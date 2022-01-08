@@ -1,15 +1,16 @@
 package com.rafaelsms.potocraft.papermc.util;
 
+import com.rafaelsms.potocraft.common.util.Database;
+import com.rafaelsms.potocraft.common.util.DatabaseException;
 import com.rafaelsms.potocraft.papermc.PaperPlugin;
 import com.rafaelsms.potocraft.papermc.profile.PaperProfile;
-import com.rafaelsms.potocraft.common.profile.Profile;
-import com.rafaelsms.potocraft.common.util.Database;
-import org.bukkit.entity.Player;
+import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.Optional;
+import java.util.UUID;
 
-public class PaperDatabase extends Database {
+public class PaperDatabase extends Database<PaperProfile> {
 
     private final @NotNull PaperPlugin plugin;
 
@@ -18,12 +19,16 @@ public class PaperDatabase extends Database {
         this.plugin = plugin;
     }
 
-    public @NotNull CompletableFuture<PaperProfile> getProfile(@NotNull Player player) {
-        return super.getProfile(player.getUniqueId(), document -> new PaperProfile(plugin, player, document));
+    public @NotNull Optional<PaperProfile> getProfile(@NotNull UUID playerId) throws DatabaseException {
+        return super.getProfile(playerId);
+    }
+
+    public void saveProfile(@NotNull PaperProfile profile) throws DatabaseException {
+        super.saveProfile(profile);
     }
 
     @Override
-    public @NotNull CompletableFuture<Void> saveProfile(@NotNull Profile profile) {
-        return super.saveProfile(profile);
+    protected @NotNull PaperProfile makeProfile(@NotNull Document document) {
+        return new PaperProfile(plugin, document);
     }
 }

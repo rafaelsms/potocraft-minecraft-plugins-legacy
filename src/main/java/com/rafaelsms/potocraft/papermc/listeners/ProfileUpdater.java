@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.papermc.listeners;
 
 import com.rafaelsms.potocraft.papermc.PaperPlugin;
+import com.rafaelsms.potocraft.papermc.profile.PaperProfile;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,28 +20,12 @@ public class ProfileUpdater implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     private void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        plugin.getDatabase().getProfile(player).whenComplete((profile, retrievalThrowable) -> {
-            // If there was an issue with profile retrieval, warn and return
-            if (retrievalThrowable != null) {
-                plugin.logger().warn("Failed to retrieve profile for player %s (uuid = %s) on quit: %s"
-                        .formatted(player.getName(), player.getUniqueId(), retrievalThrowable.getLocalizedMessage()));
-                return;
-            }
-            if (profile == null) {
-                return;
-            }
-            if (plugin.getSettings().getServerName().equalsIgnoreCase(plugin.getSettings().getLoginServer())) {
-                return;
-            }
-
-            profile.setQuitLocation();
-            plugin.getDatabase().saveProfile(profile).whenComplete((unused, saveThrowable) -> {
-                if (saveThrowable != null) {
-                    plugin.logger().warn("Failed to save profile for player %s (uuid = %s) on quit: %s"
-                            .formatted(player.getName(), player.getUniqueId(), saveThrowable.getLocalizedMessage()));
-                }
-            });
-        });
+        try {
+            PaperProfile profile = plugin.getDatabase().getProfile(player.getUniqueId()).orElseThrow();
+            profile.setQuitLocation(player.getLocation());
+            plugin.getDatabase().saveProfile(profile);
+        } catch (Exception ignored) {
+        }
     }
 
 }

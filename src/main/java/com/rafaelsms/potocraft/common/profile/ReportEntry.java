@@ -3,6 +3,7 @@ package com.rafaelsms.potocraft.common.profile;
 import com.rafaelsms.potocraft.common.util.Converter;
 import com.rafaelsms.potocraft.common.util.DatabaseObject;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
+import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import net.kyori.adventure.text.Component;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
@@ -131,15 +132,8 @@ public class ReportEntry extends DatabaseObject {
                 reporter = plugin.getSettings().getConsoleName();
             } else {
                 try {
-                    String playerName = plugin.getDatabase().getProfile(reporterId).handle((profile, throwable) -> {
-                        if (throwable != null) {
-                            return null;
-                        }
-                        return profile.getLastPlayerName();
-                    }).get();
-                    if (playerName != null) {
-                        reporter = Component.text(playerName);
-                    }
+                    VelocityProfile profile = plugin.getDatabase().getProfile(reporterId).orElseThrow();
+                    reporter = Component.text(profile.getLastPlayerName());
                 } catch (Exception ignored) {
                 }
             }

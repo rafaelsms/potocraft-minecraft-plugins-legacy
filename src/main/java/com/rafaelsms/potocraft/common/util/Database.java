@@ -2,7 +2,6 @@ package com.rafaelsms.potocraft.common.util;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.ReplaceOptions;
@@ -12,12 +11,12 @@ import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
-public abstract class Database {
+public abstract class Database<T extends Profile> {
+
+    private static final ReplaceOptions replaceOptions = new ReplaceOptions().upsert(true);
 
     protected final @NotNull Plugin plugin;
 
@@ -27,62 +26,54 @@ public abstract class Database {
         this.plugin = plugin;
     }
 
-    private MongoCollection<Document> getUserProfiles() {
+    private MongoCollection<Document> getUserProfiles() throws DatabaseException {
         return getDatabase().getCollection(Constants.USER_PROFILE_COLLECTION);
     }
 
-    protected <T extends Profile> CompletableFuture<T> getProfile(
-            @NotNull UUID playerId, @NotNull Function<Document, T> profileFactory) {
-        return handleExceptions(() -> {
-            Document profileDocument = getUserProfiles().find(Profile.filterId(playerId)).first();
-            if (profileDocument != null) {
-                plugin.debug("Found player profile (uuid = %s)".formatted(playerId.toString()));
-                return profileFactory.apply(profileDocument);
-            }
-            plugin.debug("Failed to find player profile (uuid = %s)".formatted(playerId.toString()));
-            return null;
+    protected abstract @NotNull T makeProfile(@NotNull Document document);
+
+    protected Optional<T> getProfile(@NotNull UUID playerId) throws DatabaseException {
+        return handleException(() -> {
+            Document document = getUserProfiles().find(Profile.filterId(playerId)).first();
+            if (document == null) return Optional.empty();
+            return Optional.of(makeProfile(document));
         });
     }
 
-    protected @NotNull CompletableFuture<Void> saveProfile(@NotNull Profile profile) {
-        return handleExceptions(() -> {
-            long modifiedCount = getUserProfiles().replaceOne(
-                    // Allow insert when none found
-                    profile.filterId(), profile.toDocument(), new ReplaceOptions().upsert(true)
-            ).getModifiedCount();
+    protected void saveProfile(T profile) throws DatabaseException {
+        handleException(() -> {
+            long modifiedCount = getUserProfiles()
+                    .replaceOne(profile.filterId(), profile.toDocument(), replaceOptions)
+                    .getModifiedCount();
             if (modifiedCount != 1) {
-                throw new DatabaseException("Profile saved replaced %d profiles".formatted(modifiedCount));
+                throw new DatabaseException("Expected only 1 database change, got %d".formatted(modifiedCount));
             }
-            plugin.debug("Saved player profile: %s".formatted(profile.getUniqueId().toString()));
             return null;
         });
     }
 
-    protected <T> @NotNull CompletableFuture<T> handleExceptions(@NotNull DatabaseOperation<T> operation) {
-        CompletableFuture<T> future = new CompletableFuture<>();
+    protected <U> U handleException(@NotNull DatabaseOperation<U> supplier) throws DatabaseException {
         try {
-            future.complete(operation.executeOperation());
+            return supplier.executeOperation();
         } catch (Exception exception) {
-            plugin.logger().error("Database exception: %s".formatted(exception.getLocalizedMessage()));
             if (plugin.getSettings().isMongoFailPrintable()) {
                 exception.printStackTrace();
             }
             if (plugin.getSettings().isMongoFailFatal()) {
                 plugin.getCommonServer().shutdown();
             }
-            future.completeExceptionally(exception);
+            throw new DatabaseException(exception);
         }
-        return future.orTimeout(plugin.getSettings().getDatabaseTimeout(), TimeUnit.MILLISECONDS);
     }
 
-    protected MongoDatabase getDatabase() throws MongoException {
+    private MongoDatabase getDatabase() throws DatabaseException {
         try {
             if (mongoClient == null) {
                 mongoClient = new MongoClient(new MongoClientURI(plugin.getSettings().getMongoURI()));
             }
             return mongoClient.getDatabase(plugin.getSettings().getMongoDatabase());
         } catch (Exception exception) {
-            throw new MongoException(exception.getLocalizedMessage());
+            throw new DatabaseException(exception);
         }
     }
 
@@ -93,8 +84,6 @@ public abstract class Database {
     }
 
     private interface DatabaseOperation<T> {
-
-        T executeOperation() throws Exception;
-
+        T executeOperation() throws DatabaseException;
     }
 }

@@ -2,6 +2,7 @@ package com.rafaelsms.potocraft.velocity;
 
 import com.google.inject.Inject;
 import com.rafaelsms.potocraft.common.CommonServer;
+import com.rafaelsms.potocraft.common.util.FloodgateException;
 import com.rafaelsms.potocraft.common.util.PlayerType;
 import com.rafaelsms.potocraft.common.util.PluginType;
 import com.rafaelsms.potocraft.velocity.commands.ChangePinCommand;
@@ -27,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
-import java.util.Optional;
 
 @Plugin(id = "potocraft-proxy", name = "PotoCraft Proxy", version = "0.1", url = "https://potocraft.com/",
         description = "Custom plugin for PotoCraft", authors = {"rafaelsms"},
@@ -148,17 +148,27 @@ public class VelocityPlugin implements com.rafaelsms.potocraft.common.Plugin {
         return database;
     }
 
-    public Optional<PlayerType> getPlayerType(@NotNull Player player) {
-        if (FloodgateApi.getInstance() != null) {
-            for (FloodgatePlayer floodgatePlayer : FloodgateApi.getInstance().getPlayers()) {
-                if (floodgatePlayer.getJavaUsername().equalsIgnoreCase(player.getUsername())) {
-                    return Optional.of(PlayerType.FLOODGATE_PLAYER);
-                }
-            }
-        } else {
-            // Always empty on Floodgate unavailable
-            return Optional.empty();
+    public FloodgateApi getFloodgate() throws FloodgateException {
+        try {
+            if (FloodgateApi.getInstance() == null)
+                throw new NullPointerException();
+            return FloodgateApi.getInstance();
+        } catch (Exception exception) {
+            throw new FloodgateException(exception);
         }
-        return Optional.of(player.isOnlineMode() ? PlayerType.ONLINE_PLAYER : PlayerType.OFFLINE_PLAYER);
+    }
+
+    public PlayerType getPlayerType(@NotNull Player player) throws FloodgateException {
+        FloodgateApi floodgate = getFloodgate();
+        for (FloodgatePlayer floodgatePlayer : floodgate.getPlayers()) {
+            if (floodgatePlayer.getJavaUsername().equalsIgnoreCase(player.getUsername())) {
+                return PlayerType.FLOODGATE_PLAYER;
+            }
+        }
+        if (player.isOnlineMode()) {
+            return PlayerType.ONLINE_PLAYER;
+        } else {
+            return PlayerType.OFFLINE_PLAYER;
+        }
     }
 }

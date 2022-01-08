@@ -37,11 +37,12 @@ public class Location extends DatabaseObject {
         this.pitch = Float.parseFloat(document.getString(Constants.PITCH_KEY));
     }
 
-    public static Location fromDocument(@NotNull Document document) {
+    public static @NotNull Location fromDocument(@NotNull Document document) {
         return new Location(document);
     }
 
-    public static Location fromPlayer(@NotNull String serverName, @NotNull org.bukkit.Location location) {
+    public static @Nullable Location fromPlayer(@Nullable String serverName, @Nullable org.bukkit.Location location) {
+        if (serverName == null || location == null) return null;
         return new Location(serverName, location);
     }
 

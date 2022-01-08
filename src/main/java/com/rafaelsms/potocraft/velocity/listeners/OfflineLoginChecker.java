@@ -2,6 +2,7 @@ package com.rafaelsms.potocraft.velocity.listeners;
 
 import com.rafaelsms.potocraft.common.util.PlayerType;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
+import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import com.velocitypowered.api.event.Continuation;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PreLoginEvent;
@@ -86,17 +87,16 @@ public record OfflineLoginChecker(@NotNull VelocityPlugin plugin) {
         Player player = event.getPlayer();
 
         // Get player type
-        Optional<PlayerType> playerTypeOptional = plugin.getPlayerType(player);
-        if (playerTypeOptional.isEmpty()) {
-            plugin.logger().warn("Couldn't check player connection type for player %s (uuid = %s)"
-                    .formatted(player.getUsername(), player.getUniqueId().toString()));
+        PlayerType playerType;
+        try {
+            playerType = plugin.getPlayerType(player);
+        } catch (Exception ignored) {
             // Couldn't retrieve player type, just cancel
             event.setResult(ServerPreConnectEvent.ServerResult.denied());
             player.disconnect(plugin.getSettings().getKickMessageCouldNotCheckPlayerType());
             continuation.resume();
             return;
         }
-        PlayerType playerType = playerTypeOptional.get();
         plugin.logger().info("Player %s (uuid = %s) connection type is %s"
                 .formatted(player.getUsername(), player.getUniqueId(), playerType.toString()));
 
@@ -108,46 +108,44 @@ public record OfflineLoginChecker(@NotNull VelocityPlugin plugin) {
         }
 
         // If it is an offline player, handle
-        CompletableFuture.runAsync(() -> plugin.getDatabase().getProfile(player.getUniqueId()).whenComplete((profile, retrievalThrowable) -> {
-            // Get login server
-            String loginServerName = plugin.getSettings().getLoginServer();
-            Optional<RegisteredServer> loginServerOptional = plugin.getProxyServer().getServer(loginServerName);
+        CompletableFuture.runAsync(() -> {
+            VelocityProfile profile;
+            try {
+                profile = plugin.getDatabase().getProfile(player.getUniqueId()).orElse(null);
+            } catch (Exception ignored) {
+                // Couldn't retrieve profile, just cancel
+                event.setResult(ServerPreConnectEvent.ServerResult.denied());
+                player.disconnect(plugin.getSettings().getKickMessageCouldNotRetrieveProfile());
+                continuation.resume();
+                return;
+            }
+
             Runnable moveToLoginServer = () -> {
+                // Get login server
+                String loginServerName = plugin.getSettings().getLoginServer();
+                Optional<RegisteredServer> loginServerOptional = plugin.getProxyServer().getServer(loginServerName);
                 if (loginServerOptional.isEmpty()) {
                     // No login server, cancel join
-                    plugin.debug("player %s: disconnected: no login server".formatted(player.getUsername()));
                     event.setResult(ServerPreConnectEvent.ServerResult.denied());
                     player.disconnect(plugin.getSettings().getKickMessageNoLoginServer());
                     continuation.resume();
                 } else {
-                    plugin.debug("player %s: redirected to login server".formatted(player.getUsername()));
                     event.setResult(ServerPreConnectEvent.ServerResult.allowed(loginServerOptional.get()));
                     continuation.resume();
                 }
             };
 
-            if (retrievalThrowable != null) {
-                plugin.logger().warn("Couldn't retrieve profile before server connect for offline player %s (uuid = %s): %s"
-                        .formatted(player.getUsername(), player.getUniqueId().toString(), retrievalThrowable.getLocalizedMessage()));
-                // Couldn't retrieve profile, just cancel
-                event.setResult(ServerPreConnectEvent.ServerResult.denied());
-                player.disconnect(plugin.getSettings().getKickMessageCouldNotRetrieveProfile());
-                continuation.resume();
-            } else if (profile == null) {
-                // If player profile is null, redirect to login server
-                plugin.debug("player %s is offline and does not have a profile".formatted(player.getUsername()));
+            if (profile == null) {
                 moveToLoginServer.run();
             } else {
                 // If player is not authenticated, redirect to login server
                 if (!profile.isLoggedIn(event.getPlayer().getRemoteAddress())) {
-                    plugin.debug("player %s is offline and not authenticated".formatted(player.getUsername()));
                     moveToLoginServer.run();
+                    return;
                 }
-                // Otherwise, allow connection player as it is authenticated
-                plugin.debug("player %s is offline but authenticated".formatted(player.getUsername()));
                 continuation.resume();
             }
-        }));
+        });
     }
 
     private boolean mojangUsernameExists(@NotNull String name) throws IOException {
