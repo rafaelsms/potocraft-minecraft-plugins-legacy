@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class VelocityDatabase extends Database {
 
-    private final VelocityPlugin plugin;
+    private final @NotNull VelocityPlugin plugin;
 
     public VelocityDatabase(@NotNull VelocityPlugin plugin) {
         super(plugin);

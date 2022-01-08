@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ReportChecker {
 
-    private final VelocityPlugin plugin;
+    private final @NotNull VelocityPlugin plugin;
 
     public ReportChecker(@NotNull VelocityPlugin plugin) {
         this.plugin = plugin;

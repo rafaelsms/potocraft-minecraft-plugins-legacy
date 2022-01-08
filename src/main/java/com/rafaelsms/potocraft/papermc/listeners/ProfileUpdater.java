@@ -6,12 +6,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class ProfileUpdater implements Listener {
 
-    private final PaperPlugin plugin;
+    private final @NotNull PaperPlugin plugin;
 
-    public ProfileUpdater(PaperPlugin plugin) {
+    public ProfileUpdater(@NotNull PaperPlugin plugin) {
         this.plugin = plugin;
     }
 

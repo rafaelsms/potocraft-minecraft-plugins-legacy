@@ -23,9 +23,9 @@ public class RegisterCommand implements RawCommand {
     // This should match white typing the first pin and after successfully typing the first pin, while typing the confirmation one
     private static final Predicate<String> pinSuggestion = Pattern.compile("^\\h*(\\d{1,6})$|((\\d{6})\\h*(\\d{1,6})$)").asPredicate();
 
-    private final VelocityPlugin plugin;
+    private final @NotNull VelocityPlugin plugin;
 
-    public RegisterCommand(VelocityPlugin plugin) {
+    public RegisterCommand(@NotNull VelocityPlugin plugin) {
         this.plugin = plugin;
     }
 

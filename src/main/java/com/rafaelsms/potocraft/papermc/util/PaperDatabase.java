@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class PaperDatabase extends Database {
 
-    private final PaperPlugin plugin;
+    private final @NotNull PaperPlugin plugin;
 
     public PaperDatabase(@NotNull PaperPlugin plugin) {
         super(plugin);

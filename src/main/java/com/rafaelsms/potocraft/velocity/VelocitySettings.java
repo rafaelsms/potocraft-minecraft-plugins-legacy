@@ -37,6 +37,7 @@ public class VelocitySettings extends Settings {
         setDefault(Constants.LANG_REPORT_UNKNOWN_REASON, "&7(motivo não especificado)");
         setDefault(Constants.LANG_REPORT_NO_EXPIRATION_DATE, "&7(data não especificada)");
         setDefault(Constants.LANG_REPORT_YOU_HAVE_BEEN_MUTED, "&cVocê foi silenciado por &e%reporter% &cpelo motivo &e\"%reason%\" &caté &e%expiration_date%&c.");
+        setDefault(Constants.LANG_REPORT_HELP, "&6Uso: &e&l/report kick/ban/history/mute");
 
         setDefault(Constants.LANG_KICKED, "&cVocê foi expulso\n&cpor &e%reporter%\n&cpelo motivo &e\"%reason%\"&c.");
         setDefault(Constants.LANG_BANNED, "&cVocê foi expulso\n&cpor &e%reporter%\n&cpelo motivo \"&e%reason%\"&c\n&caté &e%expiration_date%&c.");
@@ -116,10 +117,14 @@ public class VelocitySettings extends Settings {
 
     public Component getCommandReportYouHaveBeenMuted(@NotNull Component reporter, @NotNull Component reason,
                                                       @NotNull Component expirationDate) {
-        return getLang(Constants.LANG_REPORT_NO_EXPIRATION_DATE)
+        return getLang(Constants.LANG_REPORT_YOU_HAVE_BEEN_MUTED)
                 .replaceText(TextReplacementConfig.builder().matchLiteral("%reporter%").replacement(reporter).build())
                 .replaceText(TextReplacementConfig.builder().matchLiteral("%reason%").replacement(reason).build())
                 .replaceText(TextReplacementConfig.builder().matchLiteral("%expiration_date%").replacement(expirationDate).build());
+    }
+
+    public Component getCommandReportHelp() {
+        return getLang(Constants.LANG_REPORT_HELP);
     }
 
     public Component getKickMessageBanned(@NotNull Component reporter, @NotNull Component reason,

@@ -3,14 +3,15 @@ package com.rafaelsms.potocraft.velocity.commands;
 import com.rafaelsms.potocraft.common.Permissions;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.velocitypowered.api.command.RawCommand;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class ReplyCommand implements RawCommand {
 
-    private final VelocityPlugin plugin;
+    private final @NotNull VelocityPlugin plugin;
 
-    public ReplyCommand(VelocityPlugin plugin) {
+    public ReplyCommand(@NotNull VelocityPlugin plugin) {
         this.plugin = plugin;
     }
 

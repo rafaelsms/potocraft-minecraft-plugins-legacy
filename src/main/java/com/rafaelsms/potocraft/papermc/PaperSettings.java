@@ -13,7 +13,7 @@ public class PaperSettings extends Settings {
     @Override
     protected void setDefaults() {
         super.setDefaults();
-        setDefault(Constants.PAPER_SERVER_NAME_ON_PROXY, "");
+        setDefault(Constants.PAPER_SERVER_NAME_ON_PROXY, "<FILL THIS IN OR LOCATIONS WONT BE RESTORED>");
     }
 
     public String getServerName() {

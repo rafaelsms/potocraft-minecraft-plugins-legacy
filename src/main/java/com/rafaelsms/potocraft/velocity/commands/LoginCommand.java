@@ -20,11 +20,11 @@ import java.util.regex.Pattern;
 
 public class LoginCommand implements RawCommand {
 
-    private final VelocityPlugin plugin;
+    private final @NotNull VelocityPlugin plugin;
 
     private static final Predicate<String> unfinishedPinPattern = Pattern.compile("^[0-9]{1,6}$").asMatchPredicate();
 
-    public LoginCommand(VelocityPlugin plugin) {
+    public LoginCommand(@NotNull VelocityPlugin plugin) {
         this.plugin = plugin;
     }
 

@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class ProfileUpdater {
 
-    private final VelocityPlugin plugin;
+    private final @NotNull VelocityPlugin plugin;
 
     public ProfileUpdater(@NotNull VelocityPlugin plugin) {
         this.plugin = plugin;
