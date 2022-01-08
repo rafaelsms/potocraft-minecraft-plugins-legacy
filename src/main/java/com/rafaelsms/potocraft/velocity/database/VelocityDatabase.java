@@ -4,10 +4,9 @@ import com.rafaelsms.potocraft.util.Database;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.rafaelsms.potocraft.velocity.user.VelocityUser;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 public class VelocityDatabase extends Database {
 
@@ -18,17 +17,11 @@ public class VelocityDatabase extends Database {
         this.plugin = plugin;
     }
 
-    public void retrieveProfile(@NotNull UUID playerUniqueId,
-                                           @Nullable Consumer<VelocityUser> profileConsumer,
-                                           @Nullable Runnable nullProfileRunnable,
-                                           @Nullable Consumer<Exception> exceptionConsumer) {
-        super.retrieveProfile(playerUniqueId, (document) -> new VelocityUser(plugin, document),
-                profileConsumer, nullProfileRunnable, exceptionConsumer);
+    public @NotNull CompletableFuture<VelocityUser> getProfile(@NotNull UUID playerUniqueId) {
+        return super.getProfile(playerUniqueId, (document) -> new VelocityUser(plugin, document));
     }
 
-    public void saveProfile(@NotNull VelocityUser velocityUser,
-                            @Nullable Runnable successfulSaveRunnable,
-                            @Nullable Consumer<Exception> exceptionConsumer)  {
-        super.saveProfile(velocityUser, successfulSaveRunnable, exceptionConsumer);
+    public @NotNull CompletableFuture<Void> saveProfile(@NotNull VelocityUser velocityUser) {
+        return super.saveProfile(velocityUser);
     }
 }

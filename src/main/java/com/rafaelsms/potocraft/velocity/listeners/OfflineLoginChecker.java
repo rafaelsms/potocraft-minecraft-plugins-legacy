@@ -84,78 +84,70 @@ public record OfflineLoginChecker(@NotNull VelocityPlugin plugin) {
     @Subscribe
     private void onPreConnect(ServerPreConnectEvent event, Continuation continuation) {
         Player player = event.getPlayer();
-        plugin.retrievePlayerType(player.getUniqueId(), playerType -> {
-            plugin.logger().info("Player %s (uuid = %s) connection type is %s"
-                    .formatted(player.getUsername(), player.getUniqueId(), playerType.toString()));
 
-            // Ignore online/floodgate players
-            if (playerType != PlayerType.OFFLINE_PLAYER) {
-                plugin.debug("player %s passed through (online/floodgate)".formatted(player.getUsername()));
-                continuation.resume();
-                return;
-            }
-
-            String loginServerName = plugin.getSettings().getLoginServer();
-            Optional<RegisteredServer> serverOptional = plugin.getProxyServer().getServer(loginServerName);
-
-            // If it is an offline player, get its profile
-            CompletableFuture.runAsync(() -> plugin.getDatabase().retrieveProfile(player.getUniqueId(), profile -> {
-                // If player is not authenticated, redirect to login server
-                if (!profile.isLoggedIn(event.getPlayer().getRemoteAddress())) {
-                    if (serverOptional.isEmpty()) {
-                        // There is no login server, deny
-                        plugin.debug("player %s disconnected, no login server".formatted(player.getUsername()));
-                        event.setResult(ServerPreConnectEvent.ServerResult.denied());
-                        player.disconnect(plugin.getSettings().getKickMessageNoLoginServer());
-                        continuation.resume();
-                        return;
-                    } else {
-                        plugin.debug("player %s redirected to login server".formatted(player.getUsername()));
-                        // Login server available, redirect
-                        event.setResult(ServerPreConnectEvent.ServerResult.allowed(serverOptional.get()));
-                        continuation.resume();
-                        return;
-                    }
-                }
-                // Otherwise, allow player as it is authenticated
-                plugin.debug("player %s is offline but authenticated".formatted(player.getUsername()));
-                continuation.resume();
-            }, () -> {
-                // If player profile is null, redirect to login server
-                if (serverOptional.isEmpty()) {
-                    // No login server, cancel join
-                    plugin.debug("player %s doesn't have profile: disconnected, no login server".formatted(player.getUsername()));
-                    event.setResult(ServerPreConnectEvent.ServerResult.denied());
-                    player.disconnect(plugin.getSettings().getKickMessageNoLoginServer());
-                    continuation.resume();
-                } else {
-                    plugin.debug("player %s doesn't have profile: redirected to login server".formatted(player.getUsername()));
-                    event.setResult(ServerPreConnectEvent.ServerResult.allowed(serverOptional.get()));
-                    continuation.resume();
-                }
-            }, exception -> {
-                plugin.logger().warn("Couldn't retrieve profile before server connect for offline player %s (uuid = %s)"
-                        .formatted(player.getUsername(), player.getUniqueId().toString()));
-                // Couldn't retrieve player type, just cancel
-                event.setResult(ServerPreConnectEvent.ServerResult.denied());
-                player.disconnect(plugin.getSettings().getKickMessageCouldNotRetrieveProfile());
-                continuation.resume();
-            }));
-        }, () -> {
-            plugin.logger().warn("Couldn't find the player connection type for player %s (uuid = %s)"
-                    .formatted(player.getUsername(), player.getUniqueId().toString()));
-            // Couldn't find the player, just cancel
-            event.setResult(ServerPreConnectEvent.ServerResult.denied());
-            player.disconnect(plugin.getSettings().getKickMessageCouldNotCheckPlayerType());
-            continuation.resume();
-        }, exception -> {
+        // Get player type
+        Optional<PlayerType> playerTypeOptional = plugin.getPlayerType(player);
+        if (playerTypeOptional.isEmpty()) {
             plugin.logger().warn("Couldn't check player connection type for player %s (uuid = %s)"
                     .formatted(player.getUsername(), player.getUniqueId().toString()));
             // Couldn't retrieve player type, just cancel
             event.setResult(ServerPreConnectEvent.ServerResult.denied());
             player.disconnect(plugin.getSettings().getKickMessageCouldNotCheckPlayerType());
             continuation.resume();
-        });
+            return;
+        }
+        PlayerType playerType = playerTypeOptional.get();
+        plugin.logger().info("Player %s (uuid = %s) connection type is %s"
+                .formatted(player.getUsername(), player.getUniqueId(), playerType.toString()));
+
+        // Ignore online/floodgate players
+        if (playerType != PlayerType.OFFLINE_PLAYER) {
+            plugin.debug("player %s passed through (online/floodgate)".formatted(player.getUsername()));
+            continuation.resume();
+            return;
+        }
+
+        // If it is an offline player, handle
+        CompletableFuture.runAsync(() -> plugin.getDatabase().getProfile(player.getUniqueId()).whenComplete((profile, retrievalThrowable) -> {
+            // Get login server
+            String loginServerName = plugin.getSettings().getLoginServer();
+            Optional<RegisteredServer> loginServerOptional = plugin.getProxyServer().getServer(loginServerName);
+            Runnable moveToLoginServer = () -> {
+                if (loginServerOptional.isEmpty()) {
+                    // No login server, cancel join
+                    plugin.debug("player %s: disconnected: no login server".formatted(player.getUsername()));
+                    event.setResult(ServerPreConnectEvent.ServerResult.denied());
+                    player.disconnect(plugin.getSettings().getKickMessageNoLoginServer());
+                    continuation.resume();
+                } else {
+                    plugin.debug("player %s: redirected to login server".formatted(player.getUsername()));
+                    event.setResult(ServerPreConnectEvent.ServerResult.allowed(loginServerOptional.get()));
+                    continuation.resume();
+                }
+            };
+
+            if (retrievalThrowable != null) {
+                plugin.logger().warn("Couldn't retrieve profile before server connect for offline player %s (uuid = %s): %s"
+                        .formatted(player.getUsername(), player.getUniqueId().toString(), retrievalThrowable.getLocalizedMessage()));
+                // Couldn't retrieve profile, just cancel
+                event.setResult(ServerPreConnectEvent.ServerResult.denied());
+                player.disconnect(plugin.getSettings().getKickMessageCouldNotRetrieveProfile());
+                continuation.resume();
+            } else if (profile == null) {
+                // If player profile is null, redirect to login server
+                plugin.debug("player %s is offline and does not have a profile".formatted(player.getUsername()));
+                moveToLoginServer.run();
+            } else {
+                // If player is not authenticated, redirect to login server
+                if (!profile.isLoggedIn(event.getPlayer().getRemoteAddress())) {
+                    plugin.debug("player %s is offline and not authenticated".formatted(player.getUsername()));
+                    moveToLoginServer.run();
+                }
+                // Otherwise, allow connection player as it is authenticated
+                plugin.debug("player %s is offline but authenticated".formatted(player.getUsername()));
+                continuation.resume();
+            }
+        }));
     }
 
     private boolean mojangUsernameExists(@NotNull String name) throws IOException {

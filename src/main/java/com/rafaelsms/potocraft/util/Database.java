@@ -5,17 +5,16 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.ReplaceOptions;
 import com.rafaelsms.potocraft.Plugin;
 import com.rafaelsms.potocraft.user.UserProfile;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public abstract class Database {
 
@@ -31,60 +30,37 @@ public abstract class Database {
         return getDatabase().getCollection(Constants.USER_PROFILE_COLLECTION);
     }
 
-    protected <T extends UserProfile> void retrieveProfile(@NotNull UUID playerUniqueId,
-                                                           @NotNull Function<Document, T> profileFactory,
-                                                           @Nullable Consumer<T> profileConsumer,
-                                                           @Nullable Runnable nullProfileRunnable,
-                                                           @Nullable Consumer<Exception> exceptionConsumer) {
-        try {
-            Optional<T> profile = getProfile(playerUniqueId, profileFactory);
-            if (profile.isPresent()) {
-                if (profileConsumer == null) return;
-                profileConsumer.accept(profile.get());
-            } else {
-                if (nullProfileRunnable == null) return;
-                nullProfileRunnable.run();
-            }
-        } catch (Exception exception) {
-            if (exceptionConsumer == null) return;
-            exceptionConsumer.accept(exception);
-        }
-    }
-
-    private <T extends UserProfile> Optional<T> getProfile(
-            @NotNull UUID playerId, @NotNull Function<Document, T> profileFactory) throws DatabaseException {
+    protected <T extends UserProfile> CompletableFuture<T> getProfile(
+            @NotNull UUID playerId, @NotNull Function<Document, T> profileFactory) {
         return handleExceptions(() -> {
             Document profileDocument = getUserProfiles().find(UserProfile.filterId(playerId)).first();
             if (profileDocument != null) {
+                plugin.debug("Found player profile (uuid = %s)".formatted(playerId.toString()));
                 return profileFactory.apply(profileDocument);
             }
+            plugin.debug("Failed to find player profile (uuid = %s)".formatted(playerId.toString()));
             return null;
         });
     }
 
-    protected void saveProfile(@NotNull UserProfile userProfile,
-                               @Nullable Runnable successfulSaveRunnable,
-                               @Nullable Consumer<Exception> exceptionConsumer) {
-        try {
-            Optional<Boolean> optionalBoolean = saveProfile(userProfile);
-            if (optionalBoolean.isEmpty() || !optionalBoolean.get())
-                throw new DatabaseException("Failed to save profile");
-            if (successfulSaveRunnable == null) return;
-            successfulSaveRunnable.run();
-        } catch (DatabaseException exception) {
-            if (exceptionConsumer == null) return;
-            exceptionConsumer.accept(exception);
-        }
+    protected @NotNull CompletableFuture<Void> saveProfile(@NotNull UserProfile userProfile) {
+        return handleExceptions(() -> {
+            long modifiedCount = getUserProfiles().replaceOne(
+                    // Allow insert when none found
+                    userProfile.filterId(), userProfile.toDocument(), new ReplaceOptions().upsert(true)
+            ).getModifiedCount();
+            if (modifiedCount != 1) {
+                throw new DatabaseException("Profile saved replaced %d profiles".formatted(modifiedCount));
+            }
+            plugin.debug("Saved player profile: %s".formatted(userProfile.getUniqueId().toString()));
+            return null;
+        });
     }
 
-    protected Optional<Boolean> saveProfile(@NotNull UserProfile userProfile) throws DatabaseException {
-        return handleExceptions(
-                () -> getUserProfiles().replaceOne(userProfile.filterId(), userProfile.toDocument()).wasAcknowledged());
-    }
-
-    protected <T> Optional<T> handleExceptions(@NotNull Supplier<T> supplier) throws DatabaseException {
+    protected <T> @NotNull CompletableFuture<T> handleExceptions(@NotNull DatabaseOperation<T> operation) {
+        CompletableFuture<T> future = new CompletableFuture<>();
         try {
-            return Optional.ofNullable(supplier.get());
+            future.complete(operation.executeOperation());
         } catch (Exception exception) {
             plugin.logger().error("Database exception: %s".formatted(exception.getLocalizedMessage()));
             if (plugin.getSettings().isMongoFailPrintable()) {
@@ -93,8 +69,9 @@ public abstract class Database {
             if (plugin.getSettings().isMongoFailFatal()) {
                 plugin.getCommonServer().shutdown();
             }
-            throw new DatabaseException(exception);
+            future.completeExceptionally(exception);
         }
+        return future;
     }
 
     protected MongoDatabase getDatabase() throws MongoException {
@@ -114,4 +91,9 @@ public abstract class Database {
 
     }
 
+    private interface DatabaseOperation<T> {
+
+        T executeOperation() throws Exception;
+
+    }
 }

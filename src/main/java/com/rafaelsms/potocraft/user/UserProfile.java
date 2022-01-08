@@ -23,6 +23,7 @@ public class UserProfile extends DatabaseObject {
     private final @NotNull Plugin plugin;
     private final @NotNull UUID playerId;
 
+    private @NotNull String lastPlayerName;
     protected @Nullable ZonedDateTime lastLoginDate = null;
     protected @Nullable String lastLoginAddress = null;
     private @Nullable Integer pin = null;
@@ -34,11 +35,12 @@ public class UserProfile extends DatabaseObject {
 
     private @Nullable Location lastLocation = null;
 
-    protected UserProfile(@NotNull Plugin plugin, @NotNull UUID playerId) {
+    protected UserProfile(@NotNull Plugin plugin, @NotNull UUID playerId, @NotNull String playerName) {
         super(new Document());
         this.plugin = plugin;
         this.playerId = playerId;
 
+        this.lastPlayerName = playerName;
         this.firstJoinDate = ZonedDateTime.now();
         this.lastJoinDate = ZonedDateTime.now();
     }
@@ -50,12 +52,21 @@ public class UserProfile extends DatabaseObject {
 
         setPIN(document.getInteger(Constants.PIN_KEY));
 
+        this.lastPlayerName = document.getString(Constants.LAST_PLAYER_NAME_KEY);
         this.firstJoinDate = Objects.requireNonNull(Converter.toDateTime(document.getString(Constants.FIRST_JOIN_DATE_KEY)));
         this.lastJoinDate = Objects.requireNonNull(Converter.toDateTime(document.getString(Constants.LAST_JOIN_DATE_KEY)));
         this.lastQuitDate = Converter.toDateTime(document.getString(Constants.LAST_QUIT_DATE_KEY));
         this.playTime = document.getLong(Constants.PLAY_TIME_MILLIS_KEY);
 
         this.lastLocation = Converter.toLocation((Document) document.get(Constants.LAST_LOCATION_KEY));
+    }
+
+    public UUID getUniqueId() {
+        return playerId;
+    }
+
+    public void updateLastPlayerName(@NotNull String username) {
+        this.lastPlayerName = username;
     }
 
     /**
@@ -135,6 +146,7 @@ public class UserProfile extends DatabaseObject {
 
         public static final String PIN_KEY = "pin";
 
+        public static final String LAST_PLAYER_NAME_KEY = "lastPlayerName";
         public static final String FIRST_JOIN_DATE_KEY = "firstJoinDate";
         public static final String LAST_JOIN_DATE_KEY = "lastJoinDate";
         public static final String LAST_QUIT_DATE_KEY = "lastQuitDate";

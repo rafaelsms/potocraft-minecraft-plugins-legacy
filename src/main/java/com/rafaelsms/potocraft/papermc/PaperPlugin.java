@@ -2,6 +2,7 @@ package com.rafaelsms.potocraft.papermc;
 
 import com.rafaelsms.potocraft.CommonServer;
 import com.rafaelsms.potocraft.Permissions;
+import com.rafaelsms.potocraft.papermc.listeners.ProfileUpdater;
 import com.rafaelsms.potocraft.papermc.util.PaperDatabase;
 import com.rafaelsms.potocraft.util.PluginType;
 import org.bukkit.event.HandlerList;
@@ -36,6 +37,8 @@ public class PaperPlugin extends JavaPlugin implements com.rafaelsms.potocraft.P
                 getServer().getPluginManager().addPermission(new Permission(permission));
             }
         }
+
+        getServer().getPluginManager().registerEvents(new ProfileUpdater(this), this);
 
 //        getServer().getMessenger().registerIncomingPluginChannel(this, "potocraft:server", new PluginMessageListener() {
 //            @Override

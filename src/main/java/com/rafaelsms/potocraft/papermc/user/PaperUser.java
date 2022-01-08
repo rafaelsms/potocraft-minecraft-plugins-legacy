@@ -13,7 +13,7 @@ public class PaperUser extends UserProfile {
     private final @NotNull Player player;
 
     protected PaperUser(@NotNull PaperPlugin plugin, @NotNull Player player) {
-        super(plugin, player.getUniqueId());
+        super(plugin, player.getUniqueId(), player.getName());
         this.plugin = plugin;
         this.player = player;
     }

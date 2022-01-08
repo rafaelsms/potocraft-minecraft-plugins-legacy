@@ -6,9 +6,8 @@ import com.rafaelsms.potocraft.user.UserProfile;
 import com.rafaelsms.potocraft.util.Database;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 public class PaperDatabase extends Database {
 
@@ -19,16 +18,12 @@ public class PaperDatabase extends Database {
         this.plugin = plugin;
     }
 
-    public void retrieveProfile(@NotNull Player player,
-                                @Nullable Consumer<PaperUser> profileConsumer,
-                                @Nullable Runnable nullProfileRunnable,
-                                @Nullable Consumer<Exception> exceptionConsumer) {
-        super.retrieveProfile(player.getUniqueId(), document -> new PaperUser(plugin, player, document),
-                profileConsumer, nullProfileRunnable, exceptionConsumer);
+    public @NotNull CompletableFuture<PaperUser> getProfile(@NotNull Player player) {
+        return super.getProfile(player.getUniqueId(), document -> new PaperUser(plugin, player, document));
     }
 
     @Override
-    public void saveProfile(@NotNull UserProfile userProfile, @Nullable Runnable successfulSaveRunnable, @Nullable Consumer<Exception> exceptionConsumer) {
-        super.saveProfile(userProfile, successfulSaveRunnable, exceptionConsumer);
+    public @NotNull CompletableFuture<Void> saveProfile(@NotNull UserProfile userProfile) {
+        return super.saveProfile(userProfile);
     }
 }

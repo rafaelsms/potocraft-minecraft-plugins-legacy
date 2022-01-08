@@ -16,8 +16,8 @@ public class VelocityUser extends UserProfile {
 
     private final @NotNull VelocityPlugin plugin;
 
-    public VelocityUser(@NotNull VelocityPlugin plugin, @NotNull UUID playerId) {
-        super(plugin, playerId);
+    public VelocityUser(@NotNull VelocityPlugin plugin, @NotNull UUID playerId, @NotNull String playerName) {
+        super(plugin, playerId, playerName);
         this.plugin = plugin;
     }
 

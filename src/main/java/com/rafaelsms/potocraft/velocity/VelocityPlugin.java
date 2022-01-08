@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.rafaelsms.potocraft.CommonServer;
 import com.rafaelsms.potocraft.util.PlayerType;
 import com.rafaelsms.potocraft.util.PluginType;
+import com.rafaelsms.potocraft.velocity.commands.ChangePinCommand;
 import com.rafaelsms.potocraft.velocity.commands.LoginCommand;
 import com.rafaelsms.potocraft.velocity.commands.RegisterCommand;
 import com.rafaelsms.potocraft.velocity.database.VelocityDatabase;
@@ -19,6 +20,7 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import org.geysermc.floodgate.api.FloodgateApi;
+import org.geysermc.floodgate.api.player.FloodgatePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -66,6 +68,7 @@ public class VelocityPlugin implements com.rafaelsms.potocraft.Plugin {
         // Register commands
         getProxyServer().getCommandManager().register("login", new LoginCommand(this), "l", "log");
         getProxyServer().getCommandManager().register("registrar", new RegisterCommand(this), "reg", "register");
+        getProxyServer().getCommandManager().register("mudarsenha", new ChangePinCommand(this), "changepin", "changepassword", "mudarpin");
 
         // Register listeners
         getProxyServer().getEventManager().register(this, new OfflineLoginChecker(this));
@@ -146,16 +149,18 @@ public class VelocityPlugin implements com.rafaelsms.potocraft.Plugin {
         return database;
     }
 
-    public void retrievePlayerType(@NotNull UUID playerId,
+    private void retrievePlayerType(@NotNull UUID playerId,
                                    @Nullable Consumer<PlayerType> playerTypeConsumer,
                                    @Nullable Runnable typeNotFoundRunnable,
                                    @Nullable Consumer<Exception> exceptionConsumer) {
         try {
             Optional<PlayerType> playerTypeOptional = getPlayerType(playerId);
             if (playerTypeOptional.isPresent()) {
+                debug("Found player type for player %s".formatted(playerId.toString()));
                 if (playerTypeConsumer == null) return;
                 playerTypeConsumer.accept(playerTypeOptional.get());
             } else {
+                debug("Could not find player type for player %s".formatted(playerId.toString()));
                 if (typeNotFoundRunnable == null) return;
                 typeNotFoundRunnable.run();
             }
@@ -164,6 +169,21 @@ public class VelocityPlugin implements com.rafaelsms.potocraft.Plugin {
             exceptionConsumer.accept(exception);
         }
     }
+
+    public Optional<PlayerType> getPlayerType(@NotNull Player player) {
+        if (FloodgateApi.getInstance() != null) {
+            for (FloodgatePlayer floodgatePlayer : FloodgateApi.getInstance().getPlayers()) {
+                if (floodgatePlayer.getJavaUsername().equalsIgnoreCase(player.getUsername())) {
+                    return Optional.of(PlayerType.FLOODGATE_PLAYER);
+                }
+            }
+        } else {
+            // Always empty on Floodgate unavailable
+            return Optional.empty();
+        }
+        return Optional.of(player.isOnlineMode() ? PlayerType.ONLINE_PLAYER : PlayerType.OFFLINE_PLAYER);
+    }
+
 
     /**
      * Get the player connection type given player id.

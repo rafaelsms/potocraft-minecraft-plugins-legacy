@@ -15,7 +15,6 @@ public class VelocitySettings extends Settings {
     protected void setDefaults() {
         super.setDefaults();
         setDefault(Constants.LOGIN_MAX_LOGIN_DURATION_SECONDS, 60 * 30);
-        setDefault(Constants.LOGIN_SERVER_NAME, "login");
         setDefault(Constants.LOBBY_SERVER_NAME, "lobby");
         setDefault(Constants.KICK_IF_LOBBY_UNAVAILABLE, true);
 
@@ -27,6 +26,13 @@ public class VelocitySettings extends Settings {
         setDefault(Constants.LANG_LOGIN_SUCCESSFULLY_LOGGED_IN, "&3Senha correta! Bom jogo!");
         setDefault(Constants.LANG_LOGIN_TRANSFER_UNAVAILABLE, "&cFalha ao mover para o próximo servidor.");
 
+        setDefault(Constants.LANG_REGISTER_INVALID_PINS, "&cVocê digitou a senha numérica incorretamente. &6Imite o exemplo: &a&l/registrar 123456 123456");
+        setDefault(Constants.LANG_REGISTER_PINS_DO_NOT_MATCH, "&cVocê digitou duas senhas diferentes! &6Elas precisam ser iguais para confirmar a senha.\n&6Por exemplo: &3&l/registrar 123456 123456");
+        setDefault(Constants.LANG_REGISTER_PIN_FORMATTING_FAILED, "&cFalha ao formatar sua senha numérica! Tente novamente ou contate o administrador.");
+        setDefault(Constants.LANG_REGISTER_HELP, "&6Para registrar sua conta, pense numa &3senha de 6 números &6e digite: &3&l/registrar senha senha");
+        setDefault(Constants.LANG_REGISTER_TRY_LOGIN_INSTEAD, "&cVocê já tem uma conta cadastrada! &6Tente entrar digitando &3&l/login senha");
+        setDefault(Constants.LANG_REGISTER_TRY_CHANGE_PIN_INSTEAD, "&cVocê já tem uma conta cadastrada! &6Deseja alterar sua senha? Utilize &3&l/mudarsenha");
+
         setDefault(Constants.LANG_COULD_NOT_CHECK_PLAYER_TYPE, "&cNão foi possível verificar o tipo de jogador.");
         setDefault(Constants.LANG_COULD_NOT_CHECK_MOJANG_USERNAME, "&cNão foi possível verificar o nome de usuário.");
         setDefault(Constants.LANG_FLOODGATE_PREFIX_ON_JAVA_PLAYER, "&cNome reservado para jogadores Bedrock Edition.");
@@ -35,10 +41,6 @@ public class VelocitySettings extends Settings {
 
     public long getMaxLoginDurationSeconds() {
         return get(Constants.LOGIN_MAX_LOGIN_DURATION_SECONDS);
-    }
-
-    public String getLoginServer() {
-        return get(Constants.LOGIN_SERVER_NAME);
     }
 
     public String getLobbyServer() {
@@ -71,6 +73,30 @@ public class VelocitySettings extends Settings {
 
     public Component getCommandLoggedIn() {
         return getLang(Constants.LANG_LOGIN_SUCCESSFULLY_LOGGED_IN);
+    }
+
+    public Component getCommandRegisterInvalidPins() {
+        return getLang(Constants.LANG_REGISTER_INVALID_PINS);
+    }
+
+    public Component getCommandRegisterPinsDoNotMatch() {
+        return getLang(Constants.LANG_REGISTER_PINS_DO_NOT_MATCH);
+    }
+
+    public Component getCommandRegisterFormattingFailed() {
+        return getLang(Constants.LANG_REGISTER_PIN_FORMATTING_FAILED);
+    }
+
+    public Component getCommandRegisterHelp() {
+        return getLang(Constants.LANG_REGISTER_HELP);
+    }
+
+    public Component getCommandRegisterShouldLoginInstead() {
+        return getLang(Constants.LANG_REGISTER_TRY_LOGIN_INSTEAD);
+    }
+
+    public Component getCommandRegisterShouldChangePinInstead() {
+        return getLang(Constants.LANG_REGISTER_TRY_CHANGE_PIN_INSTEAD);
     }
 
     public Component getKickMessageTransferServerUnavailable() {

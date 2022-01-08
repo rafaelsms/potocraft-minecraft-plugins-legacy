@@ -43,6 +43,8 @@ public abstract class Settings {
         setDefault(Constants.DATABASE_FAIL_FATAL, true);
         setDefault(Constants.DATABASE_FAIL_PRINT_STACK, true);
 
+        setDefault(Constants.LOGIN_SERVER_NAME, "login");
+
         setDefault(Constants.LANG_CONSOLE_CANT_EXECUTE_COMMAND, "&cConsole não pode executar este comando.");
         setDefault(Constants.LANG_GENERIC_COMMAND_ERROR, "&cFalha ao executar comando.");
         setDefault(Constants.LANG_COULD_NOT_RETRIEVE_PROFILE, "&cFalha ao acessar perfil.");
@@ -67,6 +69,10 @@ public abstract class Settings {
 
     public boolean isMongoFailPrintable() {
         return get(Constants.DATABASE_FAIL_PRINT_STACK);
+    }
+
+    public String getLoginServer() {
+        return get(Constants.LOGIN_SERVER_NAME);
     }
 
     public Component getCommandConsoleCantExecute() {
@@ -130,10 +136,11 @@ public abstract class Settings {
         public static final String DATABASE_FAIL_FATAL = "configuration.database.database_fail_shutdowns_server";
         public static final String DATABASE_FAIL_PRINT_STACK = "configuration.database.database_fail_prints_stack_trace";
 
+        public static final String LOBBY_SERVER_NAME = "configuration.login.lobby_server";
+
         // Velocity
         public static final String LOGIN_MAX_LOGIN_DURATION_SECONDS = "configuration.login.max_time_since_last_login_to_auto_login_seconds";
         public static final String LOGIN_SERVER_NAME = "configuration.login.unauthenticated_server";
-        public static final String LOBBY_SERVER_NAME = "configuration.login.lobby_server";
         public static final String KICK_IF_LOBBY_UNAVAILABLE = "configuration.login.kick_if_lobby_server_unavailable";
 
         // Paper
@@ -155,6 +162,13 @@ public abstract class Settings {
         public static final String LANG_LOGIN_MUST_REGISTER_FIRST = "language.commands.login.must_register_first";
         public static final String LANG_LOGIN_INCORRECT_PIN = "language.commands.login.incorrect_pin";
         public static final String LANG_LOGIN_SUCCESSFULLY_LOGGED_IN = "language.commands.login.successfully_logged_in";
+
+        public static final String LANG_REGISTER_INVALID_PINS = "language.commands.register.invalid_pin_input";
+        public static final String LANG_REGISTER_PINS_DO_NOT_MATCH = "language.commands.register.pins_do_not_match";
+        public static final String LANG_REGISTER_PIN_FORMATTING_FAILED = "language.commands.register.pin_formatting_failed";
+        public static final String LANG_REGISTER_HELP = "language.commands.register.help";
+        public static final String LANG_REGISTER_TRY_LOGIN_INSTEAD = "language.commands.register.use_login_instead";
+        public static final String LANG_REGISTER_TRY_CHANGE_PIN_INSTEAD = "language.commands.register.use_change_pin_instead";
 
         public static final String LANG_COULD_NOT_CHECK_PLAYER_TYPE = "language.kick_messages.could_not_check_player_type";
         public static final String LANG_COULD_NOT_CHECK_MOJANG_USERNAME = "language.kick_messages.could_not_check_mojang_username";
