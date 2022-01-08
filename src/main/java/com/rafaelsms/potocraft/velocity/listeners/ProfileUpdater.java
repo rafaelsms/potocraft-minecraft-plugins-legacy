@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.velocity.listeners;
 
-import com.rafaelsms.potocraft.util.PlayerType;
+import com.rafaelsms.potocraft.common.util.PlayerType;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import com.velocitypowered.api.event.Continuation;

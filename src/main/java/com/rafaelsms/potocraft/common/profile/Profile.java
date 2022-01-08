@@ -1,11 +1,11 @@
-package com.rafaelsms.potocraft.profile;
+package com.rafaelsms.potocraft.common.profile;
 
 import com.mongodb.client.model.Filters;
-import com.rafaelsms.potocraft.Plugin;
-import com.rafaelsms.potocraft.util.Converter;
-import com.rafaelsms.potocraft.util.DatabaseObject;
-import com.rafaelsms.potocraft.util.Location;
-import com.rafaelsms.potocraft.util.Util;
+import com.rafaelsms.potocraft.common.Plugin;
+import com.rafaelsms.potocraft.common.util.Converter;
+import com.rafaelsms.potocraft.common.util.DatabaseObject;
+import com.rafaelsms.potocraft.common.util.Location;
+import com.rafaelsms.potocraft.common.util.Util;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jetbrains.annotations.NotNull;
@@ -14,24 +14,24 @@ import org.jetbrains.annotations.Nullable;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class Profile extends DatabaseObject {
 
     private final @NotNull Plugin plugin;
     private final @NotNull UUID playerId;
 
-    private @NotNull String lastPlayerName;
     protected @Nullable ZonedDateTime lastLoginDate = null;
     protected @Nullable String lastLoginAddress = null;
     private @Nullable Integer pin = null;
 
+    private @NotNull String lastPlayerName;
     private final @NotNull ZonedDateTime firstJoinDate;
     private @NotNull ZonedDateTime lastJoinDate;
     private @Nullable ZonedDateTime lastQuitDate = null;
     private long playTime = 0;
+
+    private final List<ReportEntry> reportEntries = new LinkedList<>();
 
     private @Nullable Location lastLocation = null;
 
@@ -58,11 +58,18 @@ public class Profile extends DatabaseObject {
         this.lastQuitDate = Converter.toDateTime(document.getString(Constants.LAST_QUIT_DATE_KEY));
         this.playTime = document.getLong(Constants.PLAY_TIME_MILLIS_KEY);
 
+        List<Document> reportEntries = document.getList(Constants.REPORT_ENTRIES_KEY, Document.class);
+        this.reportEntries.addAll(Converter.fromList(reportEntries, ReportEntry::fromDocument));
+
         this.lastLocation = Converter.toLocation((Document) document.get(Constants.LAST_LOCATION_KEY));
     }
 
-    public UUID getUniqueId() {
+    public @NotNull UUID getUniqueId() {
         return playerId;
+    }
+
+    public @NotNull String getLastPlayerName() {
+        return lastPlayerName;
     }
 
     public void updateLastPlayerName(@NotNull String username) {
@@ -106,6 +113,10 @@ public class Profile extends DatabaseObject {
         this.lastLoginAddress = address == null ? null : Util.getIpAddress(address);
     }
 
+    public List<ReportEntry> getReportEntries() {
+        return Collections.unmodifiableList(this.reportEntries);
+    }
+
     public @NotNull Optional<Location> getLastLocation() {
         return Optional.ofNullable(lastLocation);
     }
@@ -122,10 +133,13 @@ public class Profile extends DatabaseObject {
 
         document.put(Constants.PIN_KEY, pin);
 
+        document.put(Constants.LAST_PLAYER_NAME_KEY, lastPlayerName);
         document.put(Constants.FIRST_JOIN_DATE_KEY, Converter.fromDateTime(firstJoinDate));
         document.put(Constants.LAST_JOIN_DATE_KEY, Converter.fromDateTime(lastJoinDate));
         document.put(Constants.LAST_QUIT_DATE_KEY, Converter.fromDateTime(lastQuitDate));
         document.put(Constants.PLAY_TIME_MILLIS_KEY, playTime);
+
+        document.put(Constants.REPORT_ENTRIES_KEY, Converter.toList(this.reportEntries, ReportEntry::toDocument));
 
         document.put(Constants.LAST_LOCATION_KEY, Converter.fromLocation(lastLocation));
 
@@ -151,6 +165,8 @@ public class Profile extends DatabaseObject {
         public static final String LAST_JOIN_DATE_KEY = "lastJoinDate";
         public static final String LAST_QUIT_DATE_KEY = "lastQuitDate";
         public static final String PLAY_TIME_MILLIS_KEY = "playTimeMillis";
+
+        public static final String REPORT_ENTRIES_KEY = "reportEntries";
 
         public static final String LAST_LOCATION_KEY = "lastLocation";
 

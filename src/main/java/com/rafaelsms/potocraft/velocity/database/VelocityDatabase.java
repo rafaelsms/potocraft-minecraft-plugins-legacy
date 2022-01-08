@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.velocity.database;
 
-import com.rafaelsms.potocraft.util.Database;
+import com.rafaelsms.potocraft.common.util.Database;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import org.jetbrains.annotations.NotNull;

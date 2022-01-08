@@ -2,8 +2,8 @@ package com.rafaelsms.potocraft.papermc.util;
 
 import com.rafaelsms.potocraft.papermc.PaperPlugin;
 import com.rafaelsms.potocraft.papermc.profile.PaperProfile;
-import com.rafaelsms.potocraft.profile.Profile;
-import com.rafaelsms.potocraft.util.Database;
+import com.rafaelsms.potocraft.common.profile.Profile;
+import com.rafaelsms.potocraft.common.util.Database;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

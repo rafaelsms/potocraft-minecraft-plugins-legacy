@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.papermc;
 
-import com.rafaelsms.potocraft.CommonServer;
+import com.rafaelsms.potocraft.common.CommonServer;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 

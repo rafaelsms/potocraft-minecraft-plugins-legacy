@@ -1,9 +1,9 @@
 package com.rafaelsms.potocraft.velocity;
 
 import com.google.inject.Inject;
-import com.rafaelsms.potocraft.CommonServer;
-import com.rafaelsms.potocraft.util.PlayerType;
-import com.rafaelsms.potocraft.util.PluginType;
+import com.rafaelsms.potocraft.common.CommonServer;
+import com.rafaelsms.potocraft.common.util.PlayerType;
+import com.rafaelsms.potocraft.common.util.PluginType;
 import com.rafaelsms.potocraft.velocity.commands.ChangePinCommand;
 import com.rafaelsms.potocraft.velocity.commands.LoginCommand;
 import com.rafaelsms.potocraft.velocity.commands.RegisterCommand;
@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 @Plugin(id = "potocraft-proxy", name = "PotoCraft Proxy", version = "0.1", url = "https://potocraft.com/",
         description = "Custom plugin for PotoCraft", authors = {"rafaelsms"},
         dependencies = {@Dependency(id = "floodgate")})
-public class VelocityPlugin implements com.rafaelsms.potocraft.Plugin {
+public class VelocityPlugin implements com.rafaelsms.potocraft.common.Plugin {
 
     private final @NotNull ProxyServer server;
     private final @NotNull CommonServer commonServer;

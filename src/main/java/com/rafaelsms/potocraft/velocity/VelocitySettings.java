@@ -1,8 +1,9 @@
 package com.rafaelsms.potocraft.velocity;
 
-import com.rafaelsms.potocraft.Plugin;
-import com.rafaelsms.potocraft.Settings;
+import com.rafaelsms.potocraft.common.Plugin;
+import com.rafaelsms.potocraft.common.Settings;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import org.jetbrains.annotations.NotNull;
 
 public class VelocitySettings extends Settings {
@@ -33,6 +34,12 @@ public class VelocitySettings extends Settings {
         setDefault(Constants.LANG_REGISTER_TRY_LOGIN_INSTEAD, "&cVocê já tem uma conta cadastrada! &6Tente entrar digitando &3&l/login senha");
         setDefault(Constants.LANG_REGISTER_TRY_CHANGE_PIN_INSTEAD, "&cVocê já tem uma conta cadastrada! &6Deseja alterar sua senha? Utilize &3&l/mudarsenha");
 
+        setDefault(Constants.LANG_REPORT_UNKNOWN_REASON, "&7(motivo não especificado)");
+        setDefault(Constants.LANG_REPORT_NO_EXPIRATION_DATE, "&7(data não especificada)");
+        setDefault(Constants.LANG_REPORT_YOU_HAVE_BEEN_MUTED, "&cVocê foi silenciado por &e%reporter% &cpelo motivo &e\"%reason%\" &caté &e%expiration_date%&c.");
+
+        setDefault(Constants.LANG_KICKED, "&cVocê foi expulso\n&cpor &e%reporter%\n&cpelo motivo &e\"%reason%\"&c.");
+        setDefault(Constants.LANG_BANNED, "&cVocê foi expulso\n&cpor &e%reporter%\n&cpelo motivo \"&e%reason%\"&c\n&caté &e%expiration_date%&c.");
         setDefault(Constants.LANG_COULD_NOT_CHECK_PLAYER_TYPE, "&cNão foi possível verificar o tipo de jogador.");
         setDefault(Constants.LANG_COULD_NOT_CHECK_MOJANG_USERNAME, "&cNão foi possível verificar o nome de usuário.");
         setDefault(Constants.LANG_FLOODGATE_PREFIX_ON_JAVA_PLAYER, "&cNome reservado para jogadores Bedrock Edition.");
@@ -97,6 +104,36 @@ public class VelocitySettings extends Settings {
 
     public Component getCommandRegisterShouldChangePinInstead() {
         return getLang(Constants.LANG_REGISTER_TRY_CHANGE_PIN_INSTEAD);
+    }
+
+    public Component getCommandReportUnknownReason() {
+        return getLang(Constants.LANG_REPORT_UNKNOWN_REASON);
+    }
+
+    public Component getCommandReportNoExpirationDate() {
+        return getLang(Constants.LANG_REPORT_NO_EXPIRATION_DATE);
+    }
+
+    public Component getCommandReportYouHaveBeenMuted(@NotNull Component reporter, @NotNull Component reason,
+                                                      @NotNull Component expirationDate) {
+        return getLang(Constants.LANG_REPORT_NO_EXPIRATION_DATE)
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%reporter%").replacement(reporter).build())
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%reason%").replacement(reason).build())
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%expiration_date%").replacement(expirationDate).build());
+    }
+
+    public Component getKickMessageBanned(@NotNull Component reporter, @NotNull Component reason,
+                                          @NotNull Component expirationDate) {
+        return getLang(Constants.LANG_BANNED)
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%reporter%").replacement(reporter).build())
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%reason%").replacement(reason).build())
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%expiration_date%").replacement(expirationDate).build());
+    }
+
+    public Component getKickMessageKicked(@NotNull Component reporter, @NotNull Component reason) {
+        return getLang(Constants.LANG_KICKED)
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%reporter%").replacement(reporter).build())
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%reason%").replacement(reason).build());
     }
 
     public Component getKickMessageTransferServerUnavailable() {

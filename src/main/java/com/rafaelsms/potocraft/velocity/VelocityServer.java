@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.velocity;
 
-import com.rafaelsms.potocraft.CommonServer;
+import com.rafaelsms.potocraft.common.CommonServer;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;

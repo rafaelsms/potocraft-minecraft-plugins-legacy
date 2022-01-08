@@ -1,4 +1,4 @@
-package com.rafaelsms.potocraft.util;
+package com.rafaelsms.potocraft.common.util;
 
 import org.bson.Document;
 import org.bukkit.Server;

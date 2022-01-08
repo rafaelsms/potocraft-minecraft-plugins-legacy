@@ -1,13 +1,14 @@
-package com.rafaelsms.potocraft;
+package com.rafaelsms.potocraft.common;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.rafaelsms.potocraft.util.Util;
+import com.rafaelsms.potocraft.common.util.Util;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -37,14 +38,18 @@ public abstract class Settings {
 
     protected void setDefaults() {
         setDefault(Constants.DEBUG_MESSAGES_ENABLED, false);
+        setDefault(Constants.DATE_TIME_FORMAT, "EEE', 'dd' de 'MMM' às 'H'h'mm"); // Sex, 13 de Dez às 15h54
 
         setDefault(Constants.DATABASE_MONGO_URI, "mongodb://localhost:27017");
         setDefault(Constants.DATABASE_MONGO_DATABASE, "potocraftDb");
         setDefault(Constants.DATABASE_FAIL_FATAL, true);
         setDefault(Constants.DATABASE_FAIL_PRINT_STACK, true);
+        setDefault(Constants.DATABASE_TIMEOUT_MILLIS, 300);
 
         setDefault(Constants.LOGIN_SERVER_NAME, "login");
 
+        setDefault(Constants.LANG_UNKNOWN_PLAYER_NAME, "&7(&cdesconhecido&7)");
+        setDefault(Constants.LANG_CONSOLE_NAME, "&cConsole");
         setDefault(Constants.LANG_CONSOLE_CANT_EXECUTE_COMMAND, "&cConsole não pode executar este comando.");
         setDefault(Constants.LANG_GENERIC_COMMAND_ERROR, "&cFalha ao executar comando.");
         setDefault(Constants.LANG_COULD_NOT_RETRIEVE_PROFILE, "&cFalha ao acessar perfil.");
@@ -53,6 +58,10 @@ public abstract class Settings {
 
     public boolean isDebugMessagesEnabled() {
         return get(Constants.DEBUG_MESSAGES_ENABLED);
+    }
+
+    public DateTimeFormatter getDateTimeFormatter() {
+        return DateTimeFormatter.ofPattern(get(Constants.DATE_TIME_FORMAT));
     }
 
     public String getMongoURI() {
@@ -71,8 +80,20 @@ public abstract class Settings {
         return get(Constants.DATABASE_FAIL_PRINT_STACK);
     }
 
+    public long getDatabaseTimeout() {
+        return get(Constants.DATABASE_TIMEOUT_MILLIS);
+    }
+
     public String getLoginServer() {
         return get(Constants.LOGIN_SERVER_NAME);
+    }
+
+    public Component getConsoleName() {
+        return getLang(Constants.LANG_CONSOLE_NAME);
+    }
+
+    public Component getUnknownPlayerName() {
+        return getLang(Constants.LANG_UNKNOWN_PLAYER_NAME);
     }
 
     public Component getCommandConsoleCantExecute() {
@@ -130,11 +151,13 @@ public abstract class Settings {
         /* Settings */
         // Common
         public static final String DEBUG_MESSAGES_ENABLED = "configuration.debug_messages_enabled";
+        public static final String DATE_TIME_FORMAT = "configuration.date_time_format";
 
         public static final String DATABASE_MONGO_URI = "configuration.database.mongo_uri";
         public static final String DATABASE_MONGO_DATABASE = "configuration.database.mongo_database";
         public static final String DATABASE_FAIL_FATAL = "configuration.database.database_fail_shutdowns_server";
         public static final String DATABASE_FAIL_PRINT_STACK = "configuration.database.database_fail_prints_stack_trace";
+        public static final String DATABASE_TIMEOUT_MILLIS = "configuration.database.database_timeout_time_in_millis";
 
         public static final String LOBBY_SERVER_NAME = "configuration.login.lobby_server";
 
@@ -149,6 +172,9 @@ public abstract class Settings {
 
         /* Language */
         // Common
+        public static final String LANG_UNKNOWN_PLAYER_NAME = "language.unknown_player_name";
+        public static final String LANG_CONSOLE_NAME = "language.unknown_player_name";
+
         public static final String LANG_CONSOLE_CANT_EXECUTE_COMMAND = "language.commands.console_can_not_execute_command";
         public static final String LANG_GENERIC_COMMAND_ERROR = "language.commands.generic_command_error";
 
@@ -157,6 +183,7 @@ public abstract class Settings {
 
         // Velocity
         public static final String LANG_OFFLINE_PLAYERS_ONLY = "language.commands.offline_players_only";
+
         public static final String LANG_LOGIN_HELP = "language.commands.login.help";
         public static final String LANG_LOGIN_ALREADY_LOGGED_IN = "language.commands.login.already_logged_in";
         public static final String LANG_LOGIN_MUST_REGISTER_FIRST = "language.commands.login.must_register_first";
@@ -170,6 +197,12 @@ public abstract class Settings {
         public static final String LANG_REGISTER_TRY_LOGIN_INSTEAD = "language.commands.register.use_login_instead";
         public static final String LANG_REGISTER_TRY_CHANGE_PIN_INSTEAD = "language.commands.register.use_change_pin_instead";
 
+        public static final String LANG_REPORT_UNKNOWN_REASON = "language.commands.report.unknown_report_reason";
+        public static final String LANG_REPORT_NO_EXPIRATION_DATE = "language.commands.report.unknown_report_expiration_date";
+        public static final String LANG_REPORT_YOU_HAVE_BEEN_MUTED = "language.commands.report.muted";
+
+        public static final String LANG_KICKED = "language.kick_messages.kicked";
+        public static final String LANG_BANNED = "language.kick_messages.banned";
         public static final String LANG_COULD_NOT_CHECK_PLAYER_TYPE = "language.kick_messages.could_not_check_player_type";
         public static final String LANG_COULD_NOT_CHECK_MOJANG_USERNAME = "language.kick_messages.could_not_check_mojang_username";
         public static final String LANG_FLOODGATE_PREFIX_ON_JAVA_PLAYER = "language.kick_messages.floodgate_prefix_on_java_player";

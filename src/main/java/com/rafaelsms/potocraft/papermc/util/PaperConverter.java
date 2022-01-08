@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.papermc.util;
 
-import com.rafaelsms.potocraft.util.Converter;
+import com.rafaelsms.potocraft.common.util.Converter;
 import org.bson.Document;
 import org.bukkit.Location;
 import org.bukkit.World;

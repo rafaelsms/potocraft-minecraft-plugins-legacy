@@ -1,4 +1,4 @@
-package com.rafaelsms.potocraft.util;
+package com.rafaelsms.potocraft.common.util;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -6,14 +6,15 @@ import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.ReplaceOptions;
-import com.rafaelsms.potocraft.Plugin;
-import com.rafaelsms.potocraft.profile.Profile;
+import com.rafaelsms.potocraft.common.Plugin;
+import com.rafaelsms.potocraft.common.profile.Profile;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 public abstract class Database {
@@ -71,7 +72,7 @@ public abstract class Database {
             }
             future.completeExceptionally(exception);
         }
-        return future;
+        return future.orTimeout(plugin.getSettings().getDatabaseTimeout(), TimeUnit.MILLISECONDS);
     }
 
     protected MongoDatabase getDatabase() throws MongoException {

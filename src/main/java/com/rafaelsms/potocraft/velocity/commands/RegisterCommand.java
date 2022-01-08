@@ -1,9 +1,9 @@
 package com.rafaelsms.potocraft.velocity.commands;
 
-import com.rafaelsms.potocraft.Permissions;
-import com.rafaelsms.potocraft.util.Location;
-import com.rafaelsms.potocraft.util.PlayerType;
-import com.rafaelsms.potocraft.util.Util;
+import com.rafaelsms.potocraft.common.Permissions;
+import com.rafaelsms.potocraft.common.util.Location;
+import com.rafaelsms.potocraft.common.util.PlayerType;
+import com.rafaelsms.potocraft.common.util.Util;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import com.velocitypowered.api.command.RawCommand;

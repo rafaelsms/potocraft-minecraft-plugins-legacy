@@ -1,4 +1,4 @@
-package com.rafaelsms.potocraft.util;
+package com.rafaelsms.potocraft.common.util;
 
 public enum PluginType {
 

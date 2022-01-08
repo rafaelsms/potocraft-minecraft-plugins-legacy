@@ -6,11 +6,11 @@ import com.velocitypowered.api.command.RawCommand;
 
 import java.util.List;
 
-public class ChangePinCommand implements RawCommand {
+public class ReplyCommand implements RawCommand {
 
     private final VelocityPlugin plugin;
 
-    public ChangePinCommand(VelocityPlugin plugin) {
+    public ReplyCommand(VelocityPlugin plugin) {
         this.plugin = plugin;
     }
 

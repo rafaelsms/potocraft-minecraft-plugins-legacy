@@ -1,4 +1,4 @@
-package com.rafaelsms.potocraft;
+package com.rafaelsms.potocraft.common;
 
 import org.jetbrains.annotations.NotNull;
 

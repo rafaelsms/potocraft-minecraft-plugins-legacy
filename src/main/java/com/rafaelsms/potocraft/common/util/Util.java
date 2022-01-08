@@ -1,4 +1,4 @@
-package com.rafaelsms.potocraft.util;
+package com.rafaelsms.potocraft.common.util;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;

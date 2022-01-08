@@ -1,7 +1,7 @@
-package com.rafaelsms.potocraft;
+package com.rafaelsms.potocraft.common;
 
-import com.rafaelsms.potocraft.util.Database;
-import com.rafaelsms.potocraft.util.PluginType;
+import com.rafaelsms.potocraft.common.util.Database;
+import com.rafaelsms.potocraft.common.util.PluginType;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 

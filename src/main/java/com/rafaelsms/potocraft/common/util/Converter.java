@@ -1,4 +1,4 @@
-package com.rafaelsms.potocraft.util;
+package com.rafaelsms.potocraft.common.util;
 
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
@@ -39,8 +39,9 @@ public class Converter {
                                                 @NotNull Function<Document, T> mapFunction) {
         if (documentList == null) return List.of();
         ArrayList<T> list = new ArrayList<>(documentList.size());
-        for (Document document : documentList)
+        for (Document document : documentList) {
             list.add(mapFunction.apply(document));
+        }
         return list;
     }
 
@@ -48,8 +49,9 @@ public class Converter {
                                                      @NotNull Function<T, Document> mapFunction) {
         if (entries == null) return List.of();
         ArrayList<Document> list = new ArrayList<>(entries.size());
-        for (T entry : entries)
+        for (T entry : entries) {
             list.add(mapFunction.apply(entry));
+        }
         return list;
     }
 

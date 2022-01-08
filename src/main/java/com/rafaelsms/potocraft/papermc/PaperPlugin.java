@@ -1,10 +1,11 @@
 package com.rafaelsms.potocraft.papermc;
 
-import com.rafaelsms.potocraft.CommonServer;
-import com.rafaelsms.potocraft.Permissions;
+import com.rafaelsms.potocraft.common.CommonServer;
+import com.rafaelsms.potocraft.common.Permissions;
+import com.rafaelsms.potocraft.common.Plugin;
 import com.rafaelsms.potocraft.papermc.listeners.ProfileUpdater;
 import com.rafaelsms.potocraft.papermc.util.PaperDatabase;
-import com.rafaelsms.potocraft.util.PluginType;
+import com.rafaelsms.potocraft.common.util.PluginType;
 import org.bukkit.event.HandlerList;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 @SuppressWarnings("unused")
-public class PaperPlugin extends JavaPlugin implements com.rafaelsms.potocraft.Plugin {
+public class PaperPlugin extends JavaPlugin implements Plugin {
 
     private final @NotNull CommonServer commonServer = new PaperServer(this);
 

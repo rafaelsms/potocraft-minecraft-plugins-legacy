@@ -1,7 +1,7 @@
 package com.rafaelsms.potocraft.velocity.profile;
 
-import com.rafaelsms.potocraft.profile.Profile;
-import com.rafaelsms.potocraft.util.Util;
+import com.rafaelsms.potocraft.common.profile.Profile;
+import com.rafaelsms.potocraft.common.util.Util;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;

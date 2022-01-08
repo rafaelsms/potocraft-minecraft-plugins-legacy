@@ -1,4 +1,4 @@
-package com.rafaelsms.potocraft;
+package com.rafaelsms.potocraft.common;
 
 import java.io.File;
 

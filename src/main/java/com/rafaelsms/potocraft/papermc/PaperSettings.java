@@ -1,7 +1,7 @@
 package com.rafaelsms.potocraft.papermc;
 
-import com.rafaelsms.potocraft.Plugin;
-import com.rafaelsms.potocraft.Settings;
+import com.rafaelsms.potocraft.common.Plugin;
+import com.rafaelsms.potocraft.common.Settings;
 import org.jetbrains.annotations.NotNull;
 
 public class PaperSettings extends Settings {
