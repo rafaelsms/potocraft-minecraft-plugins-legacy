@@ -2,7 +2,7 @@ package com.rafaelsms.potocraft.velocity.listeners;
 
 import com.rafaelsms.potocraft.util.PlayerType;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
-import com.rafaelsms.potocraft.velocity.user.VelocityUser;
+import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import com.velocitypowered.api.event.Continuation;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.ResultedEvent;
@@ -41,7 +41,7 @@ public class ProfileUpdater {
 
         // Asynchronously handle database
         CompletableFuture.runAsync(() -> {
-            CompletableFuture<VelocityUser> profileFuture = plugin.getDatabase().getProfile(player.getUniqueId());
+            CompletableFuture<VelocityProfile> profileFuture = plugin.getDatabase().getProfile(player.getUniqueId());
             profileFuture.whenComplete((profile, retrievalException) -> {
                 if (retrievalException != null) {
                     // Exception thrown in the database
@@ -54,7 +54,7 @@ public class ProfileUpdater {
                 } else if (profile == null) {
                     // Offline players have their profile created on /login or /register commands
                     if (playerType != PlayerType.OFFLINE_PLAYER) {
-                        VelocityUser newProfile = new VelocityUser(plugin, player.getUniqueId(), player.getUsername());
+                        VelocityProfile newProfile = new VelocityProfile(plugin, player.getUniqueId(), player.getUsername());
                         plugin.getDatabase().saveProfile(newProfile).whenComplete((unused, saveException) -> {
                             if (saveException != null) {
                                 plugin.logger().warn("Failed to create profile on proxy login for player %s (uuid = %s): %s"

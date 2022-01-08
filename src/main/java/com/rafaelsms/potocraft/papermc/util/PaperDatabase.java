@@ -1,8 +1,8 @@
 package com.rafaelsms.potocraft.papermc.util;
 
 import com.rafaelsms.potocraft.papermc.PaperPlugin;
-import com.rafaelsms.potocraft.papermc.user.PaperUser;
-import com.rafaelsms.potocraft.user.UserProfile;
+import com.rafaelsms.potocraft.papermc.profile.PaperProfile;
+import com.rafaelsms.potocraft.profile.Profile;
 import com.rafaelsms.potocraft.util.Database;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -18,12 +18,12 @@ public class PaperDatabase extends Database {
         this.plugin = plugin;
     }
 
-    public @NotNull CompletableFuture<PaperUser> getProfile(@NotNull Player player) {
-        return super.getProfile(player.getUniqueId(), document -> new PaperUser(plugin, player, document));
+    public @NotNull CompletableFuture<PaperProfile> getProfile(@NotNull Player player) {
+        return super.getProfile(player.getUniqueId(), document -> new PaperProfile(plugin, player, document));
     }
 
     @Override
-    public @NotNull CompletableFuture<Void> saveProfile(@NotNull UserProfile userProfile) {
-        return super.saveProfile(userProfile);
+    public @NotNull CompletableFuture<Void> saveProfile(@NotNull Profile profile) {
+        return super.saveProfile(profile);
     }
 }

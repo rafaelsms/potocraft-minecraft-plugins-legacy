@@ -2,7 +2,7 @@ package com.rafaelsms.potocraft.velocity.database;
 
 import com.rafaelsms.potocraft.util.Database;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
-import com.rafaelsms.potocraft.velocity.user.VelocityUser;
+import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -17,11 +17,11 @@ public class VelocityDatabase extends Database {
         this.plugin = plugin;
     }
 
-    public @NotNull CompletableFuture<VelocityUser> getProfile(@NotNull UUID playerUniqueId) {
-        return super.getProfile(playerUniqueId, (document) -> new VelocityUser(plugin, document));
+    public @NotNull CompletableFuture<VelocityProfile> getProfile(@NotNull UUID playerUniqueId) {
+        return super.getProfile(playerUniqueId, (document) -> new VelocityProfile(plugin, document));
     }
 
-    public @NotNull CompletableFuture<Void> saveProfile(@NotNull VelocityUser velocityUser) {
-        return super.saveProfile(velocityUser);
+    public @NotNull CompletableFuture<Void> saveProfile(@NotNull VelocityProfile velocityProfile) {
+        return super.saveProfile(velocityProfile);
     }
 }

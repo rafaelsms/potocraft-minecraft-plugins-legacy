@@ -1,4 +1,4 @@
-package com.rafaelsms.potocraft.user;
+package com.rafaelsms.potocraft.profile;
 
 import com.mongodb.client.model.Filters;
 import com.rafaelsms.potocraft.Plugin;
@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public class UserProfile extends DatabaseObject {
+public class Profile extends DatabaseObject {
 
     private final @NotNull Plugin plugin;
     private final @NotNull UUID playerId;
@@ -35,7 +35,7 @@ public class UserProfile extends DatabaseObject {
 
     private @Nullable Location lastLocation = null;
 
-    protected UserProfile(@NotNull Plugin plugin, @NotNull UUID playerId, @NotNull String playerName) {
+    protected Profile(@NotNull Plugin plugin, @NotNull UUID playerId, @NotNull String playerName) {
         super(new Document());
         this.plugin = plugin;
         this.playerId = playerId;
@@ -45,7 +45,7 @@ public class UserProfile extends DatabaseObject {
         this.lastJoinDate = ZonedDateTime.now();
     }
 
-    public UserProfile(@NotNull Plugin plugin, @NotNull Document document) {
+    public Profile(@NotNull Plugin plugin, @NotNull Document document) {
         super(document);
         this.plugin = plugin;
         this.playerId = Converter.toUUID(document.getString(Constants.PLAYER_KEY));
@@ -137,7 +137,7 @@ public class UserProfile extends DatabaseObject {
     }
 
     public Bson filterId() {
-        return UserProfile.filterId(this.playerId);
+        return Profile.filterId(this.playerId);
     }
 
     private static class Constants {

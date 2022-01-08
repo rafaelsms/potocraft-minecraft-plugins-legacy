@@ -7,7 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.ReplaceOptions;
 import com.rafaelsms.potocraft.Plugin;
-import com.rafaelsms.potocraft.user.UserProfile;
+import com.rafaelsms.potocraft.profile.Profile;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,10 +30,10 @@ public abstract class Database {
         return getDatabase().getCollection(Constants.USER_PROFILE_COLLECTION);
     }
 
-    protected <T extends UserProfile> CompletableFuture<T> getProfile(
+    protected <T extends Profile> CompletableFuture<T> getProfile(
             @NotNull UUID playerId, @NotNull Function<Document, T> profileFactory) {
         return handleExceptions(() -> {
-            Document profileDocument = getUserProfiles().find(UserProfile.filterId(playerId)).first();
+            Document profileDocument = getUserProfiles().find(Profile.filterId(playerId)).first();
             if (profileDocument != null) {
                 plugin.debug("Found player profile (uuid = %s)".formatted(playerId.toString()));
                 return profileFactory.apply(profileDocument);
@@ -43,16 +43,16 @@ public abstract class Database {
         });
     }
 
-    protected @NotNull CompletableFuture<Void> saveProfile(@NotNull UserProfile userProfile) {
+    protected @NotNull CompletableFuture<Void> saveProfile(@NotNull Profile profile) {
         return handleExceptions(() -> {
             long modifiedCount = getUserProfiles().replaceOne(
                     // Allow insert when none found
-                    userProfile.filterId(), userProfile.toDocument(), new ReplaceOptions().upsert(true)
+                    profile.filterId(), profile.toDocument(), new ReplaceOptions().upsert(true)
             ).getModifiedCount();
             if (modifiedCount != 1) {
                 throw new DatabaseException("Profile saved replaced %d profiles".formatted(modifiedCount));
             }
-            plugin.debug("Saved player profile: %s".formatted(userProfile.getUniqueId().toString()));
+            plugin.debug("Saved player profile: %s".formatted(profile.getUniqueId().toString()));
             return null;
         });
     }

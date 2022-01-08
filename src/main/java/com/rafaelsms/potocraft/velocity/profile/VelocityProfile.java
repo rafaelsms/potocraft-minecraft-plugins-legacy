@@ -1,6 +1,6 @@
-package com.rafaelsms.potocraft.velocity.user;
+package com.rafaelsms.potocraft.velocity.profile;
 
-import com.rafaelsms.potocraft.user.UserProfile;
+import com.rafaelsms.potocraft.profile.Profile;
 import com.rafaelsms.potocraft.util.Util;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import org.bson.Document;
@@ -12,16 +12,16 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-public class VelocityUser extends UserProfile {
+public class VelocityProfile extends Profile {
 
     private final @NotNull VelocityPlugin plugin;
 
-    public VelocityUser(@NotNull VelocityPlugin plugin, @NotNull UUID playerId, @NotNull String playerName) {
+    public VelocityProfile(@NotNull VelocityPlugin plugin, @NotNull UUID playerId, @NotNull String playerName) {
         super(plugin, playerId, playerName);
         this.plugin = plugin;
     }
 
-    public VelocityUser(@NotNull VelocityPlugin plugin, @NotNull Document document) {
+    public VelocityProfile(@NotNull VelocityPlugin plugin, @NotNull Document document) {
         super(plugin, document);
         this.plugin = plugin;
     }

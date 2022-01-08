@@ -5,7 +5,7 @@ import com.rafaelsms.potocraft.util.Location;
 import com.rafaelsms.potocraft.util.PlayerType;
 import com.rafaelsms.potocraft.util.Util;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
-import com.rafaelsms.potocraft.velocity.user.VelocityUser;
+import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import com.velocitypowered.api.command.RawCommand;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
@@ -62,9 +62,9 @@ public class RegisterCommand implements RawCommand {
                 return;
             }
             // Get given profile
-            VelocityUser profile = _profile;
+            VelocityProfile profile = _profile;
             if (profile == null) {
-                profile = new VelocityUser(plugin, player.getUniqueId(), player.getUsername());
+                profile = new VelocityProfile(plugin, player.getUniqueId(), player.getUsername());
             }
 
             // Check if profile already has a PIN
