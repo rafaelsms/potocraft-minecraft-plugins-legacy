@@ -7,6 +7,7 @@ import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,10 +20,17 @@ public class VelocityDatabase extends Database<VelocityProfile> {
         this.plugin = plugin;
     }
 
+    @Override
     public @NotNull Optional<VelocityProfile> getProfile(@NotNull UUID playerId) throws DatabaseException {
         return super.getProfile(playerId);
     }
 
+    @Override
+    public List<VelocityProfile> searchOfflineProfile(@NotNull String namePattern) throws DatabaseException {
+        return super.searchOfflineProfile(namePattern);
+    }
+
+    @Override
     public void saveProfile(@NotNull VelocityProfile profile) throws DatabaseException {
         super.saveProfile(profile);
     }

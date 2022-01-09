@@ -4,15 +4,18 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.*;
 import com.rafaelsms.potocraft.common.Plugin;
 import com.rafaelsms.potocraft.common.profile.Profile;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public abstract class Database<T extends Profile> {
 
@@ -24,6 +27,12 @@ public abstract class Database<T extends Profile> {
 
     public Database(@NotNull Plugin plugin) {
         this.plugin = plugin;
+        try {
+            getUserProfiles().createIndex(Indexes.text(Profile.lastNameField()), new IndexOptions().background(false));
+        } catch (DatabaseException exception) {
+            plugin.logger().warn("Failed to create text index for player names!");
+            exception.printStackTrace();
+        }
     }
 
     private MongoCollection<Document> getUserProfiles() throws DatabaseException {
@@ -37,6 +46,19 @@ public abstract class Database<T extends Profile> {
             Document document = getUserProfiles().find(Profile.filterId(playerId)).first();
             if (document == null) return Optional.empty();
             return Optional.of(makeProfile(document));
+        });
+    }
+
+    protected List<T> searchOfflineProfile(@NotNull String namePattern) throws DatabaseException {
+        return handleException(() -> {
+            List<T> profiles = new ArrayList<>();
+            getUserProfiles()
+                    .find(Filters.regex(Profile.lastNameField(), namePattern, "i"))
+                    //.projection(Projections.metaTextScore("textScore"))
+                    //.sort(Sorts.metaTextScore("textScore"))
+                    .limit(6)
+                    .forEach((Consumer<? super Document>) document -> profiles.add(makeProfile(document)));
+            return profiles;
         });
     }
 

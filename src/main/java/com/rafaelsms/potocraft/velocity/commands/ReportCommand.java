@@ -2,6 +2,8 @@ package com.rafaelsms.potocraft.velocity.commands;
 
 import com.rafaelsms.potocraft.common.Permissions;
 import com.rafaelsms.potocraft.common.profile.ReportEntry;
+import com.rafaelsms.potocraft.common.profile.TimedReportEntry;
+import com.rafaelsms.potocraft.common.util.DatabaseException;
 import com.rafaelsms.potocraft.common.util.Util;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
@@ -11,22 +13,17 @@ import com.velocitypowered.api.command.RawCommand;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// Commands are difficult to generify because of String parsing, I did this way to be easier to debug and fix
-@SuppressWarnings("DuplicatedCode")
-// TODO god this is ugly: 1. move subcommands to its own classes, separate ban from mute, move more methods to util
 public class ReportCommand implements RawCommand {
 
-    private static final String subCommandRegex = "^\\s*(kick|ban|history|mute)\\s+";
+    private static final String subCommandRegex = "^\\s*(kick|ban|history|mute|unreport)\\s+";
     // We need to match everything (till the end) to ensure the format is correct, so we include a string end
     private static final Pattern subCommandPattern = Pattern.compile(subCommandRegex + ".*$", Pattern.CASE_INSENSITIVE);
     // We need to replace the first command part, so we need just the regex
@@ -38,11 +35,32 @@ public class ReportCommand implements RawCommand {
 
     public ReportCommand(@NotNull VelocityPlugin plugin) {
         this.plugin = plugin;
-        subCommands.put("kick", new KickCommand());
-        subCommands.put("history", new HistoryCommand());
-        TimedReportCommand timedReportCommand = new TimedReportCommand();
-        subCommands.put("mute", timedReportCommand);
-        subCommands.put("ban", timedReportCommand);
+        subCommands.put("kick", new KickSubCommand());
+        subCommands.put("history", new HistorySubCommand());
+        subCommands.put("mute", new MuteSubCommand());
+        subCommands.put("ban", new BanSubCommand());
+        subCommands.put("unreport", new UnreportSubCommand());
+    }
+
+    private Optional<VelocityProfile> handlePlayerSearch(@NotNull CommandSource source,
+                                                         @Nullable String playerNamePattern) throws DatabaseException {
+        if (playerNamePattern == null) return Optional.empty();
+        List<VelocityProfile> profiles = plugin.getDatabase().searchOfflineProfile(playerNamePattern);
+        if (profiles.isEmpty()) {
+            source.sendMessage(plugin.getSettings().getPlayerNotFound());
+            return Optional.empty();
+        } else if (profiles.size() > 1) {
+            source.sendMessage(plugin.getSettings().getManyPlayersFound(profiles));
+            return Optional.empty();
+        }
+        return Optional.of(profiles.get(0));
+    }
+
+    private Optional<UUID> getSourcePlayerId(@NotNull CommandSource source) {
+        if (source instanceof Player player) {
+            return Optional.of(player.getUniqueId());
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -74,62 +92,48 @@ public class ReportCommand implements RawCommand {
                 return command.suggest(invocation);
             }
         } else if (subCommandMatcher.hitEnd()) {
-            return List.of("kick", "ban", "history", "mute");
+            return List.of("kick", "ban", "history", "mute", "unreport");
         }
         return List.of();
     }
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return true || invocation.source().hasPermission(Permissions.REPORT_COMMAND);
+        return invocation.source().hasPermission(Permissions.REPORT_COMMAND);
     }
 
-    private Optional<Player> searchPlayer(@NotNull String playerName) {
-        for (Player player : plugin.getProxyServer().getAllPlayers()) {
-            if (!player.getUsername().equalsIgnoreCase(playerName)) continue;
-            return Optional.of(player);
-        }
-        return Optional.empty();
-    }
-
-    private Optional<UUID> getSourcePlayerId(@NotNull CommandSource source) {
-        if (source instanceof Player player) {
-            return Optional.of(player.getUniqueId());
-        }
-        return Optional.empty();
-    }
-
-    private class KickCommand implements RawCommand {
-
-        private static final Pattern kickPattern = Pattern.compile("^\\s*(\\S+)\\s*(\\S+.*)?$");
+    private class KickSubCommand implements RawCommand {
 
         @Override
         public void execute(Invocation invocation) {
             CommandSource source = invocation.source();
-            String arguments = subCommandReplacer.matcher(invocation.arguments()).replaceFirst("");
-            Matcher matcher = kickPattern.matcher(arguments);
-            if (!matcher.matches()) {
+            String[] arguments = Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
+
+            // Check argument length
+            if (arguments.length == 0) {
                 source.sendMessage(plugin.getSettings().getCommandReportSubCommandHelp("kick"));
                 return;
             }
 
             UUID reporterId = getSourcePlayerId(source).orElse(null);
-            String playerNameString = matcher.group(1);
-            String reason = matcher.group(2);
+            String playerNameString = Util.getArgument(arguments, 0).orElse(null);
+            String reason = Util.joinStrings(arguments, 1);
 
-            // Find players against typed name
-            Player player = searchPlayer(playerNameString).orElse(null);
-            if (player == null) {
+            Optional<Player> optionalPlayer = plugin.getProxyServer().getPlayer(playerNameString);
+            if (optionalPlayer.isEmpty()) {
                 source.sendMessage(plugin.getSettings().getPlayerNotFound());
                 return;
             }
+            Player player = optionalPlayer.get();
 
+            // Check if player can be kicked
             if (player.hasPermission(Permissions.REPORT_COMMAND_KICK_EXEMPT)) {
                 source.sendMessage(plugin.getSettings().getCommandReportPlayerExempt());
                 return;
             }
 
             try {
+                // Find players against typed name
                 VelocityProfile profile = plugin.getDatabase().getProfile(player.getUniqueId()).orElseThrow();
                 ReportEntry reportEntry = profile.kicked(reporterId, reason);
                 // Save the profile
@@ -154,74 +158,105 @@ public class ReportCommand implements RawCommand {
 
         @Override
         public boolean hasPermission(Invocation invocation) {
-            return true || invocation.source().hasPermission(Permissions.REPORT_COMMAND_KICK);
+            return invocation.source().hasPermission(Permissions.REPORT_COMMAND_KICK);
         }
     }
 
-    private class TimedReportCommand implements RawCommand {
-
-        private static final Pattern timedPattern = Pattern.compile("^\\s*(\\S+)\\s*((\\d+)([wdhms]))?(\\s+(\\S+.*))?$");
+    private class BanSubCommand implements RawCommand {
 
         @Override
         public void execute(Invocation invocation) {
             CommandSource source = invocation.source();
-            // Get subcommand
-            Matcher subCommandMatcher = subCommandPattern.matcher(invocation.arguments());
-            if (!subCommandMatcher.matches()) {
-                source.sendMessage(plugin.getSettings().getCommandGenericError());
-                return;
-            }
-            String subCommand = subCommandMatcher.group(1).toLowerCase();
-            source.sendMessage(Component.text(subCommand));
+            String[] arguments = Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
 
-            String arguments = subCommandReplacer.matcher(invocation.arguments()).replaceFirst("");
-            Matcher matcher = timedPattern.matcher(arguments);
-            if (!matcher.matches()) {
-                source.sendMessage(plugin.getSettings().getCommandReportSubCommandHelp("kick"));
+            // Check if no argument was given
+            if (arguments.length == 0) {
+                source.sendMessage(plugin.getSettings().getCommandReportSubCommandHelp("ban"));
                 return;
             }
 
+            // Get data from strings
             UUID reporterId = getSourcePlayerId(source).orElse(null);
-            String playerNameString = matcher.group(1);
-            String timeString = matcher.group(3);
-            String timeUnit = matcher.group(4);
-            String reason = matcher.group(6);
-
-            // Find players against typed name
-            Player player = searchPlayer(playerNameString).orElse(null);
-            if (player == null) {
-                source.sendMessage(plugin.getSettings().getPlayerNotFound());
-                return;
+            String playerNameString = Util.getArgument(arguments, 0).orElse(null);
+            Duration duration = Util.parseTime(Util.getArgument(arguments, 1).orElse(null)).orElse(null);
+            String reason;
+            if (duration == null) {
+                reason = Util.joinStrings(arguments, 1);
+            } else {
+                reason = Util.joinStrings(arguments, 2);
             }
 
-            if (subCommand.equalsIgnoreCase("mute") && player.hasPermission(Permissions.REPORT_COMMAND_MUTE_EXEMPT)) {
-                source.sendMessage(plugin.getSettings().getCommandReportPlayerExempt());
-                return;
+            // Append duration to expiration date
+            ZonedDateTime expirationDate = null;
+            if (duration != null) {
+                expirationDate = ZonedDateTime.now().plus(duration);
             }
 
-            if (subCommand.equalsIgnoreCase("ban") && player.hasPermission(Permissions.REPORT_COMMAND_BAN_EXEMPT)) {
-                source.sendMessage(plugin.getSettings().getCommandReportPlayerExempt());
-                return;
-            }
-
-            // Parse time
-            Duration duration = null;
-            if (timeString != null && timeUnit != null) {
-                int timeAmount = Integer.parseInt(timeString);
-                // Attempt to parse time unit
-                duration = switch (timeUnit.toLowerCase()) {
-                    case "w" -> Duration.ofDays(timeAmount * 7L);
-                    case "d" -> Duration.ofDays(timeAmount);
-                    case "h" -> Duration.ofHours(timeAmount);
-                    case "m" -> Duration.ofMinutes(timeAmount);
-                    case "s" -> Duration.ofSeconds(timeAmount);
-                    default -> null;
-                };
-
-                if (duration == null) {
-                    source.sendMessage(plugin.getSettings().getCommandReportSubCommandHelp(subCommand));
+            try {
+                Optional<VelocityProfile> profileOptional = handlePlayerSearch(source, playerNameString);
+                if (profileOptional.isEmpty()) {
                     return;
                 }
+                VelocityProfile profile = profileOptional.get();
+
+                // Find player by id
+                Optional<Player> player = plugin.getProxyServer().getPlayer(profile.getUniqueId());
+                if (player.isEmpty() && !source.hasPermission(Permissions.REPORT_COMMAND_BAN_OFFLINE)) {
+                    source.sendMessage(plugin.getSettings().getPlayerNotFound());
+                    return;
+                }
+                if (player.isPresent() && player.get().hasPermission(Permissions.REPORT_COMMAND_BAN_EXEMPT)) {
+                    source.sendMessage(plugin.getSettings().getCommandReportPlayerExempt());
+                    return;
+                }
+
+                ReportEntry reportEntry = profile.banned(reporterId, reason, expirationDate);
+                // Save the profile
+                plugin.getDatabase().saveProfile(profile);
+                player.ifPresent(value -> value.disconnect(reportEntry.getMessage(plugin)));
+            } catch (Exception ignored) {
+                source.sendMessage(plugin.getSettings().getCommandGenericError());
+            }
+        }
+
+        @Override
+        public List<String> suggest(Invocation invocation) {
+            return switch (Util.parseArguments(invocation.arguments()).length) {
+                case 3 -> List.of("hacking", "spam");
+                case 2 -> List.of("4d", "30m", "12h", "1w", "hacking");
+                case 1 -> VelocityUtil.getPlayerNameList(plugin);
+                default -> List.of();
+            };
+        }
+
+        @Override
+        public boolean hasPermission(Invocation invocation) {
+            return invocation.source().hasPermission(Permissions.REPORT_COMMAND_BAN);
+        }
+    }
+
+    private class MuteSubCommand implements RawCommand {
+
+        @Override
+        public void execute(Invocation invocation) {
+            CommandSource source = invocation.source();
+            String[] arguments = Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
+
+            // Check if no argument was given
+            if (arguments.length == 0) {
+                source.sendMessage(plugin.getSettings().getCommandReportSubCommandHelp("mute"));
+                return;
+            }
+
+            // Get data from strings
+            UUID reporterId = getSourcePlayerId(source).orElse(null);
+            String playerNameString = Util.getArgument(arguments, 0).orElse(null);
+            Duration duration = Util.parseTime(Util.getArgument(arguments, 1).orElse(null)).orElse(null);
+            String reason;
+            if (duration == null) {
+                reason = Util.joinStrings(arguments, 1);
+            } else {
+                reason = Util.joinStrings(arguments, 2);
             }
 
             // Include duration to expiration date
@@ -231,36 +266,37 @@ public class ReportCommand implements RawCommand {
             }
 
             try {
-                VelocityProfile profile = plugin.getDatabase().getProfile(player.getUniqueId()).orElseThrow();
-                ReportEntry reportEntry = switch (subCommand) {
-                    case "ban" -> profile.banned(reporterId, reason, expirationDate);
-                    case "mute" -> profile.muted(reporterId, reason, expirationDate);
-                    default -> null;
-                };
-                if (reportEntry == null) {
-                    source.sendMessage(plugin.getSettings().getCommandReportSubCommandHelp(subCommand));
+                Optional<VelocityProfile> profileOptional = handlePlayerSearch(source, playerNameString);
+                if (profileOptional.isEmpty()) {
                     return;
                 }
+                VelocityProfile profile = profileOptional.get();
+
+                // Find player by id
+                Optional<Player> player = plugin.getProxyServer().getPlayer(profile.getUniqueId());
+                if (player.isEmpty() && !source.hasPermission(Permissions.REPORT_COMMAND_MUTE_OFFLINE)) {
+                    source.sendMessage(plugin.getSettings().getPlayerNotFound());
+                    return;
+                }
+                if (player.isPresent() && player.get().hasPermission(Permissions.REPORT_COMMAND_MUTE_EXEMPT)) {
+                    source.sendMessage(plugin.getSettings().getCommandReportPlayerExempt());
+                    return;
+                }
+
+                ReportEntry reportEntry = profile.muted(reporterId, reason, expirationDate);
                 // Save the profile
                 plugin.getDatabase().saveProfile(profile);
-                if (subCommand.equalsIgnoreCase("ban")) {
-                    player.disconnect(reportEntry.getMessage(plugin));
-                } else {
-                    player.sendMessage(reportEntry.getMessage(plugin));
-                }
+                player.ifPresent(value -> value.sendMessage(reportEntry.getMessage(plugin)));
             } catch (Exception ignored) {
-                // Just disconnect if player doesn't have profile or failed somewhere
-                player.disconnect(plugin.getSettings().getKickMessageCouldNotRetrieveProfile());
-                Component playerName = Component.text(player.getUsername());
-                source.sendMessage(plugin.getSettings().getCommandReportCouldNotSaveReport(playerName));
+                source.sendMessage(plugin.getSettings().getCommandGenericError());
             }
         }
 
         @Override
         public List<String> suggest(Invocation invocation) {
             return switch (Util.parseArguments(invocation.arguments()).length) {
-                case 3 -> List.of("hacking", "spam");
-                case 2 -> List.of("4d", "30m", "1w");
+                case 3 -> List.of("propaganda", "spam");
+                case 2 -> List.of("1d", "18h", "12h", "3d", "spam");
                 case 1 -> VelocityUtil.getPlayerNameList(plugin);
                 default -> List.of();
             };
@@ -268,37 +304,107 @@ public class ReportCommand implements RawCommand {
 
         @Override
         public boolean hasPermission(Invocation invocation) {
-            Matcher subCommandMatcher = subCommandPattern.matcher(invocation.arguments());
-            if (!subCommandMatcher.matches()) {
-                return false;
-            }
-            String subCommand = subCommandMatcher.group(1).toLowerCase();
-            if (subCommand.equalsIgnoreCase("mute")) {
-                return true || invocation.source().hasPermission(Permissions.REPORT_COMMAND_MUTE);
-            }
-            if (subCommand.equalsIgnoreCase("ban")) {
-                return true || invocation.source().hasPermission(Permissions.REPORT_COMMAND_BAN);
-            }
-            return false;
+            return invocation.source().hasPermission(Permissions.REPORT_COMMAND_MUTE);
         }
     }
 
-    private class HistoryCommand implements RawCommand {
+    private class HistorySubCommand implements RawCommand {
 
         @Override
         public void execute(Invocation invocation) {
-            String arguments = subCommandReplacer.matcher(invocation.arguments()).replaceFirst("");
+            CommandSource source = invocation.source();
+            String[] arguments = Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
 
+            // Check if no argument was given
+            String playerNameString = Util.getArgument(arguments, 0).orElse(null);
+            if (playerNameString == null) {
+                source.sendMessage(plugin.getSettings().getCommandReportHistoryHelp());
+                return;
+            }
+
+            try {
+                List<VelocityProfile> profiles = plugin.getDatabase().searchOfflineProfile(playerNameString);
+                if (profiles.isEmpty()) {
+                    source.sendMessage(plugin.getSettings().getPlayerNotFound());
+                } else if (profiles.size() > 1) {
+                    source.sendMessage(plugin.getSettings().getManyPlayersFound(profiles));
+                } else {
+                    VelocityProfile profile = profiles.get(0);
+                    source.sendMessage(plugin.getSettings().getCommandReportHistory(profile.getLastPlayerName(), profile.getReportEntries()));
+                }
+            } catch (Exception ignored) {
+                source.sendMessage(plugin.getSettings().getCommandGenericError());
+            }
         }
 
         @Override
         public List<String> suggest(Invocation invocation) {
+            if (Util.parseArguments(invocation.arguments()).length == 1)
+                return VelocityUtil.getPlayerNameList(plugin);
             return List.of();
         }
 
         @Override
         public boolean hasPermission(Invocation invocation) {
-            return true || invocation.source().hasPermission(Permissions.REPORT_COMMAND_HISTORY);
+            return invocation.source().hasPermission(Permissions.REPORT_COMMAND_HISTORY);
+        }
+    }
+
+    private class UnreportSubCommand implements RawCommand {
+
+        @Override
+        public void execute(Invocation invocation) {
+            CommandSource source = invocation.source();
+            String[] arguments = Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
+
+            // Check if no argument was given
+            String playerNameString = Util.getArgument(arguments, 0).orElse(null);
+            if (playerNameString == null) {
+                source.sendMessage(plugin.getSettings().getCommandReportUnreportHelp());
+                return;
+            }
+
+            try {
+                List<VelocityProfile> profiles = plugin.getDatabase().searchOfflineProfile(playerNameString);
+                if (profiles.size() == 0) {
+                    source.sendMessage(plugin.getSettings().getPlayerNotFound());
+                } else if (profiles.size() == 1) {
+                    VelocityProfile profile = profiles.get(0);
+                    Optional<ReportEntry> joinPreventingOptional = profile.getJoinPreventingReport();
+                    if (joinPreventingOptional.isPresent() &&
+                                joinPreventingOptional.get() instanceof TimedReportEntry reportEntry) {
+                        reportEntry.setActive(false);
+                        plugin.getDatabase().saveProfile(profile);
+                        source.sendMessage(plugin.getSettings().getCommandReportUnreportSuccessfully(profile.getLastPlayerName()));
+                        return;
+                    }
+                    Optional<ReportEntry> chatPreventingOptional = profile.getChatPreventingReport();
+                    if (chatPreventingOptional.isPresent() &&
+                                chatPreventingOptional.get() instanceof TimedReportEntry reportEntry) {
+                        reportEntry.setActive(false);
+                        plugin.getDatabase().saveProfile(profile);
+                        source.sendMessage(plugin.getSettings().getCommandReportUnreportSuccessfully(profile.getLastPlayerName()));
+                        return;
+                    }
+                    source.sendMessage(plugin.getSettings().getCommandReportUnreportNoEntry());
+                } else {
+                    source.sendMessage(plugin.getSettings().getManyPlayersFound(profiles));
+                }
+            } catch (Exception ignored) {
+                source.sendMessage(plugin.getSettings().getCommandGenericError());
+            }
+        }
+
+        @Override
+        public List<String> suggest(Invocation invocation) {
+            if (Util.parseArguments(invocation.arguments()).length == 1)
+                return VelocityUtil.getPlayerNameList(plugin);
+            return List.of();
+        }
+
+        @Override
+        public boolean hasPermission(Invocation invocation) {
+            return invocation.source().hasPermission(Permissions.REPORT_COMMAND_UNREPORT);
         }
     }
 }

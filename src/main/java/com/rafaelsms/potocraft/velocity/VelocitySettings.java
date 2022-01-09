@@ -1,15 +1,23 @@
 package com.rafaelsms.potocraft.velocity;
 
-import com.rafaelsms.potocraft.common.Plugin;
 import com.rafaelsms.potocraft.common.Settings;
+import com.rafaelsms.potocraft.common.profile.ReportEntry;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextReplacementConfig;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class VelocitySettings extends Settings {
 
-    public VelocitySettings(@NotNull Plugin plugin) throws Exception {
+    private final @NotNull VelocityPlugin plugin;
+
+    public VelocitySettings(@NotNull VelocityPlugin plugin) throws Exception {
         super(plugin);
+        this.plugin = plugin;
     }
 
     @Override
@@ -37,10 +45,19 @@ public class VelocitySettings extends Settings {
         setDefault(Constants.LANG_REPORT_UNKNOWN_REASON, "&7(motivo não especificado)");
         setDefault(Constants.LANG_REPORT_NO_EXPIRATION_DATE, "&7(data não especificada)");
         setDefault(Constants.LANG_REPORT_YOU_HAVE_BEEN_MUTED, "&cVocê foi silenciado por &e%reporter% &cpelo motivo \"&e%reason%&c\" &caté &e%expiration_date%&c.");
-        setDefault(Constants.LANG_REPORT_HELP, "&6Uso: &e&l/report kick/ban/history/mute");
+        setDefault(Constants.LANG_REPORT_HELP, "&6Uso: &e&l/report kick/ban/history/mute/unreport");
         setDefault(Constants.LANG_REPORT_PLAYER_EXEMPT, "&cEste jogador não pode ser punido desta forma.");
         setDefault(Constants.LANG_REPORT_COULD_NOT_SAVE_REPORT, "&cNão foi possível salvar o incidente de &e%player%&c.");
         setDefault(Constants.LANG_REPORT_SUB_COMMAND_PLAYER_REASON_HELP, "&6Uso: &e&l/report %subcommand% <nome do jogador> <motivo>");
+        setDefault(Constants.LANG_REPORT_UNREPORT_HELP, "&6Uso: &e&l/report unreport <nome do jogador>");
+        setDefault(Constants.LANG_REPORT_UNREPORT_NO_ENTRY, "&cNão há report ativo para este jogador.");
+        setDefault(Constants.LANG_REPORT_UNREPORT_SUCCESSFULLY, "&6Report de &e%player% &6cancelado");
+        setDefault(Constants.LANG_REPORT_HISTORY_HELP, "&6Uso: &e&l/report history <nome do jogador>");
+        setDefault(Constants.LANG_REPORT_HISTORY_NO_ENTRIES, "&6Não há histórico para este jogador.");
+        setDefault(Constants.LANG_REPORT_HISTORY_BASE, "&dHistórico de %player%:\n%entries%");
+        setDefault(Constants.LANG_REPORT_HISTORY_ENTRY_BANNED, "&7* &cBANIDO por &e%reporter% &cmotivo: \"&e%reason%&c\" &caté &e%expiration_date%");
+        setDefault(Constants.LANG_REPORT_HISTORY_ENTRY_MUTED, "&7* &cSILENCIADO por &e%reporter% &cmotivo: \"&e%reason%&c\" &caté &e%expiration_date%");
+        setDefault(Constants.LANG_REPORT_HISTORY_ENTRY_KICKED, "&7* &cEXPULSO por &e%reporter% &cmotivo: \"&e%reason%&c\"");
 
         setDefault(Constants.LANG_KICKED, "&cVocê foi expulso\n&cpor &e%reporter%\n&cpelo motivo \"&e%reason%&c\".");
         setDefault(Constants.LANG_BANNED, "&cVocê foi banido\n&cpor &e%reporter%\n&cpelo motivo \"&e%reason%&c\"\n&caté &e%expiration_date%&c.");
@@ -132,9 +149,38 @@ public class VelocitySettings extends Settings {
                 .replaceText(TextReplacementConfig.builder().matchLiteral("%subcommand%").replacement(subCommand).build());
     }
 
-//    public Component getCommandReport() {
-//        return getLang(Constants.LANG_REPORT_);
-//    }
+    public Component getCommandReportHistoryHelp() {
+        return getLang(Constants.LANG_REPORT_HISTORY_HELP);
+    }
+
+    public Component getCommandReportUnreportHelp() {
+        return getLang(Constants.LANG_REPORT_UNREPORT_HELP);
+    }
+
+    public Component getCommandReportUnreportNoEntry() {
+        return getLang(Constants.LANG_REPORT_UNREPORT_NO_ENTRY);
+    }
+
+    public Component getCommandReportUnreportSuccessfully(@NotNull String playerName) {
+        return getLang(Constants.LANG_REPORT_UNREPORT_SUCCESSFULLY)
+                       .replaceText(TextReplacementConfig.builder().matchLiteral("%player%").replacement(playerName).build());
+    }
+
+    public Component getCommandReportHelp() {
+        return getLang(Constants.LANG_REPORT_HELP);
+    }
+
+    public Component getCommandReportHistory(@NotNull String playerName, @NotNull Collection<ReportEntry> reportEntries) {
+        if (reportEntries.isEmpty()) return getLang(Constants.LANG_REPORT_HISTORY_NO_ENTRIES);
+        List<Component> entries = new ArrayList<>(reportEntries.size());
+        for (ReportEntry reportEntry : reportEntries) {
+            entries.add(reportEntry.getHistoryMessage(plugin));
+        }
+        Component entriesJoined = Component.join(JoinConfiguration.builder().separator(Component.newline()).build(), entries);
+        return getLang(Constants.LANG_REPORT_HISTORY_BASE)
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%player%").replacement(playerName).build())
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%entries%").replacement(entriesJoined).build());
+    }
 
     public Component getCommandReportYouHaveBeenMuted(@NotNull Component reporter, @NotNull Component reason,
                                                       @NotNull Component expirationDate) {
@@ -142,10 +188,6 @@ public class VelocitySettings extends Settings {
                 .replaceText(TextReplacementConfig.builder().matchLiteral("%reporter%").replacement(reporter).build())
                 .replaceText(TextReplacementConfig.builder().matchLiteral("%reason%").replacement(reason).build())
                 .replaceText(TextReplacementConfig.builder().matchLiteral("%expiration_date%").replacement(expirationDate).build());
-    }
-
-    public Component getCommandReportHelp() {
-        return getLang(Constants.LANG_REPORT_HELP);
     }
 
     public Component getKickMessageBanned(@NotNull Component reporter, @NotNull Component reason,
@@ -158,6 +200,28 @@ public class VelocitySettings extends Settings {
 
     public Component getKickMessageKicked(@NotNull Component reporter, @NotNull Component reason) {
         return getLang(Constants.LANG_KICKED)
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%reporter%").replacement(reporter).build())
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%reason%").replacement(reason).build());
+    }
+
+    public Component getReportHistoryEntryBanned(@NotNull Component reporter, @NotNull Component reason,
+                                                 @NotNull Component expirationDate) {
+        return getLang(Constants.LANG_REPORT_HISTORY_ENTRY_BANNED)
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%reporter%").replacement(reporter).build())
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%reason%").replacement(reason).build())
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%expiration_date%").replacement(expirationDate).build());
+    }
+
+    public Component getReportHistoryEntryMuted(@NotNull Component reporter, @NotNull Component reason,
+                                                @NotNull Component expirationDate) {
+        return getLang(Constants.LANG_REPORT_HISTORY_ENTRY_MUTED)
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%reporter%").replacement(reporter).build())
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%reason%").replacement(reason).build())
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%expiration_date%").replacement(expirationDate).build());
+    }
+
+    public Component getReportHistoryEntryKicked(@NotNull Component reporter, @NotNull Component reason) {
+        return getLang(Constants.LANG_REPORT_HISTORY_ENTRY_KICKED)
                 .replaceText(TextReplacementConfig.builder().matchLiteral("%reporter%").replacement(reporter).build())
                 .replaceText(TextReplacementConfig.builder().matchLiteral("%reason%").replacement(reason).build());
     }

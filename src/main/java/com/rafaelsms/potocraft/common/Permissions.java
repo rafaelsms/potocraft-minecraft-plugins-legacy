@@ -18,6 +18,7 @@ public final class Permissions {
     public static final @NotNull String REPORT_COMMAND_MUTE_OFFLINE = "potocraft.proxy_command.report.mute.offline";
     public static final @NotNull String REPORT_COMMAND_BAN = "potocraft.proxy_command.report.ban";
     public static final @NotNull String REPORT_COMMAND_BAN_EXEMPT = "potocraft.proxy_command.report.ban.offline";
+    public static final @NotNull String REPORT_COMMAND_UNREPORT = "potocraft.proxy_command.report.unreport";
     public static final @NotNull String REPORT_COMMAND_BAN_OFFLINE = "potocraft.proxy_command.report.ban.exempt";
 
     public static final @NotNull String[] values = {
@@ -34,6 +35,7 @@ public final class Permissions {
             REPORT_COMMAND_BAN,
             REPORT_COMMAND_BAN_EXEMPT,
             REPORT_COMMAND_BAN_OFFLINE,
+            REPORT_COMMAND_UNREPORT,
     };
 
     private Permissions() {

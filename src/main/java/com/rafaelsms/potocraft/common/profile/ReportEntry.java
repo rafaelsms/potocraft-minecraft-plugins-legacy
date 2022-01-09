@@ -33,7 +33,7 @@ public class ReportEntry extends DatabaseObject {
     protected ReportEntry(@NotNull ReportType reportType, @NotNull Document document) {
         super(document);
         this.reportType = reportType;
-        this.reporterId = Objects.requireNonNull(Converter.toUUID(document.getString(Constants.REPORTER_KEY)));
+        this.reporterId = Converter.toUUID(document.getString(Constants.REPORTER_KEY));
         this.reportDate = Objects.requireNonNull(Converter.toDateTime(document.getString(Constants.REPORT_DATE_KEY)));
         this.reason = document.getString(Constants.REPORT_REASON_KEY);
     }
@@ -47,12 +47,12 @@ public class ReportEntry extends DatabaseObject {
     }
 
     public static @NotNull TimedReportEntry banned(@Nullable UUID reporterId, @Nullable String reason,
-                                              @Nullable ZonedDateTime expirationDate) {
+                                                   @Nullable ZonedDateTime expirationDate) {
         return new TimedReportEntry(ReportType.BAN_REPORT, reporterId, expirationDate, reason);
     }
 
     public static @NotNull TimedReportEntry muted(@Nullable UUID reporterId, @Nullable String reason,
-                                             @Nullable ZonedDateTime expirationDate) {
+                                                  @Nullable ZonedDateTime expirationDate) {
         return new TimedReportEntry(ReportType.MUTE_REPORT, reporterId, expirationDate, reason);
     }
 
@@ -70,6 +70,10 @@ public class ReportEntry extends DatabaseObject {
 
     public Component getMessage(@NotNull VelocityPlugin plugin) {
         return ReportType.getMessage(plugin, this);
+    }
+
+    public Component getHistoryMessage(@NotNull VelocityPlugin plugin) {
+        return ReportType.getHistoryMessage(plugin, this);
     }
 
     @Override
@@ -139,37 +143,58 @@ public class ReportEntry extends DatabaseObject {
         }
 
         public static Component getMessage(@NotNull VelocityPlugin plugin, @NotNull ReportEntry reportEntry) {
-            // Make reporter name component
-            Component reporter = plugin.getSettings().getUnknownPlayerName();
-            UUID reporterId = reportEntry.reporterId;
-            if (reporterId == null) {
-                reporter = plugin.getSettings().getConsoleName();
-            } else {
-                try {
-                    VelocityProfile profile = plugin.getDatabase().getProfile(reporterId).orElseThrow();
-                    reporter = Component.text(profile.getLastPlayerName());
-                } catch (Exception ignored) {
-                }
-            }
-
-            // Make reason component
-            Component reason = plugin.getSettings().getCommandReportUnknownReason();
-            if (reportEntry.getReason() != null) {
-                reason = Component.text(reportEntry.getReason());
-            }
-
-            // Make expiration date component
-            Component expirationDate = plugin.getSettings().getCommandReportNoExpirationDate();
-            if (reportEntry instanceof TimedReportEntry timedReportEntry && timedReportEntry.getExpirationDate() != null) {
-                String dateTime = plugin.getSettings().getDateTimeFormatter().format(timedReportEntry.getExpirationDate());
-                expirationDate = Component.text(dateTime);
-            }
+            Component reporter = getReporterComponent(plugin, reportEntry);
+            Component reason = getReasonComponent(plugin, reportEntry);
+            Component expirationDate = getExpirationDateComponent(plugin, reportEntry);
 
             return switch (reportEntry.reportType) {
                 case BAN_REPORT -> plugin.getSettings().getKickMessageBanned(reporter, reason, expirationDate);
                 case KICK_REPORT -> plugin.getSettings().getKickMessageKicked(reporter, reason);
                 case MUTE_REPORT -> plugin.getSettings().getCommandReportYouHaveBeenMuted(reporter, reason, expirationDate);
             };
+        }
+
+        public static Component getHistoryMessage(@NotNull VelocityPlugin plugin, @NotNull ReportEntry reportEntry) {
+            Component reporter = getReporterComponent(plugin, reportEntry);
+            Component reason = getReasonComponent(plugin, reportEntry);
+            Component expirationDate = getExpirationDateComponent(plugin, reportEntry);
+
+            return switch (reportEntry.reportType) {
+                case BAN_REPORT -> plugin.getSettings().getReportHistoryEntryBanned(reporter, reason, expirationDate);
+                case KICK_REPORT -> plugin.getSettings().getReportHistoryEntryKicked(reporter, reason);
+                case MUTE_REPORT -> plugin.getSettings().getReportHistoryEntryMuted(reporter, reason, expirationDate);
+            };
+        }
+
+        private static Component getReasonComponent(@NotNull VelocityPlugin plugin, @NotNull ReportEntry reportEntry) {
+            Component reason = plugin.getSettings().getCommandReportUnknownReason();
+            if (reportEntry.getReason() != null) {
+                reason = Component.text(reportEntry.getReason());
+            }
+            return reason;
+        }
+
+        private static Component getReporterComponent(@NotNull VelocityPlugin plugin, @NotNull ReportEntry reportEntry) {
+            Component reporter = plugin.getSettings().getUnknownPlayerName();
+            if (reportEntry.reporterId == null) {
+                reporter = plugin.getSettings().getConsoleName();
+            } else {
+                try {
+                    VelocityProfile profile = plugin.getDatabase().getProfile(reportEntry.reporterId).orElseThrow();
+                    reporter = Component.text(profile.getLastPlayerName());
+                } catch (Exception ignored) {
+                }
+            }
+            return reporter;
+        }
+
+        private static Component getExpirationDateComponent(@NotNull VelocityPlugin plugin, @NotNull ReportEntry reportEntry) {
+            Component expirationDate = plugin.getSettings().getCommandReportNoExpirationDate();
+            if (reportEntry instanceof TimedReportEntry timedReportEntry && timedReportEntry.getExpirationDate() != null) {
+                String dateTime = plugin.getSettings().getDateTimeFormatter().format(timedReportEntry.getExpirationDate());
+                expirationDate = Component.text(dateTime);
+            }
+            return expirationDate;
         }
     }
 }

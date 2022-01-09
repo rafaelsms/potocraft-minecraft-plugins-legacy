@@ -48,7 +48,7 @@ public class Profile extends DatabaseObject {
     public Profile(@NotNull Plugin plugin, @NotNull Document document) {
         super(document);
         this.plugin = plugin;
-        this.playerId = Converter.toUUID(document.getString(Constants.PLAYER_KEY));
+        this.playerId = Converter.toUUID(document.getString(Constants.PLAYER_ID_KEY));
 
         setPIN(document.getInteger(Constants.PIN_KEY));
 
@@ -117,6 +117,22 @@ public class Profile extends DatabaseObject {
         return Collections.unmodifiableList(this.reportEntries);
     }
 
+    public Optional<ReportEntry> getJoinPreventingReport() {
+        for (ReportEntry reportEntry : reportEntries) {
+            if (!reportEntry.isPreventsJoining()) continue;
+            return Optional.of(reportEntry);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ReportEntry> getChatPreventingReport() {
+        for (ReportEntry reportEntry : reportEntries) {
+            if (!reportEntry.isPreventsChatting()) continue;
+            return Optional.of(reportEntry);
+        }
+        return Optional.empty();
+    }
+
     public @NotNull Optional<Location> getLastLocation() {
         return Optional.ofNullable(lastLocation);
     }
@@ -129,7 +145,7 @@ public class Profile extends DatabaseObject {
     public Document toDocument() {
         Document document = new Document();
 
-        document.put(Constants.PLAYER_KEY, Converter.fromUUID(playerId));
+        document.put(Constants.PLAYER_ID_KEY, Converter.fromUUID(playerId));
 
         document.put(Constants.PIN_KEY, pin);
 
@@ -146,8 +162,12 @@ public class Profile extends DatabaseObject {
         return document;
     }
 
-    public static Bson filterId(UUID playerId) {
-        return Filters.eq(Constants.PLAYER_KEY, Converter.fromUUID(playerId));
+    public static Bson filterId(@NotNull UUID playerId) {
+        return Filters.eq(Constants.PLAYER_ID_KEY, Converter.fromUUID(playerId));
+    }
+
+    public static String lastNameField() {
+        return Constants.LAST_PLAYER_NAME_KEY;
     }
 
     public Bson filterId() {
@@ -176,7 +196,7 @@ public class Profile extends DatabaseObject {
 
     private static class Constants {
 
-        public static final String PLAYER_KEY = "_id";
+        public static final String PLAYER_ID_KEY = "_id";
 
         public static final String PIN_KEY = "pin";
 

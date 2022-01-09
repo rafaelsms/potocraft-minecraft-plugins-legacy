@@ -36,12 +36,12 @@ public class ReportChecker {
                 }
                 // Check in every report if prevents joining
                 VelocityProfile profile = profileOptional.get();
-                for (ReportEntry reportEntry : profile.getReportEntries()) {
-                    if (reportEntry.isPreventsJoining()) {
-                        event.setResult(ResultedEvent.ComponentResult.denied(reportEntry.getMessage(plugin)));
-                        continuation.resume();
-                        return;
-                    }
+                Optional<ReportEntry> entryOptional = profile.getJoinPreventingReport();
+                if (entryOptional.isPresent()) {
+                    ReportEntry reportEntry = entryOptional.get();
+                    event.setResult(ResultedEvent.ComponentResult.denied(reportEntry.getMessage(plugin)));
+                    continuation.resume();
+                    return;
                 }
             } catch (Exception ignored) {
                 Component reason = plugin.getSettings().getKickMessageCouldNotRetrieveProfile();
@@ -67,13 +67,13 @@ public class ReportChecker {
                 }
                 // Check in every report if prevents joining
                 VelocityProfile profile = profileOptional.get();
-                for (ReportEntry reportEntry : profile.getReportEntries()) {
-                    if (reportEntry.isPreventsChatting()) {
-                        player.sendMessage(reportEntry.getMessage(plugin));
-                        event.setResult(PlayerChatEvent.ChatResult.denied());
-                        continuation.resume();
-                        return;
-                    }
+                Optional<ReportEntry> entryOptional = profile.getChatPreventingReport();
+                if (entryOptional.isPresent()) {
+                    ReportEntry reportEntry = entryOptional.get();
+                    player.sendMessage(reportEntry.getMessage(plugin));
+                    event.setResult(PlayerChatEvent.ChatResult.denied());
+                    continuation.resume();
+                    return;
                 }
             } catch (Exception ignored) {
                 Component reason = plugin.getSettings().getKickMessageCouldNotRetrieveProfile();
