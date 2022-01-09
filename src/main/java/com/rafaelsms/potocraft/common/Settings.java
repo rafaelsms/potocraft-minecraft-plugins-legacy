@@ -51,6 +51,7 @@ public abstract class Settings {
         setDefault(Constants.LANG_UNKNOWN_PLAYER_NAME, "&7(&cdesconhecido&7)");
         setDefault(Constants.LANG_CONSOLE_NAME, "&cConsole");
         setDefault(Constants.LANG_NO_PERMISSION, "&cVocê não tem permissão para executar isto.");
+        setDefault(Constants.LANG_PLAYER_NOT_FOUND, "&cPessoa não encontrada.");
         setDefault(Constants.LANG_CONSOLE_CANT_EXECUTE_COMMAND, "&cConsole não pode executar este comando.");
         setDefault(Constants.LANG_GENERIC_COMMAND_ERROR, "&cFalha ao executar comando.");
         setDefault(Constants.LANG_COULD_NOT_RETRIEVE_PROFILE, "&cFalha ao acessar perfil.");
@@ -95,6 +96,10 @@ public abstract class Settings {
 
     public Component getNoPermission() {
         return getLang(Constants.LANG_NO_PERMISSION);
+    }
+
+    public Component getPlayerNotFound() {
+        return getLang(Constants.LANG_PLAYER_NOT_FOUND);
     }
 
     public Component getUnknownPlayerName() {
@@ -180,6 +185,7 @@ public abstract class Settings {
         public static final String LANG_UNKNOWN_PLAYER_NAME = "language.unknown_player_name";
         public static final String LANG_CONSOLE_NAME = "language.unknown_player_name";
         public static final String LANG_NO_PERMISSION = "language.no_permission";
+        public static final String LANG_PLAYER_NOT_FOUND = "language.player_not_found";
 
         public static final String LANG_CONSOLE_CANT_EXECUTE_COMMAND = "language.commands.console_can_not_execute_command";
         public static final String LANG_GENERIC_COMMAND_ERROR = "language.commands.generic_command_error";
@@ -207,6 +213,9 @@ public abstract class Settings {
         public static final String LANG_REPORT_NO_EXPIRATION_DATE = "language.commands.report.unknown_report_expiration_date";
         public static final String LANG_REPORT_YOU_HAVE_BEEN_MUTED = "language.commands.report.muted";
         public static final String LANG_REPORT_HELP = "language.commands.report.help";
+        public static final String LANG_REPORT_PLAYER_EXEMPT = "language.commands.report.player_is_exempt_from_punishment";
+        public static final String LANG_REPORT_COULD_NOT_SAVE_REPORT = "language.commands.report.could_not_save_report";
+        public static final String LANG_REPORT_SUB_COMMAND_PLAYER_REASON_HELP = "language.commands.report.help_subcommand_player_reason";
 
         public static final String LANG_KICKED = "language.kick_messages.kicked";
         public static final String LANG_BANNED = "language.kick_messages.banned";

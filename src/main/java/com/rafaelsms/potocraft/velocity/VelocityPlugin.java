@@ -12,6 +12,7 @@ import com.rafaelsms.potocraft.velocity.commands.ReportCommand;
 import com.rafaelsms.potocraft.velocity.database.VelocityDatabase;
 import com.rafaelsms.potocraft.velocity.listeners.OfflineLoginChecker;
 import com.rafaelsms.potocraft.velocity.listeners.ProfileUpdater;
+import com.rafaelsms.potocraft.velocity.listeners.ReportChecker;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyReloadEvent;
@@ -72,6 +73,7 @@ public class VelocityPlugin implements com.rafaelsms.potocraft.common.Plugin {
         // Register listeners
         getProxyServer().getEventManager().register(this, new OfflineLoginChecker(this));
         getProxyServer().getEventManager().register(this, new ProfileUpdater(this));
+        getProxyServer().getEventManager().register(this, new ReportChecker(this));
 
 //        MinecraftChannelIdentifier channelIdentifier = MinecraftChannelIdentifier.create("potocraft", "server");
 //        getProxyServer().getChannelRegistrar().register(channelIdentifier);

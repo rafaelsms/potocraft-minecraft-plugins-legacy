@@ -61,7 +61,7 @@ public class Location extends DatabaseObject {
     public Document toDocument() {
         Document document = new Document();
         document.put(Constants.SERVER_NAME_KEY, serverName);
-        document.put(Constants.WORLD_ID_KEY, worldId);
+        document.put(Constants.WORLD_ID_KEY, Converter.fromUUID(worldId));
         document.put(Constants.X_KEY, x);
         document.put(Constants.Y_KEY, y);
         document.put(Constants.Z_KEY, z);

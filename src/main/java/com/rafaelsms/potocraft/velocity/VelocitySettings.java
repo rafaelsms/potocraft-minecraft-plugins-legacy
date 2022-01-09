@@ -36,11 +36,14 @@ public class VelocitySettings extends Settings {
 
         setDefault(Constants.LANG_REPORT_UNKNOWN_REASON, "&7(motivo não especificado)");
         setDefault(Constants.LANG_REPORT_NO_EXPIRATION_DATE, "&7(data não especificada)");
-        setDefault(Constants.LANG_REPORT_YOU_HAVE_BEEN_MUTED, "&cVocê foi silenciado por &e%reporter% &cpelo motivo &e\"%reason%\" &caté &e%expiration_date%&c.");
+        setDefault(Constants.LANG_REPORT_YOU_HAVE_BEEN_MUTED, "&cVocê foi silenciado por &e%reporter% &cpelo motivo \"&e%reason%&c\" &caté &e%expiration_date%&c.");
         setDefault(Constants.LANG_REPORT_HELP, "&6Uso: &e&l/report kick/ban/history/mute");
+        setDefault(Constants.LANG_REPORT_PLAYER_EXEMPT, "&cEste jogador não pode ser punido desta forma.");
+        setDefault(Constants.LANG_REPORT_COULD_NOT_SAVE_REPORT, "&cNão foi possível salvar o incidente de &e%player%&c.");
+        setDefault(Constants.LANG_REPORT_SUB_COMMAND_PLAYER_REASON_HELP, "&6Uso: &e&l/report %subcommand% <nome do jogador> <motivo>");
 
-        setDefault(Constants.LANG_KICKED, "&cVocê foi expulso\n&cpor &e%reporter%\n&cpelo motivo &e\"%reason%\"&c.");
-        setDefault(Constants.LANG_BANNED, "&cVocê foi expulso\n&cpor &e%reporter%\n&cpelo motivo \"&e%reason%\"&c\n&caté &e%expiration_date%&c.");
+        setDefault(Constants.LANG_KICKED, "&cVocê foi expulso\n&cpor &e%reporter%\n&cpelo motivo \"&e%reason%&c\".");
+        setDefault(Constants.LANG_BANNED, "&cVocê foi banido\n&cpor &e%reporter%\n&cpelo motivo \"&e%reason%&c\"\n&caté &e%expiration_date%&c.");
         setDefault(Constants.LANG_COULD_NOT_CHECK_PLAYER_TYPE, "&cNão foi possível verificar o tipo de jogador.");
         setDefault(Constants.LANG_COULD_NOT_CHECK_MOJANG_USERNAME, "&cNão foi possível verificar o nome de usuário.");
         setDefault(Constants.LANG_FLOODGATE_PREFIX_ON_JAVA_PLAYER, "&cNome reservado para jogadores Bedrock Edition.");
@@ -114,6 +117,24 @@ public class VelocitySettings extends Settings {
     public Component getCommandReportNoExpirationDate() {
         return getLang(Constants.LANG_REPORT_NO_EXPIRATION_DATE);
     }
+
+    public Component getCommandReportPlayerExempt() {
+        return getLang(Constants.LANG_REPORT_PLAYER_EXEMPT);
+    }
+
+    public Component getCommandReportCouldNotSaveReport(@NotNull Component playerName) {
+        return getLang(Constants.LANG_REPORT_COULD_NOT_SAVE_REPORT)
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%player%").replacement(playerName).build());
+    }
+
+    public Component getCommandReportSubCommandHelp(@NotNull String subCommand) {
+        return getLang(Constants.LANG_REPORT_SUB_COMMAND_PLAYER_REASON_HELP)
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%subcommand%").replacement(subCommand).build());
+    }
+
+//    public Component getCommandReport() {
+//        return getLang(Constants.LANG_REPORT_);
+//    }
 
     public Component getCommandReportYouHaveBeenMuted(@NotNull Component reporter, @NotNull Component reason,
                                                       @NotNull Component expirationDate) {

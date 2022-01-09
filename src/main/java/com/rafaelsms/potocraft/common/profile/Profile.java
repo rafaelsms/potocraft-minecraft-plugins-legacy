@@ -154,6 +154,26 @@ public class Profile extends DatabaseObject {
         return Profile.filterId(this.playerId);
     }
 
+    public ReportEntry kicked(@Nullable UUID reporterId, @Nullable String reason) {
+        ReportEntry reportEntry = ReportEntry.kicked(reporterId, reason);
+        this.reportEntries.add(reportEntry);
+        return reportEntry;
+    }
+
+    public TimedReportEntry muted(@Nullable UUID reporterId, @Nullable String reason,
+                                  @Nullable ZonedDateTime expirationDate) {
+        TimedReportEntry timedReportEntry = ReportEntry.muted(reporterId, reason, expirationDate);
+        this.reportEntries.add(timedReportEntry);
+        return timedReportEntry;
+    }
+
+    public TimedReportEntry banned(@Nullable UUID reporterId, @Nullable String reason,
+                                   @Nullable ZonedDateTime expirationDate) {
+        TimedReportEntry timedReportEntry = ReportEntry.banned(reporterId, reason, expirationDate);
+        this.reportEntries.add(timedReportEntry);
+        return timedReportEntry;
+    }
+
     private static class Constants {
 
         public static final String PLAYER_KEY = "_id";

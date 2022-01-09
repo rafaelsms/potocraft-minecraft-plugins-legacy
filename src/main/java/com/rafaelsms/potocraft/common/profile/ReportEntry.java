@@ -22,7 +22,7 @@ public class ReportEntry extends DatabaseObject {
     protected final @NotNull ZonedDateTime reportDate;
     protected final @Nullable String reason;
 
-    public ReportEntry(@NotNull ReportType reportType, @Nullable UUID reporterId, @Nullable String reason) {
+    protected ReportEntry(@NotNull ReportType reportType, @Nullable UUID reporterId, @Nullable String reason) {
         super(new Document());
         this.reportType = reportType;
         this.reporterId = reporterId;
@@ -39,7 +39,21 @@ public class ReportEntry extends DatabaseObject {
     }
 
     public static @NotNull ReportEntry fromDocument(@NotNull Document document) {
-        return ReportType.fromString(document.getString(Constants.REPORTER_KEY)).getConverter().apply(document);
+        return ReportType.fromString(document.getString(Constants.REPORT_TYPE_KEY)).getConverter().apply(document);
+    }
+
+    public static @NotNull ReportEntry kicked(@Nullable UUID reporterId, @Nullable String reason) {
+        return new ReportEntry(ReportType.KICK_REPORT, reporterId, reason);
+    }
+
+    public static @NotNull TimedReportEntry banned(@Nullable UUID reporterId, @Nullable String reason,
+                                              @Nullable ZonedDateTime expirationDate) {
+        return new TimedReportEntry(ReportType.BAN_REPORT, reporterId, expirationDate, reason);
+    }
+
+    public static @NotNull TimedReportEntry muted(@Nullable UUID reporterId, @Nullable String reason,
+                                             @Nullable ZonedDateTime expirationDate) {
+        return new TimedReportEntry(ReportType.MUTE_REPORT, reporterId, expirationDate, reason);
     }
 
     public @Nullable String getReason() {
@@ -121,7 +135,7 @@ public class ReportEntry extends DatabaseObject {
                     return reportType;
                 }
             }
-            throw new IllegalStateException("Cannot find report type!");
+            throw new IllegalStateException("Cannot find report type for \"%s\"".formatted(string));
         }
 
         public static Component getMessage(@NotNull VelocityPlugin plugin, @NotNull ReportEntry reportEntry) {

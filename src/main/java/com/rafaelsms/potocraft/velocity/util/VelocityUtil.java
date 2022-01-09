@@ -9,6 +9,8 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public final class VelocityUtil {
@@ -51,4 +53,11 @@ public final class VelocityUtil {
         return server;
     }
 
+    public static List<String> getPlayerNameList(@NotNull VelocityPlugin plugin) {
+        ArrayList<String> names = new ArrayList<>(plugin.getProxyServer().getPlayerCount());
+        for (Player player : plugin.getProxyServer().getAllPlayers()) {
+            names.add(player.getUsername());
+        }
+        return names;
+    }
 }

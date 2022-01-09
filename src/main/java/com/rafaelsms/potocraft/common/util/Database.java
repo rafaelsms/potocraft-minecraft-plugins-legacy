@@ -42,12 +42,7 @@ public abstract class Database<T extends Profile> {
 
     protected void saveProfile(T profile) throws DatabaseException {
         handleException(() -> {
-            long modifiedCount = getUserProfiles()
-                    .replaceOne(profile.filterId(), profile.toDocument(), replaceOptions)
-                    .getModifiedCount();
-            if (modifiedCount != 1) {
-                throw new DatabaseException("Expected only 1 database change, got %d".formatted(modifiedCount));
-            }
+            getUserProfiles().replaceOne(profile.filterId(), profile.toDocument(), replaceOptions);
             return null;
         });
     }
