@@ -6,9 +6,9 @@ public final class Permissions {
 
     public static final @NotNull String LOGIN_COMMAND = "potocraft.proxy_command.login";
     public static final @NotNull String CHANGE_PIN_COMMAND = "potocraft.proxy_command.change_pin";
-    public static final @NotNull String CHANGE_PIN_COMMAND_OTHERS = "potocraft.proxy_command.change_pin.others"; // TODO
+    public static final @NotNull String CHANGE_PIN_COMMAND_OTHERS = "potocraft.proxy_command.change_pin.others";
     public static final @NotNull String REGISTER_COMMAND = "potocraft.proxy_command.register";
-    public static final @NotNull String REGISTER_COMMAND_OTHERS = "potocraft.proxy_command.register.others"; // TODO
+    public static final @NotNull String REGISTER_COMMAND_OTHERS = "potocraft.proxy_command.register.others";
     public static final @NotNull String REPORT_COMMAND = "potocraft.proxy_command.report";
     public static final @NotNull String REPORT_COMMAND_KICK = "potocraft.proxy_command.report.kick";
     public static final @NotNull String REPORT_COMMAND_KICK_EXEMPT = "potocraft.proxy_command.report.kick.exempt";
@@ -24,7 +24,9 @@ public final class Permissions {
     public static final @NotNull String[] values = {
             LOGIN_COMMAND,
             CHANGE_PIN_COMMAND,
+            CHANGE_PIN_COMMAND_OTHERS,
             REGISTER_COMMAND,
+            REGISTER_COMMAND_OTHERS,
             REPORT_COMMAND,
             REPORT_COMMAND_KICK,
             REPORT_COMMAND_KICK_EXEMPT,

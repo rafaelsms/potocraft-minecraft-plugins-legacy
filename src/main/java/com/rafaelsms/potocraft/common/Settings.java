@@ -219,6 +219,9 @@ public abstract class Settings {
         public static final String LANG_REGISTER_TRY_LOGIN_INSTEAD = "language.commands.register.use_login_instead";
         public static final String LANG_REGISTER_TRY_CHANGE_PIN_INSTEAD = "language.commands.register.use_change_pin_instead";
 
+        public static final String LANG_CHANGE_PIN_HELP = "language.commands.change_pin.help";
+        public static final String LANG_CHANGE_PIN_PINS_DO_NOT_MATCH = "language.commands.change_pin.new_pin_do_not_match";
+
         public static final String LANG_REPORT_UNKNOWN_REASON = "language.commands.report.unknown_report_reason";
         public static final String LANG_REPORT_NO_EXPIRATION_DATE = "language.commands.report.unknown_report_expiration_date";
         public static final String LANG_REPORT_YOU_HAVE_BEEN_MUTED = "language.commands.report.muted";

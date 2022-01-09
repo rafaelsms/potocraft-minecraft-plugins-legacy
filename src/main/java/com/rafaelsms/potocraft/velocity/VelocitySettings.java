@@ -42,6 +42,9 @@ public class VelocitySettings extends Settings {
         setDefault(Constants.LANG_REGISTER_TRY_LOGIN_INSTEAD, "&cVocê já tem uma conta cadastrada! &6Tente entrar digitando &3&l/login senha");
         setDefault(Constants.LANG_REGISTER_TRY_CHANGE_PIN_INSTEAD, "&cVocê já tem uma conta cadastrada! &6Deseja alterar sua senha? Utilize &3&l/mudarsenha");
 
+        setDefault(Constants.LANG_CHANGE_PIN_HELP, "&6Para mudar a senha, lembre de sua senha antiga, faça uma nova de 6 números e digite:\n&a/mudarsenha <senha antiga> <senha nova> <senha nova>\n&6Por exemplo: &a&l/mudarsenha 000000 123456 123456");
+        setDefault(Constants.LANG_CHANGE_PIN_PINS_DO_NOT_MATCH, "&cSua nova senha precisa ser digitada de maneira igual duas vezes! Elas não estão iguais.");
+
         setDefault(Constants.LANG_REPORT_UNKNOWN_REASON, "&7(motivo não especificado)");
         setDefault(Constants.LANG_REPORT_NO_EXPIRATION_DATE, "&7(data não especificada)");
         setDefault(Constants.LANG_REPORT_YOU_HAVE_BEEN_MUTED, "&cVocê foi silenciado por &e%reporter% &cpelo motivo \"&e%reason%&c\" &caté &e%expiration_date%&c.");
@@ -127,6 +130,14 @@ public class VelocitySettings extends Settings {
         return getLang(Constants.LANG_REGISTER_TRY_CHANGE_PIN_INSTEAD);
     }
 
+    public Component getCommandChangePinHelp() {
+        return getLang(Constants.LANG_CHANGE_PIN_HELP);
+    }
+
+    public Component getCommandChangePinPinsDoNotMatch() {
+        return getLang(Constants.LANG_CHANGE_PIN_PINS_DO_NOT_MATCH);
+    }
+
     public Component getCommandReportUnknownReason() {
         return getLang(Constants.LANG_REPORT_UNKNOWN_REASON);
     }
@@ -163,7 +174,7 @@ public class VelocitySettings extends Settings {
 
     public Component getCommandReportUnreportSuccessfully(@NotNull String playerName) {
         return getLang(Constants.LANG_REPORT_UNREPORT_SUCCESSFULLY)
-                       .replaceText(TextReplacementConfig.builder().matchLiteral("%player%").replacement(playerName).build());
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%player%").replacement(playerName).build());
     }
 
     public Component getCommandReportHelp() {
