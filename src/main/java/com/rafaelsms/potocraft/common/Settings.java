@@ -35,29 +35,6 @@ public abstract class Settings {
         reloadFile();
     }
 
-    protected void setDefaults() {
-        setDefault(Constants.DEBUG_MESSAGES_ENABLED, false);
-        setDefault(Constants.DATE_TIME_FORMAT, "EEE', 'dd' de 'MMM' às 'H'h'mm"); // Sex, 13 de Dez às 15h54
-
-        setDefault(Constants.DATABASE_MONGO_URI, "mongodb://localhost:27017");
-        setDefault(Constants.DATABASE_MONGO_DATABASE, "potocraftDb");
-        setDefault(Constants.DATABASE_FAIL_FATAL, true);
-        setDefault(Constants.DATABASE_FAIL_PRINT_STACK, true);
-        setDefault(Constants.DATABASE_TIMEOUT_MILLIS, 300);
-
-        setDefault(Constants.LOGIN_SERVER_NAME, "login");
-
-        setDefault(Constants.LANG_UNKNOWN_PLAYER_NAME, "&7(&cdesconhecido&7)");
-        setDefault(Constants.LANG_CONSOLE_NAME, "&cConsole");
-        setDefault(Constants.LANG_NO_PERMISSION, "&cVocê não tem permissão para executar isto.");
-        setDefault(Constants.LANG_PLAYER_NOT_FOUND, "&cPessoa não encontrada.");
-        setDefault(Constants.LANG_MANY_PLAYERS_FOUND, "&cVárias pessoas encontradas: &e%list%");
-        setDefault(Constants.LANG_CONSOLE_CANT_EXECUTE_COMMAND, "&cConsole não pode executar este comando.");
-        setDefault(Constants.LANG_GENERIC_COMMAND_ERROR, "&cFalha ao executar comando.");
-        setDefault(Constants.LANG_COULD_NOT_RETRIEVE_PROFILE, "&cFalha ao acessar perfil.");
-        setDefault(Constants.LANG_COULD_NOT_SAVE_PROFILE, "&cFalha ao salvar perfil.");
-    }
-
     public boolean isDebugMessagesEnabled() {
         return get(Constants.DEBUG_MESSAGES_ENABLED);
     }
@@ -80,10 +57,6 @@ public abstract class Settings {
 
     public boolean isMongoFailPrintable() {
         return get(Constants.DATABASE_FAIL_PRINT_STACK);
-    }
-
-    public long getDatabaseTimeout() {
-        return get(Constants.DATABASE_TIMEOUT_MILLIS);
     }
 
     public String getLoginServer() {
@@ -131,6 +104,14 @@ public abstract class Settings {
         return getLang(Constants.LANG_COULD_NOT_SAVE_PROFILE);
     }
 
+    public Component getChatMessagesTooFrequent() {
+        return getLang(Constants.LANG_CHAT_TOO_FREQUENT);
+    }
+
+    public Component getChatMessagesTooSimilar() {
+        return getLang(Constants.LANG_CHAT_SIMILAR);
+    }
+
     protected Component getLang(@NotNull String key) {
         try {
             return Util.getLang(get(key));
@@ -165,6 +146,32 @@ public abstract class Settings {
         }
     }
 
+    protected void setDefaults() {
+        setDefault(Constants.DEBUG_MESSAGES_ENABLED, false);
+        setDefault(Constants.DATE_TIME_FORMAT, "EEE', 'dd' de 'MMM' às 'H'h'mm"); // Sex, 13 de Dez às 15h54
+
+        setDefault(Constants.DATABASE_MONGO_URI, "mongodb://localhost:27017");
+        setDefault(Constants.DATABASE_MONGO_DATABASE, "potocraftDb");
+        setDefault(Constants.DATABASE_FAIL_FATAL, true);
+        setDefault(Constants.DATABASE_FAIL_PRINT_STACK, true);
+
+        setDefault(Constants.LOGIN_SERVER_NAME, "login");
+
+        setDefault(Constants.LANG_UNKNOWN_PLAYER_NAME, "&7(&cdesconhecido&7)");
+        setDefault(Constants.LANG_CONSOLE_NAME, "&cConsole");
+
+        setDefault(Constants.LANG_NO_PERMISSION, "&cVocê não tem permissão para executar isto.");
+        setDefault(Constants.LANG_PLAYER_NOT_FOUND, "&cPessoa não encontrada.");
+        setDefault(Constants.LANG_MANY_PLAYERS_FOUND, "&cVárias pessoas encontradas: &e%list%");
+        setDefault(Constants.LANG_CONSOLE_CANT_EXECUTE_COMMAND, "&cConsole não pode executar este comando.");
+        setDefault(Constants.LANG_GENERIC_COMMAND_ERROR, "&cFalha ao executar comando.");
+        setDefault(Constants.LANG_COULD_NOT_RETRIEVE_PROFILE, "&cFalha ao acessar perfil.");
+        setDefault(Constants.LANG_COULD_NOT_SAVE_PROFILE, "&cFalha ao salvar perfil.");
+
+        setDefault(Constants.LANG_CHAT_TOO_FREQUENT, "&cMensagens muito rápidas.");
+        setDefault(Constants.LANG_CHAT_SIMILAR, "&cMensagens muito parecidas.");
+    }
+
     protected static final class Constants {
 
         /* Settings */
@@ -176,7 +183,6 @@ public abstract class Settings {
         public static final String DATABASE_MONGO_DATABASE = "configuration.database.mongo_database";
         public static final String DATABASE_FAIL_FATAL = "configuration.database.database_fail_shutdowns_server";
         public static final String DATABASE_FAIL_PRINT_STACK = "configuration.database.database_fail_prints_stack_trace";
-        public static final String DATABASE_TIMEOUT_MILLIS = "configuration.database.database_timeout_time_in_millis";
 
         public static final String LOBBY_SERVER_NAME = "configuration.login.lobby_server";
 
@@ -185,8 +191,22 @@ public abstract class Settings {
         public static final String LOGIN_SERVER_NAME = "configuration.login.unauthenticated_server";
         public static final String KICK_IF_LOBBY_UNAVAILABLE = "configuration.login.kick_if_lobby_server_unavailable";
 
+        public static final String UNIVERSAL_CHAT_FORMAT = "configuration.chat.universal.format";
+        public static final String UNIVERSAL_CHAT_PREFIX = "configuration.chat.universal.prefix";
+        public static final String UNIVERSAL_CHAT_LIMITER_MESSAGES_AMOUNT = "configuration.chat.universal.limiter.messages_amount";
+        public static final String UNIVERSAL_CHAT_LIMITER_TIME_AMOUNT = "configuration.chat.universal.limiter.time_amount_millis";
+        public static final String UNIVERSAL_CHAT_COMPARATOR_MIN_LENGTH = "configuration.chat.universal.comparator.minimum_length";
+        public static final String UNIVERSAL_CHAT_COMPARATOR_THRESHOLD = "configuration.chat.universal.comparator.minimum_char_differences";
+
         // Paper
         public static final String PAPER_SERVER_NAME_ON_PROXY = "configuration.server_name_on_the_proxy";
+
+        public static final String LOCAL_CHAT_FORMAT = "configuration.chat.local.format";
+        public static final String GLOBAL_CHAT_FORMAT = "configuration.chat.global.format";
+        public static final String GLOBAL_CHAT_LIMITER_MESSAGES_AMOUNT = "configuration.chat.global.limiter.messages_amount";
+        public static final String GLOBAL_CHAT_LIMITER_TIME_AMOUNT = "configuration.chat.global.limiter.time_amount_millis";
+        public static final String GLOBAL_CHAT_COMPARATOR_MIN_LENGTH = "configuration.chat.global.comparator.minimum_length";
+        public static final String GLOBAL_CHAT_COMPARATOR_THRESHOLD = "configuration.chat.global.comparator.minimum_char_differences";
 
 
         /* Language */
@@ -238,6 +258,9 @@ public abstract class Settings {
         public static final String LANG_REPORT_HISTORY_ENTRY_BANNED = "language.commands.report.history_entry_banned";
         public static final String LANG_REPORT_HISTORY_ENTRY_MUTED = "language.commands.report.history_entry_muted";
         public static final String LANG_REPORT_HISTORY_ENTRY_KICKED = "language.commands.report.history_entry_kicked";
+
+        public static final String LANG_CHAT_TOO_FREQUENT = "language.chat.messages_too_frequent";
+        public static final String LANG_CHAT_SIMILAR = "language.chat.messages_are_similar";
 
         public static final String LANG_KICKED = "language.kick_messages.kicked";
         public static final String LANG_BANNED = "language.kick_messages.banned";

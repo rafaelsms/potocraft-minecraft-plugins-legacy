@@ -27,6 +27,7 @@ public class ReplyCommand implements RawCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return true || invocation.source().hasPermission(Permissions.CHANGE_PIN_COMMAND);
+        return invocation.source().hasPermission(Permissions.MESSAGE_COMMAND) &&
+                       invocation.source().hasPermission(Permissions.MESSAGE_COMMAND_REPLY);
     }
 }

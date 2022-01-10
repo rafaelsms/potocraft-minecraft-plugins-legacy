@@ -3,9 +3,14 @@ package com.rafaelsms.potocraft.papermc;
 import com.rafaelsms.potocraft.common.CommonServer;
 import com.rafaelsms.potocraft.common.Permissions;
 import com.rafaelsms.potocraft.common.Plugin;
-import com.rafaelsms.potocraft.papermc.listeners.ProfileUpdater;
-import com.rafaelsms.potocraft.papermc.util.PaperDatabase;
 import com.rafaelsms.potocraft.common.util.PluginType;
+import com.rafaelsms.potocraft.papermc.listeners.ProfileUpdater;
+import com.rafaelsms.potocraft.papermc.listeners.UserListener;
+import com.rafaelsms.potocraft.papermc.profile.PaperProfile;
+import com.rafaelsms.potocraft.papermc.user.PaperUser;
+import com.rafaelsms.potocraft.papermc.user.PaperUserManager;
+import com.rafaelsms.potocraft.papermc.util.PaperDatabase;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,18 +19,20 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 @SuppressWarnings("unused")
-public class PaperPlugin extends JavaPlugin implements Plugin {
+public class PaperPlugin extends JavaPlugin implements Plugin<PaperProfile, PaperUser, Player> {
 
     private final @NotNull CommonServer commonServer = new PaperServer(this);
 
     private @Nullable PaperSettings settings = null;
     private @Nullable PaperDatabase database = null;
+    private @Nullable PaperUserManager userManager = null;
 
     @Override
     public void onEnable() {
         try {
             this.settings = new PaperSettings(this);
             this.database = new PaperDatabase(this);
+            this.userManager = new PaperUserManager(this);
         } catch (Exception exception) {
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -39,7 +46,9 @@ public class PaperPlugin extends JavaPlugin implements Plugin {
             }
         }
 
+        // Register listeners
         getServer().getPluginManager().registerEvents(new ProfileUpdater(this), this);
+        getServer().getPluginManager().registerEvents(new UserListener(getUserManager()), this);
 
 //        getServer().getMessenger().registerIncomingPluginChannel(this, "potocraft:server", new PluginMessageListener() {
 //            @Override
@@ -56,6 +65,8 @@ public class PaperPlugin extends JavaPlugin implements Plugin {
 //                    first.ifPresent(player -> player.sendPluginMessage(this, "potocraft:server", new byte[]{'A'}));
 //                }, 40, 40
 //        );
+
+        logger().info("PotoCraft Paper Plugin enabled!");
     }
 
     @Override
@@ -89,5 +100,11 @@ public class PaperPlugin extends JavaPlugin implements Plugin {
     public @NotNull PaperDatabase getDatabase() {
         assert database != null;
         return database;
+    }
+
+    @Override
+    public @NotNull PaperUserManager getUserManager() {
+        assert userManager != null;
+        return userManager;
     }
 }

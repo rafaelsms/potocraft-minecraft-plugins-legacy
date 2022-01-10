@@ -1,18 +1,19 @@
 package com.rafaelsms.potocraft.common.util;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.InetSocketAddress;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,19 +32,19 @@ public final class Util {
         return address.getHostString();
     }
 
-    public static Component getJsonLang(String string) {
+    public static @NotNull Component getJsonLang(@NotNull String string) {
         return GsonComponentSerializer.gson().deserialize(string);
     }
 
-    public static Component getLegacyLang(String string) {
+    public static @NotNull Component getLegacyLang(@NotNull String string) {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(string);
     }
 
-    public static String toSimpleString(Component component) {
+    public static @NotNull String toSimpleString(@NotNull Component component) {
         return PlainTextComponentSerializer.plainText().serialize(component);
     }
 
-    public static Component getLang(String string) {
+    public static @NotNull Component getLang(@NotNull String string) {
         try {
             return getJsonLang(string);
         } catch (Exception exception) {
@@ -111,5 +112,31 @@ public final class Util {
     public static Optional<String> getArgument(@NotNull String[] arguments, int position) {
         if (position >= arguments.length) return Optional.empty();
         return Optional.of(arguments[position]);
+    }
+
+    public static Component applyChatFormat(@NotNull Component chatFormat, @NotNull UUID playerId,
+                                            @NotNull String playerName, @NotNull Component message) {
+        Component prefix = Component.empty();
+        Component suffix = Component.empty();
+        try {
+            LuckPerms luckPerms = LuckPermsProvider.get();
+            User user = luckPerms.getUserManager().loadUser(playerId).join();
+            // Get prefix
+            String prefixString = user.getCachedData().getMetaData().getPrefix();
+            if (prefixString != null) {
+                prefix = getLang(prefixString);
+            }
+            // Get suffix
+            String suffixString = user.getCachedData().getMetaData().getSuffix();
+            if (suffixString != null) {
+                suffix = getLang(suffixString);
+            }
+        } catch (Exception ignored) {
+        }
+        return chatFormat
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%prefix%").replacement(prefix).build())
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%suffix%").replacement(suffix).build())
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%username%").replacement(playerName).build())
+                .replaceText(TextReplacementConfig.builder().matchLiteral("%message%").replacement(message).build());
     }
 }

@@ -68,6 +68,13 @@ public class VelocitySettings extends Settings {
         setDefault(Constants.LANG_COULD_NOT_CHECK_MOJANG_USERNAME, "&cNão foi possível verificar o nome de usuário.");
         setDefault(Constants.LANG_FLOODGATE_PREFIX_ON_JAVA_PLAYER, "&cNome reservado para jogadores Bedrock Edition.");
         setDefault(Constants.LANG_NO_LOGIN_SERVER_AVAILABLE, "&cNão há servidor para login disponível.");
+
+        setDefault(Constants.UNIVERSAL_CHAT_FORMAT, "&6!! <&e%prefix%%username%%suffix%&6> &f%message%");
+        setDefault(Constants.UNIVERSAL_CHAT_PREFIX, "!!");
+        setDefault(Constants.UNIVERSAL_CHAT_LIMITER_MESSAGES_AMOUNT, 2);
+        setDefault(Constants.UNIVERSAL_CHAT_LIMITER_TIME_AMOUNT, 5500);
+        setDefault(Constants.UNIVERSAL_CHAT_COMPARATOR_MIN_LENGTH, 3);
+        setDefault(Constants.UNIVERSAL_CHAT_COMPARATOR_THRESHOLD, 3);
     }
 
     public long getMaxLoginDurationSeconds() {
@@ -255,5 +262,29 @@ public class VelocitySettings extends Settings {
 
     public Component getKickMessageNoLoginServer() {
         return getLang(Constants.LANG_NO_LOGIN_SERVER_AVAILABLE);
+    }
+
+    public Component getUniversalChatFormat() {
+        return getLang(Constants.UNIVERSAL_CHAT_FORMAT);
+    }
+
+    public String getUniversalChatPrefix() {
+        return get(Constants.UNIVERSAL_CHAT_PREFIX);
+    }
+
+    public int getUniversalChatComparatorThreshold() {
+        return get(Constants.UNIVERSAL_CHAT_COMPARATOR_THRESHOLD);
+    }
+
+    public int getUniversalChatComparatorMinLength() {
+        return get(Constants.UNIVERSAL_CHAT_COMPARATOR_MIN_LENGTH);
+    }
+
+    public int getUniversalChatLimiterMessageAmount() {
+        return get(Constants.UNIVERSAL_CHAT_LIMITER_MESSAGES_AMOUNT);
+    }
+
+    public long getUniversalChatLimiterTimeAmount() {
+        return get(Constants.UNIVERSAL_CHAT_LIMITER_TIME_AMOUNT);
     }
 }

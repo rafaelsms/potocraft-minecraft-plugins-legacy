@@ -5,10 +5,13 @@ import org.jetbrains.annotations.NotNull;
 public final class Permissions {
 
     public static final @NotNull String LOGIN_COMMAND = "potocraft.proxy_command.login";
+
     public static final @NotNull String CHANGE_PIN_COMMAND = "potocraft.proxy_command.change_pin";
     public static final @NotNull String CHANGE_PIN_COMMAND_OTHERS = "potocraft.proxy_command.change_pin.others";
+
     public static final @NotNull String REGISTER_COMMAND = "potocraft.proxy_command.register";
     public static final @NotNull String REGISTER_COMMAND_OTHERS = "potocraft.proxy_command.register.others";
+
     public static final @NotNull String REPORT_COMMAND = "potocraft.proxy_command.report";
     public static final @NotNull String REPORT_COMMAND_KICK = "potocraft.proxy_command.report.kick";
     public static final @NotNull String REPORT_COMMAND_KICK_EXEMPT = "potocraft.proxy_command.report.kick.exempt";
@@ -21,12 +24,24 @@ public final class Permissions {
     public static final @NotNull String REPORT_COMMAND_UNREPORT = "potocraft.proxy_command.report.unreport";
     public static final @NotNull String REPORT_COMMAND_BAN_OFFLINE = "potocraft.proxy_command.report.ban.exempt";
 
+    public static final @NotNull String MESSAGE_COMMAND = "potocraft.proxy_command.message";
+    public static final @NotNull String MESSAGE_COMMAND_REPLY = "potocraft.proxy_command.message.reply";
+    public static final @NotNull String MESSAGE_COMMAND_BYPASS_IGNORE = "potocraft.proxy_command.message.bypass"; // TODO
+
+    public static final @NotNull String GLOBAL_CHAT = "potocraft.chat.global"; // TODO
+    public static final @NotNull String GLOBAL_CHAT_BYPASS_TIMEOUT = "potocraft.chat.global.bypass_timeout"; // TODO
+    public static final @NotNull String UNIVERSAL_CHAT = "potocraft.chat.universal"; // TODO
+    public static final @NotNull String UNIVERSAL_CHAT_BYPASS_TIMEOUT = "potocraft.chat.universal.bypass_timeout"; // TODO
+
     public static final @NotNull String[] values = {
             LOGIN_COMMAND,
+
             CHANGE_PIN_COMMAND,
             CHANGE_PIN_COMMAND_OTHERS,
+
             REGISTER_COMMAND,
             REGISTER_COMMAND_OTHERS,
+
             REPORT_COMMAND,
             REPORT_COMMAND_KICK,
             REPORT_COMMAND_KICK_EXEMPT,
@@ -38,6 +53,15 @@ public final class Permissions {
             REPORT_COMMAND_BAN_EXEMPT,
             REPORT_COMMAND_BAN_OFFLINE,
             REPORT_COMMAND_UNREPORT,
+
+            MESSAGE_COMMAND,
+            MESSAGE_COMMAND_REPLY,
+            MESSAGE_COMMAND_BYPASS_IGNORE,
+
+            GLOBAL_CHAT,
+            GLOBAL_CHAT_BYPASS_TIMEOUT,
+            UNIVERSAL_CHAT,
+            UNIVERSAL_CHAT_BYPASS_TIMEOUT,
     };
 
     private Permissions() {

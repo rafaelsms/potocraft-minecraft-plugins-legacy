@@ -2,17 +2,15 @@ package com.rafaelsms.potocraft.velocity;
 
 import com.google.inject.Inject;
 import com.rafaelsms.potocraft.common.CommonServer;
-import com.rafaelsms.potocraft.common.util.FloodgateException;
+import com.rafaelsms.potocraft.common.util.DepedencyException;
 import com.rafaelsms.potocraft.common.util.PlayerType;
 import com.rafaelsms.potocraft.common.util.PluginType;
-import com.rafaelsms.potocraft.velocity.commands.ChangePinCommand;
-import com.rafaelsms.potocraft.velocity.commands.LoginCommand;
-import com.rafaelsms.potocraft.velocity.commands.RegisterCommand;
-import com.rafaelsms.potocraft.velocity.commands.ReportCommand;
+import com.rafaelsms.potocraft.velocity.commands.*;
 import com.rafaelsms.potocraft.velocity.database.VelocityDatabase;
-import com.rafaelsms.potocraft.velocity.listeners.OfflineLoginChecker;
-import com.rafaelsms.potocraft.velocity.listeners.ProfileUpdater;
-import com.rafaelsms.potocraft.velocity.listeners.ReportChecker;
+import com.rafaelsms.potocraft.velocity.listeners.*;
+import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
+import com.rafaelsms.potocraft.velocity.user.VelocityUser;
+import com.rafaelsms.potocraft.velocity.user.VelocityUserManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyReloadEvent;
@@ -32,18 +30,19 @@ import java.nio.file.Path;
 
 @Plugin(id = "potocraft-proxy", name = "PotoCraft Proxy", version = "0.1", url = "https://potocraft.com/",
         description = "Custom plugin for PotoCraft", authors = {"rafaelsms"},
-        dependencies = {@Dependency(id = "floodgate")})
-public class VelocityPlugin implements com.rafaelsms.potocraft.common.Plugin {
+        dependencies = {@Dependency(id = "floodgate"), @Dependency(id = "luckperms", optional = true)})
+public class VelocityPlugin implements com.rafaelsms.potocraft.common.Plugin<VelocityProfile, VelocityUser, Player> {
 
     private final @NotNull ProxyServer server;
     private final @NotNull CommonServer commonServer;
     private final @NotNull Logger logger;
 
-    private @Nullable VelocitySettings settings = null;
-    private @Nullable VelocityDatabase database = null;
+    private final @Nullable VelocitySettings settings;
+    private final @Nullable VelocityDatabase database;
+    private final @Nullable VelocityUserManager userManager;
 
     @Inject
-    public VelocityPlugin(@NotNull ProxyServer server, @NotNull Logger logger, @DataDirectory Path dataDirectory) {
+    public VelocityPlugin(@NotNull ProxyServer server, @NotNull Logger logger, @DataDirectory Path dataDirectory) throws Exception {
         this.server = server;
         this.commonServer = new VelocityServer(server, dataDirectory);
         this.logger = logger;
@@ -52,9 +51,10 @@ public class VelocityPlugin implements com.rafaelsms.potocraft.common.Plugin {
         } catch (Exception exception) {
             logger.error("Failed to create velocity settings: %s".formatted(exception.getLocalizedMessage()));
             exception.printStackTrace();
-            return;
+            throw exception;
         }
         this.database = new VelocityDatabase(this);
+        this.userManager = new VelocityUserManager(this);
     }
 
     @Subscribe
@@ -69,11 +69,15 @@ public class VelocityPlugin implements com.rafaelsms.potocraft.common.Plugin {
         getProxyServer().getCommandManager().register("registrar", new RegisterCommand(this), "reg", "register");
         getProxyServer().getCommandManager().register("mudarsenha", new ChangePinCommand(this), "changepin", "changepassword", "mudarpin");
         getProxyServer().getCommandManager().register("report", new ReportCommand(this), "reportar");
+        getProxyServer().getCommandManager().register("mensagem", new MessageCommand(this), "msg", "message", "dm", "pm", "tell");
+        getProxyServer().getCommandManager().register("responder", new ReplyCommand(this), "reply", "r");
 
         // Register listeners
         getProxyServer().getEventManager().register(this, new OfflineLoginChecker(this));
         getProxyServer().getEventManager().register(this, new ProfileUpdater(this));
         getProxyServer().getEventManager().register(this, new ReportChecker(this));
+        getProxyServer().getEventManager().register(this, new ChatController(this));
+        getProxyServer().getEventManager().register(this, new UserListener(getUserManager()));
 
 //        MinecraftChannelIdentifier channelIdentifier = MinecraftChannelIdentifier.create("potocraft", "server");
 //        getProxyServer().getChannelRegistrar().register(channelIdentifier);
@@ -90,6 +94,7 @@ public class VelocityPlugin implements com.rafaelsms.potocraft.common.Plugin {
 //            Optional<Player> first = getProxyServer().getAllPlayers().stream().findFirst();
 //            first.ifPresent(player -> player.sendPluginMessage(channelIdentifier, new byte[]{'a'}));
 //        }).repeat(2, TimeUnit.SECONDS).schedule();
+
         logger.info("PotoCraft Proxy initialized!");
     }
 
@@ -150,17 +155,13 @@ public class VelocityPlugin implements com.rafaelsms.potocraft.common.Plugin {
         return database;
     }
 
-    public FloodgateApi getFloodgate() throws FloodgateException {
-        try {
-            if (FloodgateApi.getInstance() == null)
-                throw new NullPointerException();
-            return FloodgateApi.getInstance();
-        } catch (Exception exception) {
-            throw new FloodgateException(exception);
-        }
+    @Override
+    public @NotNull VelocityUserManager getUserManager() {
+        assert userManager != null;
+        return userManager;
     }
 
-    public PlayerType getPlayerType(@NotNull Player player) throws FloodgateException {
+    public PlayerType getPlayerType(@NotNull Player player) throws DepedencyException {
         FloodgateApi floodgate = getFloodgate();
         for (FloodgatePlayer floodgatePlayer : floodgate.getPlayers()) {
             if (floodgatePlayer.getJavaUsername().equalsIgnoreCase(player.getUsername())) {

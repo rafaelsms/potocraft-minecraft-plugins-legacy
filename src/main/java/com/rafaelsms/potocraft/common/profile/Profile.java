@@ -32,8 +32,10 @@ public class Profile extends DatabaseObject {
     private long playTime = 0;
 
     private final List<ReportEntry> reportEntries = new LinkedList<>();
+    private final Set<UUID> ignoredPlayers = new HashSet<>();
 
     private @Nullable Location lastLocation = null;
+
 
     protected Profile(@NotNull Plugin plugin, @NotNull UUID playerId, @NotNull String playerName) {
         super(new Document());
@@ -60,6 +62,8 @@ public class Profile extends DatabaseObject {
 
         List<Document> reportEntries = document.getList(Constants.REPORT_ENTRIES_KEY, Document.class);
         this.reportEntries.addAll(Converter.fromList(reportEntries, ReportEntry::fromDocument));
+        List<UUID> ignoredPlayers = Converter.fromDocumentList(document, Constants.IGNORED_PLAYERS_KEY, Converter::toUUID, String.class);
+        this.ignoredPlayers.addAll(ignoredPlayers);
 
         this.lastLocation = Converter.toLocation((Document) document.get(Constants.LAST_LOCATION_KEY));
     }
@@ -133,6 +137,34 @@ public class Profile extends DatabaseObject {
         return Optional.empty();
     }
 
+    public ReportEntry kicked(@Nullable UUID reporterId, @Nullable String reason) {
+        ReportEntry reportEntry = ReportEntry.kicked(reporterId, reason);
+        this.reportEntries.add(reportEntry);
+        return reportEntry;
+    }
+
+    public TimedReportEntry muted(@Nullable UUID reporterId, @Nullable String reason,
+                                  @Nullable ZonedDateTime expirationDate) {
+        TimedReportEntry timedReportEntry = ReportEntry.muted(reporterId, reason, expirationDate);
+        this.reportEntries.add(timedReportEntry);
+        return timedReportEntry;
+    }
+
+    public TimedReportEntry banned(@Nullable UUID reporterId, @Nullable String reason,
+                                   @Nullable ZonedDateTime expirationDate) {
+        TimedReportEntry timedReportEntry = ReportEntry.banned(reporterId, reason, expirationDate);
+        this.reportEntries.add(timedReportEntry);
+        return timedReportEntry;
+    }
+
+    public Set<UUID> getIgnoredPlayers() {
+        return Collections.unmodifiableSet(this.ignoredPlayers);
+    }
+
+    public boolean ignorePlayer(@NotNull UUID ignoredPlayer) {
+        return this.ignoredPlayers.add(ignoredPlayer);
+    }
+
     public @NotNull Optional<Location> getLastLocation() {
         return Optional.ofNullable(lastLocation);
     }
@@ -156,10 +188,15 @@ public class Profile extends DatabaseObject {
         document.put(Constants.PLAY_TIME_MILLIS_KEY, playTime);
 
         document.put(Constants.REPORT_ENTRIES_KEY, Converter.toList(this.reportEntries, ReportEntry::toDocument));
+        Converter.toDocumentList(document, Constants.IGNORED_PLAYERS_KEY, this.ignoredPlayers, Converter::fromUUID);
 
         document.put(Constants.LAST_LOCATION_KEY, Converter.fromLocation(lastLocation));
 
         return document;
+    }
+
+    public Bson filterId() {
+        return Profile.filterId(this.playerId);
     }
 
     public static Bson filterId(@NotNull UUID playerId) {
@@ -168,30 +205,6 @@ public class Profile extends DatabaseObject {
 
     public static String lastNameField() {
         return Constants.LAST_PLAYER_NAME_KEY;
-    }
-
-    public Bson filterId() {
-        return Profile.filterId(this.playerId);
-    }
-
-    public ReportEntry kicked(@Nullable UUID reporterId, @Nullable String reason) {
-        ReportEntry reportEntry = ReportEntry.kicked(reporterId, reason);
-        this.reportEntries.add(reportEntry);
-        return reportEntry;
-    }
-
-    public TimedReportEntry muted(@Nullable UUID reporterId, @Nullable String reason,
-                                  @Nullable ZonedDateTime expirationDate) {
-        TimedReportEntry timedReportEntry = ReportEntry.muted(reporterId, reason, expirationDate);
-        this.reportEntries.add(timedReportEntry);
-        return timedReportEntry;
-    }
-
-    public TimedReportEntry banned(@Nullable UUID reporterId, @Nullable String reason,
-                                   @Nullable ZonedDateTime expirationDate) {
-        TimedReportEntry timedReportEntry = ReportEntry.banned(reporterId, reason, expirationDate);
-        this.reportEntries.add(timedReportEntry);
-        return timedReportEntry;
     }
 
     private static class Constants {
@@ -207,6 +220,7 @@ public class Profile extends DatabaseObject {
         public static final String PLAY_TIME_MILLIS_KEY = "playTimeMillis";
 
         public static final String REPORT_ENTRIES_KEY = "reportEntries";
+        public static final String IGNORED_PLAYERS_KEY = "ignoredPlayers";
 
         public static final String LAST_LOCATION_KEY = "lastLocation";
 
