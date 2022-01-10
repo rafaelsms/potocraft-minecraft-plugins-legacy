@@ -36,7 +36,6 @@ public class Profile extends DatabaseObject {
 
     private @Nullable Location lastLocation = null;
 
-
     protected Profile(@NotNull Plugin plugin, @NotNull UUID playerId, @NotNull String playerName) {
         super(new Document());
         this.plugin = plugin;
@@ -55,14 +54,17 @@ public class Profile extends DatabaseObject {
         setPIN(document.getInteger(Constants.PIN_KEY));
 
         this.lastPlayerName = document.getString(Constants.LAST_PLAYER_NAME_KEY);
-        this.firstJoinDate = Objects.requireNonNull(Converter.toDateTime(document.getString(Constants.FIRST_JOIN_DATE_KEY)));
-        this.lastJoinDate = Objects.requireNonNull(Converter.toDateTime(document.getString(Constants.LAST_JOIN_DATE_KEY)));
+        this.firstJoinDate =
+                Objects.requireNonNull(Converter.toDateTime(document.getString(Constants.FIRST_JOIN_DATE_KEY)));
+        this.lastJoinDate =
+                Objects.requireNonNull(Converter.toDateTime(document.getString(Constants.LAST_JOIN_DATE_KEY)));
         this.lastQuitDate = Converter.toDateTime(document.getString(Constants.LAST_QUIT_DATE_KEY));
         this.playTime = document.getLong(Constants.PLAY_TIME_MILLIS_KEY);
 
         List<Document> reportEntries = document.getList(Constants.REPORT_ENTRIES_KEY, Document.class);
         this.reportEntries.addAll(Converter.fromList(reportEntries, ReportEntry::fromDocument));
-        List<UUID> ignoredPlayers = Converter.fromDocumentList(document, Constants.IGNORED_PLAYERS_KEY, Converter::toUUID, String.class);
+        List<UUID> ignoredPlayers =
+                Converter.fromDocumentList(document, Constants.IGNORED_PLAYERS_KEY, Converter::toUUID, String.class);
         this.ignoredPlayers.addAll(ignoredPlayers);
 
         this.lastLocation = Converter.toLocation((Document) document.get(Constants.LAST_LOCATION_KEY));
@@ -104,8 +106,9 @@ public class Profile extends DatabaseObject {
     }
 
     public boolean setPIN(@Nullable Integer pin) {
-        if (pin != null && (pin < 0 || pin > 999_999))
+        if (pin != null && (pin < 0 || pin > 999_999)) {
             return false;
+        }
         this.pin = pin;
         return true;
     }
@@ -123,7 +126,9 @@ public class Profile extends DatabaseObject {
 
     public Optional<ReportEntry> getJoinPreventingReport() {
         for (ReportEntry reportEntry : reportEntries) {
-            if (!reportEntry.isPreventsJoining()) continue;
+            if (!reportEntry.isPreventsJoining()) {
+                continue;
+            }
             return Optional.of(reportEntry);
         }
         return Optional.empty();
@@ -131,7 +136,9 @@ public class Profile extends DatabaseObject {
 
     public Optional<ReportEntry> getChatPreventingReport() {
         for (ReportEntry reportEntry : reportEntries) {
-            if (!reportEntry.isPreventsChatting()) continue;
+            if (!reportEntry.isPreventsChatting()) {
+                continue;
+            }
             return Optional.of(reportEntry);
         }
         return Optional.empty();
@@ -143,14 +150,16 @@ public class Profile extends DatabaseObject {
         return reportEntry;
     }
 
-    public TimedReportEntry muted(@Nullable UUID reporterId, @Nullable String reason,
+    public TimedReportEntry muted(@Nullable UUID reporterId,
+                                  @Nullable String reason,
                                   @Nullable ZonedDateTime expirationDate) {
         TimedReportEntry timedReportEntry = ReportEntry.muted(reporterId, reason, expirationDate);
         this.reportEntries.add(timedReportEntry);
         return timedReportEntry;
     }
 
-    public TimedReportEntry banned(@Nullable UUID reporterId, @Nullable String reason,
+    public TimedReportEntry banned(@Nullable UUID reporterId,
+                                   @Nullable String reason,
                                    @Nullable ZonedDateTime expirationDate) {
         TimedReportEntry timedReportEntry = ReportEntry.banned(reporterId, reason, expirationDate);
         this.reportEntries.add(timedReportEntry);

@@ -34,8 +34,9 @@ public interface Plugin<T extends Profile, U extends User, P> {
 
     default FloodgateApi getFloodgate() throws DepedencyException {
         try {
-            if (FloodgateApi.getInstance() == null)
+            if (FloodgateApi.getInstance() == null) {
                 throw new NullPointerException();
+            }
             return FloodgateApi.getInstance();
         } catch (Exception exception) {
             throw new DepedencyException(exception);

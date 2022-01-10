@@ -47,7 +47,9 @@ public abstract class Database<T extends Profile> {
     protected Optional<T> getProfile(@NotNull UUID playerId) throws DatabaseException {
         return handleException(() -> {
             Document document = getUserProfiles().find(Profile.filterId(playerId)).first();
-            if (document == null) return Optional.empty();
+            if (document == null) {
+                return Optional.empty();
+            }
             return Optional.of(makeProfile(document));
         });
     }
@@ -55,12 +57,10 @@ public abstract class Database<T extends Profile> {
     protected List<T> searchOfflineProfile(@NotNull String namePattern) throws DatabaseException {
         return handleException(() -> {
             List<T> profiles = new ArrayList<>();
-            getUserProfiles()
-                    .find(Filters.regex(Profile.lastNameField(), namePattern, "i"))
+            getUserProfiles().find(Filters.regex(Profile.lastNameField(), namePattern, "i"))
                     //.projection(Projections.metaTextScore("textScore"))
                     //.sort(Sorts.metaTextScore("textScore"))
-                    .limit(6)
-                    .forEach((Consumer<? super Document>) document -> profiles.add(makeProfile(document)));
+                    .limit(6).forEach((Consumer<? super Document>) document -> profiles.add(makeProfile(document)));
             return profiles;
         });
     }

@@ -42,18 +42,21 @@ public class Location extends DatabaseObject {
     }
 
     public static @Nullable Location fromPlayer(@Nullable String serverName, @Nullable org.bukkit.Location location) {
-        if (serverName == null || location == null) return null;
+        if (serverName == null || location == null) {
+            return null;
+        }
         return new Location(serverName, location);
     }
 
-    public String getServerName() {
+    public @NotNull String getServerName() {
         return serverName;
     }
 
     public @Nullable org.bukkit.Location toBukkit(@NotNull Server server) {
         World world = server.getWorld(worldId);
-        if (world != null)
+        if (world != null) {
             return new org.bukkit.Location(world, x, y, z, yaw, pitch);
+        }
         return null;
     }
 

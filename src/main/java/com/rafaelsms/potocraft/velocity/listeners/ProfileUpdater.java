@@ -92,7 +92,9 @@ public class ProfileUpdater {
     @Subscribe
     private void onDisconnect(DisconnectEvent event, Continuation continuation) {
         Player player = event.getPlayer();
-        if (player == null) return;
+        if (player == null) {
+            return;
+        }
         // Asynchronously handle database
         CompletableFuture.runAsync(() -> {
             try {
@@ -106,7 +108,7 @@ public class ProfileUpdater {
                 // Offline players must be logged in to set quit date
                 VelocityProfile profile = profileOptional.get();
                 if (playerType != PlayerType.OFFLINE_PLAYER ||
-                            profile.isLoggedIn(event.getPlayer().getRemoteAddress())) {
+                        profile.isLoggedIn(event.getPlayer().getRemoteAddress())) {
                     profile.updateQuitDate();
                     plugin.getDatabase().saveProfile(profile);
                 }

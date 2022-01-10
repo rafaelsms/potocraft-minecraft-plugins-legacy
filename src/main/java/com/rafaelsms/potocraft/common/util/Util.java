@@ -62,7 +62,9 @@ public final class Util {
     }
 
     public static Optional<Duration> parseTime(@Nullable String string) {
-        if (string == null) return Optional.empty();
+        if (string == null) {
+            return Optional.empty();
+        }
         Matcher matcher = TIME_PATTERN.matcher(string);
         Duration duration = Duration.ZERO;
         while (matcher.find()) {
@@ -110,12 +112,16 @@ public final class Util {
     }
 
     public static Optional<String> getArgument(@NotNull String[] arguments, int position) {
-        if (position >= arguments.length) return Optional.empty();
+        if (position >= arguments.length) {
+            return Optional.empty();
+        }
         return Optional.of(arguments[position]);
     }
 
-    public static Component applyChatFormat(@NotNull Component chatFormat, @NotNull UUID playerId,
-                                            @NotNull String playerName, @NotNull Component message) {
+    public static Component applyChatFormat(@NotNull Component chatFormat,
+                                            @NotNull UUID playerId,
+                                            @NotNull String playerName,
+                                            @NotNull Component message) {
         Component prefix = Component.empty();
         Component suffix = Component.empty();
         try {

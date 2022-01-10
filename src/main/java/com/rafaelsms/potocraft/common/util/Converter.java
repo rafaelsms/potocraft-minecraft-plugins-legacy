@@ -26,18 +26,24 @@ public class Converter {
     }
 
     public static @Nullable ZonedDateTime toDateTime(@Nullable String string) {
-        if (string == null) return null;
+        if (string == null) {
+            return null;
+        }
         return ZonedDateTime.parse(string, DateTimeFormatter.ISO_ZONED_DATE_TIME);
     }
 
     public static @Nullable String fromDateTime(@Nullable ZonedDateTime zonedDateTime) {
-        if (zonedDateTime == null) return null;
+        if (zonedDateTime == null) {
+            return null;
+        }
         return zonedDateTime.format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
     }
 
     public static <T> @NotNull List<T> fromList(@Nullable List<Document> documentList,
                                                 @NotNull Function<Document, T> mapFunction) {
-        if (documentList == null) return List.of();
+        if (documentList == null) {
+            return List.of();
+        }
         ArrayList<T> list = new ArrayList<>(documentList.size());
         for (Document document : documentList) {
             list.add(mapFunction.apply(document));
@@ -47,7 +53,9 @@ public class Converter {
 
     public static <T> @NotNull List<Document> toList(@Nullable Collection<T> entries,
                                                      @NotNull Function<T, Document> mapFunction) {
-        if (entries == null) return List.of();
+        if (entries == null) {
+            return List.of();
+        }
         ArrayList<Document> list = new ArrayList<>(entries.size());
         for (T entry : entries) {
             list.add(mapFunction.apply(entry));
@@ -55,8 +63,10 @@ public class Converter {
         return list;
     }
 
-    public static <T, U> void toDocumentList(@NotNull Document document, @NotNull String key,
-                                             @Nullable Collection<T> tList, @NotNull Function<T, U> objectToListMapper) {
+    public static <T, U> void toDocumentList(@NotNull Document document,
+                                             @NotNull String key,
+                                             @Nullable Collection<T> tList,
+                                             @NotNull Function<T, U> objectToListMapper) {
         if (tList == null) {
             document.put(key, null);
             return;
@@ -68,11 +78,14 @@ public class Converter {
         document.put(key, list);
     }
 
-    public static <T, U> @NotNull List<T> fromDocumentList(@NotNull Document document, @NotNull String key,
+    public static <T, U> @NotNull List<T> fromDocumentList(@NotNull Document document,
+                                                           @NotNull String key,
                                                            @NotNull Function<U, T> listToObjectMapper,
                                                            @NotNull Class<U> uClass) {
         List<U> uList = document.getList(key, uClass);
-        if (uList == null || uList.isEmpty()) return List.of();
+        if (uList == null || uList.isEmpty()) {
+            return List.of();
+        }
         ArrayList<T> list = new ArrayList<>(uList.size());
         for (U entry : uList) {
             list.add(listToObjectMapper.apply(entry));
@@ -81,12 +94,16 @@ public class Converter {
     }
 
     public static @Nullable Location toLocation(@Nullable Document document) {
-        if (document == null) return null;
+        if (document == null) {
+            return null;
+        }
         return new Location(document);
     }
 
     public static @Nullable Document fromLocation(@Nullable Location location) {
-        if (location == null) return null;
+        if (location == null) {
+            return null;
+        }
         return location.toDocument();
     }
 }

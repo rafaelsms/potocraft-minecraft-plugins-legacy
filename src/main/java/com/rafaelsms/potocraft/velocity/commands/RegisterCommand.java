@@ -18,7 +18,8 @@ import java.util.regex.Pattern;
 public class RegisterCommand implements RawCommand {
 
     // This should match white typing the first pin and after successfully typing the first pin, while typing the confirmation one
-    private static final Predicate<String> pinSuggestion = Pattern.compile("^\\h*(\\d{1,6})$|((\\d{6})\\h*(\\d{1,6})$)").asPredicate();
+    private static final Predicate<String> pinSuggestion =
+            Pattern.compile("^\\h*(\\d{1,6})$|((\\d{6})\\h*(\\d{1,6})$)").asPredicate();
 
     private final @NotNull VelocityPlugin plugin;
 
@@ -52,7 +53,8 @@ public class RegisterCommand implements RawCommand {
         // Retrieve profile
         VelocityProfile profile;
         try {
-            profile = plugin.getDatabase()
+            profile = plugin
+                    .getDatabase()
                     .getProfile(player.getUniqueId())
                     .orElse(new VelocityProfile(plugin, player.getUniqueId(), player.getUsername()));
         } catch (Exception ignored) {
@@ -63,7 +65,7 @@ public class RegisterCommand implements RawCommand {
         // Check if profile already has a PIN
         if (profile.hasPin()) {
             if (profile.isLoggedIn(player.getRemoteAddress()) &&
-                        invocation.source().hasPermission(Permissions.CHANGE_PIN_COMMAND)) {
+                    invocation.source().hasPermission(Permissions.CHANGE_PIN_COMMAND)) {
                 player.sendMessage(plugin.getSettings().getCommandRegisterShouldChangePinInstead());
             } else {
                 player.sendMessage(plugin.getSettings().getCommandRegisterShouldLoginInstead());
@@ -117,7 +119,9 @@ public class RegisterCommand implements RawCommand {
     @Override
     public List<String> suggest(Invocation invocation) {
         String[] arguments = Util.parseArguments(invocation.arguments());
-        if (arguments.length > 2) return List.of();
+        if (arguments.length > 2) {
+            return List.of();
+        }
         if (pinSuggestion.test(invocation.arguments())) {
             return List.of("123456");
         }

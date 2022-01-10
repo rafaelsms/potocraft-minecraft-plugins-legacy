@@ -42,8 +42,11 @@ public class LoginCommand implements RawCommand {
             playerType = plugin.getPlayerType(player);
         } catch (Exception ignored) {
             player.disconnect(plugin.getSettings().getKickMessageCouldNotCheckPlayerType());
-            plugin.logger().warn("Failed to retrieve player connection type for player (%s, uuid = %s) in login command"
-                    .formatted(player.getUsername(), player.getUniqueId().toString()));
+            plugin
+                    .logger()
+                    .warn("Failed to retrieve player connection type for player (%s, uuid = %s) in login command".formatted(
+                            player.getUsername(),
+                            player.getUniqueId().toString()));
             return;
         }
 
@@ -126,7 +129,9 @@ public class LoginCommand implements RawCommand {
     @Override
     public List<String> suggest(Invocation invocation) {
         String[] arguments = Util.parseArguments(invocation.arguments());
-        if (arguments.length > 1) return List.of();
+        if (arguments.length > 1) {
+            return List.of();
+        }
         if (unfinishedPinPattern.test(arguments[0])) {
             return List.of("123456");
         } else {

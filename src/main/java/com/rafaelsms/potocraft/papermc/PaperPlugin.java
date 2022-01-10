@@ -50,22 +50,6 @@ public class PaperPlugin extends JavaPlugin implements Plugin<PaperProfile, Pape
         getServer().getPluginManager().registerEvents(new ProfileUpdater(this), this);
         getServer().getPluginManager().registerEvents(new UserListener(getUserManager()), this);
 
-//        getServer().getMessenger().registerIncomingPluginChannel(this, "potocraft:server", new PluginMessageListener() {
-//            @Override
-//            public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
-//                logger().info("channel %s, player %s, message: %s".formatted(channel, player.getName(), message));
-//            }
-//        });
-//        getServer().getMessenger().registerOutgoingPluginChannel(this, "potocraft:server");
-//        getServer().getScheduler().runTaskTimer(
-//                this,
-//                () -> {
-//                    getServer().sendPluginMessage(this, "potocraft:server", new byte[]{'B', 'C'});
-//                    Optional<? extends Player> first = getServer().getOnlinePlayers().stream().findFirst();
-//                    first.ifPresent(player -> player.sendPluginMessage(this, "potocraft:server", new byte[]{'A'}));
-//                }, 40, 40
-//        );
-
         logger().info("PotoCraft Paper Plugin enabled!");
     }
 

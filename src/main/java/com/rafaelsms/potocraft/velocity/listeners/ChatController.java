@@ -74,12 +74,10 @@ public class ChatController {
         Player sendingPlayer = event.getPlayer();
 
         // Format spy message
-        Component spyChatMessage = Util.applyChatFormat(
-                plugin.getSettings().getUniversalChatSpyFormat(),
-                sendingPlayer.getUniqueId(),
-                sendingPlayer.getUsername(),
-                Component.text(event.getMessage())
-        );
+        Component spyChatMessage = Util.applyChatFormat(plugin.getSettings().getUniversalChatSpyFormat(),
+                                                        sendingPlayer.getUniqueId(),
+                                                        sendingPlayer.getUsername(),
+                                                        Component.text(event.getMessage()));
         // Send to all spies
         for (Player onlinePlayer : plugin.getProxyServer().getAllPlayers()) {
             // If player doesn't have permission, skip
@@ -115,12 +113,10 @@ public class ChatController {
 
         // Format chat
         String message = event.getMessage().substring(chatPrefix.length()).strip();
-        Component chatMessage = Util.applyChatFormat(
-                plugin.getSettings().getUniversalChatFormat(),
-                sendingPlayer.getUniqueId(),
-                sendingPlayer.getUsername(),
-                Component.text(message)
-        );
+        Component chatMessage = Util.applyChatFormat(plugin.getSettings().getUniversalChatFormat(),
+                                                     sendingPlayer.getUniqueId(),
+                                                     sendingPlayer.getUsername(),
+                                                     Component.text(message));
         // Cancel the event
         event.setResult(PlayerChatEvent.ChatResult.denied());
         // Send the message to everybody

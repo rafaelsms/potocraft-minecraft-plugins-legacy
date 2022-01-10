@@ -46,12 +46,14 @@ public class ReportEntry extends DatabaseObject {
         return new ReportEntry(ReportType.KICK_REPORT, reporterId, reason);
     }
 
-    public static @NotNull TimedReportEntry banned(@Nullable UUID reporterId, @Nullable String reason,
+    public static @NotNull TimedReportEntry banned(@Nullable UUID reporterId,
+                                                   @Nullable String reason,
                                                    @Nullable ZonedDateTime expirationDate) {
         return new TimedReportEntry(ReportType.BAN_REPORT, reporterId, expirationDate, reason);
     }
 
-    public static @NotNull TimedReportEntry muted(@Nullable UUID reporterId, @Nullable String reason,
+    public static @NotNull TimedReportEntry muted(@Nullable UUID reporterId,
+                                                  @Nullable String reason,
                                                   @Nullable ZonedDateTime expirationDate) {
         return new TimedReportEntry(ReportType.MUTE_REPORT, reporterId, expirationDate, reason);
     }
@@ -150,7 +152,9 @@ public class ReportEntry extends DatabaseObject {
             return switch (reportEntry.reportType) {
                 case BAN_REPORT -> plugin.getSettings().getKickMessageBanned(reporter, reason, expirationDate);
                 case KICK_REPORT -> plugin.getSettings().getKickMessageKicked(reporter, reason);
-                case MUTE_REPORT -> plugin.getSettings().getCommandReportYouHaveBeenMuted(reporter, reason, expirationDate);
+                case MUTE_REPORT -> plugin
+                        .getSettings()
+                        .getCommandReportYouHaveBeenMuted(reporter, reason, expirationDate);
             };
         }
 
@@ -174,7 +178,8 @@ public class ReportEntry extends DatabaseObject {
             return reason;
         }
 
-        private static Component getReporterComponent(@NotNull VelocityPlugin plugin, @NotNull ReportEntry reportEntry) {
+        private static Component getReporterComponent(@NotNull VelocityPlugin plugin,
+                                                      @NotNull ReportEntry reportEntry) {
             Component reporter = plugin.getSettings().getUnknownPlayerName();
             if (reportEntry.reporterId == null) {
                 reporter = plugin.getSettings().getConsoleName();
@@ -188,10 +193,13 @@ public class ReportEntry extends DatabaseObject {
             return reporter;
         }
 
-        private static Component getExpirationDateComponent(@NotNull VelocityPlugin plugin, @NotNull ReportEntry reportEntry) {
+        private static Component getExpirationDateComponent(@NotNull VelocityPlugin plugin,
+                                                            @NotNull ReportEntry reportEntry) {
             Component expirationDate = plugin.getSettings().getCommandReportNoExpirationDate();
-            if (reportEntry instanceof TimedReportEntry timedReportEntry && timedReportEntry.getExpirationDate() != null) {
-                String dateTime = plugin.getSettings().getDateTimeFormatter().format(timedReportEntry.getExpirationDate());
+            if (reportEntry instanceof TimedReportEntry timedReportEntry &&
+                    timedReportEntry.getExpirationDate() != null) {
+                String dateTime =
+                        plugin.getSettings().getDateTimeFormatter().format(timedReportEntry.getExpirationDate());
                 expirationDate = Component.text(dateTime);
             }
             return expirationDate;

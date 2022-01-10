@@ -80,8 +80,12 @@ public abstract class Settings {
         for (Profile profile : profiles) {
             playerNames.add(profile.getLastPlayerName());
         }
-        return getLang(Constants.LANG_MANY_PLAYERS_FOUND)
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%list%").replacement(Util.joinStrings(playerNames, ", ")).build());
+        TextReplacementConfig replacementConfig = TextReplacementConfig
+                .builder()
+                .matchLiteral("%list%")
+                .replacement(Util.joinStrings(playerNames, ", "))
+                .build();
+        return getLang(Constants.LANG_MANY_PLAYERS_FOUND).replaceText(replacementConfig);
     }
 
     public Component getUnknownPlayerName() {
@@ -116,7 +120,9 @@ public abstract class Settings {
         try {
             return Util.getLang(get(key));
         } catch (Exception exception) {
-            plugin.logger().warn("Couldn't get language for \"%s\": %s".formatted(key, exception.getLocalizedMessage()));
+            plugin
+                    .logger()
+                    .warn("Couldn't get language for \"%s\": %s".formatted(key, exception.getLocalizedMessage()));
             exception.printStackTrace();
             return Component.text(key);
         }
@@ -182,41 +188,55 @@ public abstract class Settings {
         public static final String DATABASE_MONGO_URI = "configuration.database.mongo_uri";
         public static final String DATABASE_MONGO_DATABASE = "configuration.database.mongo_database";
         public static final String DATABASE_FAIL_FATAL = "configuration.database.database_fail_shutdowns_server";
-        public static final String DATABASE_FAIL_PRINT_STACK = "configuration.database.database_fail_prints_stack_trace";
+        public static final String DATABASE_FAIL_PRINT_STACK =
+                "configuration.database.database_fail_prints_stack_trace";
 
         public static final String LOBBY_SERVER_NAME = "configuration.login.lobby_server";
 
         // Velocity
-        public static final String LOGIN_MAX_LOGIN_DURATION_SECONDS = "configuration.login.max_time_since_last_login_to_auto_login_seconds";
+        public static final String LOGIN_MAX_LOGIN_DURATION_SECONDS =
+                "configuration.login.max_time_since_last_login_to_auto_login_seconds";
         public static final String LOGIN_SERVER_NAME = "configuration.login.unauthenticated_server";
         public static final String KICK_IF_LOBBY_UNAVAILABLE = "configuration.login.kick_if_lobby_server_unavailable";
 
         public static final String UNIVERSAL_CHAT_FORMAT = "configuration.chat.universal.format";
         public static final String UNIVERSAL_CHAT_SPY_FORMAT = "configuration.chat.universal.format";
         public static final String UNIVERSAL_CHAT_PREFIX = "configuration.chat.universal.prefix";
-        public static final String UNIVERSAL_CHAT_LIMITER_MESSAGES_AMOUNT = "configuration.chat.universal.limiter.messages_amount";
-        public static final String UNIVERSAL_CHAT_LIMITER_TIME_AMOUNT = "configuration.chat.universal.limiter.time_amount_millis";
-        public static final String UNIVERSAL_CHAT_COMPARATOR_MIN_LENGTH = "configuration.chat.universal.comparator.minimum_length";
-        public static final String UNIVERSAL_CHAT_COMPARATOR_THRESHOLD = "configuration.chat.universal.comparator.minimum_char_differences";
+        public static final String UNIVERSAL_CHAT_LIMITER_MESSAGES_AMOUNT =
+                "configuration.chat.universal.limiter.messages_amount";
+        public static final String UNIVERSAL_CHAT_LIMITER_TIME_AMOUNT =
+                "configuration.chat.universal.limiter.time_amount_millis";
+        public static final String UNIVERSAL_CHAT_COMPARATOR_MIN_LENGTH =
+                "configuration.chat.universal.comparator.minimum_length";
+        public static final String UNIVERSAL_CHAT_COMPARATOR_THRESHOLD =
+                "configuration.chat.universal.comparator.minimum_char_differences";
 
         // Paper
         public static final String PAPER_SERVER_NAME_ON_PROXY = "configuration.server_name_on_the_proxy";
 
         public static final String GLOBAL_CHAT_FORMAT = "configuration.chat.global.format";
         public static final String GLOBAL_CHAT_PREFIX = "configuration.chat.global.prefix";
-        public static final String GLOBAL_CHAT_LIMITER_MESSAGES_AMOUNT = "configuration.chat.global.limiter.messages_amount";
-        public static final String GLOBAL_CHAT_LIMITER_TIME_AMOUNT = "configuration.chat.global.limiter.time_amount_millis";
-        public static final String GLOBAL_CHAT_COMPARATOR_MIN_LENGTH = "configuration.chat.global.comparator.minimum_length";
-        public static final String GLOBAL_CHAT_COMPARATOR_THRESHOLD = "configuration.chat.global.comparator.minimum_char_differences";
+        public static final String GLOBAL_CHAT_LIMITER_MESSAGES_AMOUNT =
+                "configuration.chat.global.limiter.messages_amount";
+        public static final String GLOBAL_CHAT_LIMITER_TIME_AMOUNT =
+                "configuration.chat.global.limiter.time_amount_millis";
+        public static final String GLOBAL_CHAT_COMPARATOR_MIN_LENGTH =
+                "configuration.chat.global.comparator.minimum_length";
+        public static final String GLOBAL_CHAT_COMPARATOR_THRESHOLD =
+                "configuration.chat.global.comparator.minimum_char_differences";
         public static final String LOCAL_CHAT_FORMAT = "configuration.chat.local.format";
         public static final String LOCAL_CHAT_SPY_FORMAT = "configuration.chat.local.spy_format";
         public static final String LOCAL_CHAT_RADIUS = "configuration.chat.local.radius";
-        public static final String LOCAL_CHAT_LIMITER_MESSAGES_AMOUNT = "configuration.chat.local.limiter.messages_amount";
-        public static final String LOCAL_CHAT_LIMITER_TIME_AMOUNT = "configuration.chat.local.limiter.time_amount_millis";
-        public static final String LOCAL_CHAT_COMPARATOR_MIN_LENGTH = "configuration.chat.local.comparator.minimum_length";
-        public static final String LOCAL_CHAT_COMPARATOR_THRESHOLD = "configuration.chat.local.comparator.minimum_char_differences";
-        public static final String REPLY_MESSAGE_TIMEOUT = "configuration.chat.direct_messages.reply_candidate_timeout_in_seconds";
-
+        public static final String LOCAL_CHAT_LIMITER_MESSAGES_AMOUNT =
+                "configuration.chat.local.limiter.messages_amount";
+        public static final String LOCAL_CHAT_LIMITER_TIME_AMOUNT =
+                "configuration.chat.local.limiter.time_amount_millis";
+        public static final String LOCAL_CHAT_COMPARATOR_MIN_LENGTH =
+                "configuration.chat.local.comparator.minimum_length";
+        public static final String LOCAL_CHAT_COMPARATOR_THRESHOLD =
+                "configuration.chat.local.comparator.minimum_char_differences";
+        public static final String REPLY_MESSAGE_TIMEOUT =
+                "configuration.chat.direct_messages.reply_candidate_timeout_in_seconds";
 
         /* Language */
         // Common
@@ -226,10 +246,12 @@ public abstract class Settings {
         public static final String LANG_PLAYER_NOT_FOUND = "language.player_not_found";
         public static final String LANG_MANY_PLAYERS_FOUND = "language.player_not_found";
 
-        public static final String LANG_CONSOLE_CANT_EXECUTE_COMMAND = "language.commands.console_can_not_execute_command";
+        public static final String LANG_CONSOLE_CANT_EXECUTE_COMMAND =
+                "language.commands.console_can_not_execute_command";
         public static final String LANG_GENERIC_COMMAND_ERROR = "language.commands.generic_command_error";
 
-        public static final String LANG_COULD_NOT_RETRIEVE_PROFILE = "language.kick_messages.could_not_retrieve_profile";
+        public static final String LANG_COULD_NOT_RETRIEVE_PROFILE =
+                "language.kick_messages.could_not_retrieve_profile";
         public static final String LANG_COULD_NOT_SAVE_PROFILE = "language.kick_messages.could_not_save_profile";
 
         // Velocity
@@ -243,23 +265,30 @@ public abstract class Settings {
 
         public static final String LANG_REGISTER_INVALID_PINS = "language.commands.register.invalid_pin_input";
         public static final String LANG_REGISTER_PINS_DO_NOT_MATCH = "language.commands.register.pins_do_not_match";
-        public static final String LANG_REGISTER_PIN_FORMATTING_FAILED = "language.commands.register.pin_formatting_failed";
+        public static final String LANG_REGISTER_PIN_FORMATTING_FAILED =
+                "language.commands.register.pin_formatting_failed";
         public static final String LANG_REGISTER_HELP = "language.commands.register.help";
         public static final String LANG_REGISTER_TRY_LOGIN_INSTEAD = "language.commands.register.use_login_instead";
-        public static final String LANG_REGISTER_TRY_CHANGE_PIN_INSTEAD = "language.commands.register.use_change_pin_instead";
+        public static final String LANG_REGISTER_TRY_CHANGE_PIN_INSTEAD =
+                "language.commands.register.use_change_pin_instead";
 
         public static final String LANG_CHANGE_PIN_HELP = "language.commands.change_pin.help";
-        public static final String LANG_CHANGE_PIN_PINS_DO_NOT_MATCH = "language.commands.change_pin.new_pin_do_not_match";
+        public static final String LANG_CHANGE_PIN_PINS_DO_NOT_MATCH =
+                "language.commands.change_pin.new_pin_do_not_match";
 
         public static final String LANG_REPORT_UNKNOWN_REASON = "language.commands.report.unknown_report_reason";
-        public static final String LANG_REPORT_NO_EXPIRATION_DATE = "language.commands.report.unknown_report_expiration_date";
+        public static final String LANG_REPORT_NO_EXPIRATION_DATE =
+                "language.commands.report.unknown_report_expiration_date";
         public static final String LANG_REPORT_YOU_HAVE_BEEN_MUTED = "language.commands.report.muted";
         public static final String LANG_REPORT_HELP = "language.commands.report.help";
-        public static final String LANG_REPORT_PLAYER_EXEMPT = "language.commands.report.player_is_exempt_from_punishment";
+        public static final String LANG_REPORT_PLAYER_EXEMPT =
+                "language.commands.report.player_is_exempt_from_punishment";
         public static final String LANG_REPORT_COULD_NOT_SAVE_REPORT = "language.commands.report.could_not_save_report";
-        public static final String LANG_REPORT_SUB_COMMAND_PLAYER_REASON_HELP = "language.commands.report.help_subcommand_player_reason";
+        public static final String LANG_REPORT_SUB_COMMAND_PLAYER_REASON_HELP =
+                "language.commands.report.help_subcommand_player_reason";
         public static final String LANG_REPORT_UNREPORT_HELP = "language.commands.report.unreport_help";
-        public static final String LANG_REPORT_UNREPORT_NO_ENTRY = "language.commands.report.unreport_no_entry_for_player";
+        public static final String LANG_REPORT_UNREPORT_NO_ENTRY =
+                "language.commands.report.unreport_no_entry_for_player";
         public static final String LANG_REPORT_UNREPORT_SUCCESSFULLY = "language.commands.report.unreport_successful";
         public static final String LANG_REPORT_HISTORY_HELP = "language.commands.report.help_history_subcommand";
         public static final String LANG_REPORT_HISTORY_NO_ENTRIES = "language.commands.report.history_no_entries";
@@ -273,9 +302,12 @@ public abstract class Settings {
 
         public static final String LANG_KICKED = "language.kick_messages.kicked";
         public static final String LANG_BANNED = "language.kick_messages.banned";
-        public static final String LANG_COULD_NOT_CHECK_PLAYER_TYPE = "language.kick_messages.could_not_check_player_type";
-        public static final String LANG_COULD_NOT_CHECK_MOJANG_USERNAME = "language.kick_messages.could_not_check_mojang_username";
-        public static final String LANG_FLOODGATE_PREFIX_ON_JAVA_PLAYER = "language.kick_messages.floodgate_prefix_on_java_player";
+        public static final String LANG_COULD_NOT_CHECK_PLAYER_TYPE =
+                "language.kick_messages.could_not_check_player_type";
+        public static final String LANG_COULD_NOT_CHECK_MOJANG_USERNAME =
+                "language.kick_messages.could_not_check_mojang_username";
+        public static final String LANG_FLOODGATE_PREFIX_ON_JAVA_PLAYER =
+                "language.kick_messages.floodgate_prefix_on_java_player";
         public static final String LANG_NO_LOGIN_SERVER_AVAILABLE = "language.kick_messages.login_server_unavailable";
         public static final String LANG_LOGIN_TRANSFER_UNAVAILABLE = "language.kick_messages.lobby_server_unavailable";
 

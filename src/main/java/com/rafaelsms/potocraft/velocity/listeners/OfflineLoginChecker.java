@@ -41,7 +41,7 @@ public record OfflineLoginChecker(@NotNull VelocityPlugin plugin) {
                 }
             }
             if (FloodgateApi.getInstance().getPlayerPrefix().length() > 0 &&
-                        event.getUsername().startsWith(FloodgateApi.getInstance().getPlayerPrefix())) {
+                    event.getUsername().startsWith(FloodgateApi.getInstance().getPlayerPrefix())) {
                 plugin.debug("player %s is not floodgate but using prefix, denied".formatted(event.getUsername()));
                 Component reason = plugin.getSettings().getKickMessageInvalidPrefixForJavaPlayer();
                 event.setResult(PreLoginEvent.PreLoginComponentResult.denied(reason));
@@ -49,8 +49,9 @@ public record OfflineLoginChecker(@NotNull VelocityPlugin plugin) {
                 return;
             }
         } else {
-            plugin.logger().warn("Failed to access Floodgate API: disconnecting player %s"
-                    .formatted(event.getUsername()));
+            plugin
+                    .logger()
+                    .warn("Failed to access Floodgate API: disconnecting player %s".formatted(event.getUsername()));
             Component reason = plugin.getSettings().getKickMessageCouldNotCheckPlayerType();
             event.setResult(PreLoginEvent.PreLoginComponentResult.denied(reason));
             continuation.resume();
@@ -97,8 +98,11 @@ public record OfflineLoginChecker(@NotNull VelocityPlugin plugin) {
             continuation.resume();
             return;
         }
-        plugin.logger().info("Player %s (uuid = %s) connection type is %s"
-                .formatted(player.getUsername(), player.getUniqueId(), playerType.toString()));
+        plugin
+                .logger()
+                .info("Player %s (uuid = %s) connection type is %s".formatted(player.getUsername(),
+                                                                              player.getUniqueId(),
+                                                                              playerType.toString()));
 
         // Ignore online/floodgate players
         if (playerType != PlayerType.OFFLINE_PLAYER) {

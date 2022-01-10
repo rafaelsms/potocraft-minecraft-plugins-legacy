@@ -17,7 +17,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,7 +47,9 @@ public class ReportCommand implements RawCommand {
 
     private Optional<VelocityProfile> handlePlayerSearch(@NotNull CommandSource source,
                                                          @Nullable String playerNamePattern) throws DatabaseException {
-        if (playerNamePattern == null) return Optional.empty();
+        if (playerNamePattern == null) {
+            return Optional.empty();
+        }
         List<VelocityProfile> profiles = plugin.getDatabase().searchOfflineProfile(playerNamePattern);
         if (profiles.isEmpty()) {
             source.sendMessage(plugin.getSettings().getPlayerNotFound());
@@ -107,7 +112,8 @@ public class ReportCommand implements RawCommand {
         @Override
         public void execute(Invocation invocation) {
             CommandSource source = invocation.source();
-            String[] arguments = Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
+            String[] arguments =
+                    Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
 
             // Check argument length
             if (arguments.length == 0) {
@@ -167,7 +173,8 @@ public class ReportCommand implements RawCommand {
         @Override
         public void execute(Invocation invocation) {
             CommandSource source = invocation.source();
-            String[] arguments = Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
+            String[] arguments =
+                    Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
 
             // Check if no argument was given
             if (arguments.length == 0) {
@@ -240,7 +247,8 @@ public class ReportCommand implements RawCommand {
         @Override
         public void execute(Invocation invocation) {
             CommandSource source = invocation.source();
-            String[] arguments = Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
+            String[] arguments =
+                    Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
 
             // Check if no argument was given
             if (arguments.length == 0) {
@@ -313,7 +321,8 @@ public class ReportCommand implements RawCommand {
         @Override
         public void execute(Invocation invocation) {
             CommandSource source = invocation.source();
-            String[] arguments = Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
+            String[] arguments =
+                    Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
 
             // Check if no argument was given
             String playerNameString = Util.getArgument(arguments, 0).orElse(null);
@@ -330,7 +339,10 @@ public class ReportCommand implements RawCommand {
                     source.sendMessage(plugin.getSettings().getManyPlayersFound(profiles));
                 } else {
                     VelocityProfile profile = profiles.get(0);
-                    source.sendMessage(plugin.getSettings().getCommandReportHistory(profile.getLastPlayerName(), profile.getReportEntries()));
+                    source.sendMessage(plugin
+                                               .getSettings()
+                                               .getCommandReportHistory(profile.getLastPlayerName(),
+                                                                        profile.getReportEntries()));
                 }
             } catch (Exception ignored) {
                 source.sendMessage(plugin.getSettings().getCommandGenericError());
@@ -339,8 +351,9 @@ public class ReportCommand implements RawCommand {
 
         @Override
         public List<String> suggest(Invocation invocation) {
-            if (Util.parseArguments(invocation.arguments()).length == 1)
+            if (Util.parseArguments(invocation.arguments()).length == 1) {
                 return VelocityUtil.getPlayerNameList(plugin);
+            }
             return List.of();
         }
 
@@ -355,7 +368,8 @@ public class ReportCommand implements RawCommand {
         @Override
         public void execute(Invocation invocation) {
             CommandSource source = invocation.source();
-            String[] arguments = Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
+            String[] arguments =
+                    Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
 
             // Check if no argument was given
             String playerNameString = Util.getArgument(arguments, 0).orElse(null);
@@ -372,18 +386,22 @@ public class ReportCommand implements RawCommand {
                     VelocityProfile profile = profiles.get(0);
                     Optional<ReportEntry> joinPreventingOptional = profile.getJoinPreventingReport();
                     if (joinPreventingOptional.isPresent() &&
-                                joinPreventingOptional.get() instanceof TimedReportEntry reportEntry) {
+                            joinPreventingOptional.get() instanceof TimedReportEntry reportEntry) {
                         reportEntry.setActive(false);
                         plugin.getDatabase().saveProfile(profile);
-                        source.sendMessage(plugin.getSettings().getCommandReportUnreportSuccessfully(profile.getLastPlayerName()));
+                        source.sendMessage(plugin
+                                                   .getSettings()
+                                                   .getCommandReportUnreportSuccessfully(profile.getLastPlayerName()));
                         return;
                     }
                     Optional<ReportEntry> chatPreventingOptional = profile.getChatPreventingReport();
                     if (chatPreventingOptional.isPresent() &&
-                                chatPreventingOptional.get() instanceof TimedReportEntry reportEntry) {
+                            chatPreventingOptional.get() instanceof TimedReportEntry reportEntry) {
                         reportEntry.setActive(false);
                         plugin.getDatabase().saveProfile(profile);
-                        source.sendMessage(plugin.getSettings().getCommandReportUnreportSuccessfully(profile.getLastPlayerName()));
+                        source.sendMessage(plugin
+                                                   .getSettings()
+                                                   .getCommandReportUnreportSuccessfully(profile.getLastPlayerName()));
                         return;
                     }
                     source.sendMessage(plugin.getSettings().getCommandReportUnreportNoEntry());
@@ -397,8 +415,9 @@ public class ReportCommand implements RawCommand {
 
         @Override
         public List<String> suggest(Invocation invocation) {
-            if (Util.parseArguments(invocation.arguments()).length == 1)
+            if (Util.parseArguments(invocation.arguments()).length == 1) {
                 return VelocityUtil.getPlayerNameList(plugin);
+            }
             return List.of();
         }
 

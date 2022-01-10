@@ -26,7 +26,8 @@ public final class Permissions {
 
     public static final @NotNull String MESSAGE_COMMAND = "potocraft.proxy_command.message";
     public static final @NotNull String MESSAGE_COMMAND_REPLY = "potocraft.proxy_command.message.reply";
-    public static final @NotNull String MESSAGE_COMMAND_BYPASS_IGNORE = "potocraft.proxy_command.message.bypass"; // TODO
+    // TODO below
+    public static final @NotNull String MESSAGE_COMMAND_BYPASS_IGNORE = "potocraft.proxy_command.message.bypass";
 
     public static final @NotNull String LOCAL_CHAT_SPY = "potocraft.chat.spy";
     public static final @NotNull String GLOBAL_CHAT = "potocraft.chat.global";

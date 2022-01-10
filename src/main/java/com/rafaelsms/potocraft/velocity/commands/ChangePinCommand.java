@@ -25,7 +25,8 @@ public class ChangePinCommand implements RawCommand {
     }
 
     private Optional<Integer> getMatchingPins(@NotNull CommandSource source,
-                                              @NotNull String firstPin, @NotNull String secondPin) {
+                                              @NotNull String firstPin,
+                                              @NotNull String secondPin) {
         try {
             int newPin = Util.parsePin(firstPin).orElseThrow();
             int newPinConfirmation = Util.parsePin(secondPin).orElseThrow();

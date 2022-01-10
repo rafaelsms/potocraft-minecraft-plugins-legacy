@@ -13,12 +13,15 @@ import java.util.UUID;
 public class PaperConverter {
 
     public static Document fromLocation(@Nullable Location location) {
-        if (location == null) return null;
+        if (location == null) {
+            return null;
+        }
         UUID worldId;
-        if (location.getWorld() == null)
+        if (location.getWorld() == null) {
             worldId = null;
-        else
+        } else {
             worldId = location.getWorld().getUID();
+        }
         double x = location.getX();
         double y = location.getY();
         double z = location.getZ();
@@ -36,13 +39,16 @@ public class PaperConverter {
     }
 
     public static Location toLocation(@NotNull JavaPlugin plugin, @Nullable Document document) {
-        if (document == null) return null;
+        if (document == null) {
+            return null;
+        }
         UUID worldId = Converter.toUUID(document.getString(LocationConstants.WORLD_KEY));
         World world;
-        if (worldId == null)
+        if (worldId == null) {
             world = null;
-        else
+        } else {
             world = plugin.getServer().getWorld(worldId);
+        }
         double x = document.getDouble(LocationConstants.X_KEY);
         double y = document.getDouble(LocationConstants.Y_KEY);
         double z = document.getDouble(LocationConstants.Z_KEY);

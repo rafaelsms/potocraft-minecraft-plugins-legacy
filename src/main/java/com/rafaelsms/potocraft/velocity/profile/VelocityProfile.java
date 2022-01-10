@@ -27,11 +27,13 @@ public class VelocityProfile extends Profile {
     }
 
     public boolean isLoggedIn(@Nullable InetSocketAddress address) {
-        if (address == null || this.lastLoginAddress == null || this.lastLoginDate == null)
+        if (address == null || this.lastLoginAddress == null || this.lastLoginDate == null) {
             return false;
+        }
         long maxLoginDurationSeconds = plugin.getSettings().getMaxLoginDurationSeconds();
-        if (this.lastLoginDate.isAfter(ZonedDateTime.now().minus(Duration.ofSeconds(maxLoginDurationSeconds))))
+        if (this.lastLoginDate.isAfter(ZonedDateTime.now().minus(Duration.ofSeconds(maxLoginDurationSeconds)))) {
             return false;
+        }
         return Util.getIpAddress(address).equalsIgnoreCase(this.lastLoginAddress);
     }
 

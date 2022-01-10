@@ -16,6 +16,7 @@ public class PaperSettings extends Settings {
     @Override
     protected void setDefaults() {
         super.setDefaults();
+        /* CONFIGURATION */
         setDefault(Constants.PAPER_SERVER_NAME_ON_PROXY, "<FILL THIS IN OR LOCATIONS WONT BE RESTORED>");
 
         setDefault(Constants.GLOBAL_CHAT_FORMAT, "&7! <&e%prefix%%username%%suffix%&7> &f%message%");
@@ -30,6 +31,8 @@ public class PaperSettings extends Settings {
         setDefault(Constants.LOCAL_CHAT_COMPARATOR_MIN_LENGTH, 4);
         setDefault(Constants.LOCAL_CHAT_COMPARATOR_THRESHOLD, 2);
         setDefault(Constants.LOCAL_CHAT_RADIUS, 400.0);
+
+        /* LANG */
     }
 
     public String getServerName() {

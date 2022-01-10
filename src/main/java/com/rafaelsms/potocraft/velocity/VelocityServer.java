@@ -21,8 +21,9 @@ public class VelocityServer implements CommonServer {
     @Override
     public File getConfigurationFile() {
         File dataDirectory = this.dataDirectory.toFile();
-        if (!dataDirectory.exists() && !dataDirectory.mkdir())
+        if (!dataDirectory.exists() && !dataDirectory.mkdir()) {
             throw new IllegalStateException("Couldn't create data folder");
+        }
         return new File(dataDirectory, "config.json");
     }
 

@@ -11,6 +11,7 @@ import com.rafaelsms.potocraft.velocity.listeners.*;
 import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import com.rafaelsms.potocraft.velocity.user.VelocityUser;
 import com.rafaelsms.potocraft.velocity.user.VelocityUserManager;
+import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyReloadEvent;
@@ -42,7 +43,8 @@ public class VelocityPlugin implements com.rafaelsms.potocraft.common.Plugin<Vel
     private final @Nullable VelocityUserManager userManager;
 
     @Inject
-    public VelocityPlugin(@NotNull ProxyServer server, @NotNull Logger logger, @DataDirectory Path dataDirectory) throws Exception {
+    public VelocityPlugin(@NotNull ProxyServer server, @NotNull Logger logger, @DataDirectory Path dataDirectory)
+            throws Exception {
         this.server = server;
         this.commonServer = new VelocityServer(server, dataDirectory);
         this.logger = logger;
@@ -65,12 +67,13 @@ public class VelocityPlugin implements com.rafaelsms.potocraft.common.Plugin<Vel
         }
 
         // Register commands
-        getProxyServer().getCommandManager().register("login", new LoginCommand(this), "l", "log");
-        getProxyServer().getCommandManager().register("registrar", new RegisterCommand(this), "reg", "register");
-        getProxyServer().getCommandManager().register("mudarsenha", new ChangePinCommand(this), "changepin", "changepassword", "mudarpin");
-        getProxyServer().getCommandManager().register("report", new ReportCommand(this), "reportar");
-        getProxyServer().getCommandManager().register("mensagem", new MessageCommand(this), "msg", "message", "dm", "pm", "tell");
-        getProxyServer().getCommandManager().register("responder", new ReplyCommand(this), "reply", "r");
+        CommandManager commandManager = getProxyServer().getCommandManager();
+        commandManager.register("login", new LoginCommand(this), "l", "log");
+        commandManager.register("registrar", new RegisterCommand(this), "reg", "register");
+        commandManager.register("mudarsenha", new ChangePinCommand(this), "changepin", "changepassword", "mudarpin");
+        commandManager.register("report", new ReportCommand(this), "reportar");
+        commandManager.register("mensagem", new MessageCommand(this), "msg", "message", "dm", "pm", "tell");
+        commandManager.register("responder", new ReplyCommand(this), "reply", "r");
 
         // Register listeners
         getProxyServer().getEventManager().register(this, new OfflineLoginChecker(this));
@@ -78,22 +81,6 @@ public class VelocityPlugin implements com.rafaelsms.potocraft.common.Plugin<Vel
         getProxyServer().getEventManager().register(this, new ReportChecker(this));
         getProxyServer().getEventManager().register(this, new ChatController(this));
         getProxyServer().getEventManager().register(this, new UserListener(getUserManager()));
-
-//        MinecraftChannelIdentifier channelIdentifier = MinecraftChannelIdentifier.create("potocraft", "server");
-//        getProxyServer().getChannelRegistrar().register(channelIdentifier);
-//        getProxyServer().getEventManager().register(this, new Object() {
-//            @Subscribe
-//            private void onPluginMessage(PluginMessageEvent event) {
-//                if (channelIdentifier.equals(event.getIdentifier())) {
-//                    logger.info(Arrays.toString(event.getData()));
-//                }
-//            }
-//        });
-//        getProxyServer().getScheduler().buildTask(this, () -> {
-//            getProxyServer().getServer("lobby").get().sendPluginMessage(channelIdentifier, new byte[]{'b', 'c'});
-//            Optional<Player> first = getProxyServer().getAllPlayers().stream().findFirst();
-//            first.ifPresent(player -> player.sendPluginMessage(channelIdentifier, new byte[]{'a'}));
-//        }).repeat(2, TimeUnit.SECONDS).schedule();
 
         logger.info("PotoCraft Proxy initialized!");
     }

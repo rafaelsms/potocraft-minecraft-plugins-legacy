@@ -18,17 +18,22 @@ public final class VelocityUtil {
     private VelocityUtil() {
     }
 
-    public static void sendPlayerToLastServer(@NotNull VelocityPlugin plugin, @NotNull Player player,
+    public static void sendPlayerToLastServer(@NotNull VelocityPlugin plugin,
+                                              @NotNull Player player,
                                               @NotNull VelocityProfile profile) {
         sendPlayerToServer(plugin, player, getLastServer(plugin, profile));
     }
 
-    public static void sendPlayerToServer(@NotNull VelocityPlugin plugin, @NotNull Player player, @Nullable RegisteredServer server) {
+    public static void sendPlayerToServer(@NotNull VelocityPlugin plugin,
+                                          @NotNull Player player,
+                                          @Nullable RegisteredServer server) {
         try {
-            if (server == null)
+            if (server == null) {
                 throw new NullPointerException();
-            if (!player.createConnectionRequest(server).connect().get().isSuccessful())
+            }
+            if (!player.createConnectionRequest(server).connect().get().isSuccessful()) {
                 throw new IllegalStateException();
+            }
         } catch (Exception ignored) {
             Component reason = plugin.getSettings().getKickMessageTransferServerUnavailable();
             if (plugin.getSettings().isKickIfLobbyUnavailable()) {
@@ -39,7 +44,8 @@ public final class VelocityUtil {
         }
     }
 
-    public static @Nullable RegisteredServer getLastServer(@NotNull VelocityPlugin plugin, @NotNull VelocityProfile profile) {
+    public static @Nullable RegisteredServer getLastServer(@NotNull VelocityPlugin plugin,
+                                                           @NotNull VelocityProfile profile) {
         String lobbyServerName = plugin.getSettings().getLobbyServer();
         RegisteredServer server = plugin.getProxyServer().getServer(lobbyServerName).orElse(null);
 

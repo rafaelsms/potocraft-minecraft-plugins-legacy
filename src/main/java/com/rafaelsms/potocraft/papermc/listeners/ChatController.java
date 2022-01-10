@@ -72,18 +72,14 @@ public class ChatController implements Listener {
         }
 
         // Format chat
-        Component chatMessage = Util.applyChatFormat(
-                plugin.getSettings().getLocalChatFormat(),
-                sendingPlayer.getUniqueId(),
-                sendingPlayer.getName(),
-                event.message()
-        );
-        Component spyChatMessage = Util.applyChatFormat(
-                plugin.getSettings().getLocalChatSpyFormat(),
-                sendingPlayer.getUniqueId(),
-                sendingPlayer.getName(),
-                event.message()
-        );
+        Component chatMessage = Util.applyChatFormat(plugin.getSettings().getLocalChatFormat(),
+                                                     sendingPlayer.getUniqueId(),
+                                                     sendingPlayer.getName(),
+                                                     event.message());
+        Component spyChatMessage = Util.applyChatFormat(plugin.getSettings().getLocalChatSpyFormat(),
+                                                        sendingPlayer.getUniqueId(),
+                                                        sendingPlayer.getName(),
+                                                        event.message());
         // Cancel the event
         event.setCancelled(true);
 
@@ -145,7 +141,8 @@ public class ChatController implements Listener {
         }
 
         // Replace global prefix
-        TextReplacementConfig replacePrefix = TextReplacementConfig.builder()
+        TextReplacementConfig replacePrefix = TextReplacementConfig
+                .builder()
                 .matchLiteral(plugin.getSettings().getGlobalChatPrefix())
                 .replacement(Component.empty())
                 .once()
@@ -175,7 +172,8 @@ public class ChatController implements Listener {
         }
 
         // Replace global prefix
-        TextReplacementConfig replacePrefix = TextReplacementConfig.builder()
+        TextReplacementConfig replacePrefix = TextReplacementConfig
+                .builder()
                 .matchLiteral(plugin.getSettings().getGlobalChatPrefix())
                 .replacement(Component.empty())
                 .once()
@@ -184,12 +182,10 @@ public class ChatController implements Listener {
         String messageString = Util.toSimpleString(messageComponent).strip();
 
         // Format chat
-        Component chatMessage = Util.applyChatFormat(
-                plugin.getSettings().getGlobalChatFormat(),
-                sendingPlayer.getUniqueId(),
-                sendingPlayer.getName(),
-                messageComponent
-        );
+        Component chatMessage = Util.applyChatFormat(plugin.getSettings().getGlobalChatFormat(),
+                                                     sendingPlayer.getUniqueId(),
+                                                     sendingPlayer.getName(),
+                                                     messageComponent);
         // Cancel the event
         event.setCancelled(true);
         // Send the message to everybody

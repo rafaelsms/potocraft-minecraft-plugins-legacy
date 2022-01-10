@@ -16,8 +16,9 @@ public class PaperServer implements CommonServer {
 
     @Override
     public File getConfigurationFile() {
-        if (!plugin.getDataFolder().exists() && !plugin.getDataFolder().mkdir())
+        if (!plugin.getDataFolder().exists() && !plugin.getDataFolder().mkdir()) {
             throw new IllegalStateException("Couldn't create data folder");
+        }
         return new File(plugin.getDataFolder(), "config.json");
     }
 
