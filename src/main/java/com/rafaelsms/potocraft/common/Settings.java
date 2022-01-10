@@ -192,6 +192,7 @@ public abstract class Settings {
         public static final String KICK_IF_LOBBY_UNAVAILABLE = "configuration.login.kick_if_lobby_server_unavailable";
 
         public static final String UNIVERSAL_CHAT_FORMAT = "configuration.chat.universal.format";
+        public static final String UNIVERSAL_CHAT_SPY_FORMAT = "configuration.chat.universal.format";
         public static final String UNIVERSAL_CHAT_PREFIX = "configuration.chat.universal.prefix";
         public static final String UNIVERSAL_CHAT_LIMITER_MESSAGES_AMOUNT = "configuration.chat.universal.limiter.messages_amount";
         public static final String UNIVERSAL_CHAT_LIMITER_TIME_AMOUNT = "configuration.chat.universal.limiter.time_amount_millis";
@@ -201,12 +202,20 @@ public abstract class Settings {
         // Paper
         public static final String PAPER_SERVER_NAME_ON_PROXY = "configuration.server_name_on_the_proxy";
 
-        public static final String LOCAL_CHAT_FORMAT = "configuration.chat.local.format";
         public static final String GLOBAL_CHAT_FORMAT = "configuration.chat.global.format";
+        public static final String GLOBAL_CHAT_PREFIX = "configuration.chat.global.prefix";
         public static final String GLOBAL_CHAT_LIMITER_MESSAGES_AMOUNT = "configuration.chat.global.limiter.messages_amount";
         public static final String GLOBAL_CHAT_LIMITER_TIME_AMOUNT = "configuration.chat.global.limiter.time_amount_millis";
         public static final String GLOBAL_CHAT_COMPARATOR_MIN_LENGTH = "configuration.chat.global.comparator.minimum_length";
         public static final String GLOBAL_CHAT_COMPARATOR_THRESHOLD = "configuration.chat.global.comparator.minimum_char_differences";
+        public static final String LOCAL_CHAT_FORMAT = "configuration.chat.local.format";
+        public static final String LOCAL_CHAT_SPY_FORMAT = "configuration.chat.local.spy_format";
+        public static final String LOCAL_CHAT_RADIUS = "configuration.chat.local.radius";
+        public static final String LOCAL_CHAT_LIMITER_MESSAGES_AMOUNT = "configuration.chat.local.limiter.messages_amount";
+        public static final String LOCAL_CHAT_LIMITER_TIME_AMOUNT = "configuration.chat.local.limiter.time_amount_millis";
+        public static final String LOCAL_CHAT_COMPARATOR_MIN_LENGTH = "configuration.chat.local.comparator.minimum_length";
+        public static final String LOCAL_CHAT_COMPARATOR_THRESHOLD = "configuration.chat.local.comparator.minimum_char_differences";
+        public static final String REPLY_MESSAGE_TIMEOUT = "configuration.chat.direct_messages.reply_candidate_timeout_in_seconds";
 
 
         /* Language */

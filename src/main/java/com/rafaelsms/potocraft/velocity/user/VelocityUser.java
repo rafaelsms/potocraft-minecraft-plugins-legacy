@@ -1,12 +1,17 @@
 package com.rafaelsms.potocraft.velocity.user;
 
+import com.rafaelsms.potocraft.common.Permissions;
 import com.rafaelsms.potocraft.common.user.ChatHistory;
 import com.rafaelsms.potocraft.common.user.User;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.velocitypowered.api.proxy.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 public class VelocityUser extends User {
 
@@ -15,18 +20,36 @@ public class VelocityUser extends User {
 
     private final @NotNull UniversalMessageHistory universalMessageHistory;
 
+    private @Nullable UUID lastReplyCandidate = null;
+    private @Nullable ZonedDateTime lastPrivateMessageDate = null;
+
     public VelocityUser(@NotNull VelocityPlugin plugin, @NotNull Player player) {
         this.plugin = plugin;
         this.player = player;
         this.universalMessageHistory = new UniversalMessageHistory();
     }
 
-    public ChatHistory.ChatResult canSendMessage(@NotNull String message) {
+    public ChatHistory.ChatResult canSendUniversalMessage(@NotNull String message) {
         return universalMessageHistory.canSendMessage(message);
     }
 
     public void sentUniversalMessage(@NotNull String message) {
         universalMessageHistory.sentMessage(message);
+    }
+
+    public Optional<UUID> getLastReplyCandidate() {
+        ZonedDateTime expirationDate = ZonedDateTime.now().minus(plugin.getSettings().getPrivateMessageTimeout());
+        if (lastPrivateMessageDate == null || lastPrivateMessageDate.isBefore(expirationDate)) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(lastReplyCandidate);
+    }
+
+    public void setLastReplyCandidate(@Nullable UUID lastReplyCandidate) {
+        if (lastReplyCandidate != null) {
+            lastPrivateMessageDate = ZonedDateTime.now();
+        }
+        this.lastReplyCandidate = lastReplyCandidate;
     }
 
     private class UniversalMessageHistory extends ChatHistory {
@@ -42,13 +65,18 @@ public class VelocityUser extends User {
         }
 
         @Override
-        protected Duration getLimiterTimeFrame() {
+        protected @NotNull Duration getLimiterTimeFrame() {
             return Duration.ofMillis(plugin.getSettings().getUniversalChatLimiterTimeAmount());
         }
 
         @Override
         protected int getLimiterMaxMessageAmount() {
             return plugin.getSettings().getUniversalChatLimiterMessageAmount();
+        }
+
+        @Override
+        public boolean playerHasBypassPermission() {
+            return player.hasPermission(Permissions.UNIVERSAL_CHAT_BYPASS);
         }
     }
 }

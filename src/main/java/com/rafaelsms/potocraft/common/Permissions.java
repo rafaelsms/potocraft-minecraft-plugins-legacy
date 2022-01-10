@@ -28,12 +28,15 @@ public final class Permissions {
     public static final @NotNull String MESSAGE_COMMAND_REPLY = "potocraft.proxy_command.message.reply";
     public static final @NotNull String MESSAGE_COMMAND_BYPASS_IGNORE = "potocraft.proxy_command.message.bypass"; // TODO
 
-    public static final @NotNull String GLOBAL_CHAT = "potocraft.chat.global"; // TODO
-    public static final @NotNull String GLOBAL_CHAT_BYPASS_TIMEOUT = "potocraft.chat.global.bypass_timeout"; // TODO
-    public static final @NotNull String UNIVERSAL_CHAT = "potocraft.chat.universal"; // TODO
-    public static final @NotNull String UNIVERSAL_CHAT_BYPASS_TIMEOUT = "potocraft.chat.universal.bypass_timeout"; // TODO
+    public static final @NotNull String LOCAL_CHAT_SPY = "potocraft.chat.spy";
+    public static final @NotNull String GLOBAL_CHAT = "potocraft.chat.global";
+    public static final @NotNull String GLOBAL_CHAT_BYPASS = "potocraft.chat.global.bypass";
+    public static final @NotNull String UNIVERSAL_CHAT = "potocraft.chat.universal";
+    public static final @NotNull String UNIVERSAL_CHAT_BYPASS = "potocraft.chat.universal.bypass";
+    public static final @NotNull String UNIVERSAL_CHAT_SPY = "potocraft.chat.spy.universal";
 
     public static final @NotNull String[] values = {
+
             LOGIN_COMMAND,
 
             CHANGE_PIN_COMMAND,
@@ -59,9 +62,12 @@ public final class Permissions {
             MESSAGE_COMMAND_BYPASS_IGNORE,
 
             GLOBAL_CHAT,
-            GLOBAL_CHAT_BYPASS_TIMEOUT,
+            GLOBAL_CHAT_BYPASS,
+            LOCAL_CHAT_SPY,
             UNIVERSAL_CHAT,
-            UNIVERSAL_CHAT_BYPASS_TIMEOUT,
+            UNIVERSAL_CHAT_BYPASS,
+            UNIVERSAL_CHAT_SPY,
+
     };
 
     private Permissions() {

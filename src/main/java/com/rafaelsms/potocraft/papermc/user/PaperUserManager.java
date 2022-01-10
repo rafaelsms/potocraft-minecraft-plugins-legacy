@@ -7,12 +7,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class PaperUserManager extends UserManager<PaperUser, Player> {
 
+    private final @NotNull PaperPlugin plugin;
+
     public PaperUserManager(@NotNull PaperPlugin plugin) {
         super(plugin);
+        this.plugin = plugin;
     }
 
     @Override
     protected PaperUser makeUser(@NotNull Player playerInstance) {
-        return new PaperUser(playerInstance);
+        return new PaperUser(playerInstance, plugin);
     }
 }

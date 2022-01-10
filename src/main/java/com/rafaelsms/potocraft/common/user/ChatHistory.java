@@ -13,9 +13,13 @@ public abstract class ChatHistory {
     private final Deque<Message> messages = new ArrayDeque<>();
 
     public ChatResult canSendMessage(@NotNull String messageString) {
-        ZonedDateTime now = ZonedDateTime.now();
+        // If player has bypass permission, allow it right away
+        if (playerHasBypassPermission()) {
+            return ChatResult.ALLOWED;
+        }
 
         // Remove old messages from queue
+        ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime expirationDate = now.minus(getLimiterTimeFrame());
         while (!messages.isEmpty() && messages.peekFirst().dateTime().isBefore(expirationDate)) {
             messages.pollFirst();
@@ -58,9 +62,11 @@ public abstract class ChatHistory {
 
     protected abstract int getMinLengthToCompare();
 
-    protected abstract Duration getLimiterTimeFrame();
+    protected abstract @NotNull Duration getLimiterTimeFrame();
 
     protected abstract int getLimiterMaxMessageAmount();
+
+    protected abstract boolean playerHasBypassPermission();
 
     private record Message(@NotNull String message, @NotNull ZonedDateTime dateTime) {
     }

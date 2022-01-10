@@ -7,6 +7,7 @@ import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextReplacementConfig;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -70,11 +71,13 @@ public class VelocitySettings extends Settings {
         setDefault(Constants.LANG_NO_LOGIN_SERVER_AVAILABLE, "&cNão há servidor para login disponível.");
 
         setDefault(Constants.UNIVERSAL_CHAT_FORMAT, "&6!! <&e%prefix%%username%%suffix%&6> &f%message%");
+        setDefault(Constants.UNIVERSAL_CHAT_SPY_FORMAT, "&e%prefix%%username%%suffix% &7(%server_name%) &f%message%");
         setDefault(Constants.UNIVERSAL_CHAT_PREFIX, "!!");
         setDefault(Constants.UNIVERSAL_CHAT_LIMITER_MESSAGES_AMOUNT, 2);
         setDefault(Constants.UNIVERSAL_CHAT_LIMITER_TIME_AMOUNT, 5500);
         setDefault(Constants.UNIVERSAL_CHAT_COMPARATOR_MIN_LENGTH, 3);
         setDefault(Constants.UNIVERSAL_CHAT_COMPARATOR_THRESHOLD, 3);
+        setDefault(Constants.REPLY_MESSAGE_TIMEOUT, 60 * 7L);
     }
 
     public long getMaxLoginDurationSeconds() {
@@ -268,6 +271,10 @@ public class VelocitySettings extends Settings {
         return getLang(Constants.UNIVERSAL_CHAT_FORMAT);
     }
 
+    public Component getUniversalChatSpyFormat() {
+        return getLang(Constants.UNIVERSAL_CHAT_SPY_FORMAT);
+    }
+
     public String getUniversalChatPrefix() {
         return get(Constants.UNIVERSAL_CHAT_PREFIX);
     }
@@ -286,5 +293,9 @@ public class VelocitySettings extends Settings {
 
     public long getUniversalChatLimiterTimeAmount() {
         return get(Constants.UNIVERSAL_CHAT_LIMITER_TIME_AMOUNT);
+    }
+
+    public Duration getPrivateMessageTimeout() {
+        return Duration.ofSeconds(get(Constants.REPLY_MESSAGE_TIMEOUT));
     }
 }
