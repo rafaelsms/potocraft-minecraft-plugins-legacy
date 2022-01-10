@@ -41,7 +41,7 @@ public record OfflineLoginChecker(@NotNull VelocityPlugin plugin) {
                 }
             }
             if (FloodgateApi.getInstance().getPlayerPrefix().length() > 0 &&
-                    event.getUsername().startsWith(FloodgateApi.getInstance().getPlayerPrefix())) {
+                event.getUsername().startsWith(FloodgateApi.getInstance().getPlayerPrefix())) {
                 plugin.debug("player %s is not floodgate but using prefix, denied".formatted(event.getUsername()));
                 Component reason = plugin.getSettings().getKickMessageInvalidPrefixForJavaPlayer();
                 event.setResult(PreLoginEvent.PreLoginComponentResult.denied(reason));

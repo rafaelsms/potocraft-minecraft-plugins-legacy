@@ -1,9 +1,9 @@
 package com.rafaelsms.potocraft.common;
 
+import com.rafaelsms.potocraft.common.database.Database;
 import com.rafaelsms.potocraft.common.profile.Profile;
 import com.rafaelsms.potocraft.common.user.User;
 import com.rafaelsms.potocraft.common.user.UserManager;
-import com.rafaelsms.potocraft.common.util.Database;
 import com.rafaelsms.potocraft.common.util.DepedencyException;
 import com.rafaelsms.potocraft.common.util.PluginType;
 import net.luckperms.api.LuckPerms;

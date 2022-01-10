@@ -17,12 +17,12 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class Util {
+public final class TextUtil {
 
     private static final Pattern SPACED_STRING_PATTERN = Pattern.compile("\\s*(\\S+)");
     private static final Pattern TIME_PATTERN = Pattern.compile("((\\d+)([wdhms]))+");
 
-    private Util() {
+    private TextUtil() {
     }
 
     public static @NotNull String getIpAddress(@NotNull InetSocketAddress address) {

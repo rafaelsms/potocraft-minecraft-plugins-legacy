@@ -1,9 +1,9 @@
 package com.rafaelsms.potocraft.velocity.commands;
 
 import com.rafaelsms.potocraft.common.Permissions;
-import com.rafaelsms.potocraft.common.util.DatabaseException;
+import com.rafaelsms.potocraft.common.database.DatabaseException;
 import com.rafaelsms.potocraft.common.util.PlayerType;
-import com.rafaelsms.potocraft.common.util.Util;
+import com.rafaelsms.potocraft.common.util.TextUtil;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import com.rafaelsms.potocraft.velocity.util.VelocityUtil;
@@ -90,14 +90,14 @@ public class LoginCommand implements RawCommand {
         }
 
         // Check if required arguments are present and nothing else
-        String[] arguments = Util.parseArguments(invocation.arguments());
+        String[] arguments = TextUtil.parseArguments(invocation.arguments());
         if (arguments.length != 1) {
             player.sendMessage(plugin.getSettings().getCommandLoginHelp());
             return;
         }
 
         // Attempt PIN format match
-        Optional<Integer> pinOptional = Util.parsePin(arguments[0]);
+        Optional<Integer> pinOptional = TextUtil.parsePin(arguments[0]);
         if (pinOptional.isEmpty()) {
             player.sendMessage(plugin.getSettings().getCommandLoginHelp());
             return;
@@ -128,7 +128,7 @@ public class LoginCommand implements RawCommand {
 
     @Override
     public List<String> suggest(Invocation invocation) {
-        String[] arguments = Util.parseArguments(invocation.arguments());
+        String[] arguments = TextUtil.parseArguments(invocation.arguments());
         if (arguments.length > 1) {
             return List.of();
         }

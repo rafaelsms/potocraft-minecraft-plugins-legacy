@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.velocity.util;
 
-import com.rafaelsms.potocraft.common.util.Location;
+import com.rafaelsms.potocraft.common.profile.Location;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import com.velocitypowered.api.proxy.Player;

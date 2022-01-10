@@ -1,7 +1,7 @@
-package com.rafaelsms.potocraft.papermc.util;
+package com.rafaelsms.potocraft.papermc.database;
 
-import com.rafaelsms.potocraft.common.util.Database;
-import com.rafaelsms.potocraft.common.util.DatabaseException;
+import com.rafaelsms.potocraft.common.database.Database;
+import com.rafaelsms.potocraft.common.database.DatabaseException;
 import com.rafaelsms.potocraft.papermc.PaperPlugin;
 import com.rafaelsms.potocraft.papermc.profile.PaperProfile;
 import org.bson.Document;

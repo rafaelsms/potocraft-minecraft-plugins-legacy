@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.common.profile;
 
-import com.rafaelsms.potocraft.common.util.Converter;
+import com.rafaelsms.potocraft.common.database.Converter;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

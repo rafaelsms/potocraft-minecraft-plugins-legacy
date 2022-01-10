@@ -1,4 +1,4 @@
-package com.rafaelsms.potocraft.common.util;
+package com.rafaelsms.potocraft.common.database;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;

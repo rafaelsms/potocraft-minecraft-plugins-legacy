@@ -1,5 +1,6 @@
-package com.rafaelsms.potocraft.common.util;
+package com.rafaelsms.potocraft.common.database;
 
+import com.rafaelsms.potocraft.common.profile.Location;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -97,7 +98,7 @@ public class Converter {
         if (document == null) {
             return null;
         }
-        return new Location(document);
+        return Location.fromDocument(document);
     }
 
     public static @Nullable Document fromLocation(@Nullable Location location) {

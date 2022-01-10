@@ -2,7 +2,7 @@ package com.rafaelsms.potocraft.velocity.commands;
 
 import com.rafaelsms.potocraft.common.Permissions;
 import com.rafaelsms.potocraft.common.util.PlayerType;
-import com.rafaelsms.potocraft.common.util.Util;
+import com.rafaelsms.potocraft.common.util.TextUtil;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import com.rafaelsms.potocraft.velocity.util.VelocityUtil;
@@ -65,7 +65,7 @@ public class RegisterCommand implements RawCommand {
         // Check if profile already has a PIN
         if (profile.hasPin()) {
             if (profile.isLoggedIn(player.getRemoteAddress()) &&
-                    invocation.source().hasPermission(Permissions.CHANGE_PIN_COMMAND)) {
+                invocation.source().hasPermission(Permissions.CHANGE_PIN_COMMAND)) {
                 player.sendMessage(plugin.getSettings().getCommandRegisterShouldChangePinInstead());
             } else {
                 player.sendMessage(plugin.getSettings().getCommandRegisterShouldLoginInstead());
@@ -74,15 +74,15 @@ public class RegisterCommand implements RawCommand {
         }
 
         // Retrieve arguments
-        String[] arguments = Util.parseArguments(invocation.arguments());
+        String[] arguments = TextUtil.parseArguments(invocation.arguments());
         if (arguments.length != 2) {
             player.sendMessage(plugin.getSettings().getCommandRegisterHelp());
             return;
         }
 
         // Parse to PIN
-        Optional<Integer> pinOptional = Util.parsePin(arguments[0]);
-        Optional<Integer> pinConfirmationOptional = Util.parsePin(arguments[1]);
+        Optional<Integer> pinOptional = TextUtil.parsePin(arguments[0]);
+        Optional<Integer> pinConfirmationOptional = TextUtil.parsePin(arguments[1]);
         if (pinOptional.isEmpty() || pinConfirmationOptional.isEmpty()) {
             player.sendMessage(plugin.getSettings().getCommandRegisterInvalidPins());
             return;
@@ -118,7 +118,7 @@ public class RegisterCommand implements RawCommand {
 
     @Override
     public List<String> suggest(Invocation invocation) {
-        String[] arguments = Util.parseArguments(invocation.arguments());
+        String[] arguments = TextUtil.parseArguments(invocation.arguments());
         if (arguments.length > 2) {
             return List.of();
         }

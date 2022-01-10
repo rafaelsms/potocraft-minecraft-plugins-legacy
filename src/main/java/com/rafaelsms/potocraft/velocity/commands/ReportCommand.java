@@ -1,10 +1,10 @@
 package com.rafaelsms.potocraft.velocity.commands;
 
 import com.rafaelsms.potocraft.common.Permissions;
+import com.rafaelsms.potocraft.common.database.DatabaseException;
 import com.rafaelsms.potocraft.common.profile.ReportEntry;
 import com.rafaelsms.potocraft.common.profile.TimedReportEntry;
-import com.rafaelsms.potocraft.common.util.DatabaseException;
-import com.rafaelsms.potocraft.common.util.Util;
+import com.rafaelsms.potocraft.common.util.TextUtil;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import com.rafaelsms.potocraft.velocity.util.VelocityUtil;
@@ -113,7 +113,7 @@ public class ReportCommand implements RawCommand {
         public void execute(Invocation invocation) {
             CommandSource source = invocation.source();
             String[] arguments =
-                    Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
+                    TextUtil.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
 
             // Check argument length
             if (arguments.length == 0) {
@@ -122,8 +122,8 @@ public class ReportCommand implements RawCommand {
             }
 
             UUID reporterId = getSourcePlayerId(source).orElse(null);
-            String playerNameString = Util.getArgument(arguments, 0).orElse(null);
-            String reason = Util.joinStrings(arguments, 1);
+            String playerNameString = TextUtil.getArgument(arguments, 0).orElse(null);
+            String reason = TextUtil.joinStrings(arguments, 1);
 
             Optional<Player> optionalPlayer = plugin.getProxyServer().getPlayer(playerNameString);
             if (optionalPlayer.isEmpty()) {
@@ -155,7 +155,7 @@ public class ReportCommand implements RawCommand {
 
         @Override
         public List<String> suggest(Invocation invocation) {
-            return switch (Util.parseArguments(invocation.arguments()).length) {
+            return switch (TextUtil.parseArguments(invocation.arguments()).length) {
                 case 2 -> List.of("hacking", "spam");
                 case 1 -> VelocityUtil.getPlayerNameList(plugin);
                 default -> List.of();
@@ -174,7 +174,7 @@ public class ReportCommand implements RawCommand {
         public void execute(Invocation invocation) {
             CommandSource source = invocation.source();
             String[] arguments =
-                    Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
+                    TextUtil.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
 
             // Check if no argument was given
             if (arguments.length == 0) {
@@ -184,13 +184,13 @@ public class ReportCommand implements RawCommand {
 
             // Get data from strings
             UUID reporterId = getSourcePlayerId(source).orElse(null);
-            String playerNameString = Util.getArgument(arguments, 0).orElse(null);
-            Duration duration = Util.parseTime(Util.getArgument(arguments, 1).orElse(null)).orElse(null);
+            String playerNameString = TextUtil.getArgument(arguments, 0).orElse(null);
+            Duration duration = TextUtil.parseTime(TextUtil.getArgument(arguments, 1).orElse(null)).orElse(null);
             String reason;
             if (duration == null) {
-                reason = Util.joinStrings(arguments, 1);
+                reason = TextUtil.joinStrings(arguments, 1);
             } else {
-                reason = Util.joinStrings(arguments, 2);
+                reason = TextUtil.joinStrings(arguments, 2);
             }
 
             // Append duration to expiration date
@@ -228,7 +228,7 @@ public class ReportCommand implements RawCommand {
 
         @Override
         public List<String> suggest(Invocation invocation) {
-            return switch (Util.parseArguments(invocation.arguments()).length) {
+            return switch (TextUtil.parseArguments(invocation.arguments()).length) {
                 case 3 -> List.of("hacking", "spam");
                 case 2 -> List.of("4d", "30m", "12h", "1w", "hacking");
                 case 1 -> VelocityUtil.getPlayerNameList(plugin);
@@ -248,7 +248,7 @@ public class ReportCommand implements RawCommand {
         public void execute(Invocation invocation) {
             CommandSource source = invocation.source();
             String[] arguments =
-                    Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
+                    TextUtil.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
 
             // Check if no argument was given
             if (arguments.length == 0) {
@@ -258,13 +258,13 @@ public class ReportCommand implements RawCommand {
 
             // Get data from strings
             UUID reporterId = getSourcePlayerId(source).orElse(null);
-            String playerNameString = Util.getArgument(arguments, 0).orElse(null);
-            Duration duration = Util.parseTime(Util.getArgument(arguments, 1).orElse(null)).orElse(null);
+            String playerNameString = TextUtil.getArgument(arguments, 0).orElse(null);
+            Duration duration = TextUtil.parseTime(TextUtil.getArgument(arguments, 1).orElse(null)).orElse(null);
             String reason;
             if (duration == null) {
-                reason = Util.joinStrings(arguments, 1);
+                reason = TextUtil.joinStrings(arguments, 1);
             } else {
-                reason = Util.joinStrings(arguments, 2);
+                reason = TextUtil.joinStrings(arguments, 2);
             }
 
             // Include duration to expiration date
@@ -302,7 +302,7 @@ public class ReportCommand implements RawCommand {
 
         @Override
         public List<String> suggest(Invocation invocation) {
-            return switch (Util.parseArguments(invocation.arguments()).length) {
+            return switch (TextUtil.parseArguments(invocation.arguments()).length) {
                 case 3 -> List.of("propaganda", "spam");
                 case 2 -> List.of("1d", "18h", "12h", "3d", "spam");
                 case 1 -> VelocityUtil.getPlayerNameList(plugin);
@@ -322,10 +322,10 @@ public class ReportCommand implements RawCommand {
         public void execute(Invocation invocation) {
             CommandSource source = invocation.source();
             String[] arguments =
-                    Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
+                    TextUtil.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
 
             // Check if no argument was given
-            String playerNameString = Util.getArgument(arguments, 0).orElse(null);
+            String playerNameString = TextUtil.getArgument(arguments, 0).orElse(null);
             if (playerNameString == null) {
                 source.sendMessage(plugin.getSettings().getCommandReportHistoryHelp());
                 return;
@@ -351,7 +351,7 @@ public class ReportCommand implements RawCommand {
 
         @Override
         public List<String> suggest(Invocation invocation) {
-            if (Util.parseArguments(invocation.arguments()).length == 1) {
+            if (TextUtil.parseArguments(invocation.arguments()).length == 1) {
                 return VelocityUtil.getPlayerNameList(plugin);
             }
             return List.of();
@@ -369,10 +369,10 @@ public class ReportCommand implements RawCommand {
         public void execute(Invocation invocation) {
             CommandSource source = invocation.source();
             String[] arguments =
-                    Util.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
+                    TextUtil.parseArguments(subCommandReplacer.matcher(invocation.arguments()).replaceFirst(""));
 
             // Check if no argument was given
-            String playerNameString = Util.getArgument(arguments, 0).orElse(null);
+            String playerNameString = TextUtil.getArgument(arguments, 0).orElse(null);
             if (playerNameString == null) {
                 source.sendMessage(plugin.getSettings().getCommandReportUnreportHelp());
                 return;
@@ -386,7 +386,7 @@ public class ReportCommand implements RawCommand {
                     VelocityProfile profile = profiles.get(0);
                     Optional<ReportEntry> joinPreventingOptional = profile.getJoinPreventingReport();
                     if (joinPreventingOptional.isPresent() &&
-                            joinPreventingOptional.get() instanceof TimedReportEntry reportEntry) {
+                        joinPreventingOptional.get() instanceof TimedReportEntry reportEntry) {
                         reportEntry.setActive(false);
                         plugin.getDatabase().saveProfile(profile);
                         source.sendMessage(plugin
@@ -396,7 +396,7 @@ public class ReportCommand implements RawCommand {
                     }
                     Optional<ReportEntry> chatPreventingOptional = profile.getChatPreventingReport();
                     if (chatPreventingOptional.isPresent() &&
-                            chatPreventingOptional.get() instanceof TimedReportEntry reportEntry) {
+                        chatPreventingOptional.get() instanceof TimedReportEntry reportEntry) {
                         reportEntry.setActive(false);
                         plugin.getDatabase().saveProfile(profile);
                         source.sendMessage(plugin
@@ -415,7 +415,7 @@ public class ReportCommand implements RawCommand {
 
         @Override
         public List<String> suggest(Invocation invocation) {
-            if (Util.parseArguments(invocation.arguments()).length == 1) {
+            if (TextUtil.parseArguments(invocation.arguments()).length == 1) {
                 return VelocityUtil.getPlayerNameList(plugin);
             }
             return List.of();

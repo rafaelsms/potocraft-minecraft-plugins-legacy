@@ -2,7 +2,7 @@ package com.rafaelsms.potocraft.papermc.listeners;
 
 import com.rafaelsms.potocraft.common.Permissions;
 import com.rafaelsms.potocraft.common.user.ChatHistory;
-import com.rafaelsms.potocraft.common.util.Util;
+import com.rafaelsms.potocraft.common.util.TextUtil;
 import com.rafaelsms.potocraft.papermc.PaperPlugin;
 import com.rafaelsms.potocraft.papermc.user.PaperUser;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -43,7 +43,7 @@ public class ChatController implements Listener {
         Player sendingPlayer = event.getPlayer();
 
         // Ignore when prefixed with global prefix
-        String uncoloredString = Util.toSimpleString(event.message());
+        String uncoloredString = TextUtil.toSimpleString(event.message());
         if (uncoloredString.startsWith(plugin.getSettings().getGlobalChatPrefix())) {
             return;
         }
@@ -66,20 +66,20 @@ public class ChatController implements Listener {
         Player sendingPlayer = event.getPlayer();
 
         // Ignore when prefixed with global prefix
-        String uncoloredString = Util.toSimpleString(event.message());
+        String uncoloredString = TextUtil.toSimpleString(event.message());
         if (uncoloredString.startsWith(plugin.getSettings().getGlobalChatPrefix())) {
             return;
         }
 
         // Format chat
-        Component chatMessage = Util.applyChatFormat(plugin.getSettings().getLocalChatFormat(),
-                                                     sendingPlayer.getUniqueId(),
-                                                     sendingPlayer.getName(),
-                                                     event.message());
-        Component spyChatMessage = Util.applyChatFormat(plugin.getSettings().getLocalChatSpyFormat(),
-                                                        sendingPlayer.getUniqueId(),
-                                                        sendingPlayer.getName(),
-                                                        event.message());
+        Component chatMessage = TextUtil.applyChatFormat(plugin.getSettings().getLocalChatFormat(),
+                                                         sendingPlayer.getUniqueId(),
+                                                         sendingPlayer.getName(),
+                                                         event.message());
+        Component spyChatMessage = TextUtil.applyChatFormat(plugin.getSettings().getLocalChatSpyFormat(),
+                                                            sendingPlayer.getUniqueId(),
+                                                            sendingPlayer.getName(),
+                                                            event.message());
         // Cancel the event
         event.setCancelled(true);
 
@@ -128,7 +128,7 @@ public class ChatController implements Listener {
         Player sendingPlayer = event.getPlayer();
 
         // Ignore when not prefixed with global prefix
-        String uncoloredString = Util.toSimpleString(event.message());
+        String uncoloredString = TextUtil.toSimpleString(event.message());
         if (!uncoloredString.startsWith(plugin.getSettings().getGlobalChatPrefix())) {
             return;
         }
@@ -147,7 +147,7 @@ public class ChatController implements Listener {
                 .replacement(Component.empty())
                 .once()
                 .build();
-        String messageString = Util.toSimpleString(event.message().replaceText(replacePrefix)).strip();
+        String messageString = TextUtil.toSimpleString(event.message().replaceText(replacePrefix)).strip();
 
         // Check if message have any content
         if (messageString.isEmpty()) {
@@ -166,7 +166,7 @@ public class ChatController implements Listener {
         Player sendingPlayer = event.getPlayer();
 
         // Ignore when not prefixed with global prefix
-        String uncoloredString = Util.toSimpleString(event.message());
+        String uncoloredString = TextUtil.toSimpleString(event.message());
         if (!uncoloredString.startsWith(plugin.getSettings().getGlobalChatPrefix())) {
             return;
         }
@@ -179,13 +179,13 @@ public class ChatController implements Listener {
                 .once()
                 .build();
         Component messageComponent = event.message().replaceText(replacePrefix);
-        String messageString = Util.toSimpleString(messageComponent).strip();
+        String messageString = TextUtil.toSimpleString(messageComponent).strip();
 
         // Format chat
-        Component chatMessage = Util.applyChatFormat(plugin.getSettings().getGlobalChatFormat(),
-                                                     sendingPlayer.getUniqueId(),
-                                                     sendingPlayer.getName(),
-                                                     messageComponent);
+        Component chatMessage = TextUtil.applyChatFormat(plugin.getSettings().getGlobalChatFormat(),
+                                                         sendingPlayer.getUniqueId(),
+                                                         sendingPlayer.getName(),
+                                                         messageComponent);
         // Cancel the event
         event.setCancelled(true);
         // Send the message to everybody

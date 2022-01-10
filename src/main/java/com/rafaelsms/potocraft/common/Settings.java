@@ -3,7 +3,7 @@ package com.rafaelsms.potocraft.common;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.rafaelsms.potocraft.common.profile.Profile;
-import com.rafaelsms.potocraft.common.util.Util;
+import com.rafaelsms.potocraft.common.util.TextUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import org.jetbrains.annotations.NotNull;
@@ -83,7 +83,7 @@ public abstract class Settings {
         TextReplacementConfig replacementConfig = TextReplacementConfig
                 .builder()
                 .matchLiteral("%list%")
-                .replacement(Util.joinStrings(playerNames, ", "))
+                .replacement(TextUtil.joinStrings(playerNames, ", "))
                 .build();
         return getLang(Constants.LANG_MANY_PLAYERS_FOUND).replaceText(replacementConfig);
     }
@@ -118,7 +118,7 @@ public abstract class Settings {
 
     protected Component getLang(@NotNull String key) {
         try {
-            return Util.getLang(get(key));
+            return TextUtil.getLang(get(key));
         } catch (Exception exception) {
             plugin
                     .logger()

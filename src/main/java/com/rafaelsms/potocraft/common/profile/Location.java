@@ -1,5 +1,7 @@
-package com.rafaelsms.potocraft.common.util;
+package com.rafaelsms.potocraft.common.profile;
 
+import com.rafaelsms.potocraft.common.database.Converter;
+import com.rafaelsms.potocraft.common.database.DatabaseObject;
 import org.bson.Document;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -26,7 +28,7 @@ public class Location extends DatabaseObject {
         this.pitch = location.getPitch();
     }
 
-    protected Location(@NotNull Document document) {
+    private Location(@NotNull Document document) {
         super(document);
         this.serverName = document.getString(Constants.SERVER_NAME_KEY);
         this.worldId = Converter.toUUID(document.getString(Constants.WORLD_ID_KEY));

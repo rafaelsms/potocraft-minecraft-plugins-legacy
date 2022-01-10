@@ -1,7 +1,7 @@
 package com.rafaelsms.potocraft.papermc.profile;
 
+import com.rafaelsms.potocraft.common.profile.Location;
 import com.rafaelsms.potocraft.common.profile.Profile;
-import com.rafaelsms.potocraft.common.util.Location;
 import com.rafaelsms.potocraft.papermc.PaperPlugin;
 import org.bson.Document;
 import org.bukkit.entity.Player;

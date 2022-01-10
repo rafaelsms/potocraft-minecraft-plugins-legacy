@@ -2,7 +2,7 @@ package com.rafaelsms.potocraft.velocity.listeners;
 
 import com.rafaelsms.potocraft.common.Permissions;
 import com.rafaelsms.potocraft.common.user.ChatHistory;
-import com.rafaelsms.potocraft.common.util.Util;
+import com.rafaelsms.potocraft.common.util.TextUtil;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.rafaelsms.potocraft.velocity.user.VelocityUser;
 import com.velocitypowered.api.event.PostOrder;
@@ -74,10 +74,10 @@ public class ChatController {
         Player sendingPlayer = event.getPlayer();
 
         // Format spy message
-        Component spyChatMessage = Util.applyChatFormat(plugin.getSettings().getUniversalChatSpyFormat(),
-                                                        sendingPlayer.getUniqueId(),
-                                                        sendingPlayer.getUsername(),
-                                                        Component.text(event.getMessage()));
+        Component spyChatMessage = TextUtil.applyChatFormat(plugin.getSettings().getUniversalChatSpyFormat(),
+                                                            sendingPlayer.getUniqueId(),
+                                                            sendingPlayer.getUsername(),
+                                                            Component.text(event.getMessage()));
         // Send to all spies
         for (Player onlinePlayer : plugin.getProxyServer().getAllPlayers()) {
             // If player doesn't have permission, skip
@@ -113,10 +113,10 @@ public class ChatController {
 
         // Format chat
         String message = event.getMessage().substring(chatPrefix.length()).strip();
-        Component chatMessage = Util.applyChatFormat(plugin.getSettings().getUniversalChatFormat(),
-                                                     sendingPlayer.getUniqueId(),
-                                                     sendingPlayer.getUsername(),
-                                                     Component.text(message));
+        Component chatMessage = TextUtil.applyChatFormat(plugin.getSettings().getUniversalChatFormat(),
+                                                         sendingPlayer.getUniqueId(),
+                                                         sendingPlayer.getUsername(),
+                                                         Component.text(message));
         // Cancel the event
         event.setResult(PlayerChatEvent.ChatResult.denied());
         // Send the message to everybody

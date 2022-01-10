@@ -12,7 +12,7 @@ public abstract class ChatHistory {
 
     private final Deque<Message> messages = new ArrayDeque<>();
 
-    public ChatResult canSendMessage(@NotNull String messageString) {
+    public synchronized ChatResult canSendMessage(@NotNull String messageString) {
         // If player has bypass permission, allow it right away
         if (playerHasBypassPermission()) {
             return ChatResult.ALLOWED;
@@ -54,7 +54,7 @@ public abstract class ChatHistory {
         return ChatResult.ALLOWED;
     }
 
-    public void sentMessage(@NotNull String messageString) {
+    public synchronized void sentMessage(@NotNull String messageString) {
         messages.addLast(new Message(messageString, ZonedDateTime.now()));
     }
 

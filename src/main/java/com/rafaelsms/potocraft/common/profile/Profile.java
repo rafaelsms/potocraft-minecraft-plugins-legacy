@@ -2,10 +2,9 @@ package com.rafaelsms.potocraft.common.profile;
 
 import com.mongodb.client.model.Filters;
 import com.rafaelsms.potocraft.common.Plugin;
-import com.rafaelsms.potocraft.common.util.Converter;
-import com.rafaelsms.potocraft.common.util.DatabaseObject;
-import com.rafaelsms.potocraft.common.util.Location;
-import com.rafaelsms.potocraft.common.util.Util;
+import com.rafaelsms.potocraft.common.database.Converter;
+import com.rafaelsms.potocraft.common.database.DatabaseObject;
+import com.rafaelsms.potocraft.common.util.TextUtil;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jetbrains.annotations.NotNull;
@@ -117,7 +116,7 @@ public class Profile extends DatabaseObject {
         ZonedDateTime now = ZonedDateTime.now();
         this.lastLoginDate = now;
         this.lastJoinDate = now;
-        this.lastLoginAddress = address == null ? null : Util.getIpAddress(address);
+        this.lastLoginAddress = address == null ? null : TextUtil.getIpAddress(address);
     }
 
     public List<ReportEntry> getReportEntries() {

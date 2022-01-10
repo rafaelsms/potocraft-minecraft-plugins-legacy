@@ -2,7 +2,7 @@ package com.rafaelsms.potocraft.velocity.commands;
 
 import com.rafaelsms.potocraft.common.Permissions;
 import com.rafaelsms.potocraft.common.util.PlayerType;
-import com.rafaelsms.potocraft.common.util.Util;
+import com.rafaelsms.potocraft.common.util.TextUtil;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import com.velocitypowered.api.command.CommandSource;
@@ -28,8 +28,8 @@ public class ChangePinCommand implements RawCommand {
                                               @NotNull String firstPin,
                                               @NotNull String secondPin) {
         try {
-            int newPin = Util.parsePin(firstPin).orElseThrow();
-            int newPinConfirmation = Util.parsePin(secondPin).orElseThrow();
+            int newPin = TextUtil.parsePin(firstPin).orElseThrow();
+            int newPinConfirmation = TextUtil.parsePin(secondPin).orElseThrow();
             if (newPin != newPinConfirmation) {
                 source.sendMessage(plugin.getSettings().getCommandChangePinPinsDoNotMatch());
                 return Optional.empty();
@@ -45,13 +45,13 @@ public class ChangePinCommand implements RawCommand {
     @Override
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
-        String[] arguments = Util.parseArguments(invocation.arguments());
+        String[] arguments = TextUtil.parseArguments(invocation.arguments());
         if (arguments.length < 3) {
             source.sendMessage(plugin.getSettings().getCommandChangePinHelp());
             return;
         }
 
-        Optional<Integer> oldPinOptional = Util.parsePin(arguments[0]);
+        Optional<Integer> oldPinOptional = TextUtil.parsePin(arguments[0]);
         if (oldPinOptional.isEmpty() || !(source instanceof Player player)) {
             if (!source.hasPermission(Permissions.CHANGE_PIN_COMMAND_OTHERS)) {
                 source.sendMessage(plugin.getSettings().getCommandChangePinHelp());
@@ -131,7 +131,7 @@ public class ChangePinCommand implements RawCommand {
 
     @Override
     public List<String> suggest(Invocation invocation) {
-        if (Util.parseArguments(invocation.arguments()).length <= 2) {
+        if (TextUtil.parseArguments(invocation.arguments()).length <= 2) {
             return List.of("123456", "000000");
         }
         return List.of();

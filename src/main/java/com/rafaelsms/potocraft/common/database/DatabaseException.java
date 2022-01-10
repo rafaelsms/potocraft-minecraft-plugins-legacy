@@ -1,4 +1,4 @@
-package com.rafaelsms.potocraft.common.util;
+package com.rafaelsms.potocraft.common.database;
 
 public class DatabaseException extends Exception {
 

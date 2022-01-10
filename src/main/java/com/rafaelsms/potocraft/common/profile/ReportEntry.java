@@ -1,7 +1,7 @@
 package com.rafaelsms.potocraft.common.profile;
 
-import com.rafaelsms.potocraft.common.util.Converter;
-import com.rafaelsms.potocraft.common.util.DatabaseObject;
+import com.rafaelsms.potocraft.common.database.Converter;
+import com.rafaelsms.potocraft.common.database.DatabaseObject;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import net.kyori.adventure.text.Component;
@@ -197,7 +197,7 @@ public class ReportEntry extends DatabaseObject {
                                                             @NotNull ReportEntry reportEntry) {
             Component expirationDate = plugin.getSettings().getCommandReportNoExpirationDate();
             if (reportEntry instanceof TimedReportEntry timedReportEntry &&
-                    timedReportEntry.getExpirationDate() != null) {
+                timedReportEntry.getExpirationDate() != null) {
                 String dateTime =
                         plugin.getSettings().getDateTimeFormatter().format(timedReportEntry.getExpirationDate());
                 expirationDate = Component.text(dateTime);

@@ -1,4 +1,4 @@
-package com.rafaelsms.potocraft.common.util;
+package com.rafaelsms.potocraft.common.database;
 
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;

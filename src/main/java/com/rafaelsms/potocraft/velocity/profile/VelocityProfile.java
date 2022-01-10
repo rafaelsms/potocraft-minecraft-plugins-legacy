@@ -1,7 +1,7 @@
 package com.rafaelsms.potocraft.velocity.profile;
 
 import com.rafaelsms.potocraft.common.profile.Profile;
-import com.rafaelsms.potocraft.common.util.Util;
+import com.rafaelsms.potocraft.common.util.TextUtil;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ public class VelocityProfile extends Profile {
         if (this.lastLoginDate.isAfter(ZonedDateTime.now().minus(Duration.ofSeconds(maxLoginDurationSeconds)))) {
             return false;
         }
-        return Util.getIpAddress(address).equalsIgnoreCase(this.lastLoginAddress);
+        return TextUtil.getIpAddress(address).equalsIgnoreCase(this.lastLoginAddress);
     }
 
     public void setLoggedIn(@Nullable InetSocketAddress address) {

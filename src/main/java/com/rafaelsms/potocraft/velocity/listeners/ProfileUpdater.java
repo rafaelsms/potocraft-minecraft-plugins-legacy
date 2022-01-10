@@ -108,7 +108,7 @@ public class ProfileUpdater {
                 // Offline players must be logged in to set quit date
                 VelocityProfile profile = profileOptional.get();
                 if (playerType != PlayerType.OFFLINE_PLAYER ||
-                        profile.isLoggedIn(event.getPlayer().getRemoteAddress())) {
+                    profile.isLoggedIn(event.getPlayer().getRemoteAddress())) {
                     profile.updateQuitDate();
                     plugin.getDatabase().saveProfile(profile);
                 }
