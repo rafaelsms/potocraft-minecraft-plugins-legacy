@@ -2,6 +2,7 @@ package com.rafaelsms.potocraft.velocity;
 
 import com.rafaelsms.potocraft.common.Settings;
 import com.rafaelsms.potocraft.common.profile.ReportEntry;
+import com.rafaelsms.potocraft.common.util.TextUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextReplacementConfig;
@@ -37,14 +38,22 @@ public class VelocitySettings extends Settings {
         setDefault(Constants.UNIVERSAL_CHAT_COMPARATOR_MIN_LENGTH, 3);
         setDefault(Constants.UNIVERSAL_CHAT_COMPARATOR_THRESHOLD, 3);
         setDefault(Constants.REPLY_MESSAGE_TIMEOUT, 60 * 7L);
+        setDefault(Constants.DIRECT_MESSAGE_INCOMING_FORMAT, "&3%username% &c-> &3você &f%message%");
+        setDefault(Constants.DIRECT_MESSAGE_OUTGOING_FORMAT, "&3você &c-> &3%username% &f%message%");
+        setDefault(Constants.DIRECT_MESSAGE_SPY_FORMAT, "&3%sending_name% &c-> &3%receiving_name% &f%message%");
+        setDefault(Constants.DIRECT_MESSAGE_LIMITER_MESSAGES_AMOUNT, 4);
+        setDefault(Constants.DIRECT_MESSAGE_LIMITER_TIME_AMOUNT, 5500);
+        setDefault(Constants.DIRECT_MESSAGE_COMPARATOR_MIN_LENGTH, 5);
+        setDefault(Constants.DIRECT_MESSAGE_COMPARATOR_THRESHOLD, 3);
 
         /* LANG */
         setDefault(Constants.LANG_OFFLINE_PLAYERS_ONLY, "&cComando disponível apenas para jogadores piratas.");
         setDefault(Constants.LANG_LOGIN_HELP,
                    "&6Lembre de sua senha de &3&l6 números &6e escreva &a&l/login senha &6para entrar.");
         setDefault(Constants.LANG_LOGIN_ALREADY_LOGGED_IN, "&3Você já está logado! Pode jogar :)");
-        setDefault(Constants.LANG_LOGIN_MUST_REGISTER_FIRST,
-                   "&cSua conta ainda não tem senha!\n&6Pense em uma senha de &3&l6 números &6e digite &a&l/registrar senha senha &6para cadastrar.");
+        setDefault(Constants.LANG_LOGIN_MUST_REGISTER_FIRST, """
+                                                             &cSua conta ainda não tem senha!
+                                                             &6Pense em uma senha de &3&l6 números &6e digite &a&l/registrar senha senha &6para cadastrar.""");
         setDefault(Constants.LANG_LOGIN_INCORRECT_PIN, "&cSenha de 6 números incorreta.");
         setDefault(Constants.LANG_LOGIN_SUCCESSFULLY_LOGGED_IN, "&3Senha correta! Bom jogo!");
         setDefault(Constants.LANG_LOGIN_TRANSFER_UNAVAILABLE, "&cFalha ao mover para o próximo servidor.");
@@ -52,8 +61,8 @@ public class VelocitySettings extends Settings {
         setDefault(Constants.LANG_REGISTER_INVALID_PINS,
                    "&cVocê digitou a senha numérica incorretamente. &6Imite o exemplo: &a&l/registrar 123456 123456");
         setDefault(Constants.LANG_REGISTER_PINS_DO_NOT_MATCH, """
-                &cVocê digitou duas senhas diferentes! &6Elas precisam ser iguais para confirmar a senha.
-                &6Por exemplo: &3&l/registrar 123456 123456""");
+                                                              &cVocê digitou duas senhas diferentes! &6Elas precisam ser iguais para confirmar a senha.
+                                                              &6Por exemplo: &3&l/registrar 123456 123456""");
         setDefault(Constants.LANG_REGISTER_PIN_FORMATTING_FAILED,
                    "&cFalha ao formatar sua senha numérica! Tente novamente ou contate o administrador.");
         setDefault(Constants.LANG_REGISTER_HELP,
@@ -64,9 +73,9 @@ public class VelocitySettings extends Settings {
                    "&cVocê já tem uma conta cadastrada! &6Deseja alterar sua senha? Utilize &3&l/mudarsenha");
 
         setDefault(Constants.LANG_CHANGE_PIN_HELP, """
-                &6Para mudar a senha, lembre de sua senha antiga, faça uma nova de 6 números e digite:
-                &a/mudarsenha <senha antiga> <senha nova> <senha nova>
-                &6Por exemplo: &a&l/mudarsenha 000000 123456 123456""");
+                                                   &6Para mudar a senha, lembre de sua senha antiga, faça uma nova de 6 números e digite:
+                                                   &a/mudarsenha <senha antiga> <senha nova> <senha nova>
+                                                   &6Por exemplo: &a&l/mudarsenha 000000 123456 123456""");
         setDefault(Constants.LANG_CHANGE_PIN_PINS_DO_NOT_MATCH,
                    "&cSua nova senha precisa ser digitada de maneira igual duas vezes! Elas não estão iguais.");
 
@@ -93,15 +102,19 @@ public class VelocitySettings extends Settings {
         setDefault(Constants.LANG_REPORT_HISTORY_ENTRY_KICKED,
                    "&7* &cEXPULSO por &e%reporter% &cmotivo: \"&e%reason%&c\"");
 
+        setDefault(Constants.LANG_DIRECT_MESSAGE_REPLY_HELP, "&6Uso: &3&l/responder <mensagem>");
+        setDefault(Constants.LANG_DIRECT_MESSAGE_NO_RECIPIENT, "&cPessoa não encontrada.");
+        setDefault(Constants.LANG_DIRECT_MESSAGE_RECIPIENT_LEFT, "&cPessoa saiu recentemente.");
+
         setDefault(Constants.LANG_KICKED, """
-                &cVocê foi expulso
-                &cpor &e%reporter%
-                &cpelo motivo "&e%reason%&c".""");
+                                          &cVocê foi expulso
+                                          &cpor &e%reporter%
+                                          &cpelo motivo "&e%reason%&c".""");
         setDefault(Constants.LANG_BANNED, """
-                &cVocê foi banido
-                &cpor &e%reporter%
-                &cpelo motivo "&e%reason%&c"
-                &caté &e%expiration_date%&c.""");
+                                          &cVocê foi banido
+                                          &cpor &e%reporter%
+                                          &cpelo motivo "&e%reason%&c"
+                                          &caté &e%expiration_date%&c.""");
         setDefault(Constants.LANG_COULD_NOT_CHECK_PLAYER_TYPE, "&cNão foi possível verificar o tipo de jogador.");
         setDefault(Constants.LANG_COULD_NOT_CHECK_MOJANG_USERNAME, "&cNão foi possível verificar o nome de usuário.");
         setDefault(Constants.LANG_FLOODGATE_PREFIX_ON_JAVA_PLAYER, "&cNome reservado para jogadores Bedrock Edition.");
@@ -189,20 +202,13 @@ public class VelocitySettings extends Settings {
     }
 
     public Component getCommandReportCouldNotSaveReport(@NotNull Component playerName) {
-        return getLang(Constants.LANG_REPORT_COULD_NOT_SAVE_REPORT).replaceText(TextReplacementConfig
-                                                                                        .builder()
-                                                                                        .matchLiteral("%player%")
-                                                                                        .replacement(playerName)
-                                                                                        .build());
+        TextReplacementConfig nameReplacer = TextUtil.replaceText("%player%", playerName);
+        return getLang(Constants.LANG_REPORT_COULD_NOT_SAVE_REPORT).replaceText(nameReplacer);
     }
 
     public Component getCommandReportSubCommandHelp(@NotNull String subCommand) {
-        return getLang(Constants.LANG_REPORT_SUB_COMMAND_PLAYER_REASON_HELP).replaceText(TextReplacementConfig
-                                                                                                 .builder()
-                                                                                                 .matchLiteral(
-                                                                                                         "%subcommand%")
-                                                                                                 .replacement(subCommand)
-                                                                                                 .build());
+        TextReplacementConfig subCommandReplacer = TextUtil.replaceText("%subcommand%", subCommand);
+        return getLang(Constants.LANG_REPORT_SUB_COMMAND_PLAYER_REASON_HELP).replaceText(subCommandReplacer);
     }
 
     public Component getCommandReportHistoryHelp() {
@@ -218,11 +224,8 @@ public class VelocitySettings extends Settings {
     }
 
     public Component getCommandReportUnreportSuccessfully(@NotNull String playerName) {
-        return getLang(Constants.LANG_REPORT_UNREPORT_SUCCESSFULLY).replaceText(TextReplacementConfig
-                                                                                        .builder()
-                                                                                        .matchLiteral("%player%")
-                                                                                        .replacement(playerName)
-                                                                                        .build());
+        TextReplacementConfig nameReplacer = TextUtil.replaceText("%player%", playerName);
+        return getLang(Constants.LANG_REPORT_UNREPORT_SUCCESSFULLY).replaceText(nameReplacer);
     }
 
     public Component getCommandReportHelp() {
@@ -241,76 +244,56 @@ public class VelocitySettings extends Settings {
         Component entriesJoined =
                 Component.join(JoinConfiguration.builder().separator(Component.newline()).build(), entries);
         return getLang(Constants.LANG_REPORT_HISTORY_BASE)
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%player%").replacement(playerName).build())
-                .replaceText(TextReplacementConfig
-                                     .builder()
-                                     .matchLiteral("%entries%")
-                                     .replacement(entriesJoined)
-                                     .build());
+                .replaceText(TextUtil.replaceText("%player%", playerName))
+                .replaceText(TextUtil.replaceText("%entries%", entriesJoined));
     }
 
     public Component getCommandReportYouHaveBeenMuted(@NotNull Component reporter,
                                                       @NotNull Component reason,
                                                       @NotNull Component expirationDate) {
         return getLang(Constants.LANG_REPORT_YOU_HAVE_BEEN_MUTED)
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%reporter%").replacement(reporter).build())
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%reason%").replacement(reason).build())
-                .replaceText(TextReplacementConfig
-                                     .builder()
-                                     .matchLiteral("%expiration_date%")
-                                     .replacement(expirationDate)
-                                     .build());
+                .replaceText(TextUtil.replaceText("%reporter%", reporter))
+                .replaceText(TextUtil.replaceText("%reason%", reason))
+                .replaceText(TextUtil.replaceText("%expiration_date%", expirationDate));
     }
 
     public Component getKickMessageBanned(@NotNull Component reporter,
                                           @NotNull Component reason,
                                           @NotNull Component expirationDate) {
         return getLang(Constants.LANG_BANNED)
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%reporter%").replacement(reporter).build())
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%reason%").replacement(reason).build())
-                .replaceText(TextReplacementConfig
-                                     .builder()
-                                     .matchLiteral("%expiration_date%")
-                                     .replacement(expirationDate)
-                                     .build());
+                .replaceText(TextUtil.replaceText("%reporter%", reporter))
+                .replaceText(TextUtil.replaceText("%reason%", reason))
+                .replaceText(TextUtil.replaceText("%expiration_date%", expirationDate));
     }
 
     public Component getKickMessageKicked(@NotNull Component reporter, @NotNull Component reason) {
         return getLang(Constants.LANG_KICKED)
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%reporter%").replacement(reporter).build())
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%reason%").replacement(reason).build());
+                .replaceText(TextUtil.replaceText("%reporter%", reporter))
+                .replaceText(TextUtil.replaceText("%reason%", reason));
     }
 
     public Component getReportHistoryEntryBanned(@NotNull Component reporter,
                                                  @NotNull Component reason,
                                                  @NotNull Component expirationDate) {
         return getLang(Constants.LANG_REPORT_HISTORY_ENTRY_BANNED)
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%reporter%").replacement(reporter).build())
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%reason%").replacement(reason).build())
-                .replaceText(TextReplacementConfig
-                                     .builder()
-                                     .matchLiteral("%expiration_date%")
-                                     .replacement(expirationDate)
-                                     .build());
+                .replaceText(TextUtil.replaceText("%reporter%", reporter))
+                .replaceText(TextUtil.replaceText("%reason%", reason))
+                .replaceText(TextUtil.replaceText("%expiration_date%", expirationDate));
     }
 
     public Component getReportHistoryEntryMuted(@NotNull Component reporter,
                                                 @NotNull Component reason,
                                                 @NotNull Component expirationDate) {
         return getLang(Constants.LANG_REPORT_HISTORY_ENTRY_MUTED)
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%reporter%").replacement(reporter).build())
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%reason%").replacement(reason).build())
-                .replaceText(TextReplacementConfig
-                                     .builder()
-                                     .matchLiteral("%expiration_date%")
-                                     .replacement(expirationDate)
-                                     .build());
+                .replaceText(TextUtil.replaceText("%reporter%", reporter))
+                .replaceText(TextUtil.replaceText("%reason%", reason))
+                .replaceText(TextUtil.replaceText("%expiration_date%", expirationDate));
     }
 
     public Component getReportHistoryEntryKicked(@NotNull Component reporter, @NotNull Component reason) {
         return getLang(Constants.LANG_REPORT_HISTORY_ENTRY_KICKED)
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%reporter%").replacement(reporter).build())
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%reason%").replacement(reason).build());
+                .replaceText(TextUtil.replaceText("%reporter%", reporter))
+                .replaceText(TextUtil.replaceText("%reason%", reason));
     }
 
     public Component getKickMessageTransferServerUnavailable() {
@@ -364,4 +347,54 @@ public class VelocitySettings extends Settings {
     public Duration getPrivateMessageTimeout() {
         return Duration.ofSeconds(get(Constants.REPLY_MESSAGE_TIMEOUT));
     }
+
+    public Component getDirectMessageIncomingFormat(@NotNull String playerName, @NotNull String message) {
+        return getLang(Constants.DIRECT_MESSAGE_INCOMING_FORMAT)
+                .replaceText(TextUtil.replaceText("%username%", playerName))
+                .replaceText(TextUtil.replaceText("%message%", message));
+    }
+
+    public Component getDirectMessageOutgoingFormat(@NotNull String playerName, @NotNull String message) {
+        return getLang(Constants.DIRECT_MESSAGE_OUTGOING_FORMAT)
+                .replaceText(TextUtil.replaceText("%username%", playerName))
+                .replaceText(TextUtil.replaceText("%message%", message));
+    }
+
+    public Component getDirectMessageSpyFormat(@NotNull String sendingName,
+                                               @NotNull String receivingName,
+                                               @NotNull String message) {
+        return getLang(Constants.DIRECT_MESSAGE_OUTGOING_FORMAT)
+                .replaceText(TextUtil.replaceText("%sending_name%", sendingName))
+                .replaceText(TextUtil.replaceText("%receiving_name%", receivingName))
+                .replaceText(TextUtil.replaceText("%message%", message));
+    }
+
+    public int getDirectMessageComparatorThreshold() {
+        return get(Constants.DIRECT_MESSAGE_COMPARATOR_THRESHOLD);
+    }
+
+    public int getDirectMessageComparatorMinLength() {
+        return get(Constants.DIRECT_MESSAGE_COMPARATOR_MIN_LENGTH);
+    }
+
+    public int getDirectMessageLimiterMessageAmount() {
+        return get(Constants.DIRECT_MESSAGE_LIMITER_MESSAGES_AMOUNT);
+    }
+
+    public long getDirectMessageLimiterTimeAmount() {
+        return get(Constants.DIRECT_MESSAGE_LIMITER_TIME_AMOUNT);
+    }
+
+    public Component getCommandDirectMessageReplyHelp() {
+        return getLang(Constants.LANG_DIRECT_MESSAGE_REPLY_HELP);
+    }
+
+    public Component getCommandDirectMessageNoRecipient() {
+        return getLang(Constants.LANG_DIRECT_MESSAGE_NO_RECIPIENT);
+    }
+
+    public Component getCommandDirectMessageRecipientLeft() {
+        return getLang(Constants.LANG_DIRECT_MESSAGE_RECIPIENT_LEFT);
+    }
+
 }

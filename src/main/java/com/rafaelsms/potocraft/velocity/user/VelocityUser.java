@@ -19,6 +19,7 @@ public class VelocityUser extends User {
     private final @NotNull Player player;
 
     private final @NotNull UniversalMessageHistory universalMessageHistory;
+    private final @NotNull DirectMessageHistory directMessageHistory;
 
     private @Nullable UUID lastReplyCandidate = null;
     private @Nullable ZonedDateTime lastPrivateMessageDate = null;
@@ -27,6 +28,7 @@ public class VelocityUser extends User {
         this.plugin = plugin;
         this.player = player;
         this.universalMessageHistory = new UniversalMessageHistory();
+        this.directMessageHistory = new DirectMessageHistory();
     }
 
     public ChatHistory.ChatResult canSendUniversalMessage(@NotNull String message) {
@@ -50,6 +52,34 @@ public class VelocityUser extends User {
             lastPrivateMessageDate = ZonedDateTime.now();
         }
         this.lastReplyCandidate = lastReplyCandidate;
+    }
+
+    private class DirectMessageHistory extends ChatHistory {
+
+        @Override
+        protected int getComparatorThreshold() {
+            return plugin.getSettings().getDirectMessageComparatorThreshold();
+        }
+
+        @Override
+        protected int getMinLengthToCompare() {
+            return plugin.getSettings().getDirectMessageComparatorMinLength();
+        }
+
+        @Override
+        protected @NotNull Duration getLimiterTimeFrame() {
+            return Duration.ofMillis(plugin.getSettings().getDirectMessageLimiterTimeAmount());
+        }
+
+        @Override
+        protected int getLimiterMaxMessageAmount() {
+            return plugin.getSettings().getDirectMessageLimiterMessageAmount();
+        }
+
+        @Override
+        public boolean playerHasBypassPermission() {
+            return player.hasPermission(Permissions.MESSAGE_COMMAND_BYPASS_LIMITER);
+        }
     }
 
     private class UniversalMessageHistory extends ChatHistory {

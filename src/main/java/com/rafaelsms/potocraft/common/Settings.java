@@ -80,12 +80,8 @@ public abstract class Settings {
         for (Profile profile : profiles) {
             playerNames.add(profile.getLastPlayerName());
         }
-        TextReplacementConfig replacementConfig = TextReplacementConfig
-                .builder()
-                .matchLiteral("%list%")
-                .replacement(TextUtil.joinStrings(playerNames, ", "))
-                .build();
-        return getLang(Constants.LANG_MANY_PLAYERS_FOUND).replaceText(replacementConfig);
+        TextReplacementConfig playerList = TextUtil.replaceText("%list%", TextUtil.joinStrings(playerNames, ", "));
+        return getLang(Constants.LANG_MANY_PLAYERS_FOUND).replaceText(playerList);
     }
 
     public Component getUnknownPlayerName() {
@@ -210,6 +206,22 @@ public abstract class Settings {
                 "configuration.chat.universal.comparator.minimum_length";
         public static final String UNIVERSAL_CHAT_COMPARATOR_THRESHOLD =
                 "configuration.chat.universal.comparator.minimum_char_differences";
+        public static final String REPLY_MESSAGE_TIMEOUT =
+                "configuration.chat.direct_messages.reply_candidate_timeout_in_seconds";
+        public static final String DIRECT_MESSAGE_INCOMING_FORMAT =
+                "configuration.chat.direct_messages.incoming_format";
+        public static final String DIRECT_MESSAGE_OUTGOING_FORMAT =
+                "configuration.chat.direct_messages.outgoing_format";
+        public static final String DIRECT_MESSAGE_SPY_FORMAT =
+                "configuration.chat.direct_messages.spy_format";
+        public static final String DIRECT_MESSAGE_LIMITER_MESSAGES_AMOUNT =
+                "configuration.chat.direct_messages.limiter.time_amount_millis";
+        public static final String DIRECT_MESSAGE_LIMITER_TIME_AMOUNT =
+                "configuration.chat.direct_messages.limiter.time_amount_millis";
+        public static final String DIRECT_MESSAGE_COMPARATOR_MIN_LENGTH =
+                "configuration.chat.direct_messages.comparator.minimum_length";
+        public static final String DIRECT_MESSAGE_COMPARATOR_THRESHOLD =
+                "configuration.chat.direct_messages.comparator.minimum_char_differences";
 
         // Paper
         public static final String PAPER_SERVER_NAME_ON_PROXY = "configuration.server_name_on_the_proxy";
@@ -235,8 +247,7 @@ public abstract class Settings {
                 "configuration.chat.local.comparator.minimum_length";
         public static final String LOCAL_CHAT_COMPARATOR_THRESHOLD =
                 "configuration.chat.local.comparator.minimum_char_differences";
-        public static final String REPLY_MESSAGE_TIMEOUT =
-                "configuration.chat.direct_messages.reply_candidate_timeout_in_seconds";
+
 
         /* Language */
         // Common
@@ -299,6 +310,10 @@ public abstract class Settings {
 
         public static final String LANG_CHAT_TOO_FREQUENT = "language.chat.messages_too_frequent";
         public static final String LANG_CHAT_SIMILAR = "language.chat.messages_are_similar";
+
+        public static final String LANG_DIRECT_MESSAGE_REPLY_HELP = "language.commands.reply.help";
+        public static final String LANG_DIRECT_MESSAGE_NO_RECIPIENT = "language.commands.reply.recipient_not_found";
+        public static final String LANG_DIRECT_MESSAGE_RECIPIENT_LEFT = "language.commands.reply.recipient_left";
 
         public static final String LANG_KICKED = "language.kick_messages.kicked";
         public static final String LANG_BANNED = "language.kick_messages.banned";

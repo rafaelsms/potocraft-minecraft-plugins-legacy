@@ -118,12 +118,16 @@ public final class TextUtil {
         return Optional.of(arguments[position]);
     }
 
-    public static Component applyChatFormat(@NotNull Component chatFormat,
-                                            @NotNull UUID playerId,
-                                            @NotNull String playerName,
-                                            @NotNull Component message) {
+    public static @NotNull TextReplacementConfig replaceText(@NotNull String match, @NotNull String replacement) {
+        return TextReplacementConfig.builder().matchLiteral(match).replacement(replacement).build();
+    }
+
+    public static @NotNull TextReplacementConfig replaceText(@NotNull String match, @NotNull Component replacement) {
+        return TextReplacementConfig.builder().matchLiteral(match).replacement(replacement).build();
+    }
+
+    public static Component getPrefix(@NotNull UUID playerId) {
         Component prefix = Component.empty();
-        Component suffix = Component.empty();
         try {
             LuckPerms luckPerms = LuckPermsProvider.get();
             User user = luckPerms.getUserManager().loadUser(playerId).join();
@@ -132,17 +136,34 @@ public final class TextUtil {
             if (prefixString != null) {
                 prefix = getLang(prefixString);
             }
-            // Get suffix
+        } catch (Exception ignored) {
+        }
+        return prefix;
+    }
+
+    public static Component getSuffix(@NotNull UUID playerId) {
+        Component suffix = Component.empty();
+        try {
+            LuckPerms luckPerms = LuckPermsProvider.get();
+            User user = luckPerms.getUserManager().loadUser(playerId).join();
             String suffixString = user.getCachedData().getMetaData().getSuffix();
             if (suffixString != null) {
                 suffix = getLang(suffixString);
             }
         } catch (Exception ignored) {
         }
+        return suffix;
+    }
+
+    public static Component applyChatFormat(@NotNull Component chatFormat,
+                                            @NotNull UUID playerId,
+                                            @NotNull String playerName,
+                                            @NotNull Component message) {
+
         return chatFormat
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%prefix%").replacement(prefix).build())
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%suffix%").replacement(suffix).build())
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%username%").replacement(playerName).build())
-                .replaceText(TextReplacementConfig.builder().matchLiteral("%message%").replacement(message).build());
+                .replaceText(replaceText("%prefix%", getPrefix(playerId)))
+                .replaceText(replaceText("%suffix%", getSuffix(playerId)))
+                .replaceText(replaceText("%username%", playerName))
+                .replaceText(replaceText("%message%", message));
     }
 }

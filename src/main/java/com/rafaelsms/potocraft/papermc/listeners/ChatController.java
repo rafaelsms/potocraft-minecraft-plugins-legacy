@@ -141,13 +141,9 @@ public class ChatController implements Listener {
         }
 
         // Replace global prefix
-        TextReplacementConfig replacePrefix = TextReplacementConfig
-                .builder()
-                .matchLiteral(plugin.getSettings().getGlobalChatPrefix())
-                .replacement(Component.empty())
-                .once()
-                .build();
-        String messageString = TextUtil.toSimpleString(event.message().replaceText(replacePrefix)).strip();
+        TextReplacementConfig prefixRemover =
+                TextUtil.replaceText(plugin.getSettings().getGlobalChatPrefix(), Component.empty());
+        String messageString = TextUtil.toSimpleString(event.message().replaceText(prefixRemover)).strip();
 
         // Check if message have any content
         if (messageString.isEmpty()) {
@@ -172,13 +168,9 @@ public class ChatController implements Listener {
         }
 
         // Replace global prefix
-        TextReplacementConfig replacePrefix = TextReplacementConfig
-                .builder()
-                .matchLiteral(plugin.getSettings().getGlobalChatPrefix())
-                .replacement(Component.empty())
-                .once()
-                .build();
-        Component messageComponent = event.message().replaceText(replacePrefix);
+        TextReplacementConfig prefixRemover =
+                TextUtil.replaceText(plugin.getSettings().getGlobalChatPrefix(), Component.empty());
+        Component messageComponent = event.message().replaceText(prefixRemover);
         String messageString = TextUtil.toSimpleString(messageComponent).strip();
 
         // Format chat

@@ -24,6 +24,7 @@ public final class Permissions {
 
     public static final String MESSAGE_COMMAND = "potocraft.proxy_command.message";
     public static final String MESSAGE_COMMAND_REPLY = "potocraft.proxy_command.message.reply";
+    public static final String MESSAGE_COMMAND_SPY = "potocraft.proxy_command.message.spy";
     // TODO below
     public static final String MESSAGE_COMMAND_BYPASS_IGNORE = "potocraft.proxy_command.message.bypass.ignore";
     public static final String MESSAGE_COMMAND_BYPASS_LIMITER = "potocraft.proxy_command.message.bypass.limiter";

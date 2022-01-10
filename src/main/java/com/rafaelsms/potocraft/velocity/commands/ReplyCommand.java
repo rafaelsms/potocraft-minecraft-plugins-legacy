@@ -1,11 +1,18 @@
 package com.rafaelsms.potocraft.velocity.commands;
 
 import com.rafaelsms.potocraft.common.Permissions;
+import com.rafaelsms.potocraft.common.util.TextUtil;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
+import com.rafaelsms.potocraft.velocity.user.VelocityUser;
 import com.velocitypowered.api.command.RawCommand;
+import com.velocitypowered.api.proxy.Player;
+import net.kyori.adventure.audience.MessageType;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class ReplyCommand implements RawCommand {
 
@@ -17,7 +24,70 @@ public class ReplyCommand implements RawCommand {
 
     @Override
     public void execute(Invocation invocation) {
+        // Check if is a player (supports User and therefore can store reply candidates)
+        if (!(invocation.source() instanceof Player sendingPlayer)) {
+            invocation.source().sendMessage(plugin.getSettings().getCommandConsoleCantExecute());
+            return;
+        }
 
+        // Check if there is a message to reply
+        if (TextUtil.parseArguments(invocation.arguments()).length == 0) {
+            sendingPlayer.sendMessage(plugin.getSettings().getCommandDirectMessageReplyHelp());
+            return;
+        }
+        String message = invocation.arguments().strip();
+        if (message.isEmpty()) {
+            sendingPlayer.sendMessage(plugin.getSettings().getCommandDirectMessageReplyHelp());
+            return;
+        }
+
+        // Check if the player user has a reply candidate
+        VelocityUser sendingUser = plugin.getUserManager().getUser(sendingPlayer.getUniqueId());
+        Optional<UUID> receivingIdOptional = sendingUser.getLastReplyCandidate();
+        if (receivingIdOptional.isEmpty()) {
+            sendingPlayer.sendMessage(plugin.getSettings().getCommandDirectMessageNoRecipient());
+            return;
+        }
+
+        // Get receiving player instance
+        UUID receivingId = receivingIdOptional.get();
+        Optional<Player> receivingOptional = plugin.getProxyServer().getPlayer(receivingId);
+        if (receivingOptional.isEmpty()) {
+            sendingPlayer.sendMessage(plugin.getSettings().getCommandDirectMessageNoRecipient());
+            return;
+        }
+        Player receivingPlayer = receivingOptional.get();
+        if (!receivingPlayer.isActive()) {
+            sendingPlayer.sendMessage(plugin.getSettings().getCommandDirectMessageRecipientLeft());
+            return;
+        }
+
+        // Apply formats
+        Component incomingMessage =
+                plugin.getSettings().getDirectMessageIncomingFormat(sendingPlayer.getUsername(), message);
+        Component outgoingMessage =
+                plugin.getSettings().getDirectMessageOutgoingFormat(receivingPlayer.getUsername(), message);
+        Component spyMessage = plugin
+                .getSettings()
+                .getDirectMessageSpyFormat(sendingPlayer.getUsername(), receivingPlayer.getUsername(), message);
+        // Send message to the player
+        receivingPlayer.sendMessage(sendingPlayer.identity(), incomingMessage, MessageType.CHAT);
+        sendingPlayer.sendMessage(sendingPlayer.identity(), outgoingMessage, MessageType.CHAT);
+        // Send to those who spy
+        for (Player player : plugin.getProxyServer().getAllPlayers()) {
+            if (!player.hasPermission(Permissions.MESSAGE_COMMAND_SPY)) {
+                continue;
+            }
+            player.sendMessage(sendingPlayer.identity(), spyMessage, MessageType.CHAT);
+        }
+        plugin
+                .getProxyServer()
+                .getConsoleCommandSource()
+                .sendMessage(sendingPlayer.identity(), spyMessage, MessageType.CHAT);
+        // Update reply candidates for both
+        VelocityUser receivingUser = plugin.getUserManager().getUser(receivingPlayer.getUniqueId());
+        sendingUser.setLastReplyCandidate(receivingPlayer.getUniqueId());
+        receivingUser.setLastReplyCandidate(sendingPlayer.getUniqueId());
     }
 
     @Override
