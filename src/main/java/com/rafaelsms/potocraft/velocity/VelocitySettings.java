@@ -102,6 +102,7 @@ public class VelocitySettings extends Settings {
         setDefault(Constants.LANG_REPORT_HISTORY_ENTRY_KICKED,
                    "&7* &cEXPULSO por &e%reporter% &cmotivo: \"&e%reason%&c\"");
 
+        setDefault(Constants.LANG_DIRECT_MESSAGE_HELP, "&6Uso: &3&l/mensagem <nome> <mensagem>");
         setDefault(Constants.LANG_DIRECT_MESSAGE_REPLY_HELP, "&6Uso: &3&l/responder <mensagem>");
         setDefault(Constants.LANG_DIRECT_MESSAGE_NO_RECIPIENT, "&cPessoa não encontrada.");
         setDefault(Constants.LANG_DIRECT_MESSAGE_RECIPIENT_LEFT, "&cPessoa saiu recentemente.");
@@ -348,21 +349,21 @@ public class VelocitySettings extends Settings {
         return Duration.ofSeconds(get(Constants.REPLY_MESSAGE_TIMEOUT));
     }
 
-    public Component getDirectMessageIncomingFormat(@NotNull String playerName, @NotNull String message) {
+    public Component getDirectMessageIncomingFormat(@NotNull Component playerName, @NotNull Component message) {
         return getLang(Constants.DIRECT_MESSAGE_INCOMING_FORMAT)
                 .replaceText(TextUtil.replaceText("%username%", playerName))
                 .replaceText(TextUtil.replaceText("%message%", message));
     }
 
-    public Component getDirectMessageOutgoingFormat(@NotNull String playerName, @NotNull String message) {
+    public Component getDirectMessageOutgoingFormat(@NotNull Component playerName, @NotNull Component message) {
         return getLang(Constants.DIRECT_MESSAGE_OUTGOING_FORMAT)
                 .replaceText(TextUtil.replaceText("%username%", playerName))
                 .replaceText(TextUtil.replaceText("%message%", message));
     }
 
-    public Component getDirectMessageSpyFormat(@NotNull String sendingName,
-                                               @NotNull String receivingName,
-                                               @NotNull String message) {
+    public Component getDirectMessageSpyFormat(@NotNull Component sendingName,
+                                               @NotNull Component receivingName,
+                                               @NotNull Component message) {
         return getLang(Constants.DIRECT_MESSAGE_OUTGOING_FORMAT)
                 .replaceText(TextUtil.replaceText("%sending_name%", sendingName))
                 .replaceText(TextUtil.replaceText("%receiving_name%", receivingName))
@@ -383,6 +384,10 @@ public class VelocitySettings extends Settings {
 
     public long getDirectMessageLimiterTimeAmount() {
         return get(Constants.DIRECT_MESSAGE_LIMITER_TIME_AMOUNT);
+    }
+
+    public Component getCommandDirectMessageHelp() {
+        return getLang(Constants.LANG_DIRECT_MESSAGE_HELP);
     }
 
     public Component getCommandDirectMessageReplyHelp() {

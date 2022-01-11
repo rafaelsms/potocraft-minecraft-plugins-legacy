@@ -8,6 +8,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -165,5 +166,23 @@ public final class TextUtil {
                 .replaceText(replaceText("%suffix%", getSuffix(playerId)))
                 .replaceText(replaceText("%username%", playerName))
                 .replaceText(replaceText("%message%", message));
+    }
+
+    public static @NotNull Optional<String> closestMatch(@NotNull Iterable<String> list, @NotNull String search) {
+        String closestMatch = null;
+        int closesMatchResult = Integer.MAX_VALUE;
+        LevenshteinDistance comparator = new LevenshteinDistance();
+        for (String entry : list) {
+            int compareResult = comparator.apply(entry, search);
+            // Return if exact match
+            if (compareResult == 0) {
+                return Optional.of(entry);
+            }
+            if (compareResult >= 0 && compareResult < closesMatchResult) {
+                closestMatch = entry;
+                closesMatchResult = compareResult;
+            }
+        }
+        return Optional.ofNullable(closestMatch);
     }
 }

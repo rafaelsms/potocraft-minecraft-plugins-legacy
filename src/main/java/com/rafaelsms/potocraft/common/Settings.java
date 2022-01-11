@@ -311,6 +311,7 @@ public abstract class Settings {
         public static final String LANG_CHAT_TOO_FREQUENT = "language.chat.messages_too_frequent";
         public static final String LANG_CHAT_SIMILAR = "language.chat.messages_are_similar";
 
+        public static final String LANG_DIRECT_MESSAGE_HELP = "language.commands.message.help";
         public static final String LANG_DIRECT_MESSAGE_REPLY_HELP = "language.commands.reply.help";
         public static final String LANG_DIRECT_MESSAGE_NO_RECIPIENT = "language.commands.reply.recipient_not_found";
         public static final String LANG_DIRECT_MESSAGE_RECIPIENT_LEFT = "language.commands.reply.recipient_left";

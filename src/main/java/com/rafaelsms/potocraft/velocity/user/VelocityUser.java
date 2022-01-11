@@ -39,6 +39,14 @@ public class VelocityUser extends User {
         universalMessageHistory.sentMessage(message);
     }
 
+    public ChatHistory.ChatResult canSendDirectMessages(@NotNull String message) {
+        return directMessageHistory.canSendMessage(message);
+    }
+
+    public void sentDirectMessage(@NotNull String message) {
+        directMessageHistory.sentMessage(message);
+    }
+
     public Optional<UUID> getLastReplyCandidate() {
         ZonedDateTime expirationDate = ZonedDateTime.now().minus(plugin.getSettings().getPrivateMessageTimeout());
         if (lastPrivateMessageDate == null || lastPrivateMessageDate.isBefore(expirationDate)) {

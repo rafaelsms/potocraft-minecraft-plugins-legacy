@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.velocity.util;
 
 import com.rafaelsms.potocraft.common.profile.Location;
+import com.rafaelsms.potocraft.common.util.TextUtil;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
 import com.velocitypowered.api.proxy.Player;
@@ -59,11 +60,21 @@ public final class VelocityUtil {
         return server;
     }
 
-    public static List<String> getPlayerNameList(@NotNull VelocityPlugin plugin) {
+    public static @NotNull List<String> getPlayerNameList(@NotNull VelocityPlugin plugin) {
         ArrayList<String> names = new ArrayList<>(plugin.getProxyServer().getPlayerCount());
         for (Player player : plugin.getProxyServer().getAllPlayers()) {
             names.add(player.getUsername());
         }
         return names;
+    }
+
+    public static @NotNull Optional<Player> searchPlayerName(@NotNull VelocityPlugin plugin, @NotNull String search) {
+        List<String> nameList = VelocityUtil.getPlayerNameList(plugin);
+        Optional<String> matchOptional = TextUtil.closestMatch(nameList, search);
+        if (matchOptional.isEmpty()) {
+            return Optional.empty();
+        }
+        String foundPlayer = matchOptional.get();
+        return plugin.getProxyServer().getPlayer(foundPlayer);
     }
 }
