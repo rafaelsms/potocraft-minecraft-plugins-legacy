@@ -28,6 +28,8 @@ public final class Permissions {
     public static final String MESSAGE_COMMAND_BYPASS_LIMITER = "potocraft.proxy_command.message.bypass.limiter";
 
     public static final String TELEPORT_COMMAND = "potocraft.paper_command.teleport.teleport";
+    public static final String TELEPORT_COMMAND_NO_REQUEST = "potocraft.paper_command.teleport.teleport.no_request";
+    public static final String TELEPORT_COMMAND_OTHERS = "potocraft.paper_command.teleport.teleport.others";
     public static final String TELEPORT_COMMAND_HERE = "potocraft.paper_command.teleport.teleport_here";
     public static final String TELEPORT_COMMAND_WARP = "potocraft.paper_command.teleport.warp";
     public static final String TELEPORT_COMMAND_HOME = "potocraft.paper_command.teleport.home";
@@ -71,17 +73,19 @@ public final class Permissions {
             MESSAGE_COMMAND,
             MESSAGE_COMMAND_REPLY,
             MESSAGE_COMMAND_SPY,
-            // MESSAGE_COMMAND_BYPASS_IGNORE,
             MESSAGE_COMMAND_BYPASS_LIMITER,
 
-            //TELEPORT_COMMAND,
-            //TELEPORT_COMMAND_HERE,
+            TELEPORT_COMMAND,
+            TELEPORT_COMMAND_NO_REQUEST,
+            //TELEPORT_COMMAND_OTHERS,
+            TELEPORT_COMMAND_HERE,
             //TELEPORT_COMMAND_WARP,
             //TELEPORT_COMMAND_HOME,
             //TELEPORT_COMMAND_HOME_UNLIMITED,
-            //TELEPORT_COMMAND_NO_DELAY,
-            //TELEPORT_COMMAND_NO_COOLDOWN,
+            TELEPORT_COMMAND_NO_DELAY,
+            TELEPORT_COMMAND_NO_COOLDOWN,
 
+            COMBAT_SHOW_DEATH_LOCATION,
             COMBAT_MOBS_BYPASS,
             COMBAT_PLAYERS_BYPASS,
 

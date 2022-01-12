@@ -14,7 +14,7 @@ public class PlayerDestination implements TeleportDestination {
 
     @Override
     public boolean isAvailable() {
-        return destination.canTeleport() && destination.getTeleportTask().isEmpty();
+        return !destination.getPlayer().isDead() && destination.getPlayer().isOnline();
     }
 
     @Override

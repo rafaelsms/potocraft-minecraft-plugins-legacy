@@ -40,6 +40,7 @@ public class PaperSettings extends Settings {
         setDefault(Constants.LOCAL_CHAT_RADIUS, 400.0);
 
         setDefault(Constants.TELEPORT_COOLDOWN, 60 * 5);
+        setDefault(Constants.TELEPORT_REQUEST_TIME_TO_LIVE, 60 * 2);
         setDefault(Constants.TELEPORT_DELAY, 20 * 15);
 
         setDefault(Constants.IN_COMBAT_SHOULD_USE_TOTEM, false);
@@ -48,10 +49,36 @@ public class PaperSettings extends Settings {
         setDefault(Constants.IN_COMBAT_BLOCKED_COMMANDS, List.of("tp", "tphere", "warp", "spawn"));
 
         /* LANG */
+        setDefault(Constants.LANG_TELEPORT_HELP, "&6Uso: &e/teleporte <nome>");
+        setDefault(Constants.LANG_TELEPORT_HERE_HELP, "&6Uso: &e/teleporteaqui <nome>");
+        setDefault(Constants.LANG_TELEPORT_HELP_ADMIN, """
+                                                       &6Uso: &e/teleporte <nome de quem teleportará> <pessoa destino do teleporte>
+                                                       &6Uso: &e/teleporte <nome de quem teleportará> <mundo> <x> <y> <z>
+                                                       """);
         setDefault(Constants.LANG_TELEPORT_PROGRESS_BAR_TITLE, "&eTeleportando... Não entre em combate!");
         setDefault(Constants.LANG_TELEPORT_SUCCESS, "&6Teleportando... Digite &e&l/voltar &6para voltar");
         setDefault(Constants.LANG_TELEPORT_FAIL, "&cFalha ao teleportar!");
+        setDefault(Constants.LANG_TELEPORT_PLAYER_ENTERED_COMBAT, "&cTeleporte cancelado por combate!");
         setDefault(Constants.LANG_TELEPORT_DESTINATION_UNAVAILABLE, "&cDestino indisponível.");
+        setDefault(Constants.LANG_TELEPORT_CAN_NOT_TELEPORT_NOW, "&cVocê não pode teleportar agora.");
+        setDefault(Constants.LANG_TELEPORT_IN_COOLDOWN, "&cVocê só pode teleportar daqui &e%seconds% segundos&c.");
+        setDefault(Constants.LANG_TELEPORT_REQUEST_ANSWER_HELP, """
+                                                                &6Para aceitar ou recusar um pedido de teleporte, digite:
+                                                                &a&l/tpaceitar <nome> &6ou &a&l/tprecusar <nome>
+                                                                """);
+        setDefault(Constants.LANG_TELEPORT_REQUEST_SENT, "&6Pedido enviado para &e%username%&6.");
+        setDefault(Constants.LANG_TELEPORT_REQUESTS_LIST, "&6Você tem pedidos de teleporte de: &e%list%");
+        setDefault(Constants.LANG_TELEPORT_REQUESTS_LIST_EMPTY, "&cNão há pedidos de teleporte válidos.");
+        setDefault(Constants.LANG_TELEPORT_REQUEST_ACCEPTED, "&6Pedido de teleporte de &e%username% &6aceito.");
+        setDefault(Constants.LANG_TELEPORT_REQUEST_DENIED, "&cPedido de teleporte de &e%username% &crecusado.");
+        setDefault(Constants.LANG_TELEPORT_REQUEST_RECEIVED, """
+                                                             &e%username% &6pediu para &e%username% &6se teleportar até &evocê&6.
+                                                             &6Digite &e&l/tpaceitar %username% &6para aceitar ou &e&l/tprecusar %username% &6para recusar.
+                                                             """);
+        setDefault(Constants.LANG_TELEPORT_HERE_REQUEST_RECEIVED, """
+                                                                  &3%username% &6pediu para &3você &6se teleportar até &3%username%&6.
+                                                                  &6Digite &e&l/tpaceitar %username% &6para aceitar ou &e&l/tprecusar %username% &6para recusar.
+                                                                  """);
 
         setDefault(Constants.LANG_COMBAT_PROGRESS_BAR_TITLE, "&cNão saia nem desconecte do jogo ou morrerá!");
         setDefault(Constants.LANG_COMBAT_BLOCKED_COMMAND, "&cEste comando está bloqueado em combate.");
@@ -130,6 +157,10 @@ public class PaperSettings extends Settings {
         return Duration.ofSeconds(get(Constants.TELEPORT_COOLDOWN));
     }
 
+    public Duration getTeleportRequestDuration() {
+        return Duration.ofSeconds(get(Constants.TELEPORT_REQUEST_TIME_TO_LIVE));
+    }
+
     public Component getTeleportTitle() {
         return getLang(Constants.LANG_TELEPORT_PROGRESS_BAR_TITLE);
     }
@@ -142,8 +173,73 @@ public class PaperSettings extends Settings {
         return getLang(Constants.LANG_TELEPORT_FAIL);
     }
 
+    public Component getTeleportPlayerInCombat() {
+        return getLang(Constants.LANG_TELEPORT_PLAYER_ENTERED_COMBAT);
+    }
+
     public Component getTeleportDestinationUnavailable() {
         return getLang(Constants.LANG_TELEPORT_DESTINATION_UNAVAILABLE);
+    }
+
+    public Component getTeleportCanNotTeleportNow() {
+        return getLang(Constants.LANG_TELEPORT_CAN_NOT_TELEPORT_NOW);
+    }
+
+    public Component getTeleportHelp() {
+        return getLang(Constants.LANG_TELEPORT_HELP);
+    }
+
+    public Component getTeleportHereHelp() {
+        return getLang(Constants.LANG_TELEPORT_HERE_HELP);
+    }
+
+    public Component getTeleportHelpAdmin() {
+        return getLang(Constants.LANG_TELEPORT_HELP_ADMIN);
+    }
+
+    public Component getTeleportRequestAnswerHelp() {
+        return getLang(Constants.LANG_TELEPORT_REQUEST_ANSWER_HELP);
+    }
+
+    public Component getTeleportRequestReceived(@NotNull String playerName) {
+        return getLang(Constants.LANG_TELEPORT_REQUEST_RECEIVED).replaceText(TextUtil.replaceText("%username%",
+                                                                                                  playerName));
+    }
+
+    public Component getTeleportHereRequestReceived(@NotNull String playerName) {
+        return getLang(Constants.LANG_TELEPORT_HERE_REQUEST_RECEIVED).replaceText(TextUtil.replaceText("%username%",
+                                                                                                       playerName));
+    }
+
+    public Component getTeleportRequestSent(@NotNull String playerName) {
+        return getLang(Constants.LANG_TELEPORT_REQUEST_SENT).replaceText(TextUtil.replaceText("%username%",
+                                                                                              playerName));
+    }
+
+    public Component getTeleportRequestsList(@NotNull List<String> playerNames) {
+        return getLang(Constants.LANG_TELEPORT_REQUESTS_LIST).replaceText(TextUtil.replaceText("%list%",
+                                                                                               TextUtil.joinStrings(
+                                                                                                       playerNames,
+                                                                                                       ", ")));
+    }
+
+    public Component getTeleportRequestAccepted(@NotNull String playerName) {
+        return getLang(Constants.LANG_TELEPORT_REQUEST_ACCEPTED).replaceText(TextUtil.replaceText("%username%",
+                                                                                                  playerName));
+    }
+
+    public Component getTeleportRequestDenied(@NotNull String playerName) {
+        return getLang(Constants.LANG_TELEPORT_REQUEST_DENIED).replaceText(TextUtil.replaceText("%username%",
+                                                                                                  playerName));
+    }
+
+    public Component getTeleportRequestsListEmpty() {
+        return getLang(Constants.LANG_TELEPORT_REQUESTS_LIST_EMPTY);
+    }
+
+    public Component getTeleportInCooldown(long seconds) {
+        return getLang(Constants.LANG_TELEPORT_IN_COOLDOWN).replaceText(TextUtil.replaceText("%seconds%",
+                                                                                             Long.toString(seconds)));
     }
 
     public boolean getCombatShouldUseTotem() {

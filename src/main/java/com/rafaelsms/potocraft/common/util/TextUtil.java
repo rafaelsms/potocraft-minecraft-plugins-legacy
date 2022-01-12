@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -92,12 +93,31 @@ public final class TextUtil {
         }
     }
 
-    public static String joinStrings(@NotNull Collection<String> strings, String separator) {
+    public static <T> List<String> toStringList(@NotNull Collection<T> ts,
+                                                @NotNull Function<T, String> stringFunction) {
+        List<String> stringList = new ArrayList<>(ts.size());
+        for (T t : ts) {
+            stringList.add(stringFunction.apply(t));
+        }
+        return stringList;
+    }
+
+    public static <T> String joinStrings(@NotNull Iterable<T> ts,
+                                         String separator,
+                                         @NotNull Function<T, String> stringFunction) {
         StringBuilder builder = new StringBuilder();
-        for (String string : strings) {
-            builder.append(string).append(separator);
+        Iterator<T> iterator = ts.iterator();
+        while (iterator.hasNext()) {
+            builder.append(stringFunction.apply(iterator.next()));
+            if (iterator.hasNext()) {
+                builder.append(separator);
+            }
         }
         return builder.toString();
+    }
+
+    public static String joinStrings(@NotNull Iterable<String> strings, String separator) {
+        return joinStrings(strings, separator, string -> string);
     }
 
     public static String joinStrings(@NotNull String[] strings, int start) {
@@ -169,11 +189,18 @@ public final class TextUtil {
     }
 
     public static @NotNull Optional<String> closestMatch(@NotNull Iterable<String> list, @NotNull String search) {
-        String closestMatch = null;
+        return closestStringMatch(list, string -> string, search);
+    }
+
+    public static <T> @NotNull Optional<T> closestStringMatch(@NotNull Iterable<T> list,
+                                                              Function<T, String> stringFunction,
+                                                              @NotNull String search) {
+        T closestMatch = null;
         int closesMatchResult = Integer.MAX_VALUE;
         LevenshteinDistance comparator = new LevenshteinDistance();
-        for (String entry : list) {
-            int compareResult = comparator.apply(entry, search);
+
+        for (T entry : list) {
+            int compareResult = comparator.apply(stringFunction.apply(entry), search);
             // Return if exact match
             if (compareResult == 0) {
                 return Optional.of(entry);
@@ -183,6 +210,7 @@ public final class TextUtil {
                 closesMatchResult = compareResult;
             }
         }
+
         return Optional.ofNullable(closestMatch);
     }
 }

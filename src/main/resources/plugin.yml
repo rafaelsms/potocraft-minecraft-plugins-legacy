@@ -15,3 +15,9 @@ commands:
   teleporteaqui:
     description: Allows players to teleport to each other.
     aliases: [ tphere, tpahere ]
+  teleporteaceitar:
+    description: Accepts the player request to teleport
+    aliases: [ tpaceitar, tpaccept, tpsim, tpyes ]
+  teleporterecusar:
+    description: Denies the player request to teleport
+    aliases: [ tprecusar, tpdeny, tpnao, tpno ]

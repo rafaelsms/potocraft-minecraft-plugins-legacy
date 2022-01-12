@@ -10,7 +10,6 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,11 +60,7 @@ public final class VelocityUtil {
     }
 
     public static @NotNull List<String> getPlayerNameList(@NotNull VelocityPlugin plugin) {
-        ArrayList<String> names = new ArrayList<>(plugin.getProxyServer().getPlayerCount());
-        for (Player player : plugin.getProxyServer().getAllPlayers()) {
-            names.add(player.getUsername());
-        }
-        return names;
+        return TextUtil.toStringList(plugin.getProxyServer().getAllPlayers(), Player::getUsername);
     }
 
     public static @NotNull Optional<Player> searchPlayerName(@NotNull VelocityPlugin plugin, @NotNull String search) {

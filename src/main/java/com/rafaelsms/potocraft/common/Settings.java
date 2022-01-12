@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.rafaelsms.potocraft.common.profile.Profile;
 import com.rafaelsms.potocraft.common.util.TextUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -76,12 +75,8 @@ public abstract class Settings {
     }
 
     public Component getManyPlayersFound(@NotNull List<? extends Profile> profiles) {
-        List<String> playerNames = new ArrayList<>();
-        for (Profile profile : profiles) {
-            playerNames.add(profile.getLastPlayerName());
-        }
-        TextReplacementConfig playerList = TextUtil.replaceText("%list%", TextUtil.joinStrings(playerNames, ", "));
-        return getLang(Constants.LANG_MANY_PLAYERS_FOUND).replaceText(playerList);
+        String playerList = TextUtil.joinStrings(profiles, ", ", Profile::getLastPlayerName);
+        return getLang(Constants.LANG_MANY_PLAYERS_FOUND).replaceText(TextUtil.replaceText("%list%", playerList));
     }
 
     public Component getUnknownPlayerName() {
@@ -250,6 +245,8 @@ public abstract class Settings {
                 "configuration.chat.local.comparator.minimum_char_differences";
 
         public static final String TELEPORT_COOLDOWN = "configuration.teleport.cooldown_in_seconds";
+        public static final String TELEPORT_REQUEST_TIME_TO_LIVE =
+                "configuration.teleport.request_time_to_live_in_seconds";
         public static final String TELEPORT_DELAY = "configuration.teleport.delay_in_ticks";
 
         public static final String IN_COMBAT_SHOULD_USE_TOTEM = "configuration.combat.should_use_totem_on_logout";
@@ -338,10 +335,25 @@ public abstract class Settings {
 
 
         // Paper
+        public static final String LANG_TELEPORT_HELP = "language.teleport.help";
+        public static final String LANG_TELEPORT_HERE_HELP = "language.teleport.teleport_here_help";
+        public static final String LANG_TELEPORT_HELP_ADMIN = "language.teleport.help_admin";
         public static final String LANG_TELEPORT_PROGRESS_BAR_TITLE = "language.teleport.progress_bar_title";
         public static final String LANG_TELEPORT_SUCCESS = "language.teleport.success";
         public static final String LANG_TELEPORT_FAIL = "language.teleport.failed";
+        public static final String LANG_TELEPORT_PLAYER_ENTERED_COMBAT = "language.teleport.entered_combat";
         public static final String LANG_TELEPORT_DESTINATION_UNAVAILABLE = "language.teleport.destination_unavailable";
+        public static final String LANG_TELEPORT_CAN_NOT_TELEPORT_NOW = "language.teleport.can_not_teleport_now";
+        public static final String LANG_TELEPORT_IN_COOLDOWN = "language.teleport.in_cooldown";
+        public static final String LANG_TELEPORT_REQUEST_RECEIVED = "language.teleport.request_received";
+        public static final String LANG_TELEPORT_HERE_REQUEST_RECEIVED =
+                "language.teleport.teleport_here_request_received";
+        public static final String LANG_TELEPORT_REQUEST_ANSWER_HELP = "language.teleport.request_answer_help";
+        public static final String LANG_TELEPORT_REQUEST_SENT = "language.teleport.request_sent";
+        public static final String LANG_TELEPORT_REQUESTS_LIST = "language.teleport.requests_available";
+        public static final String LANG_TELEPORT_REQUESTS_LIST_EMPTY = "language.teleport.no_request_available";
+        public static final String LANG_TELEPORT_REQUEST_ACCEPTED = "language.teleport.request_accepted";
+        public static final String LANG_TELEPORT_REQUEST_DENIED = "language.teleport.request_denied";
 
         public static final String LANG_COMBAT_PROGRESS_BAR_TITLE = "language.combat.progress_bar_title";
         public static final String LANG_COMBAT_BLOCKED_COMMAND = "language.combat.this_command_is_blocked_in_combat";

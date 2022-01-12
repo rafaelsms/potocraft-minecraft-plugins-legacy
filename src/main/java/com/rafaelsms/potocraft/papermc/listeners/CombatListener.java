@@ -98,19 +98,19 @@ public class CombatListener implements Listener {
 
             // Set in combat for the damaged player
             if (!damagedPlayer.hasPermission(Permissions.COMBAT_PLAYERS_BYPASS)) {
-                damagedUser.setCombatTask(new CombatTask(plugin, damagedUser, delayTicks));
+                damagedUser.setCombatTask(new CombatTask(plugin, damagedUser, CombatTask.Type.PLAYER, delayTicks));
             }
 
             // Set in combat for the damager user as well
             if (!damagerPlayer.hasPermission(Permissions.COMBAT_PLAYERS_BYPASS)) {
                 PaperUser damagerUser = plugin.getUserManager().getUser(damagerPlayer.getUniqueId());
-                damagerUser.setCombatTask(new CombatTask(plugin, damagerUser, delayTicks));
+                damagerUser.setCombatTask(new CombatTask(plugin, damagerUser, CombatTask.Type.PLAYER, delayTicks));
             }
         } else {
             // Set in combat for the damaged player
             if (!damagedPlayer.hasPermission(Permissions.COMBAT_MOBS_BYPASS)) {
                 long delayTicks = plugin.getSettings().getCombatVsMobsTicks();
-                damagedUser.setCombatTask(new CombatTask(plugin, damagedUser, delayTicks));
+                damagedUser.setCombatTask(new CombatTask(plugin, damagedUser, CombatTask.Type.MOB, delayTicks));
             }
         }
     }
