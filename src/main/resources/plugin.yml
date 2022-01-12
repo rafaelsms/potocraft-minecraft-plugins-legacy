@@ -21,3 +21,6 @@ commands:
   teleporterecusar:
     description: Denies the player request to teleport
     aliases: [ tprecusar, tpdeny, tpnao, tpno ]
+  casa:
+    description: Create and store a location for the player
+    aliases: [ home, homes, casa, sethome, delhome ]

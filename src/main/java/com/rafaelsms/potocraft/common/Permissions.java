@@ -80,8 +80,8 @@ public final class Permissions {
             //TELEPORT_COMMAND_OTHERS,
             TELEPORT_COMMAND_HERE,
             //TELEPORT_COMMAND_WARP,
-            //TELEPORT_COMMAND_HOME,
-            //TELEPORT_COMMAND_HOME_UNLIMITED,
+            TELEPORT_COMMAND_HOME,
+            TELEPORT_COMMAND_HOME_UNLIMITED,
             TELEPORT_COMMAND_NO_DELAY,
             TELEPORT_COMMAND_NO_COOLDOWN,
 

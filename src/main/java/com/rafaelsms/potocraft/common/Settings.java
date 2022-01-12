@@ -254,6 +254,9 @@ public abstract class Settings {
         public static final String IN_COMBAT_PLAYER_TICKS = "configuration.combat.time_in_combat_vs_players_ticks";
         public static final String IN_COMBAT_BLOCKED_COMMANDS = "configuration.combat.blocked_commands";
 
+        public static final String HOME_PERMISSION_GROUP = "configuration.homes.permission_groups";
+        public static final String HOME_BASE_HOME_NUMBER = "configuration.homes.base_number_of_homes";
+
 
         /* Language */
         // Common
@@ -361,6 +364,13 @@ public abstract class Settings {
         public static final String LANG_COMBAT_LAST_DEATH_LOCATION_WORLD =
                 "language.combat.show_last_death_location.with_world";
 
+        public static final String LANG_HOME_HELP = "language.home.help";
+        public static final String LANG_HOME_ALREADY_EXISTS = "language.home.already_exists";
+        public static final String LANG_HOME_UNAVAILABLE_NO_PERMISSION =
+                "language.home.required_permissions_are_missing";
+        public static final String LANG_HOME_LIST = "language.home.home_list";
+        public static final String LANG_HOME_CREATED = "language.home.created";
+        public static final String LANG_HOME_DELETED = "language.home.deleted";
 
         private Constants() {
         }

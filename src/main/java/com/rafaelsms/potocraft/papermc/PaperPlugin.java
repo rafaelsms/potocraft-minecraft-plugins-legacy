@@ -5,10 +5,7 @@ import com.rafaelsms.potocraft.common.Permissions;
 import com.rafaelsms.potocraft.common.Plugin;
 import com.rafaelsms.potocraft.common.util.Command;
 import com.rafaelsms.potocraft.common.util.PluginType;
-import com.rafaelsms.potocraft.papermc.commands.TeleportAcceptCommand;
-import com.rafaelsms.potocraft.papermc.commands.TeleportCommand;
-import com.rafaelsms.potocraft.papermc.commands.TeleportDenyCommand;
-import com.rafaelsms.potocraft.papermc.commands.TeleportHereCommand;
+import com.rafaelsms.potocraft.papermc.commands.*;
 import com.rafaelsms.potocraft.papermc.database.PaperDatabase;
 import com.rafaelsms.potocraft.papermc.listeners.CombatListener;
 import com.rafaelsms.potocraft.papermc.listeners.ProfileUpdater;
@@ -63,6 +60,7 @@ public class PaperPlugin extends JavaPlugin implements Plugin<PaperProfile, Pape
         setCommand(getServer().getPluginCommand("teleporteaqui"), new TeleportHereCommand(this));
         setCommand(getServer().getPluginCommand("teleporteaceitar"), new TeleportAcceptCommand(this));
         setCommand(getServer().getPluginCommand("teleporterecusar"), new TeleportDenyCommand(this));
+        setCommand(getServer().getPluginCommand("casa"), new HomeCommand(this));
 
         logger().info("PotoCraft Paper Plugin enabled!");
     }

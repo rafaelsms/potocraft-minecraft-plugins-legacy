@@ -34,6 +34,14 @@ public class Home extends DatabaseObject {
         return name;
     }
 
+    public @NotNull Location getLocation() {
+        return location;
+    }
+
+    public @NotNull ZonedDateTime getCreationTime() {
+        return creationTime;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -57,10 +65,6 @@ public class Home extends DatabaseObject {
 
     public static Home fromLocation(@NotNull String name, @NotNull Location location) {
         return new Home(name, location);
-    }
-
-    public static Document toDocument(@NotNull Home home) {
-        return home.toDocument();
     }
 
     @Override

@@ -2,13 +2,16 @@ package com.rafaelsms.potocraft.papermc;
 
 import com.rafaelsms.potocraft.common.Settings;
 import com.rafaelsms.potocraft.common.util.TextUtil;
+import com.rafaelsms.potocraft.papermc.database.Home;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class PaperSettings extends Settings {
 
@@ -47,6 +50,9 @@ public class PaperSettings extends Settings {
         setDefault(Constants.IN_COMBAT_MOB_TICKS, 20 * 19);
         setDefault(Constants.IN_COMBAT_PLAYER_TICKS, 20 * 19 * 2);
         setDefault(Constants.IN_COMBAT_BLOCKED_COMMANDS, List.of("tp", "tphere", "warp", "spawn"));
+
+        setDefault(Constants.HOME_PERMISSION_GROUP, Map.of("potocraft.paper_command.teleport.home.vip", 3));
+        setDefault(Constants.HOME_BASE_HOME_NUMBER, 1);
 
         /* LANG */
         setDefault(Constants.LANG_TELEPORT_HELP, "&6Uso: &e/teleporte <nome>");
@@ -87,6 +93,13 @@ public class PaperSettings extends Settings {
         setDefault(Constants.LANG_COMBAT_LAST_DEATH_LOCATION_WORLD,
                    "&cVocê morreu no mundo &e\"%world%\" na posição &ex = %x%&c, &ey = %y%&c, &ez = %z%&c.");
 
+        setDefault(Constants.LANG_HOME_HELP, "&6Uso: &e&l/casa <nome> &6ou &e&l/casa criar/apagar/substituir <nome>");
+        setDefault(Constants.LANG_HOME_ALREADY_EXISTS, "&cCasa já existe!");
+        setDefault(Constants.LANG_HOME_UNAVAILABLE_NO_PERMISSION,
+                   "&cEsta casa não está mais disponível: você não possui mais as permissões necessárias.");
+        setDefault(Constants.LANG_HOME_LIST, "&6Lista de casas: &e%list%");
+        setDefault(Constants.LANG_HOME_CREATED, "&6Casa &e%name% &6criada!");
+        setDefault(Constants.LANG_HOME_DELETED, "&cCasa &e%name% &cdeletada!");
     }
 
     public String getMongoServerProfilesCollection() {
@@ -230,7 +243,7 @@ public class PaperSettings extends Settings {
 
     public Component getTeleportRequestDenied(@NotNull String playerName) {
         return getLang(Constants.LANG_TELEPORT_REQUEST_DENIED).replaceText(TextUtil.replaceText("%username%",
-                                                                                                  playerName));
+                                                                                                playerName));
     }
 
     public Component getTeleportRequestsListEmpty() {
@@ -281,5 +294,40 @@ public class PaperSettings extends Settings {
                     .replaceText(TextUtil.replaceText("%y%", String.valueOf(location.getBlockY())))
                     .replaceText(TextUtil.replaceText("%z%", String.valueOf(location.getBlockZ())));
         }
+    }
+
+    public Map<String, Integer> getHomePermissionGroups() {
+        return get(Constants.HOME_PERMISSION_GROUP);
+    }
+
+    public int getBaseHomeNumber() {
+        return get(Constants.HOME_BASE_HOME_NUMBER);
+    }
+
+    public Component getHomeHelp() {
+        return getLang(Constants.LANG_HOME_HELP);
+    }
+
+    public Component getHomeUnavailableNoPermission() {
+        return getLang(Constants.LANG_HOME_UNAVAILABLE_NO_PERMISSION);
+    }
+
+    public Component getHomeAlreadyExists() {
+        return getLang(Constants.LANG_HOME_ALREADY_EXISTS);
+    }
+
+    public Component getHomeList(@NotNull Collection<Home> homeNames) {
+        return getLang(Constants.LANG_HOME_LIST).replaceText(TextUtil.replaceText("%list%",
+                                                                                  TextUtil.joinStrings(homeNames,
+                                                                                                       ", ",
+                                                                                                       Home::getName)));
+    }
+
+    public Component getHomeCreated(@NotNull String name) {
+        return getLang(Constants.LANG_HOME_CREATED).replaceText(TextUtil.replaceText("%name%", name));
+    }
+
+    public Component getHomeDeleted(@NotNull String name) {
+        return getLang(Constants.LANG_HOME_DELETED).replaceText(TextUtil.replaceText("%name%", name));
     }
 }

@@ -45,8 +45,10 @@ public class ServerProfile extends DatabaseObject {
         return playerId;
     }
 
-    public Collection<Home> getHomes() {
-        return Collections.unmodifiableCollection(homes.values());
+    public LinkedList<Home> getHomes() {
+        LinkedList<Home> homes = new LinkedList<>(this.homes.values());
+        homes.sort(Comparator.comparing(Home::getCreationTime));
+        return homes;
     }
 
     public boolean createHome(@NotNull String name, @NotNull Location location) {
@@ -94,10 +96,6 @@ public class ServerProfile extends DatabaseObject {
         return new ServerProfile(playerId);
     }
 
-    public static @NotNull Document toDocument(@NotNull ServerProfile serverProfile) {
-        return serverProfile.toDocument();
-    }
-
     public static Bson filterId(@NotNull UUID playerId) {
         return Filters.eq(Constants.PLAYER_ID_KEY, Converter.fromUUID(playerId));
     }
@@ -111,7 +109,7 @@ public class ServerProfile extends DatabaseObject {
         Document document = new Document();
         document.put(Constants.PLAYER_ID_KEY, Converter.fromUUID(playerId));
 
-        document.put(Constants.HOMES_KEY, Converter.toList(homes.values(), DatabaseObject::toDocument));
+        document.put(Constants.HOMES_KEY, Converter.toList(homes.values(), Home::toDocument));
 
         document.put(Constants.BACK_LOCATION_KEY, Location.toDocument(backLocation));
         document.put(Constants.DEATH_LOCATION_KEY, Location.toDocument(backLocation));

@@ -196,8 +196,8 @@ public final class TextUtil {
                                                               Function<T, String> stringFunction,
                                                               @NotNull String search) {
         T closestMatch = null;
-        int closesMatchResult = Integer.MAX_VALUE;
-        LevenshteinDistance comparator = new LevenshteinDistance();
+        int closesMatchResult = search.length(); // Prevent matching when no character is equal
+        LevenshteinDistance comparator = new LevenshteinDistance(closesMatchResult);
 
         for (T entry : list) {
             int compareResult = comparator.apply(stringFunction.apply(entry), search);
