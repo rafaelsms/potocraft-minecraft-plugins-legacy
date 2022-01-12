@@ -79,7 +79,7 @@ public class ReportEntry extends DatabaseObject {
     }
 
     @Override
-    public Document toDocument() {
+    public @NotNull Document toDocument() {
         Document document = new Document();
         document.put(Constants.REPORT_TYPE_KEY, reportType.toString());
         document.put(Constants.REPORTER_KEY, Converter.fromUUID(reporterId));

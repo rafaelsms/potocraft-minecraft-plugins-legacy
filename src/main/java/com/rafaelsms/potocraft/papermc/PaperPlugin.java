@@ -3,13 +3,17 @@ package com.rafaelsms.potocraft.papermc;
 import com.rafaelsms.potocraft.common.CommonServer;
 import com.rafaelsms.potocraft.common.Permissions;
 import com.rafaelsms.potocraft.common.Plugin;
+import com.rafaelsms.potocraft.common.util.Command;
 import com.rafaelsms.potocraft.common.util.PluginType;
+import com.rafaelsms.potocraft.papermc.commands.TeleportCommand;
+import com.rafaelsms.potocraft.papermc.commands.TeleportHereCommand;
 import com.rafaelsms.potocraft.papermc.database.PaperDatabase;
 import com.rafaelsms.potocraft.papermc.listeners.ProfileUpdater;
 import com.rafaelsms.potocraft.papermc.listeners.UserListener;
 import com.rafaelsms.potocraft.papermc.profile.PaperProfile;
 import com.rafaelsms.potocraft.papermc.user.PaperUser;
 import com.rafaelsms.potocraft.papermc.user.PaperUserManager;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.permissions.Permission;
@@ -48,9 +52,20 @@ public class PaperPlugin extends JavaPlugin implements Plugin<PaperProfile, Pape
 
         // Register listeners
         getServer().getPluginManager().registerEvents(new ProfileUpdater(this), this);
-        getServer().getPluginManager().registerEvents(new UserListener(getUserManager()), this);
+        getServer().getPluginManager().registerEvents(new UserListener(this, getUserManager()), this);
+
+        // Register commands
+        setCommand(getServer().getPluginCommand("teleporte"), new TeleportCommand(this));
+        setCommand(getServer().getPluginCommand("teleporteaqui"), new TeleportHereCommand(this));
 
         logger().info("PotoCraft Paper Plugin enabled!");
+    }
+
+    private <T extends Command> void setCommand(@Nullable PluginCommand pluginCommand,
+                                                @NotNull T commandImplementation) {
+        assert pluginCommand != null;
+        pluginCommand.setExecutor(commandImplementation);
+        pluginCommand.setTabCompleter(commandImplementation);
     }
 
     @Override

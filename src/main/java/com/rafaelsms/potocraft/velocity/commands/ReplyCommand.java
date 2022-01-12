@@ -85,9 +85,11 @@ public class ReplyCommand implements RawCommand {
         Component spyMessage = plugin
                 .getSettings()
                 .getDirectMessageSpyFormat(sendingPlayerUsername, receivingPlayerName, messageComponent);
+
         // Send message to the player
         receivingPlayer.sendMessage(sendingPlayer.identity(), incomingMessage, MessageType.CHAT);
         sendingPlayer.sendMessage(sendingPlayer.identity(), outgoingMessage, MessageType.CHAT);
+
         // Send to those who spy
         for (Player player : plugin.getProxyServer().getAllPlayers()) {
             if (!player.hasPermission(Permissions.MESSAGE_COMMAND_SPY)) {
@@ -102,11 +104,15 @@ public class ReplyCommand implements RawCommand {
         // Update reply candidates for both
         VelocityUser receivingUser = plugin.getUserManager().getUser(receivingPlayer.getUniqueId());
         sendingUser.setLastReplyCandidate(receivingPlayer.getUniqueId());
+
         // Set last reply candidate if none or if the same player (keep the old one if it isn't this player)
         Optional<UUID> receivingReplyCandidate = receivingUser.getLastReplyCandidate();
         if (receivingReplyCandidate.isEmpty() || receivingReplyCandidate.get().equals(sendingPlayer.getUniqueId())) {
             receivingUser.setLastReplyCandidate(sendingPlayer.getUniqueId());
         }
+
+        // Store sent message for spam checking
+        sendingUser.sentDirectMessage(message);
     }
 
     @Override

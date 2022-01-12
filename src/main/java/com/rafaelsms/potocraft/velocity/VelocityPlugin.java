@@ -80,7 +80,7 @@ public class VelocityPlugin implements com.rafaelsms.potocraft.common.Plugin<Vel
         getProxyServer().getEventManager().register(this, new ProfileUpdater(this));
         getProxyServer().getEventManager().register(this, new ReportChecker(this));
         getProxyServer().getEventManager().register(this, new ChatController(this));
-        getProxyServer().getEventManager().register(this, new UserListener(getUserManager()));
+        getProxyServer().getEventManager().register(this, new UserListener(this, getUserManager()));
 
         logger.info("PotoCraft Proxy initialized!");
     }

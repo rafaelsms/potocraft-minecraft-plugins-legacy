@@ -56,7 +56,7 @@ public class TimedReportEntry extends ReportEntry {
     }
 
     @Override
-    public Document toDocument() {
+    public @NotNull Document toDocument() {
         Document document = super.toDocument();
         document.put(Constants.EXPIRATION_DATE_KEY, Converter.fromDateTime(expirationDate));
         document.put(Constants.REPORT_ACTIVE_KEY, active);

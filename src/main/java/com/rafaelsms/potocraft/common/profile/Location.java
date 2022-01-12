@@ -50,6 +50,10 @@ public class Location extends DatabaseObject {
         return new Location(serverName, location);
     }
 
+    public static @NotNull Document toDocument(@NotNull Location location) {
+        return location.toDocument();
+    }
+
     public @NotNull String getServerName() {
         return serverName;
     }
@@ -63,7 +67,7 @@ public class Location extends DatabaseObject {
     }
 
     @Override
-    public Document toDocument() {
+    public @NotNull Document toDocument() {
         Document document = new Document();
         document.put(Constants.SERVER_NAME_KEY, serverName);
         document.put(Constants.WORLD_ID_KEY, Converter.fromUUID(worldId));

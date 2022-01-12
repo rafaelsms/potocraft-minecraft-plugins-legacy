@@ -8,3 +8,10 @@ description: Custom plugin for PotoCraft Server
 load: POSTWORLD
 depend:
   - floodgate
+commands:
+  teleporte:
+    description: Allows players to teleport to each other.
+    aliases: [ tp, tpa ]
+  teleporteaqui:
+    description: Allows players to teleport to each other.
+    aliases: [ tphere, tpahere ]

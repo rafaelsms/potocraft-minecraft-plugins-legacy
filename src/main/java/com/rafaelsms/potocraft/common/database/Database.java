@@ -24,11 +24,11 @@ public abstract class Database<T extends Profile> {
 
     private static final ReplaceOptions replaceOptions = new ReplaceOptions().upsert(true);
 
-    protected final @NotNull Plugin plugin;
+    protected final @NotNull Plugin<?, ?, ?> plugin;
 
     private @Nullable MongoClient mongoClient = null;
 
-    public Database(@NotNull Plugin plugin) {
+    public Database(@NotNull Plugin<?, ?, ?> plugin) {
         this.plugin = plugin;
         try {
             getUserProfiles().createIndex(Indexes.text(Profile.lastNameField()), new IndexOptions().background(false));
@@ -86,7 +86,7 @@ public abstract class Database<T extends Profile> {
         }
     }
 
-    private MongoDatabase getDatabase() throws DatabaseException {
+    protected MongoDatabase getDatabase() throws DatabaseException {
         try {
             if (mongoClient == null) {
                 mongoClient = new MongoClient(new MongoClientURI(plugin.getSettings().getMongoURI()));
@@ -103,7 +103,7 @@ public abstract class Database<T extends Profile> {
 
     }
 
-    private interface DatabaseOperation<T> {
+    public interface DatabaseOperation<T> {
         T executeOperation() throws DatabaseException;
     }
 }

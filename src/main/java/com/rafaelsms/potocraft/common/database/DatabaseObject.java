@@ -9,6 +9,6 @@ public abstract class DatabaseObject {
     protected DatabaseObject(@NotNull Document document) {
     }
 
-    public abstract Document toDocument();
+    public abstract @NotNull Document toDocument();
 
 }

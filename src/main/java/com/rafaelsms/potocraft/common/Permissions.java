@@ -19,15 +19,21 @@ public final class Permissions {
     public static final String REPORT_COMMAND_MUTE_OFFLINE = "potocraft.proxy_command.report.mute.offline";
     public static final String REPORT_COMMAND_BAN = "potocraft.proxy_command.report.ban";
     public static final String REPORT_COMMAND_BAN_EXEMPT = "potocraft.proxy_command.report.ban.offline";
-    public static final String REPORT_COMMAND_UNREPORT = "potocraft.proxy_command.report.unreport";
     public static final String REPORT_COMMAND_BAN_OFFLINE = "potocraft.proxy_command.report.ban.exempt";
+    public static final String REPORT_COMMAND_UNREPORT = "potocraft.proxy_command.report.unreport";
 
     public static final String MESSAGE_COMMAND = "potocraft.proxy_command.message";
     public static final String MESSAGE_COMMAND_REPLY = "potocraft.proxy_command.message.reply";
     public static final String MESSAGE_COMMAND_SPY = "potocraft.proxy_command.message.spy";
-    // TODO below
-    public static final String MESSAGE_COMMAND_BYPASS_IGNORE = "potocraft.proxy_command.message.bypass.ignore";
     public static final String MESSAGE_COMMAND_BYPASS_LIMITER = "potocraft.proxy_command.message.bypass.limiter";
+
+    public static final String TELEPORT_COMMAND = "potocraft.paper_command.teleport.teleport";
+    public static final String TELEPORT_COMMAND_HERE = "potocraft.paper_command.teleport.teleport_here";
+    public static final String TELEPORT_COMMAND_WARP = "potocraft.paper_command.teleport.warp";
+    public static final String TELEPORT_COMMAND_HOME = "potocraft.paper_command.teleport.home";
+    public static final String TELEPORT_COMMAND_HOME_UNLIMITED = "potocraft.paper_command.teleport.home.*";
+    public static final String TELEPORT_COMMAND_NO_DELAY = "potocraft.paper_command.teleport.no_delay";
+    public static final String TELEPORT_COMMAND_NO_COOLDOWN = "potocraft.paper_command.teleport.no_cooldown";
 
     public static final String LOCAL_CHAT_SPY = "potocraft.chat.spy";
     public static final String GLOBAL_CHAT = "potocraft.chat.global";
@@ -60,16 +66,24 @@ public final class Permissions {
 
             MESSAGE_COMMAND,
             MESSAGE_COMMAND_REPLY,
-            MESSAGE_COMMAND_BYPASS_IGNORE,
+            MESSAGE_COMMAND_SPY,
+            // MESSAGE_COMMAND_BYPASS_IGNORE,
+            MESSAGE_COMMAND_BYPASS_LIMITER,
+
+            //TELEPORT_COMMAND,
+            //TELEPORT_COMMAND_HERE,
+            //TELEPORT_COMMAND_WARP,
+            //TELEPORT_COMMAND_HOME,
+            //TELEPORT_COMMAND_HOME_UNLIMITED,
+            //TELEPORT_COMMAND_NO_DELAY,
+            //TELEPORT_COMMAND_NO_COOLDOWN,
 
             GLOBAL_CHAT,
             GLOBAL_CHAT_BYPASS,
             LOCAL_CHAT_SPY,
             UNIVERSAL_CHAT,
             UNIVERSAL_CHAT_BYPASS,
-            UNIVERSAL_CHAT_SPY,
-
-    };
+            UNIVERSAL_CHAT_SPY,};
 
     private Permissions() {
     }

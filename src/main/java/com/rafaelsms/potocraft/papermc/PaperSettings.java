@@ -4,6 +4,8 @@ import com.rafaelsms.potocraft.common.Settings;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
+
 public class PaperSettings extends Settings {
 
     private final @NotNull PaperPlugin plugin;
@@ -18,6 +20,7 @@ public class PaperSettings extends Settings {
         super.setDefaults();
         /* CONFIGURATION */
         setDefault(Constants.PAPER_SERVER_NAME_ON_PROXY, "<FILL THIS IN OR LOCATIONS WONT BE RESTORED>");
+        setDefault(Constants.DATABASE_MONGO_PAPER_SERVER_PROFILES_COLLECTION, null);
 
         setDefault(Constants.GLOBAL_CHAT_FORMAT, "&7! <&e%prefix%%username%%suffix%&7> &f%message%");
         setDefault(Constants.GLOBAL_CHAT_LIMITER_MESSAGES_AMOUNT, 3);
@@ -32,7 +35,24 @@ public class PaperSettings extends Settings {
         setDefault(Constants.LOCAL_CHAT_COMPARATOR_THRESHOLD, 2);
         setDefault(Constants.LOCAL_CHAT_RADIUS, 400.0);
 
+        setDefault(Constants.TELEPORT_COOLDOWN, 60 * 5);
+        setDefault(Constants.TELEPORT_DELAY, 20 * 15);
+
+        setDefault(Constants.IN_COMBAT_MOB_TICKS, 20 * 19);
+        setDefault(Constants.IN_COMBAT_PLAYER_TICKS, 20 * 19 * 2);
+
         /* LANG */
+        setDefault(Constants.LANG_TELEPORT_PROGRESS_BAR_TITLE, "&eTeleportando... Não entre em combate!");
+        setDefault(Constants.LANG_TELEPORT_SUCCESS, "&6Teleportando... Digite &e&l/voltar &6para voltar");
+        setDefault(Constants.LANG_TELEPORT_FAIL, "&cFalha ao teleportar!");
+        setDefault(Constants.LANG_TELEPORT_DESTINATION_UNAVAILABLE, "&cDestino indisponível.");
+
+        setDefault(Constants.LANG_COMBAT_PROGRESS_BAR_TITLE, "&cNão saia nem desconecte do jogo ou morrerá!");
+
+    }
+
+    public String getMongoServerProfilesCollection() {
+        return get(Constants.DATABASE_MONGO_PAPER_SERVER_PROFILES_COLLECTION);
     }
 
     public String getServerName() {
@@ -89,5 +109,41 @@ public class PaperSettings extends Settings {
 
     public int getLocalChatComparatorMinLength() {
         return get(Constants.LOCAL_CHAT_COMPARATOR_MIN_LENGTH);
+    }
+
+    public long getTeleportDelayTicks() {
+        return get(Constants.TELEPORT_DELAY);
+    }
+
+    public Duration getTeleportCooldown() {
+        return Duration.ofSeconds(get(Constants.TELEPORT_COOLDOWN));
+    }
+
+    public Component getTeleportTitle() {
+        return getLang(Constants.LANG_TELEPORT_PROGRESS_BAR_TITLE);
+    }
+
+    public Component getTeleportedSuccessfully() {
+        return getLang(Constants.LANG_TELEPORT_SUCCESS);
+    }
+
+    public Component getTeleportFailed() {
+        return getLang(Constants.LANG_TELEPORT_FAIL);
+    }
+
+    public Component getTeleportDestinationUnavailable() {
+        return getLang(Constants.LANG_TELEPORT_DESTINATION_UNAVAILABLE);
+    }
+
+    public long getCombatVsMobsTicks() {
+        return get(Constants.IN_COMBAT_MOB_TICKS);
+    }
+
+    public long getCombatVsPlayersTicks() {
+        return get(Constants.IN_COMBAT_PLAYER_TICKS);
+    }
+
+    public Component getCombatTitle() {
+        return getLang(Constants.LANG_COMBAT_PROGRESS_BAR_TITLE);
     }
 }

@@ -90,6 +90,7 @@ public class MessageCommand implements RawCommand {
         // Send message to the player
         receivingPlayer.sendMessage(sendingPlayerIdentity, incomingMessage, MessageType.CHAT);
         sendingSource.sendMessage(sendingPlayerIdentity, outgoingMessage, MessageType.CHAT);
+
         // Send to those who spy
         for (Player player : plugin.getProxyServer().getAllPlayers()) {
             if (!player.hasPermission(Permissions.MESSAGE_COMMAND_SPY)) {
@@ -106,6 +107,7 @@ public class MessageCommand implements RawCommand {
         if (sendingSource instanceof Player sendingPlayer) {
             VelocityUser sendingUser = plugin.getUserManager().getUser(sendingPlayer.getUniqueId());
             sendingUser.setLastReplyCandidate(receivingPlayer.getUniqueId());
+
             // Set last reply candidate if none or if the same player (keep the old one if it isn't this player)
             VelocityUser receivingUser = plugin.getUserManager().getUser(receivingPlayer.getUniqueId());
             Optional<UUID> receivingReplyCandidate = receivingUser.getLastReplyCandidate();
@@ -113,6 +115,9 @@ public class MessageCommand implements RawCommand {
                 receivingReplyCandidate.get().equals(sendingPlayer.getUniqueId())) {
                 receivingUser.setLastReplyCandidate(sendingPlayer.getUniqueId());
             }
+
+            // Store sent message for spam checking
+            sendingUser.sentDirectMessage(message);
         }
     }
 

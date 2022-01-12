@@ -18,9 +18,9 @@ public abstract class Settings {
     private final Gson jsonConfig = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
     protected final Map<String, Object> configuration = Collections.synchronizedMap(new LinkedHashMap<>());
 
-    protected final @NotNull Plugin plugin;
+    protected final @NotNull Plugin<?, ?, ?> plugin;
 
-    protected Settings(@NotNull Plugin plugin) throws Exception {
+    protected Settings(@NotNull Plugin<?, ?, ?> plugin) throws Exception {
         this.plugin = plugin;
 
         // Create configuration file
@@ -225,6 +225,7 @@ public abstract class Settings {
 
         // Paper
         public static final String PAPER_SERVER_NAME_ON_PROXY = "configuration.server_name_on_the_proxy";
+        public static final String DATABASE_MONGO_PAPER_SERVER_PROFILES_COLLECTION = "configuration.database.server_profiles_collection";
 
         public static final String GLOBAL_CHAT_FORMAT = "configuration.chat.global.format";
         public static final String GLOBAL_CHAT_PREFIX = "configuration.chat.global.prefix";
@@ -247,6 +248,12 @@ public abstract class Settings {
                 "configuration.chat.local.comparator.minimum_length";
         public static final String LOCAL_CHAT_COMPARATOR_THRESHOLD =
                 "configuration.chat.local.comparator.minimum_char_differences";
+
+        public static final String TELEPORT_COOLDOWN = "configuration.teleport.cooldown_in_seconds";
+        public static final String TELEPORT_DELAY = "configuration.teleport.delay_in_ticks";
+
+        public static final String IN_COMBAT_MOB_TICKS = "configuration.combat.time_in_combat_vs_mobs_ticks";
+        public static final String IN_COMBAT_PLAYER_TICKS = "configuration.combat.time_in_combat_vs_players_ticks";
 
 
         /* Language */
@@ -326,6 +333,16 @@ public abstract class Settings {
                 "language.kick_messages.floodgate_prefix_on_java_player";
         public static final String LANG_NO_LOGIN_SERVER_AVAILABLE = "language.kick_messages.login_server_unavailable";
         public static final String LANG_LOGIN_TRANSFER_UNAVAILABLE = "language.kick_messages.lobby_server_unavailable";
+
+
+        // Paper
+        public static final String LANG_TELEPORT_PROGRESS_BAR_TITLE = "language.teleport.progress_bar_title";
+        public static final String LANG_TELEPORT_SUCCESS = "language.teleport.success";
+        public static final String LANG_TELEPORT_FAIL = "language.teleport.failed";
+        public static final String LANG_TELEPORT_DESTINATION_UNAVAILABLE = "language.teleport.destination_unavailable";
+
+        public static final String LANG_COMBAT_PROGRESS_BAR_TITLE = "language.combat.progress_bar_title";
+
 
         private Constants() {
         }
