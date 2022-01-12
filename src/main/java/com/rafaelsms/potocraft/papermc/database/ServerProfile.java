@@ -20,6 +20,7 @@ public class ServerProfile extends DatabaseObject {
 
     private @Nullable ZonedDateTime lastTeleportDate = null;
     private @Nullable Location backLocation = null;
+    private @Nullable Location deathLocation = null;
 
     private ServerProfile(@NotNull UUID playerId) {
         super(new Document());
@@ -35,6 +36,9 @@ public class ServerProfile extends DatabaseObject {
         for (Home home : homes) {
             this.homes.put(home.getName().toLowerCase(), home);
         }
+
+        this.backLocation = Location.fromDocument(document.get(Constants.BACK_LOCATION_KEY, Document.class));
+        this.deathLocation = Location.fromDocument(document.get(Constants.DEATH_LOCATION_KEY, Document.class));
     }
 
     public @NotNull UUID getPlayerId() {
@@ -74,6 +78,14 @@ public class ServerProfile extends DatabaseObject {
         this.backLocation = backLocation;
     }
 
+    public Optional<Location> getDeathLocation() {
+        return Optional.ofNullable(deathLocation);
+    }
+
+    public void setDeathLocation(@Nullable Location deathLocation) {
+        this.deathLocation = deathLocation;
+    }
+
     public static @NotNull ServerProfile fromDocument(@NotNull Document document) {
         return new ServerProfile(document);
     }
@@ -98,7 +110,12 @@ public class ServerProfile extends DatabaseObject {
     public @NotNull Document toDocument() {
         Document document = new Document();
         document.put(Constants.PLAYER_ID_KEY, Converter.fromUUID(playerId));
+
         document.put(Constants.HOMES_KEY, Converter.toList(homes.values(), DatabaseObject::toDocument));
+
+        document.put(Constants.BACK_LOCATION_KEY, Location.toDocument(backLocation));
+        document.put(Constants.DEATH_LOCATION_KEY, Location.toDocument(backLocation));
+
         return document;
     }
 
@@ -107,6 +124,9 @@ public class ServerProfile extends DatabaseObject {
         public static final String PLAYER_ID_KEY = "_id";
 
         public static final String HOMES_KEY = "homes";
+
+        public static final String BACK_LOCATION_KEY = "backLocation";
+        public static final String DEATH_LOCATION_KEY = "deathLocation";
 
         private Constants() {
         }

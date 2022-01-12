@@ -4,7 +4,6 @@ import com.rafaelsms.potocraft.common.database.Converter;
 import com.rafaelsms.potocraft.common.database.DatabaseObject;
 import org.bson.Document;
 import org.bukkit.Server;
-import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +38,10 @@ public class Location extends DatabaseObject {
         this.pitch = Float.parseFloat(document.getString(Constants.PITCH_KEY));
     }
 
-    public static @NotNull Location fromDocument(@NotNull Document document) {
+    public static @Nullable Location fromDocument(@Nullable Document document) {
+        if (document == null) {
+            return null;
+        }
         return new Location(document);
     }
 
@@ -50,7 +52,10 @@ public class Location extends DatabaseObject {
         return new Location(serverName, location);
     }
 
-    public static @NotNull Document toDocument(@NotNull Location location) {
+    public static @Nullable Document toDocument(@Nullable Location location) {
+        if (location == null) {
+            return null;
+        }
         return location.toDocument();
     }
 
@@ -58,12 +63,9 @@ public class Location extends DatabaseObject {
         return serverName;
     }
 
-    public @Nullable org.bukkit.Location toBukkit(@NotNull Server server) {
-        World world = server.getWorld(worldId);
-        if (world != null) {
-            return new org.bukkit.Location(world, x, y, z, yaw, pitch);
-        }
-        return null;
+    public @NotNull org.bukkit.Location toBukkit(@NotNull Server server) {
+        // World may be null
+        return new org.bukkit.Location(server.getWorld(worldId), x, y, z, yaw, pitch);
     }
 
     @Override

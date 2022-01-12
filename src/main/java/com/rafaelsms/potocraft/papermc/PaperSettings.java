@@ -1,10 +1,14 @@
 package com.rafaelsms.potocraft.papermc;
 
 import com.rafaelsms.potocraft.common.Settings;
+import com.rafaelsms.potocraft.common.util.TextUtil;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
+import java.util.List;
 
 public class PaperSettings extends Settings {
 
@@ -38,8 +42,10 @@ public class PaperSettings extends Settings {
         setDefault(Constants.TELEPORT_COOLDOWN, 60 * 5);
         setDefault(Constants.TELEPORT_DELAY, 20 * 15);
 
+        setDefault(Constants.IN_COMBAT_SHOULD_USE_TOTEM, false);
         setDefault(Constants.IN_COMBAT_MOB_TICKS, 20 * 19);
         setDefault(Constants.IN_COMBAT_PLAYER_TICKS, 20 * 19 * 2);
+        setDefault(Constants.IN_COMBAT_BLOCKED_COMMANDS, List.of("tp", "tphere", "warp", "spawn"));
 
         /* LANG */
         setDefault(Constants.LANG_TELEPORT_PROGRESS_BAR_TITLE, "&eTeleportando... Não entre em combate!");
@@ -48,6 +54,11 @@ public class PaperSettings extends Settings {
         setDefault(Constants.LANG_TELEPORT_DESTINATION_UNAVAILABLE, "&cDestino indisponível.");
 
         setDefault(Constants.LANG_COMBAT_PROGRESS_BAR_TITLE, "&cNão saia nem desconecte do jogo ou morrerá!");
+        setDefault(Constants.LANG_COMBAT_BLOCKED_COMMAND, "&cEste comando está bloqueado em combate.");
+        setDefault(Constants.LANG_COMBAT_LAST_DEATH_LOCATION,
+                   "&cVocê morreu na posição &ex = %x%&c, &ey = %y%&c, &ez = %z%&c.");
+        setDefault(Constants.LANG_COMBAT_LAST_DEATH_LOCATION_WORLD,
+                   "&cVocê morreu no mundo &e\"%world%\" na posição &ex = %x%&c, &ey = %y%&c, &ez = %z%&c.");
 
     }
 
@@ -135,6 +146,10 @@ public class PaperSettings extends Settings {
         return getLang(Constants.LANG_TELEPORT_DESTINATION_UNAVAILABLE);
     }
 
+    public boolean getCombatShouldUseTotem() {
+        return get(Constants.IN_COMBAT_SHOULD_USE_TOTEM);
+    }
+
     public long getCombatVsMobsTicks() {
         return get(Constants.IN_COMBAT_MOB_TICKS);
     }
@@ -143,7 +158,32 @@ public class PaperSettings extends Settings {
         return get(Constants.IN_COMBAT_PLAYER_TICKS);
     }
 
+    public List<String> getCombatBlockedCommands() {
+        return get(Constants.IN_COMBAT_BLOCKED_COMMANDS);
+    }
+
     public Component getCombatTitle() {
         return getLang(Constants.LANG_COMBAT_PROGRESS_BAR_TITLE);
+    }
+
+    public Component getCombatBlockedCommand() {
+        return getLang(Constants.LANG_COMBAT_BLOCKED_COMMAND);
+    }
+
+    public Component getCombatDeathLocation(@NotNull Location location) {
+        World locationWorld = location.getWorld();
+        if (locationWorld != null) {
+            String worldName = locationWorld.getName();
+            return getLang(Constants.LANG_COMBAT_LAST_DEATH_LOCATION_WORLD)
+                    .replaceText(TextUtil.replaceText("%world%", worldName))
+                    .replaceText(TextUtil.replaceText("%x%", String.valueOf(location.getBlockX())))
+                    .replaceText(TextUtil.replaceText("%y%", String.valueOf(location.getBlockY())))
+                    .replaceText(TextUtil.replaceText("%z%", String.valueOf(location.getBlockZ())));
+        } else {
+            return getLang(Constants.LANG_COMBAT_LAST_DEATH_LOCATION)
+                    .replaceText(TextUtil.replaceText("%x%", String.valueOf(location.getBlockX())))
+                    .replaceText(TextUtil.replaceText("%y%", String.valueOf(location.getBlockY())))
+                    .replaceText(TextUtil.replaceText("%z%", String.valueOf(location.getBlockZ())));
+        }
     }
 }

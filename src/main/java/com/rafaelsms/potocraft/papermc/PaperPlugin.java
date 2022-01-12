@@ -8,6 +8,7 @@ import com.rafaelsms.potocraft.common.util.PluginType;
 import com.rafaelsms.potocraft.papermc.commands.TeleportCommand;
 import com.rafaelsms.potocraft.papermc.commands.TeleportHereCommand;
 import com.rafaelsms.potocraft.papermc.database.PaperDatabase;
+import com.rafaelsms.potocraft.papermc.listeners.CombatListener;
 import com.rafaelsms.potocraft.papermc.listeners.ProfileUpdater;
 import com.rafaelsms.potocraft.papermc.listeners.UserListener;
 import com.rafaelsms.potocraft.papermc.profile.PaperProfile;
@@ -53,6 +54,7 @@ public class PaperPlugin extends JavaPlugin implements Plugin<PaperProfile, Pape
         // Register listeners
         getServer().getPluginManager().registerEvents(new ProfileUpdater(this), this);
         getServer().getPluginManager().registerEvents(new UserListener(this, getUserManager()), this);
+        getServer().getPluginManager().registerEvents(new CombatListener(this), this);
 
         // Register commands
         setCommand(getServer().getPluginCommand("teleporte"), new TeleportCommand(this));

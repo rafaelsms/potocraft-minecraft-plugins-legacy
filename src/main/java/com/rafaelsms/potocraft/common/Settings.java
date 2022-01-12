@@ -212,8 +212,7 @@ public abstract class Settings {
                 "configuration.chat.direct_messages.incoming_format";
         public static final String DIRECT_MESSAGE_OUTGOING_FORMAT =
                 "configuration.chat.direct_messages.outgoing_format";
-        public static final String DIRECT_MESSAGE_SPY_FORMAT =
-                "configuration.chat.direct_messages.spy_format";
+        public static final String DIRECT_MESSAGE_SPY_FORMAT = "configuration.chat.direct_messages.spy_format";
         public static final String DIRECT_MESSAGE_LIMITER_MESSAGES_AMOUNT =
                 "configuration.chat.direct_messages.limiter.time_amount_millis";
         public static final String DIRECT_MESSAGE_LIMITER_TIME_AMOUNT =
@@ -225,7 +224,8 @@ public abstract class Settings {
 
         // Paper
         public static final String PAPER_SERVER_NAME_ON_PROXY = "configuration.server_name_on_the_proxy";
-        public static final String DATABASE_MONGO_PAPER_SERVER_PROFILES_COLLECTION = "configuration.database.server_profiles_collection";
+        public static final String DATABASE_MONGO_PAPER_SERVER_PROFILES_COLLECTION =
+                "configuration.database.server_profiles_collection";
 
         public static final String GLOBAL_CHAT_FORMAT = "configuration.chat.global.format";
         public static final String GLOBAL_CHAT_PREFIX = "configuration.chat.global.prefix";
@@ -252,8 +252,10 @@ public abstract class Settings {
         public static final String TELEPORT_COOLDOWN = "configuration.teleport.cooldown_in_seconds";
         public static final String TELEPORT_DELAY = "configuration.teleport.delay_in_ticks";
 
+        public static final String IN_COMBAT_SHOULD_USE_TOTEM = "configuration.combat.should_use_totem_on_logout";
         public static final String IN_COMBAT_MOB_TICKS = "configuration.combat.time_in_combat_vs_mobs_ticks";
         public static final String IN_COMBAT_PLAYER_TICKS = "configuration.combat.time_in_combat_vs_players_ticks";
+        public static final String IN_COMBAT_BLOCKED_COMMANDS = "configuration.combat.blocked_commands";
 
 
         /* Language */
@@ -342,6 +344,10 @@ public abstract class Settings {
         public static final String LANG_TELEPORT_DESTINATION_UNAVAILABLE = "language.teleport.destination_unavailable";
 
         public static final String LANG_COMBAT_PROGRESS_BAR_TITLE = "language.combat.progress_bar_title";
+        public static final String LANG_COMBAT_BLOCKED_COMMAND = "language.combat.this_command_is_blocked_in_combat";
+        public static final String LANG_COMBAT_LAST_DEATH_LOCATION = "language.combat.show_last_death_location";
+        public static final String LANG_COMBAT_LAST_DEATH_LOCATION_WORLD =
+                "language.combat.show_last_death_location.with_world";
 
 
         private Constants() {

@@ -35,6 +35,10 @@ public final class Permissions {
     public static final String TELEPORT_COMMAND_NO_DELAY = "potocraft.paper_command.teleport.no_delay";
     public static final String TELEPORT_COMMAND_NO_COOLDOWN = "potocraft.paper_command.teleport.no_cooldown";
 
+    public static final String COMBAT_SHOW_DEATH_LOCATION = "potocraft.combat.show_death_location";
+    public static final String COMBAT_MOBS_BYPASS = "potocraft.combat.bypass.mobs";
+    public static final String COMBAT_PLAYERS_BYPASS = "potocraft.combat.bypass.players";
+
     public static final String LOCAL_CHAT_SPY = "potocraft.chat.spy";
     public static final String GLOBAL_CHAT = "potocraft.chat.global";
     public static final String GLOBAL_CHAT_BYPASS = "potocraft.chat.global.bypass";
@@ -77,6 +81,9 @@ public final class Permissions {
             //TELEPORT_COMMAND_HOME_UNLIMITED,
             //TELEPORT_COMMAND_NO_DELAY,
             //TELEPORT_COMMAND_NO_COOLDOWN,
+
+            COMBAT_MOBS_BYPASS,
+            COMBAT_PLAYERS_BYPASS,
 
             GLOBAL_CHAT,
             GLOBAL_CHAT_BYPASS,
