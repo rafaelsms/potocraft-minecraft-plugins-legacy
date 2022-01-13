@@ -29,6 +29,7 @@ dependencies {
     compileOnly('org.geysermc.floodgate:api:2.0-SNAPSHOT')
     implementation('com.google.code.gson:gson:2.8.9')
     compileOnly("net.luckperms:api:5.3")
+    implementation('org.yaml:snakeyaml:1.29')
 }
 
 java {

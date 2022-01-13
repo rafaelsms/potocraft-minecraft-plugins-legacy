@@ -61,7 +61,7 @@ public class ChatController implements Listener {
         handleChatResult(event, sendingPlayer, chatResult);
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void sendLocalChat(AsyncChatEvent event) {
         Player sendingPlayer = event.getPlayer();
 
@@ -157,7 +157,7 @@ public class ChatController implements Listener {
         handleChatResult(event, sendingPlayer, chatResult);
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void sendGlobalChat(AsyncChatEvent event) {
         Player sendingPlayer = event.getPlayer();
 

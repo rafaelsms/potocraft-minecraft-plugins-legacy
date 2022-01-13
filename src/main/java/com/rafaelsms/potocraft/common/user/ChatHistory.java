@@ -31,12 +31,12 @@ public abstract class ChatHistory {
             return ChatResult.TOO_FREQUENT;
         }
 
-        Message lastMessage = messages.peekFirst();
+        Message lastMessage = messages.peekLast();
         // Check if we have anything to compare against
         if (lastMessage == null) {
             return ChatResult.ALLOWED;
         }
-        // Check if messages are too small to compare
+        // Check if either messages are too small to compare
         if (lastMessage.message().length() < getMinLengthToCompare()) {
             return ChatResult.ALLOWED;
         }

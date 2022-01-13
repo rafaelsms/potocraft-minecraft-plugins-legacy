@@ -4,6 +4,7 @@ import com.rafaelsms.potocraft.common.profile.Location;
 import com.rafaelsms.potocraft.common.util.TextUtil;
 import com.rafaelsms.potocraft.velocity.VelocityPlugin;
 import com.rafaelsms.potocraft.velocity.profile.VelocityProfile;
+import com.velocitypowered.api.proxy.ConnectionRequestBuilder;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.adventure.text.Component;
@@ -31,7 +32,8 @@ public final class VelocityUtil {
             if (server == null) {
                 throw new NullPointerException();
             }
-            if (!player.createConnectionRequest(server).connect().get().isSuccessful()) {
+            ConnectionRequestBuilder.Result result = player.createConnectionRequest(server).connect().get();
+            if (!result.isSuccessful() && result.getStatus() != ConnectionRequestBuilder.Status.ALREADY_CONNECTED) {
                 throw new IllegalStateException();
             }
         } catch (Exception ignored) {

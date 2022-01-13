@@ -112,7 +112,7 @@ public class ServerProfile extends DatabaseObject {
         document.put(Constants.HOMES_KEY, Converter.toList(homes.values(), Home::toDocument));
 
         document.put(Constants.BACK_LOCATION_KEY, Location.toDocument(backLocation));
-        document.put(Constants.DEATH_LOCATION_KEY, Location.toDocument(backLocation));
+        document.put(Constants.DEATH_LOCATION_KEY, Location.toDocument(deathLocation));
 
         return document;
     }

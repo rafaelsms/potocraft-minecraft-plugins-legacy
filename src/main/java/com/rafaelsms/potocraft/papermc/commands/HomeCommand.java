@@ -7,6 +7,7 @@ import com.rafaelsms.potocraft.papermc.PaperPlugin;
 import com.rafaelsms.potocraft.papermc.database.Home;
 import com.rafaelsms.potocraft.papermc.user.PaperUser;
 import com.rafaelsms.potocraft.papermc.user.teleport.TeleportTask;
+import com.rafaelsms.potocraft.papermc.util.PaperUtil;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -50,10 +51,17 @@ public class HomeCommand implements Command {
         PaperUser user = plugin.getUserManager().getUser(player.getUniqueId());
         Collection<Home> homes = user.getServerProfile().getHomes();
 
+        // Check teleport status before changing/teleporting homes
+        if (!PaperUtil.handleTeleportStatus(plugin, user)) {
+            return true;
+        }
+
         // Check if player isn't attempting to teleport to its single home
         if (arguments.length == 0) {
-            if (homes.size() != 1) {
+            if (homes.isEmpty()) {
                 player.sendMessage(plugin.getSettings().getHomeHelp());
+            } else if (homes.size() > 1) {
+                player.sendMessage(plugin.getSettings().getHomeList(homes));
             } else {
                 for (Home home : homes) {
                     teleportHome(user, home);
@@ -69,6 +77,13 @@ public class HomeCommand implements Command {
                         com.rafaelsms.potocraft.common.profile.Location.fromPlayer(plugin.getSettings().getServerName(),
                                                                                    player.getLocation());
                 if (argument.equalsIgnoreCase("criar")) {
+                    // Prevent updating homes when size is greater than limit
+                    int indexLimit = getHomeIndexLimit(user);
+                    if (homes.size() > indexLimit) {
+                        user.getPlayer().sendMessage(plugin.getSettings().getHomeAtLimit());
+                        return true;
+                    }
+
                     if (user.getServerProfile().createHome(homeName, location)) {
                         player.sendMessage(plugin.getSettings().getHomeCreated(homeName));
                     } else {
@@ -79,10 +94,17 @@ public class HomeCommand implements Command {
                     if (user.getServerProfile().deleteHome(homeName)) {
                         player.sendMessage(plugin.getSettings().getHomeDeleted(homeName));
                     } else {
-                        player.sendMessage(plugin.getSettings().getHomeAlreadyExists());
+                        player.sendMessage(plugin.getSettings().getHomeNotFound());
                     }
                     return true;
                 } else if (argument.equalsIgnoreCase("substituir")) {
+                    // Prevent updating homes when size is greater than limit
+                    int indexLimit = getHomeIndexLimit(user);
+                    if (homes.size() - 1 > indexLimit) {
+                        user.getPlayer().sendMessage(plugin.getSettings().getHomeUnavailableNoPermission());
+                        return true;
+                    }
+
                     if (user.getServerProfile().deleteHome(homeName) &&
                         user.getServerProfile().createHome(homeName, location)) {
                         player.sendMessage(plugin.getSettings().getHomeCreated(homeName));
@@ -102,30 +124,40 @@ public class HomeCommand implements Command {
         return true;
     }
 
+    private int getHomeIndexLimit(@NotNull PaperUser user) {
+        LinkedList<Home> homes = user.getServerProfile().getHomes();
+        // If unlimited, always not limited
+        if (user.getPlayer().hasPermission(Permissions.TELEPORT_COMMAND_HOME_UNLIMITED)) {
+            return homes.size();
+        }
+        // Check current home size
+        int baseHomeNumber = plugin.getSettings().getBaseHomeNumber();
+        if (homes.size() <= baseHomeNumber) {
+            return baseHomeNumber - 1;
+        }
+
+        // Find max number of homes that the player has access to
+        int maxHomes = baseHomeNumber;
+        for (Map.Entry<String, Integer> entry : plugin.getSettings().getHomePermissionGroups().entrySet()) {
+            // Skip if player doesn't have this group
+            if (!user.getPlayer().hasPermission(entry.getKey())) {
+                continue;
+            }
+            // Update maximum if player has
+            if (entry.getValue() > maxHomes) {
+                maxHomes = entry.getValue();
+            }
+        }
+        return maxHomes - 1;
+    }
+
     private void teleportHome(@NotNull PaperUser user, @NotNull Home home) {
         // Check if home is available
         LinkedList<Home> homes = user.getServerProfile().getHomes();
-        if (homes.size() > plugin.getSettings().getBaseHomeNumber() &&
-            !user.getPlayer().hasPermission(Permissions.TELEPORT_COMMAND_HOME_UNLIMITED)) {
-
-            // Find max number of homes that the player has access to
-            int maxHomes = plugin.getSettings().getBaseHomeNumber();
-            for (Map.Entry<String, Integer> entry : plugin.getSettings().getHomePermissionGroups().entrySet()) {
-                // Skip if player doesn't have this group
-                if (!user.getPlayer().hasPermission(entry.getKey())) {
-                    continue;
-                }
-                // Update maximum if player has
-                if (entry.getValue() > maxHomes) {
-                    maxHomes = entry.getValue();
-                }
-            }
-
-            // Don't allow if home is outside of range
-            if ((homes.indexOf(home) + 1) > maxHomes) {
-                user.getPlayer().sendMessage(plugin.getSettings().getHomeUnavailableNoPermission());
-                return;
-            }
+        int indexLimit = getHomeIndexLimit(user);
+        if (homes.indexOf(home) > indexLimit) {
+            user.getPlayer().sendMessage(plugin.getSettings().getHomeUnavailableNoPermission());
+            return;
         }
 
         // Check if player can teleport
@@ -153,12 +185,12 @@ public class HomeCommand implements Command {
 
         PaperUser user = plugin.getUserManager().getUser(player.getUniqueId());
         Collection<Home> homes = user.getServerProfile().getHomes();
-        if (arguments.length == 0) {
+        if (arguments.length == 1) {
             List<String> list = new ArrayList<>();
             list.addAll(TextUtil.toStringList(homes, Home::getName));
             list.addAll(List.of("criar", "apagar", "substituir"));
             return list;
-        } else if (arguments.length == 1) {
+        } else if (arguments.length == 2) {
             return TextUtil.toStringList(homes, Home::getName);
         }
         return List.of();

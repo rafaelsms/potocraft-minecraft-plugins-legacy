@@ -8,13 +8,15 @@ description: Custom plugin for PotoCraft Server
 load: POSTWORLD
 depend:
   - floodgate
+softdepend:
+  - LuckPerms
 commands:
   teleporte:
     description: Allows players to teleport to each other.
     aliases: [ tp, tpa ]
   teleporteaqui:
     description: Allows players to teleport to each other.
-    aliases: [ tphere, tpahere ]
+    aliases: [ tphere, tpahere, tpaqui ]
   teleporteaceitar:
     description: Accepts the player request to teleport
     aliases: [ tpaceitar, tpaccept, tpsim, tpyes ]
@@ -23,4 +25,4 @@ commands:
     aliases: [ tprecusar, tpdeny, tpnao, tpno ]
   casa:
     description: Create and store a location for the player
-    aliases: [ home, homes, casa, sethome, delhome ]
+    aliases: [ home, homes, casas, setcasa, delcasa, sethome, delhome ]

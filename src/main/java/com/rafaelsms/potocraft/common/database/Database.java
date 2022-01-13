@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 
 public abstract class Database<T extends Profile> {
 
-    private static final ReplaceOptions replaceOptions = new ReplaceOptions().upsert(true);
+    protected static final ReplaceOptions UPSERT = new ReplaceOptions().upsert(true);
 
     protected final @NotNull Plugin<?, ?, ?> plugin;
 
@@ -67,7 +67,7 @@ public abstract class Database<T extends Profile> {
 
     protected void saveProfile(T profile) throws DatabaseException {
         handleException(() -> {
-            getUserProfiles().replaceOne(profile.filterId(), profile.toDocument(), replaceOptions);
+            getUserProfiles().replaceOne(profile.filterId(), profile.toDocument(), UPSERT);
             return null;
         });
     }

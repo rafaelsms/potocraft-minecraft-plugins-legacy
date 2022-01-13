@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class TeleportCommand implements com.rafaelsms.potocraft.common.util.Command {
@@ -81,21 +82,14 @@ public class TeleportCommand implements com.rafaelsms.potocraft.common.util.Comm
                 PaperUser playerUser = plugin.getUserManager().getUser(player.getUniqueId());
                 PaperUser destinationUser = plugin.getUserManager().getUser(destinationPlayer.getUniqueId());
 
-                // Check teleport status
-                PaperUser.TeleportResult teleportResult = playerUser.getTeleportStatus();
-                if (!teleportResult.isAllowed()) {
-                    switch (teleportResult) {
-                        case IN_COMBAT -> player.sendMessage(plugin.getSettings().getCombatBlockedCommand());
-                        case PLAYER_UNAVAILABLE -> player.sendMessage(plugin
-                                                                              .getSettings()
-                                                                              .getTeleportDestinationUnavailable());
-                        case IN_COOLDOWN -> player.sendMessage(plugin
-                                                                       .getSettings()
-                                                                       .getTeleportInCooldown(playerUser.getTeleportCooldown()));
-                        case ALREADY_TELEPORTING -> player.sendMessage(plugin
-                                                                               .getSettings()
-                                                                               .getTeleportCanNotTeleportNow());
-                    }
+                // Check if destination is same player
+                if (Objects.equals(destinationPlayer.getUniqueId(), player.getUniqueId())) {
+                    player.sendMessage(plugin.getSettings().getTeleportToItself());
+                    return true;
+                }
+
+                // Return if player can't teleport right now
+                if (!PaperUtil.handleTeleportStatus(plugin, playerUser)) {
                     return true;
                 }
 

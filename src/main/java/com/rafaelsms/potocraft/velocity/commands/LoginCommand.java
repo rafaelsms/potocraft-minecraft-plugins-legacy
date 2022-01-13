@@ -132,7 +132,7 @@ public class LoginCommand implements RawCommand {
         if (arguments.length > 1) {
             return List.of();
         }
-        if (unfinishedPinPattern.test(arguments[0])) {
+        if (arguments.length >= 1 && unfinishedPinPattern.test(arguments[0])) {
             return List.of("123456");
         } else {
             return List.of();

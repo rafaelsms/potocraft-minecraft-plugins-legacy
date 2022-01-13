@@ -7,6 +7,7 @@ import com.rafaelsms.potocraft.common.util.Command;
 import com.rafaelsms.potocraft.common.util.PluginType;
 import com.rafaelsms.potocraft.papermc.commands.*;
 import com.rafaelsms.potocraft.papermc.database.PaperDatabase;
+import com.rafaelsms.potocraft.papermc.listeners.ChatController;
 import com.rafaelsms.potocraft.papermc.listeners.CombatListener;
 import com.rafaelsms.potocraft.papermc.listeners.ProfileUpdater;
 import com.rafaelsms.potocraft.papermc.listeners.UserListener;
@@ -39,6 +40,8 @@ public class PaperPlugin extends JavaPlugin implements Plugin<PaperProfile, Pape
             this.userManager = new PaperUserManager(this);
         } catch (Exception exception) {
             getServer().getPluginManager().disablePlugin(this);
+            logger().error(exception.getLocalizedMessage());
+            exception.printStackTrace();
             return;
         }
 
@@ -54,6 +57,7 @@ public class PaperPlugin extends JavaPlugin implements Plugin<PaperProfile, Pape
         getServer().getPluginManager().registerEvents(new ProfileUpdater(this), this);
         getServer().getPluginManager().registerEvents(new UserListener(this, getUserManager()), this);
         getServer().getPluginManager().registerEvents(new CombatListener(this), this);
+        getServer().getPluginManager().registerEvents(new ChatController(this), this);
 
         // Register commands
         setCommand(getServer().getPluginCommand("teleporte"), new TeleportCommand(this));

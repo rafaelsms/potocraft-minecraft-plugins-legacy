@@ -24,7 +24,7 @@ public class VelocityServer implements CommonServer {
         if (!dataDirectory.exists() && !dataDirectory.mkdir()) {
             throw new IllegalStateException("Couldn't create data folder");
         }
-        return new File(dataDirectory, "config.json");
+        return new File(dataDirectory, "config.yml");
     }
 
     @Override

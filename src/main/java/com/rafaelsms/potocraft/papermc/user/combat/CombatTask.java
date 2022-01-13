@@ -25,7 +25,7 @@ public class CombatTask implements Runnable {
         this.remainingTicks = initialDelayTicks;
         this.progressBar = BossBar.bossBar(plugin.getSettings().getCombatTitle(),
                                            BossBar.MAX_PROGRESS,
-                                           BossBar.Color.YELLOW,
+                                           BossBar.Color.RED,
                                            BossBar.Overlay.PROGRESS);
     }
 
@@ -36,6 +36,11 @@ public class CombatTask implements Runnable {
     public void cancelTask() {
         user.getPlayer().hideBossBar(progressBar);
         user.setCombatTask(null);
+    }
+
+    public void reset() {
+        // This will prevent the progress bar from blinking
+        this.remainingTicks = initialDelayTicks;
     }
 
     @Override
@@ -65,7 +70,8 @@ public class CombatTask implements Runnable {
         MOB;
 
         public boolean canOverride(@NotNull Type type) {
-            return type == PLAYER;
+            // player combat has higher priority over mobs
+            return this == PLAYER && type == MOB;
         }
     }
 }

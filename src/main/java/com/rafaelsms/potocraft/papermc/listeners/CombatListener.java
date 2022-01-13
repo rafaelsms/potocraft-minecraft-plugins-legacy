@@ -18,6 +18,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -36,9 +37,27 @@ public class CombatListener implements Listener {
     private void storeDeathLocation(PlayerDeathEvent event) {
         Player player = event.getPlayer();
         PaperUser user = plugin.getUserManager().getUser(player.getUniqueId());
-        user
-                .getServerProfile()
-                .setDeathLocation(Location.fromPlayer(plugin.getSettings().getServerName(), player.getLocation()));
+        org.bukkit.Location location = player.getLocation();
+        user.getServerProfile().setDeathLocation(Location.fromPlayer(plugin.getSettings().getServerName(), location));
+        // Log death information
+        plugin
+                .logger()
+                .info("Player %s died at world = %s, %d %d %d".formatted(player.getName(),
+                                                                         location.getWorld().getName(),
+                                                                         location.getBlockX(),
+                                                                         location.getBlockY(),
+                                                                         location.getBlockZ()));
+        // List player drops with enchantments to console
+        for (ItemStack itemStack : event.getDrops()) {
+            if (itemStack.getEnchantments().size() == 0) {
+                continue;
+            }
+            String enchantmentList = TextUtil.joinStrings(itemStack.getEnchantments().entrySet(),
+                                                          ", ",
+                                                          entry -> "%s %d".formatted(entry.getKey().getKey().getKey(),
+                                                                                     entry.getValue()));
+            plugin.logger().info("Dropped: %s with %s".formatted(itemStack.getType().name(), enchantmentList));
+        }
     }
 
     @EventHandler(ignoreCancelled = true)

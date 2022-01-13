@@ -30,14 +30,15 @@ public class PaperSettings extends Settings {
         setDefault(Constants.DATABASE_MONGO_PAPER_SERVER_PROFILES_COLLECTION, null);
 
         setDefault(Constants.GLOBAL_CHAT_FORMAT, "&7! <&e%prefix%%username%%suffix%&7> &f%message%");
+        setDefault(Constants.GLOBAL_CHAT_PREFIX, "!");
         setDefault(Constants.GLOBAL_CHAT_LIMITER_MESSAGES_AMOUNT, 3);
-        setDefault(Constants.GLOBAL_CHAT_LIMITER_TIME_AMOUNT, 5000);
+        setDefault(Constants.GLOBAL_CHAT_LIMITER_TIME_AMOUNT, 6000);
         setDefault(Constants.GLOBAL_CHAT_COMPARATOR_MIN_LENGTH, 3);
         setDefault(Constants.GLOBAL_CHAT_COMPARATOR_THRESHOLD, 3);
         setDefault(Constants.LOCAL_CHAT_FORMAT, "&e%prefix%%username%%suffix% &f%message%");
         setDefault(Constants.LOCAL_CHAT_SPY_FORMAT, "&e%prefix%%username%%suffix% &7(longe) &f%message%");
-        setDefault(Constants.LOCAL_CHAT_LIMITER_MESSAGES_AMOUNT, 7);
-        setDefault(Constants.LOCAL_CHAT_LIMITER_TIME_AMOUNT, 10000);
+        setDefault(Constants.LOCAL_CHAT_LIMITER_MESSAGES_AMOUNT, 5);
+        setDefault(Constants.LOCAL_CHAT_LIMITER_TIME_AMOUNT, 6000);
         setDefault(Constants.LOCAL_CHAT_COMPARATOR_MIN_LENGTH, 4);
         setDefault(Constants.LOCAL_CHAT_COMPARATOR_THRESHOLD, 2);
         setDefault(Constants.LOCAL_CHAT_RADIUS, 400.0);
@@ -64,6 +65,8 @@ public class PaperSettings extends Settings {
         setDefault(Constants.LANG_TELEPORT_PROGRESS_BAR_TITLE, "&eTeleportando... Não entre em combate!");
         setDefault(Constants.LANG_TELEPORT_SUCCESS, "&6Teleportando... Digite &e&l/voltar &6para voltar");
         setDefault(Constants.LANG_TELEPORT_FAIL, "&cFalha ao teleportar!");
+        setDefault(Constants.LANG_TELEPORT_CANCELLED, "&6Teleporte cancelado!");
+        setDefault(Constants.LANG_TELEPORT_TO_ITSELF, "&cNão pode teleportar para você.");
         setDefault(Constants.LANG_TELEPORT_PLAYER_ENTERED_COMBAT, "&cTeleporte cancelado por combate!");
         setDefault(Constants.LANG_TELEPORT_DESTINATION_UNAVAILABLE, "&cDestino indisponível.");
         setDefault(Constants.LANG_TELEPORT_CAN_NOT_TELEPORT_NOW, "&cVocê não pode teleportar agora.");
@@ -94,7 +97,10 @@ public class PaperSettings extends Settings {
                    "&cVocê morreu no mundo &e\"%world%\" na posição &ex = %x%&c, &ey = %y%&c, &ez = %z%&c.");
 
         setDefault(Constants.LANG_HOME_HELP, "&6Uso: &e&l/casa <nome> &6ou &e&l/casa criar/apagar/substituir <nome>");
+        setDefault(Constants.LANG_HOME_NOT_AVAILABLE, "&cCasas não disponíveis neste momento.");
+        setDefault(Constants.LANG_HOME_NOT_FOUND, "&cCasa não encontrada!");
         setDefault(Constants.LANG_HOME_ALREADY_EXISTS, "&cCasa já existe!");
+        setDefault(Constants.LANG_HOME_ALREADY_AT_LIMIT, "&cVocê já tem muitas casas!");
         setDefault(Constants.LANG_HOME_UNAVAILABLE_NO_PERMISSION,
                    "&cEsta casa não está mais disponível: você não possui mais as permissões necessárias.");
         setDefault(Constants.LANG_HOME_LIST, "&6Lista de casas: &e%list%");
@@ -122,8 +128,8 @@ public class PaperSettings extends Settings {
         return get(Constants.GLOBAL_CHAT_LIMITER_MESSAGES_AMOUNT);
     }
 
-    public long getGlobalChatLimiterTimeAmount() {
-        return get(Constants.GLOBAL_CHAT_LIMITER_TIME_AMOUNT);
+    public Duration getGlobalChatLimiterTimeAmount() {
+        return Duration.ofMillis(get(Constants.GLOBAL_CHAT_LIMITER_TIME_AMOUNT, Integer.class).longValue());
     }
 
     public int getGlobalChatComparatorThreshold() {
@@ -150,8 +156,8 @@ public class PaperSettings extends Settings {
         return get(Constants.LOCAL_CHAT_LIMITER_MESSAGES_AMOUNT);
     }
 
-    public long getLocalChatLimiterTimeAmount() {
-        return get(Constants.LOCAL_CHAT_LIMITER_TIME_AMOUNT);
+    public Duration getLocalChatLimiterTimeAmount() {
+        return Duration.ofMillis(get(Constants.LOCAL_CHAT_LIMITER_TIME_AMOUNT, Integer.class).longValue());
     }
 
     public int getLocalChatComparatorThreshold() {
@@ -162,16 +168,16 @@ public class PaperSettings extends Settings {
         return get(Constants.LOCAL_CHAT_COMPARATOR_MIN_LENGTH);
     }
 
-    public long getTeleportDelayTicks() {
+    public int getTeleportDelayTicks() {
         return get(Constants.TELEPORT_DELAY);
     }
 
     public Duration getTeleportCooldown() {
-        return Duration.ofSeconds(get(Constants.TELEPORT_COOLDOWN));
+        return Duration.ofSeconds(get(Constants.TELEPORT_COOLDOWN, Integer.class).longValue());
     }
 
     public Duration getTeleportRequestDuration() {
-        return Duration.ofSeconds(get(Constants.TELEPORT_REQUEST_TIME_TO_LIVE));
+        return Duration.ofSeconds(get(Constants.TELEPORT_REQUEST_TIME_TO_LIVE, Integer.class).longValue());
     }
 
     public Component getTeleportTitle() {
@@ -184,6 +190,14 @@ public class PaperSettings extends Settings {
 
     public Component getTeleportFailed() {
         return getLang(Constants.LANG_TELEPORT_FAIL);
+    }
+
+    public Component getTeleportCancelled() {
+        return getLang(Constants.LANG_TELEPORT_CANCELLED);
+    }
+
+    public Component getTeleportToItself() {
+        return getLang(Constants.LANG_TELEPORT_TO_ITSELF);
     }
 
     public Component getTeleportPlayerInCombat() {
@@ -259,11 +273,11 @@ public class PaperSettings extends Settings {
         return get(Constants.IN_COMBAT_SHOULD_USE_TOTEM);
     }
 
-    public long getCombatVsMobsTicks() {
+    public int getCombatVsMobsTicks() {
         return get(Constants.IN_COMBAT_MOB_TICKS);
     }
 
-    public long getCombatVsPlayersTicks() {
+    public int getCombatVsPlayersTicks() {
         return get(Constants.IN_COMBAT_PLAYER_TICKS);
     }
 
@@ -306,6 +320,18 @@ public class PaperSettings extends Settings {
 
     public Component getHomeHelp() {
         return getLang(Constants.LANG_HOME_HELP);
+    }
+
+    public Component getHomesNotAvailable() {
+        return getLang(Constants.LANG_HOME_NOT_AVAILABLE);
+    }
+
+    public Component getHomeNotFound() {
+        return getLang(Constants.LANG_HOME_NOT_FOUND);
+    }
+
+    public Component getHomeAtLimit() {
+        return getLang(Constants.LANG_HOME_ALREADY_AT_LIMIT);
     }
 
     public Component getHomeUnavailableNoPermission() {

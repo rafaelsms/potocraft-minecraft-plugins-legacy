@@ -34,15 +34,15 @@ public class VelocitySettings extends Settings {
         setDefault(Constants.UNIVERSAL_CHAT_SPY_FORMAT, "&e%prefix%%username%%suffix% &7(%server_name%) &f%message%");
         setDefault(Constants.UNIVERSAL_CHAT_PREFIX, "!!");
         setDefault(Constants.UNIVERSAL_CHAT_LIMITER_MESSAGES_AMOUNT, 2);
-        setDefault(Constants.UNIVERSAL_CHAT_LIMITER_TIME_AMOUNT, 5500);
+        setDefault(Constants.UNIVERSAL_CHAT_LIMITER_TIME_AMOUNT, 8000);
         setDefault(Constants.UNIVERSAL_CHAT_COMPARATOR_MIN_LENGTH, 3);
         setDefault(Constants.UNIVERSAL_CHAT_COMPARATOR_THRESHOLD, 3);
         setDefault(Constants.REPLY_MESSAGE_TIMEOUT, 60 * 7L);
         setDefault(Constants.DIRECT_MESSAGE_INCOMING_FORMAT, "&3%username% &c-> &3você &f%message%");
         setDefault(Constants.DIRECT_MESSAGE_OUTGOING_FORMAT, "&3você &c-> &3%username% &f%message%");
         setDefault(Constants.DIRECT_MESSAGE_SPY_FORMAT, "&3%sending_name% &c-> &3%receiving_name% &f%message%");
-        setDefault(Constants.DIRECT_MESSAGE_LIMITER_MESSAGES_AMOUNT, 4);
-        setDefault(Constants.DIRECT_MESSAGE_LIMITER_TIME_AMOUNT, 5500);
+        setDefault(Constants.DIRECT_MESSAGE_LIMITER_MESSAGES_AMOUNT, 3);
+        setDefault(Constants.DIRECT_MESSAGE_LIMITER_TIME_AMOUNT, 6000);
         setDefault(Constants.DIRECT_MESSAGE_COMPARATOR_MIN_LENGTH, 5);
         setDefault(Constants.DIRECT_MESSAGE_COMPARATOR_THRESHOLD, 3);
 
@@ -122,7 +122,7 @@ public class VelocitySettings extends Settings {
         setDefault(Constants.LANG_NO_LOGIN_SERVER_AVAILABLE, "&cNão há servidor para login disponível.");
     }
 
-    public long getMaxLoginDurationSeconds() {
+    public int getMaxLoginDurationSeconds() {
         return get(Constants.LOGIN_MAX_LOGIN_DURATION_SECONDS);
     }
 
@@ -341,12 +341,12 @@ public class VelocitySettings extends Settings {
         return get(Constants.UNIVERSAL_CHAT_LIMITER_MESSAGES_AMOUNT);
     }
 
-    public long getUniversalChatLimiterTimeAmount() {
-        return get(Constants.UNIVERSAL_CHAT_LIMITER_TIME_AMOUNT);
+    public Duration getUniversalChatLimiterTimeAmount() {
+        return Duration.ofMillis(get(Constants.UNIVERSAL_CHAT_LIMITER_TIME_AMOUNT, Integer.class).longValue());
     }
 
     public Duration getPrivateMessageTimeout() {
-        return Duration.ofSeconds(get(Constants.REPLY_MESSAGE_TIMEOUT));
+        return Duration.ofSeconds(get(Constants.REPLY_MESSAGE_TIMEOUT, Integer.class));
     }
 
     public Component getDirectMessageIncomingFormat(@NotNull Component playerName, @NotNull Component message) {
@@ -382,8 +382,8 @@ public class VelocitySettings extends Settings {
         return get(Constants.DIRECT_MESSAGE_LIMITER_MESSAGES_AMOUNT);
     }
 
-    public long getDirectMessageLimiterTimeAmount() {
-        return get(Constants.DIRECT_MESSAGE_LIMITER_TIME_AMOUNT);
+    public Duration getDirectMessageLimiterTimeAmount() {
+        return Duration.ofMillis(get(Constants.DIRECT_MESSAGE_LIMITER_TIME_AMOUNT, Integer.class).longValue());
     }
 
     public Component getCommandDirectMessageHelp() {

@@ -40,16 +40,21 @@ public class PaperDatabase extends Database<PaperProfile> {
     }
 
     public @NotNull Optional<ServerProfile> getServerProfile(@NotNull UUID playerId) throws DatabaseException {
-        MongoCollection<Document> serverProfiles = getServerProfilesCollection();
-        Document serverProfileDocument = serverProfiles.find(ServerProfile.filterId(playerId)).first();
-        if (serverProfileDocument == null) {
-            return Optional.empty();
-        }
-        return Optional.of(ServerProfile.fromDocument(serverProfileDocument));
+        return handleException(() -> {
+            MongoCollection<Document> serverProfiles = getServerProfilesCollection();
+            Document serverProfileDocument = serverProfiles.find(ServerProfile.filterId(playerId)).first();
+            if (serverProfileDocument == null) {
+                return Optional.empty();
+            }
+            return Optional.of(ServerProfile.fromDocument(serverProfileDocument));
+        });
     }
 
     public void saveServerProfile(@NotNull ServerProfile profile) throws DatabaseException {
-        MongoCollection<Document> serverProfiles = getServerProfilesCollection();
-        serverProfiles.replaceOne(profile.filterId(), profile.toDocument());
+        handleException(() -> {
+            MongoCollection<Document> serverProfiles = getServerProfilesCollection();
+            serverProfiles.replaceOne(profile.filterId(), profile.toDocument(), Database.UPSERT);
+            return null;
+        });
     }
 }

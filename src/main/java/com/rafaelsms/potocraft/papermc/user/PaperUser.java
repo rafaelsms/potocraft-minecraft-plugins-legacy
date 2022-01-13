@@ -72,6 +72,13 @@ public class PaperUser extends User {
     }
 
     public void setTeleportTask(@Nullable TeleportTask teleportTask) {
+        // Cancel the previous task
+        if (this.teleportTask != null && this.teleportTask != teleportTask) {
+            // Hack to prevent stackoverflow
+            TeleportTask oldTask = this.teleportTask;
+            this.teleportTask = null;
+            oldTask.cancel();
+        }
         this.teleportTask = teleportTask;
     }
 
@@ -149,6 +156,7 @@ public class PaperUser extends User {
             String serverName = plugin.getSettings().getServerName();
             serverProfile.setBackLocation(com.rafaelsms.potocraft.common.profile.Location.fromPlayer(serverName,
                                                                                                      oldLocation));
+            serverProfile.setLastTeleportDate();
         });
     }
 
@@ -157,10 +165,23 @@ public class PaperUser extends User {
     }
 
     public void setCombatTask(@Nullable CombatTask combatTask) {
-        if (this.combatTask != null &&
-            combatTask != null &&
-            !this.combatTask.getType().canOverride(combatTask.getType())) {
-            return;
+        // Check if the new task can override the old one
+        if (this.combatTask != null && combatTask != null) {
+            if (this.combatTask.getType() == combatTask.getType()) {
+                // Reset the timer instead of recreating
+                this.combatTask.reset();
+                return;
+            } else if (!combatTask.getType().canOverride(this.combatTask.getType())) {
+                // Since we can't override, just ignore
+                return;
+            }
+        }
+        // Cancel the previous task
+        if (this.combatTask != null && this.combatTask != combatTask) {
+            // Hack to prevent stackoverflow
+            CombatTask oldCombatTask = this.combatTask;
+            this.combatTask = null;
+            oldCombatTask.cancelTask();
         }
         this.combatTask = combatTask;
     }
@@ -228,7 +249,7 @@ public class PaperUser extends User {
 
         @Override
         protected @NotNull Duration getLimiterTimeFrame() {
-            return Duration.ofMillis(plugin.getSettings().getGlobalChatLimiterTimeAmount());
+            return plugin.getSettings().getGlobalChatLimiterTimeAmount();
         }
 
         @Override
@@ -256,7 +277,7 @@ public class PaperUser extends User {
 
         @Override
         protected @NotNull Duration getLimiterTimeFrame() {
-            return Duration.ofMillis(plugin.getSettings().getLocalChatLimiterTimeAmount());
+            return plugin.getSettings().getLocalChatLimiterTimeAmount();
         }
 
         @Override

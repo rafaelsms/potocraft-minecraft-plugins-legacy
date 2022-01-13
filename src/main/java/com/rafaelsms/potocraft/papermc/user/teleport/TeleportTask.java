@@ -50,7 +50,7 @@ public class TeleportTask implements Runnable {
         this.warnParticipant = Objects.requireNonNullElse(warnParticipant, true);
         this.progressBar = BossBar.bossBar(plugin.getSettings().getTeleportTitle(),
                                            BossBar.MIN_PROGRESS,
-                                           BossBar.Color.RED,
+                                           BossBar.Color.YELLOW,
                                            BossBar.Overlay.PROGRESS);
     }
 
@@ -77,8 +77,14 @@ public class TeleportTask implements Runnable {
         warn(participant, warnParticipant, warning);
     }
 
-    private void cancel(@NotNull Component warning) {
+    public void cancel(@NotNull Component warning) {
         warnBoth(warning);
+        teleporting.getPlayer().hideBossBar(progressBar);
+        teleporting.setTeleportTask(null);
+    }
+
+    public void cancel() {
+        teleporting.getPlayer().hideBossBar(progressBar);
         teleporting.setTeleportTask(null);
     }
 
@@ -91,8 +97,12 @@ public class TeleportTask implements Runnable {
                 cancel(plugin.getSettings().getTeleportFailed());
                 return;
             }
-            if (participant.getCombatTask().isPresent() || participant.getTeleportTask().isPresent()) {
+            if (participant.getCombatTask().isPresent()) {
                 cancel(plugin.getSettings().getTeleportPlayerInCombat());
+                return;
+            }
+            if (participant.getTeleportTask().isPresent()) {
+                cancel(plugin.getSettings().getTeleportCanNotTeleportNow());
                 return;
             }
         }

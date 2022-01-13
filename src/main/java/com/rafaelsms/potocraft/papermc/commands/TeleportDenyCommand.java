@@ -5,6 +5,7 @@ import com.rafaelsms.potocraft.common.util.TextUtil;
 import com.rafaelsms.potocraft.papermc.PaperPlugin;
 import com.rafaelsms.potocraft.papermc.user.PaperUser;
 import com.rafaelsms.potocraft.papermc.user.teleport.TeleportRequest;
+import com.rafaelsms.potocraft.papermc.user.teleport.TeleportTask;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -46,8 +47,15 @@ public class TeleportDenyCommand implements com.rafaelsms.potocraft.common.util.
         }
 
         PaperUser user = plugin.getUserManager().getUser(player.getUniqueId());
-        List<TeleportRequest> teleportRequests = user.getTeleportRequests();
 
+        // Cancel existing teleport if it has one
+        Optional<TeleportTask> teleportTask = user.getTeleportTask();
+        if (teleportTask.isPresent()) {
+            teleportTask.get().cancel(plugin.getSettings().getTeleportCancelled());
+            return true;
+        }
+
+        List<TeleportRequest> teleportRequests = user.getTeleportRequests();
 
         if (teleportRequests.isEmpty()) {
             sender.sendMessage(plugin.getSettings().getTeleportRequestsListEmpty());

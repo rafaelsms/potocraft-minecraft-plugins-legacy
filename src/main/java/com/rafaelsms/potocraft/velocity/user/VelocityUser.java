@@ -76,7 +76,7 @@ public class VelocityUser extends User {
 
         @Override
         protected @NotNull Duration getLimiterTimeFrame() {
-            return Duration.ofMillis(plugin.getSettings().getDirectMessageLimiterTimeAmount());
+            return plugin.getSettings().getDirectMessageLimiterTimeAmount();
         }
 
         @Override
@@ -104,7 +104,7 @@ public class VelocityUser extends User {
 
         @Override
         protected @NotNull Duration getLimiterTimeFrame() {
-            return Duration.ofMillis(plugin.getSettings().getUniversalChatLimiterTimeAmount());
+            return plugin.getSettings().getUniversalChatLimiterTimeAmount();
         }
 
         @Override

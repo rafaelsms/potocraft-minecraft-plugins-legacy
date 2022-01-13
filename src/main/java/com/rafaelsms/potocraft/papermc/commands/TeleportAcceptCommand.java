@@ -6,6 +6,7 @@ import com.rafaelsms.potocraft.papermc.PaperPlugin;
 import com.rafaelsms.potocraft.papermc.user.PaperUser;
 import com.rafaelsms.potocraft.papermc.user.teleport.TeleportRequest;
 import com.rafaelsms.potocraft.papermc.user.teleport.TeleportTask;
+import com.rafaelsms.potocraft.papermc.util.PaperUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -48,8 +49,13 @@ public class TeleportAcceptCommand implements com.rafaelsms.potocraft.common.uti
         }
 
         PaperUser user = plugin.getUserManager().getUser(player.getUniqueId());
-        List<TeleportRequest> teleportRequests = user.getTeleportRequests();
 
+        // Return if player can't teleport right now
+        if (!PaperUtil.handleTeleportStatus(plugin, user)) {
+            return true;
+        }
+
+        List<TeleportRequest> teleportRequests = user.getTeleportRequests();
         if (teleportRequests.isEmpty()) {
             sender.sendMessage(plugin.getSettings().getTeleportRequestsListEmpty());
             return true;
@@ -78,13 +84,6 @@ public class TeleportAcceptCommand implements com.rafaelsms.potocraft.common.uti
     }
 
     private void handleFoundRequest(@NotNull PaperUser user, @NotNull TeleportRequest teleportRequest) {
-        // Check if player can teleport
-        PaperUser.TeleportResult teleportStatus = user.getTeleportStatus();
-        if (!teleportStatus.isAllowed()) {
-            user.getPlayer().sendMessage(plugin.getSettings().getTeleportCanNotTeleportNow());
-            return;
-        }
-
         // Accept the request
         TeleportTask teleportTask =
                 teleportRequest.accept(plugin, PlayerTeleportEvent.TeleportCause.COMMAND).warnParticipant(true).build();

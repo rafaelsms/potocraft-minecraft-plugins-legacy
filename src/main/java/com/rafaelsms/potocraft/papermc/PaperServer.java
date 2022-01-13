@@ -19,7 +19,7 @@ public class PaperServer implements CommonServer {
         if (!plugin.getDataFolder().exists() && !plugin.getDataFolder().mkdir()) {
             throw new IllegalStateException("Couldn't create data folder");
         }
-        return new File(plugin.getDataFolder(), "config.json");
+        return new File(plugin.getDataFolder(), "config.yml");
     }
 
     @Override

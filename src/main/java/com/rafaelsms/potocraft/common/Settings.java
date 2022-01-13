@@ -1,24 +1,25 @@
 package com.rafaelsms.potocraft.common;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.rafaelsms.potocraft.common.profile.Profile;
 import com.rafaelsms.potocraft.common.util.TextUtil;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public abstract class Settings {
 
-    private final Gson jsonConfig = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
     protected final Map<String, Object> configuration = Collections.synchronizedMap(new LinkedHashMap<>());
 
     protected final @NotNull Plugin<?, ?, ?> plugin;
 
+    @SuppressWarnings("unchecked")
     protected Settings(@NotNull Plugin<?, ?, ?> plugin) throws Exception {
         this.plugin = plugin;
 
@@ -26,12 +27,89 @@ public abstract class Settings {
         File configFile = plugin.getCommonServer().getConfigurationFile();
         if (!configFile.exists()) {
             setDefaults();
-            try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(configFile))) {
-                outputStream.write(jsonConfig.toJson(this.configuration).getBytes(StandardCharsets.UTF_8));
+
+            Map<String, Object> serializingMap = new HashMap<>();
+            for (Map.Entry<String, Object> entry : configuration.entrySet()) {
+                Map<String, Object> root = serializingMap;
+                String[] path = entry.getKey().split("\\.");
+                try {
+                    for (int i = 0; i < path.length; i++) {
+                        String div = path[i];
+                        if (i + 1 == path.length) {
+                            root.put(div, entry.getValue());
+                        } else {
+                            HashMap<String, Object> map =
+                                    (HashMap<String, Object>) root.getOrDefault(div, new HashMap<>());
+                            root.put(div, map);
+                            root = map;
+                        }
+                    }
+                } catch (Exception exception) {
+                    plugin.logger().info("Failed at path %s".formatted(entry.getKey()));
+                    throw exception;
+                }
+            }
+
+            try (FileWriter fileWriter = new FileWriter(configFile)) {
+                DumperOptions options = new DumperOptions();
+                options.setIndent(4);
+                options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+                options.setPrettyFlow(true);
+                Yaml yaml = new Yaml(options);
+                yaml.dump(serializingMap, fileWriter);
             }
         }
         // Read configuration file
         reloadFile();
+    }
+
+    protected <T> void setDefault(@NotNull String key, T tDefault) {
+        configuration.putIfAbsent(key, tDefault);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> T get(@NotNull String key) {
+        return (T) configuration.get(key);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> T get(@NotNull String key, Class<T> tClass) {
+        return (T) configuration.get(key);
+    }
+
+    public void reloadFile() throws Exception {
+        File configFile = plugin.getCommonServer().getConfigurationFile();
+
+        try (FileReader fileReader = new FileReader(configFile)) {
+            Yaml yaml = new Yaml();
+            Map<String, Object> finalMap = new HashMap<>();
+            Map<String, Object> readMap = yaml.load(fileReader);
+            findAllEntries(finalMap, readMap, "");
+            try {
+                new HashMap<>(this.configuration).putAll(finalMap);
+            } catch (Exception exception) {
+                plugin.logger().warn("Failed to update settings: %s".formatted(exception.getLocalizedMessage()));
+                return;
+            }
+            this.configuration.putAll(finalMap);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void findAllEntries(Map<String, Object> destMap, Map<String, Object> readMap, String path) {
+        String originalPath = path;
+        for (Map.Entry<String, Object> entry : readMap.entrySet()) {
+            if (originalPath.isEmpty()) {
+                path = entry.getKey();
+            } else {
+                path = "%s.%s".formatted(originalPath, entry.getKey());
+            }
+            if (entry.getValue() instanceof Map<?, ?> map) {
+                findAllEntries(destMap, (Map<String, Object>) map, path);
+            } else {
+                destMap.put(path, entry.getValue());
+            }
+        }
     }
 
     public boolean isDebugMessagesEnabled() {
@@ -119,30 +197,6 @@ public abstract class Settings {
         }
     }
 
-    protected <T> void setDefault(@NotNull String key, T tDefault) {
-        configuration.putIfAbsent(key, tDefault);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T> T get(@NotNull String key) {
-        return (T) configuration.get(key);
-    }
-
-    public void reloadFile() throws Exception {
-        File configFile = plugin.getCommonServer().getConfigurationFile();
-        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(configFile))) {
-            String json = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-            @SuppressWarnings("unchecked") Map<String, ?> map = (Map<String, ?>) jsonConfig.fromJson(json, Map.class);
-            try {
-                new HashMap<>(this.configuration).putAll(map);
-            } catch (Exception exception) {
-                plugin.logger().warn("Failed to update settings: %s".formatted(exception.getLocalizedMessage()));
-                return;
-            }
-            this.configuration.putAll(map);
-        }
-    }
-
     protected void setDefaults() {
         setDefault(Constants.DEBUG_MESSAGES_ENABLED, false);
         setDefault(Constants.DATE_TIME_FORMAT, "EEE', 'dd' de 'MMM' às 'H'h'mm"); // Sex, 13 de Dez às 15h54
@@ -209,7 +263,7 @@ public abstract class Settings {
                 "configuration.chat.direct_messages.outgoing_format";
         public static final String DIRECT_MESSAGE_SPY_FORMAT = "configuration.chat.direct_messages.spy_format";
         public static final String DIRECT_MESSAGE_LIMITER_MESSAGES_AMOUNT =
-                "configuration.chat.direct_messages.limiter.time_amount_millis";
+                "configuration.chat.direct_messages.limiter.messages_amount";
         public static final String DIRECT_MESSAGE_LIMITER_TIME_AMOUNT =
                 "configuration.chat.direct_messages.limiter.time_amount_millis";
         public static final String DIRECT_MESSAGE_COMPARATOR_MIN_LENGTH =
@@ -343,7 +397,9 @@ public abstract class Settings {
         public static final String LANG_TELEPORT_HELP_ADMIN = "language.teleport.help_admin";
         public static final String LANG_TELEPORT_PROGRESS_BAR_TITLE = "language.teleport.progress_bar_title";
         public static final String LANG_TELEPORT_SUCCESS = "language.teleport.success";
+        public static final String LANG_TELEPORT_CANCELLED = "language.teleport.cancelled";
         public static final String LANG_TELEPORT_FAIL = "language.teleport.failed";
+        public static final String LANG_TELEPORT_TO_ITSELF = "language.teleport.teleport_to_itself";
         public static final String LANG_TELEPORT_PLAYER_ENTERED_COMBAT = "language.teleport.entered_combat";
         public static final String LANG_TELEPORT_DESTINATION_UNAVAILABLE = "language.teleport.destination_unavailable";
         public static final String LANG_TELEPORT_CAN_NOT_TELEPORT_NOW = "language.teleport.can_not_teleport_now";
@@ -360,12 +416,15 @@ public abstract class Settings {
 
         public static final String LANG_COMBAT_PROGRESS_BAR_TITLE = "language.combat.progress_bar_title";
         public static final String LANG_COMBAT_BLOCKED_COMMAND = "language.combat.this_command_is_blocked_in_combat";
-        public static final String LANG_COMBAT_LAST_DEATH_LOCATION = "language.combat.show_last_death_location";
+        public static final String LANG_COMBAT_LAST_DEATH_LOCATION = "language.combat.show_last_death_location.without_world";
         public static final String LANG_COMBAT_LAST_DEATH_LOCATION_WORLD =
                 "language.combat.show_last_death_location.with_world";
 
         public static final String LANG_HOME_HELP = "language.home.help";
+        public static final String LANG_HOME_NOT_AVAILABLE = "language.home.not_available_right_now";
+        public static final String LANG_HOME_NOT_FOUND = "language.home.not_found";
         public static final String LANG_HOME_ALREADY_EXISTS = "language.home.already_exists";
+        public static final String LANG_HOME_ALREADY_AT_LIMIT = "language.home.at_home_limit";
         public static final String LANG_HOME_UNAVAILABLE_NO_PERMISSION =
                 "language.home.required_permissions_are_missing";
         public static final String LANG_HOME_LIST = "language.home.home_list";
