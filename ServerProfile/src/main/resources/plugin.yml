@@ -6,6 +6,8 @@ author: rafaelsms
 website: www.potocraft.com
 description: Custom plugin for PotoCraft Server
 load: POSTWORLD
+softdepend:
+  - LuckPerms
 commands:
   voltar:
     description: Go back to your location prior to teleport.

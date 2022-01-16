@@ -21,7 +21,6 @@ public class ServerProfilePlugin extends JavaPlugin {
 
     public ServerProfilePlugin() throws IOException {
         this.configuration = new Configuration(this);
-        this.configuration.loadConfiguration();
         this.database = new Database(this);
         this.userManager = new UserManager(this);
     }

@@ -21,11 +21,12 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public Configuration(@NotNull ServerProfilePlugin plugin) throws IOException {
         super(getConfigurationFile(plugin.getDataFolder()));
+        loadConfiguration();
         this.plugin = plugin;
     }
 
     private static @NotNull File getConfigurationFile(@NotNull File dataFolder) throws IOException {
-        if (!dataFolder.exists() || !dataFolder.mkdir()) {
+        if (!dataFolder.exists() && !dataFolder.mkdir()) {
             throw new IOException("Failed to create data folder");
         }
         return new File(dataFolder, "config.yml");
@@ -33,11 +34,12 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     @Override
     protected @Nullable Map<String, Object> getDefaults() {
-        HashMap<String, Object> defaults = new HashMap<>();
+        Map<String, Object> defaults = new LinkedHashMap<>();
         defaults.put(Keys.MONGO_URI, "mongodb://localhost:27017");
         defaults.put(Keys.MONGO_DATABASE_NAME, "serverNameDb");
         defaults.put(Keys.MONGO_DATABASE_FAILURE_FATAL, false);
-        defaults.put(Keys.MONGO_WARPS_COLLECTION_NAME, "playerProfiles");
+        defaults.put(Keys.MONGO_PLAYER_PROFILES_COLLECTION_NAME, "playerProfiles");
+        defaults.put(Keys.MONGO_WARPS_COLLECTION_NAME, "warps");
 
         defaults.put(Keys.LOCAL_CHAT_RANGE, 300.0);
         defaults.put(Keys.LOCAL_CHAT_FORMAT, "&e%prefix%%username%%suffix% &f%message%");

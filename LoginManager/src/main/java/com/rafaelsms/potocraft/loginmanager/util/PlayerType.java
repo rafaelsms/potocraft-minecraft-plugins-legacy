@@ -12,7 +12,7 @@ public enum PlayerType {
     ;
 
     public static @NotNull PlayerType get(@NotNull Player player) {
-        if (FloodgateApi.getInstance().isFloodgateId(player.getUniqueId())) {
+        if (FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
             return PlayerType.FLOODGATE_PLAYER;
         }
         if (player.isOnlineMode()) {

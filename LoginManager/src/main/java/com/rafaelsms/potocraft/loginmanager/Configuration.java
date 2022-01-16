@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -35,7 +35,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     @Override
     protected @Nullable Map<String, Object> getDefaults() {
-        HashMap<String, Object> defaults = new HashMap<>();
+        Map<String, Object> defaults = new LinkedHashMap<>();
         /* Configuration */
         defaults.put(Keys.MONGO_URI, "mongodb://localhost:27017");
         defaults.put(Keys.MONGO_DATABASE, "proxyDb");
@@ -74,7 +74,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                              "teleport",
                              "teleportaccept",
                              "teleportaceitar"));
-        defaults.put(Keys.ALLOWED_USERNAMES_REGEX, "ˆ*?[A-Za-z0-9_]{3,16}$");
+        defaults.put(Keys.ALLOWED_USERNAMES_REGEX, "^*?[A-Za-z0-9_]{3,16}$");
         defaults.put(Keys.DATE_TIME_FORMATTER, "EEE', 'dd' de 'MMM' às 'H'h'mm");
 
 
@@ -82,7 +82,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.GENERIC_CONSOLE_NAME, "Console (administração)");
         defaults.put(Keys.GENERIC_UNKNOWN_PLAYER, "(desconhecido)");
         defaults.put(Keys.GENERIC_UNKNOWN_REPORT_REASON, "não especificado");
-        defaults.put(Keys.GENERIC_NO_EXPIRATION_DATE, "não especificado");
+        defaults.put(Keys.GENERIC_NO_EXPIRATION_DATE, "data não especificada");
         defaults.put(Keys.GENERIC_NO_PERMISSION, "&cVocê não possui permissão.");
         defaults.put(Keys.GENERIC_NO_PLAYER_FOUND, "&cNenhum jogador encontrado.");
 

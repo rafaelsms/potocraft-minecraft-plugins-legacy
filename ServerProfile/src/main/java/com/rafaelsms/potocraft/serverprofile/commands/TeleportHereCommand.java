@@ -48,6 +48,10 @@ public class TeleportHereCommand implements CommandExecutor {
             return true;
         }
         Player teleportingPlayer = optionalPlayer.get();
+        if (teleportingPlayer.getUniqueId().equals(destinationPlayer.getUniqueId())) {
+            sender.sendMessage(plugin.getConfiguration().getTeleportPlayerNotFound());
+            return true;
+        }
 
         // Teleport to player or request
         User teleportingUser = plugin.getUserManager().getUser(teleportingPlayer);

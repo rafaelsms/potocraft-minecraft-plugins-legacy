@@ -10,13 +10,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public Configuration(@NotNull Path dataDirectory) throws IOException {
         super(getConfigurationFile(dataDirectory));
+        loadConfiguration();
     }
 
     private static @NotNull File getConfigurationFile(Path dataDirectory) throws IOException {
@@ -29,7 +30,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     @Override
     protected @Nullable Map<String, Object> getDefaults() {
-        Map<String, Object> defaults = new HashMap<>();
+        Map<String, Object> defaults = new LinkedHashMap<>();
         defaults.put(Keys.LIMITER_MESSAGE_AMOUNT, 4);
         defaults.put(Keys.LIMITER_TIME_AMOUNT_MILLIS, 12000);
         defaults.put(Keys.LIMITER_MIN_LENGTH, 3);

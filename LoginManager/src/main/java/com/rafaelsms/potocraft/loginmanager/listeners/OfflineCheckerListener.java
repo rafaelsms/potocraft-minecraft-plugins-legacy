@@ -46,6 +46,10 @@ public class OfflineCheckerListener {
 
         // Check if is floodgate player
         for (FloodgatePlayer player : FloodgateApi.getInstance().getPlayers()) {
+            if (player.isLinked() && player.getLinkedPlayer().getJavaUsername().equalsIgnoreCase(event.getUsername())) {
+                continuation.resume();
+                return;
+            }
             if (player.getJavaUsername().equalsIgnoreCase(event.getUsername())) {
                 continuation.resume();
                 return;
