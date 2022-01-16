@@ -1,0 +1,36 @@
+plugins {
+    id 'com.github.johnrengelman.shadow'
+    id 'java'
+}
+
+group 'com.rafaelsms'
+version '0.1'
+
+repositories {
+    mavenCentral()
+    maven {
+        name 'velocity'
+        url 'https://nexus.velocitypowered.com/repository/maven-public/'
+    }
+    maven {
+        url 'https://repo.opencollab.dev/maven-snapshots/'
+    }
+}
+
+dependencies {
+    compileOnly('com.velocitypowered:velocity-api:3.0.1')
+    annotationProcessor('com.velocitypowered:velocity-api:3.0.1')
+    compileOnly('org.geysermc.floodgate:api:2.0-SNAPSHOT')
+    implementation('org.jetbrains:annotations:22.0.0')
+    implementation('org.mongodb:mongodb-driver:3.12.10')
+    implementation('com.google.code.gson:gson:2.8.9')
+    implementation(project(':common'))
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+shadowJar {
+    minimize()
+}

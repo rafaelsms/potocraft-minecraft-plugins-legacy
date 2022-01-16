@@ -1,0 +1,42 @@
+name: ServerProfile
+main: com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin
+version: 0.1
+api-version: 1.18
+author: rafaelsms
+website: www.potocraft.com
+description: Custom plugin for PotoCraft Server
+load: POSTWORLD
+commands:
+  voltar:
+    description: Go back to your location prior to teleport.
+    aliases: [ back, retornar ]
+  criarcasa:
+    description: Creates a home location to return to.
+    aliases: [ criarcasas, sethome, setcasa ]
+  apagarcasa:
+    description: Deletes a home location.
+    aliases: [ delhome, deletarcasa, delecarcasas, apagarcasas, deletehome ]
+  casa:
+    description: Teleports to your set home location.
+    aliases: [ home, casas, homes ]
+  criarportal:
+    description: Set a public warp location.
+    aliases: [ setwarp, setportal ]
+  apagarportal:
+    description: Delets a public warp location.
+    aliases: [ deleteportal, delportal, delwarp, deletewarp, removewarp, remwarp, remportal ]
+  portal:
+    description: Teleports you to a public warp location.
+    aliases: [ warp, warps, portals, portais ]
+  teleporteaceitar:
+    description: Accepts a teleport request.
+    aliases: [ tpaccept, tpsim, tpyes, teleportaccept, tpaceitar ]
+  teleporterecusar:
+    description: Denies a teleport request.
+    aliases: [ tpdeny, tpnao, tprecusar, teleportdeny ]
+  teleporte:
+    description: Teleports you to another player.
+    aliases: [ tp, tpa, teleport, tpask ]
+  teleporteaqui:
+    description: Teleports another player to you.
+    aliases: [ tphere, tpahere, tpaqui ]

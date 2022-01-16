@@ -1,2 +1,5 @@
-rootProject.name = 'PotoCraft Proxy'
-
+rootProject.name = 'PotoCraft'
+include 'LoginManager'
+include 'common'
+include 'UniversalChat'
+include 'ServerProfile'
