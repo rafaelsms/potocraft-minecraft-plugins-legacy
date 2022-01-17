@@ -2,8 +2,10 @@ package com.rafaelsms.potocraft.loginmanager.player;
 
 import com.mongodb.client.model.Filters;
 import com.rafaelsms.potocraft.database.DatabaseObject;
+import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
+import com.velocitypowered.api.proxy.Player;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jetbrains.annotations.NotNull;
@@ -80,6 +82,7 @@ public class Profile extends DatabaseObject {
      * @param autoLoginWindow time window to auto login to work
      * @return true if player logged in using the same address or if player joined within auto login time using the
      * same address
+     * @see com.rafaelsms.potocraft.loginmanager.util.Util#isPlayerLoggedIn(LoginManagerPlugin, Profile, Player) helper
      */
     public boolean isLoggedIn(@NotNull InetSocketAddress address, @NotNull Duration autoLoginWindow) {
         String ipAddress = TextUtil.getIpAddress(address);
@@ -102,10 +105,13 @@ public class Profile extends DatabaseObject {
     }
 
     public void setLoggedIn(@NotNull InetSocketAddress address) {
-        this.loggedIn = true;
-        this.lastLoginDate = ZonedDateTime.now();
+        // Update logged in date and join date only if player is logged off
+        if (this.loggedIn == null || !this.loggedIn) {
+            this.loggedIn = true;
+            this.lastLoginDate = ZonedDateTime.now();
+            setJoinDate(lastPlayerName); // offline mode can't change names
+        }
         this.lastLoginAddress = TextUtil.getIpAddress(address);
-        setJoinDate(lastPlayerName); // offline mode can't change names
     }
 
     public boolean isPinValid(int pin) {
@@ -133,12 +139,14 @@ public class Profile extends DatabaseObject {
         this.lastJoinDate = now;
     }
 
-    public void setQuitDate() {
+    public void setQuitDate(@Nullable String lastServerName) {
         if (this.loggedIn != null) {
             this.loggedIn = false;
         }
         this.lastQuitDate = ZonedDateTime.now();
-        this.playTime = Util.getOrElse(playTime, 0L) + Duration.between(lastQuitDate, lastJoinDate).toMillis();
+        this.lastServerName = lastServerName;
+        this.playTime = Util.getOrElse(playTime, 0L) +
+                        Duration.between(Util.getOrElse(lastJoinDate, lastQuitDate), lastQuitDate).toMillis();
     }
 
     /**

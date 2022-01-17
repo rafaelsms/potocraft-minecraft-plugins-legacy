@@ -5,10 +5,13 @@ import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.util.PlayerType;
 import com.rafaelsms.potocraft.loginmanager.util.Util;
 import com.velocitypowered.api.event.Continuation;
+import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ServerConnection;
+import com.velocitypowered.api.proxy.server.ServerInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -30,19 +33,22 @@ public class ProfileUpdater {
         this.plugin = plugin;
     }
 
-    @Subscribe
+    @Subscribe(order = PostOrder.FIRST)
     private void updateJoinDate(PostLoginEvent event, Continuation continuation) {
         CompletableFuture.runAsync(() -> {
             Player player = event.getPlayer();
+            boolean playerTypeRequiresLogin = PlayerType.get(player).requiresLogin();
             Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
-            if (optionalProfile.isEmpty()) {
+            // Don't create profile for offline players, just return
+            if (optionalProfile.isEmpty() && playerTypeRequiresLogin) {
                 continuation.resume();
                 return;
             }
-            Profile profile = optionalProfile.get();
+            // The new profile will only be created for online players
+            Profile profile = optionalProfile.orElse(new Profile(player.getUniqueId(), player.getUsername()));
 
             // Check if profile is logged in and set its join date
-            if (!PlayerType.get(player).requiresLogin() || Util.isPlayerLoggedIn(plugin, profile, player)) {
+            if (!playerTypeRequiresLogin || Util.isPlayerLoggedIn(plugin, profile, player)) {
                 profile.setJoinDate(player.getUsername());
                 plugin.getDatabase().saveProfileCatching(profile);
             }
@@ -50,7 +56,7 @@ public class ProfileUpdater {
         }, Util.getExecutor(plugin, continuation));
     }
 
-    @Subscribe
+    @Subscribe(order = PostOrder.LAST)
     private void updateQuitDate(DisconnectEvent event, Continuation continuation) {
         CompletableFuture.runAsync(() -> {
             Player player = event.getPlayer();
@@ -63,7 +69,13 @@ public class ProfileUpdater {
 
             // Check if profile is logged in and set its join date
             if (!PlayerType.get(player).requiresLogin() || Util.isPlayerLoggedIn(plugin, profile, player)) {
-                profile.setQuitDate();
+                String serverName = event
+                        .getPlayer()
+                        .getCurrentServer()
+                        .map(ServerConnection::getServerInfo)
+                        .map(ServerInfo::getName)
+                        .orElse(null);
+                profile.setQuitDate(serverName);
                 plugin.getDatabase().saveProfileCatching(profile);
             }
             continuation.resume();
