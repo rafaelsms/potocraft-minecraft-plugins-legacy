@@ -86,9 +86,17 @@ public class ReplyCommand implements RawCommand {
         // Send to all spies
         for (Player onlinePlayer : plugin.getServer().getAllPlayers()) {
             if (onlinePlayer.hasPermission(Permissions.DIRECT_MESSAGES_SPY)) {
+                // Skip of spy is the participant
+                if (onlinePlayer.getUniqueId().equals(receiver.getUniqueId())) {
+                    continue;
+                }
+                if (onlinePlayer.getUniqueId().equals(sender.getUniqueId())) {
+                    continue;
+                }
                 onlinePlayer.sendMessage(sender.identity(), spyFormat, MessageType.CHAT);
             }
         }
+        plugin.getServer().getConsoleCommandSource().sendMessage(sender.identity(), spyFormat);
 
         // Update reply candidate for receiver
         User receiverUser = plugin.getUserManager().getUser(receiver.getUniqueId());

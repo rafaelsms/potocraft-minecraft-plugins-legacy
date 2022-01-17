@@ -83,7 +83,7 @@ public class Profile extends DatabaseObject {
      */
     public boolean isLoggedIn(@NotNull InetSocketAddress address, @NotNull Duration autoLoginWindow) {
         String ipAddress = TextUtil.getIpAddress(address);
-        if (pin == null || loggedIn == null || lastQuitDate == null || !ipAddress.equalsIgnoreCase(lastLoginAddress)) {
+        if (pin == null || loggedIn == null || !ipAddress.equalsIgnoreCase(lastLoginAddress)) {
             return false;
         }
         // We asserted that player has a pin and its IP is the same, so we continue the session if logged in
@@ -93,7 +93,7 @@ public class Profile extends DatabaseObject {
         }
         // If it isn't logged in, we check if last quit date is within auto login window
         ZonedDateTime loginExpiration = ZonedDateTime.now().minus(autoLoginWindow);
-        if (this.lastQuitDate.isAfter(loginExpiration)) {
+        if (lastQuitDate != null && this.lastQuitDate.isAfter(loginExpiration)) {
             // If it is, log in
             setLoggedIn(address);
             return true;
@@ -105,7 +105,7 @@ public class Profile extends DatabaseObject {
         this.loggedIn = true;
         this.lastLoginDate = ZonedDateTime.now();
         this.lastLoginAddress = TextUtil.getIpAddress(address);
-        setJoinDate();
+        setJoinDate(lastPlayerName); // offline mode can't change names
     }
 
     public boolean isPinValid(int pin) {
@@ -124,11 +124,12 @@ public class Profile extends DatabaseObject {
         return true;
     }
 
-    public void setJoinDate() {
+    public void setJoinDate(@NotNull String playerName) {
         ZonedDateTime now = ZonedDateTime.now();
         if (this.firstJoinDate == null) {
             this.firstJoinDate = now;
         }
+        this.lastPlayerName = playerName;
         this.lastJoinDate = now;
     }
 
@@ -137,6 +138,7 @@ public class Profile extends DatabaseObject {
             this.loggedIn = false;
         }
         this.lastQuitDate = ZonedDateTime.now();
+        this.playTime = Util.getOrElse(playTime, 0L) + Duration.between(lastQuitDate, lastJoinDate).toMillis();
     }
 
     /**

@@ -30,7 +30,7 @@ public class TeleportHereCommand implements CommandExecutor {
             sender.sendMessage(plugin.getConfiguration().getPlayersOnly());
             return true;
         }
-        if (!sender.hasPermission(Permissions.TELEPORT)) {
+        if (!sender.hasPermission(Permissions.TELEPORT) || !sender.hasPermission(Permissions.TELEPORT_HERE)) {
             sender.sendMessage(plugin.getConfiguration().getNoPermission());
             return true;
         }

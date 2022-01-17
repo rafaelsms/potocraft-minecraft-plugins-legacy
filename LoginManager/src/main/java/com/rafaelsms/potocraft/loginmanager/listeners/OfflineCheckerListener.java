@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.loginmanager.listeners;
 
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
+import com.rafaelsms.potocraft.loginmanager.util.Util;
 import com.velocitypowered.api.event.Continuation;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
@@ -82,7 +83,7 @@ public class OfflineCheckerListener {
                 event.setResult(PreLoginEvent.PreLoginComponentResult.denied(reason));
                 continuation.resume();
             }
-        });
+        }, Util.getExecutor(plugin, continuation));
     }
 
     private boolean isMojangUsernameExistent(@NotNull String name) throws IOException {

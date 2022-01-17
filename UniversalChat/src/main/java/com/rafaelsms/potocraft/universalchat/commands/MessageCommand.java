@@ -52,6 +52,12 @@ public class MessageCommand implements RawCommand {
         Identity senderIdentity = Identity.nil();
         UUID senderId = null;
         if (source instanceof Player sender) {
+            // Check if same player
+            if (sender.getUniqueId().equals(receiver.getUniqueId())) {
+                sender.sendMessage(plugin.getConfiguration().getDirectMessagesNoPlayerFound());
+                return;
+            }
+
             senderUsername = sender.getUsername();
             senderIdentity = sender.identity();
             senderId = sender.getUniqueId();
@@ -88,9 +94,17 @@ public class MessageCommand implements RawCommand {
         // Send to all spies
         for (Player onlinePlayer : plugin.getServer().getAllPlayers()) {
             if (onlinePlayer.hasPermission(Permissions.DIRECT_MESSAGES_SPY)) {
+                // Skip of spy is the participant
+                if (onlinePlayer.getUniqueId().equals(receiver.getUniqueId())) {
+                    continue;
+                }
+                if (onlinePlayer.getUniqueId().equals(senderId)) {
+                    continue;
+                }
                 onlinePlayer.sendMessage(senderIdentity, spyFormat, MessageType.CHAT);
             }
         }
+        plugin.getServer().getConsoleCommandSource().sendMessage(senderIdentity, spyFormat);
 
         // Update reply candidate for receiver
         User receiverUser = plugin.getUserManager().getUser(receiver.getUniqueId());

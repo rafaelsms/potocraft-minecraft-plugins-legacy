@@ -25,7 +25,7 @@ public final class Util {
      * @param <T>      type of items
      * @return if first item is null, fallback otherwise first item
      */
-    public static <T> T getOrElse(T first, T fallback) {
+    public static <T> @NotNull T getOrElse(@Nullable T first, @NotNull T fallback) {
         if (first == null) {
             return fallback;
         }

@@ -14,8 +14,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LoginCommand implements RawCommand {
+
+    private final Pattern pinExtractor = Pattern.compile("^\\s*(\\d{6})(\\s+.*)?$", Pattern.CASE_INSENSITIVE);
 
     private final @NotNull LoginManagerPlugin plugin;
 
@@ -37,9 +41,8 @@ public class LoginCommand implements RawCommand {
             return;
         }
 
-        // Check if required arguments are present and nothing else
-        List<String> arguments = TextUtil.parseArguments(invocation.arguments());
-        if (arguments.size() != 1) {
+        Matcher matcher = pinExtractor.matcher(invocation.arguments());
+        if (!matcher.matches()) {
             player.sendMessage(plugin.getConfiguration().getCommandLoginHelp());
             return;
         }
@@ -72,7 +75,7 @@ public class LoginCommand implements RawCommand {
         }
 
         // Attempt PIN format match
-        Optional<Integer> pinOptional = TextUtil.parsePin(arguments.get(0));
+        Optional<Integer> pinOptional = TextUtil.parsePin(matcher.group(1));
         if (pinOptional.isEmpty()) {
             player.sendMessage(plugin.getConfiguration().getCommandLoginHelp());
             return;
@@ -96,10 +99,6 @@ public class LoginCommand implements RawCommand {
 
     @Override
     public List<String> suggest(Invocation invocation) {
-        List<String> arguments = TextUtil.parseArguments(invocation.arguments());
-        if (arguments.size() > 1) {
-            return List.of();
-        }
         return List.of("123456", "000000");
     }
 

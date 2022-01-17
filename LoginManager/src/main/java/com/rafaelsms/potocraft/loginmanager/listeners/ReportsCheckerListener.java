@@ -79,7 +79,7 @@ public class ReportsCheckerListener {
 
             // Allow if player wasn't kicked
             continuation.resume();
-        });
+        }, com.rafaelsms.potocraft.loginmanager.util.Util.getExecutor(plugin, continuation));
     }
 
     @Subscribe
@@ -126,7 +126,7 @@ public class ReportsCheckerListener {
 
             // Allow if player wasn't kicked
             continuation.resume();
-        });
+        }, com.rafaelsms.potocraft.loginmanager.util.Util.getExecutor(plugin, continuation));
     }
 
     @Subscribe
@@ -158,7 +158,7 @@ public class ReportsCheckerListener {
                 event.setResult(CommandExecuteEvent.CommandResult.denied());
             }
             continuation.resume();
-        });
+        }, com.rafaelsms.potocraft.loginmanager.util.Util.getExecutor(plugin, continuation));
     }
 
 

@@ -59,7 +59,7 @@ public class LoginManagerPlugin {
 
         // Register commands
         CommandManager commandManager = getServer().getCommandManager();
-        commandManager.register("login", new RegisterCommand(this), "l", "log");
+        commandManager.register("login", new LoginCommand(this), "l", "log");
         commandManager.register("registrar", new RegisterCommand(this), "reg", "register", "cadastrar");
         commandManager.register("mudarsenha", new ChangePinCommand(this), "changepin", "changepassword", "mudarpin");
         commandManager.register("ban", new BanCommand(this), "banir");

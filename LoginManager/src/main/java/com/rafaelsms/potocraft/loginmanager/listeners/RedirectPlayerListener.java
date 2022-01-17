@@ -69,7 +69,7 @@ public class RedirectPlayerListener {
                 }
             }
             continuation.resume();
-        });
+        }, Util.getExecutor(plugin, continuation));
     }
 
     @Subscribe
@@ -116,7 +116,7 @@ public class RedirectPlayerListener {
             // Redirect to last server
             lastServerOptional.ifPresent(event::setInitialServer);
             continuation.resume();
-        });
+        }, Util.getExecutor(plugin, continuation));
     }
 
     private @NotNull Optional<RegisteredServer> getLoginServer() {

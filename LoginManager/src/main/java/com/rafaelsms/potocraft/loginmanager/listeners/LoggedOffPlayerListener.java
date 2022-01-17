@@ -41,7 +41,7 @@ public class LoggedOffPlayerListener {
             // Just cancel chatting
             event.setResult(PlayerChatEvent.ChatResult.denied());
             continuation.resume();
-        });
+        }, Util.getExecutor(plugin, continuation));
     }
 
     @Subscribe
@@ -75,7 +75,7 @@ public class LoggedOffPlayerListener {
                 event.setResult(CommandExecuteEvent.CommandResult.denied());
             }
             continuation.resume();
-        });
+        }, Util.getExecutor(plugin, continuation));
     }
 
     private boolean isPlayerLoggedOn(@NotNull Player player) {

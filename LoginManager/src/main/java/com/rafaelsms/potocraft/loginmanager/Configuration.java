@@ -108,7 +108,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.COMMAND_CHANGE_PIN_REGISTER_INSTEAD, """
                                                                &6Você ainda não tem senha cadastrada, digite para cadastrar:
                                                                &a&l/registrar
-                                                               """);
+                                                                """);
+        defaults.put(Keys.COMMAND_CHANGE_PIN_SUCCESSFUL, "&6Senha alterada com sucesso!");
         defaults.put(Keys.COMMAND_REGISTER_HELP, """
                                                  &6Pense e memorize uma senha de 6 números e digite duas vezes:
                                                  &6Por exemplo: &e&l/registrar 123456 123456
@@ -163,12 +164,12 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.PUNISHMENT_MUTED,
                      "&cVocê foi silenciado por &e%reporter% &cpelo motivo &e%reason% &caté &e%expiration_date%");
         defaults.put(Keys.PUNISHMENT_BANNED, """
-                                             &cVocê foi banido por &e%reporter$
+                                             &cVocê foi banido por &e%reporter%
                                              &cpelo motivo &e%reason%
                                              &caté &e%expiration_date%
                                              """);
         defaults.put(Keys.PUNISHMENT_KICKED, """
-                                             &cVocê foi expulso por &e%reporter$
+                                             &cVocê foi expulso por &e%reporter%
                                              &cpor &e%reason%
                                              """);
         defaults.put(Keys.PUNISHMENT_LOGGED_OFF, "&6Você não efetuou login! Digite &e&l/registrar &6ou &e&l/login&6!");
@@ -274,6 +275,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return TextUtil.toComponent(get(Keys.COMMAND_CHANGE_PIN_REGISTER_INSTEAD));
     }
 
+    public Component getCommandChangedPinSuccessful() {
+        return TextUtil.toComponent(get(Keys.COMMAND_CHANGE_PIN_SUCCESSFUL));
+    }
+
     public Component getCommandRegisterHelp() {
         return TextUtil.toComponent(get(Keys.COMMAND_REGISTER_HELP));
     }
@@ -358,14 +363,15 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return TextUtil.toComponent(get(Keys.KICK_MESSAGE_LOGIN_SERVER_UNAVAILABLE));
     }
 
-    private Component getPunishmentMessage(@NotNull Component baseMessage,
+    private Component getPunishmentMessage(@NotNull String baseMessage,
                                            @Nullable String reporterName,
                                            @Nullable String reason,
                                            @Nullable String expirationDate) {
         String reporterFallback = get(Keys.GENERIC_UNKNOWN_PLAYER);
         String reasonFallback = get(Keys.GENERIC_UNKNOWN_REPORT_REASON);
         String expirationDateFallback = get(Keys.GENERIC_NO_EXPIRATION_DATE);
-        return baseMessage
+        return TextUtil
+                .toComponent(baseMessage)
                 .replaceText(TextUtil.replaceText("%reporter%", Util.getOrElse(reporterName, reporterFallback)))
                 .replaceText(TextUtil.replaceText("%reason%", Util.getOrElse(reason, reasonFallback)))
                 .replaceText(TextUtil.replaceText("%expiration_date%",
@@ -435,6 +441,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String COMMAND_CHANGE_PIN_INVALID_PINS = "language.commands.change_pin.invalid_pins";
         public static final String COMMAND_CHANGE_PIN_REGISTER_INSTEAD =
                 "language.commands.change_pin.register_instead";
+        public static final String COMMAND_CHANGE_PIN_SUCCESSFUL = "language.commands.change_pin.success";
         public static final String COMMAND_REGISTER_HELP = "language.commands.register.help";
         public static final String COMMAND_REGISTER_INVALID_PINS = "language.commands.register.invalid_pins";
         public static final String COMMAND_REGISTER_LOGIN_INSTEAD = "language.commands.register.login_instead";

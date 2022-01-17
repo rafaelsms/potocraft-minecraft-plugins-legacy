@@ -13,10 +13,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ChangePinCommand implements RawCommand {
 
     // /<command> <old pin> <new pin> <new pin>
+
+    private final Pattern pinExtractor = Pattern.compile("^\\s*(\\d{6})\\s*(\\d{6})\\s*(\\d{6})(\\s+.*)?$", Pattern.CASE_INSENSITIVE);
 
     private final @NotNull LoginManagerPlugin plugin;
 
@@ -39,14 +43,15 @@ public class ChangePinCommand implements RawCommand {
         }
 
         // Check arguments
-        List<String> arguments = TextUtil.parseArguments(invocation.arguments());
-        if (arguments.size() != 3) {
+        Matcher matcher = pinExtractor.matcher(invocation.arguments());
+        if (!matcher.matches()) {
             player.sendMessage(plugin.getConfiguration().getCommandChangePinHelp());
             return;
         }
 
         // Parse old pin
-        Optional<Integer> oldPinOptional = TextUtil.parsePin(arguments.get(0));
+        String oldPinString = matcher.group(1);
+        Optional<Integer> oldPinOptional = TextUtil.parsePin(oldPinString);
         if (oldPinOptional.isEmpty()) {
             player.sendMessage(plugin.getConfiguration().getCommandChangePinHelp());
             return;
@@ -54,7 +59,9 @@ public class ChangePinCommand implements RawCommand {
         int oldPin = oldPinOptional.get();
 
         // Get new pin and verify they are equal
-        Optional<Integer> pinOptional = TextUtil.parseMatchingPins(arguments.get(1), arguments.get(2));
+        String newPinString = matcher.group(2);
+        String newPinConfirmationString = matcher.group(3);
+        Optional<Integer> pinOptional = TextUtil.parseMatchingPins(newPinString, newPinConfirmationString);
         if (pinOptional.isEmpty()) {
             player.sendMessage(plugin.getConfiguration().getCommandChangePinInvalidPins());
             return;
@@ -96,6 +103,7 @@ public class ChangePinCommand implements RawCommand {
         // Update player's pin
         try {
             plugin.getDatabase().saveProfile(profile);
+            player.sendMessage(plugin.getConfiguration().getCommandChangedPinSuccessful());
         } catch (Database.DatabaseException ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
         }
@@ -103,9 +111,6 @@ public class ChangePinCommand implements RawCommand {
 
     @Override
     public List<String> suggest(Invocation invocation) {
-        if (TextUtil.parseArguments(invocation.arguments()).size() <= 2) {
-            return List.of("123456", "000000");
-        }
         return List.of();
     }
 

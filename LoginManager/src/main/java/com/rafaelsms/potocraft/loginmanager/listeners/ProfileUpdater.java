@@ -43,11 +43,11 @@ public class ProfileUpdater {
 
             // Check if profile is logged in and set its join date
             if (!PlayerType.get(player).requiresLogin() || Util.isPlayerLoggedIn(plugin, profile, player)) {
-                profile.setJoinDate();
+                profile.setJoinDate(player.getUsername());
                 plugin.getDatabase().saveProfileCatching(profile);
             }
             continuation.resume();
-        });
+        }, Util.getExecutor(plugin, continuation));
     }
 
     @Subscribe
@@ -67,6 +67,6 @@ public class ProfileUpdater {
                 plugin.getDatabase().saveProfileCatching(profile);
             }
             continuation.resume();
-        });
+        }, Util.getExecutor(plugin, continuation));
     }
 }
