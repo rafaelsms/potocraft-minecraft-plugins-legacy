@@ -3,6 +3,7 @@ package com.rafaelsms.potocraft.util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
@@ -28,6 +29,10 @@ public final class TextUtil {
 
     public static @NotNull Component toComponent(@NotNull String text) {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(text);
+    }
+
+    public static @NotNull String toPlainString(@NotNull Component component) {
+        return PlainTextComponentSerializer.plainText().serialize(component);
     }
 
     public static @NotNull String getIpAddress(@NotNull InetSocketAddress address) {

@@ -43,7 +43,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.GLOBAL_CHAT_SPY_FORMAT, "&7! <&e%prefix%%username%%suffix%&7> &f%message%");
         defaults.put(Keys.GLOBAL_CHAT_PREFIX, "!");
         defaults.put(Keys.DIRECT_MESSAGES_REPLY_SECONDS, 60 * 4);
-        defaults.put(Keys.OTHER_SERVER_CHAT_SPY_FORMAT, "&7%prefix%%username%%suffix &7(outro server) &7%message%");
+        defaults.put(Keys.OTHER_SERVER_CHAT_SPY_FORMAT, "&7%prefix%%username%%suffix% &7(outro server) &7%message%");
 
         defaults.put(Keys.LANG_CONSOLE_NAME, "administração");
         defaults.put(Keys.LANG_NO_PERMISSION, "&cVocê não possui permissão.");

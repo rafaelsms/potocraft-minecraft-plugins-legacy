@@ -4,6 +4,7 @@ import com.rafaelsms.potocraft.universalchat.Permissions;
 import com.rafaelsms.potocraft.universalchat.UniversalChatPlugin;
 import com.rafaelsms.potocraft.universalchat.player.User;
 import com.rafaelsms.potocraft.util.ChatHistory;
+import com.rafaelsms.potocraft.util.TextUtil;
 import com.velocitypowered.api.command.RawCommand;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.audience.MessageType;
@@ -96,7 +97,7 @@ public class ReplyCommand implements RawCommand {
                 onlinePlayer.sendMessage(sender.identity(), spyFormat, MessageType.CHAT);
             }
         }
-        plugin.getServer().getConsoleCommandSource().sendMessage(sender.identity(), spyFormat);
+        plugin.getLogger().info(TextUtil.toPlainString(spyFormat));
 
         // Update reply candidate for receiver
         User receiverUser = plugin.getUserManager().getUser(receiver.getUniqueId());

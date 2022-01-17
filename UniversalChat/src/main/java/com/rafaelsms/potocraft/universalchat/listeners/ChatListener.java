@@ -4,6 +4,7 @@ import com.rafaelsms.potocraft.universalchat.Permissions;
 import com.rafaelsms.potocraft.universalchat.UniversalChatPlugin;
 import com.rafaelsms.potocraft.universalchat.player.User;
 import com.rafaelsms.potocraft.util.ChatHistory;
+import com.rafaelsms.potocraft.util.TextUtil;
 import com.velocitypowered.api.event.Continuation;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
@@ -139,6 +140,7 @@ public class ChatListener {
                     onlinePlayer.sendMessage(player.identity(), spyMessage, MessageType.CHAT);
                 }
             }
+            plugin.getLogger().info(TextUtil.toPlainString(spyMessage));
             continuation.resume();
         });
     }
@@ -173,6 +175,7 @@ public class ChatListener {
             event.setResult(PlayerChatEvent.ChatResult.denied());
             // Send the message for everybody
             plugin.getServer().sendMessage(event.getPlayer().identity(), chatMessage, MessageType.CHAT);
+            plugin.getLogger().info(TextUtil.toPlainString(chatMessage));
             continuation.resume();
         });
     }
@@ -188,7 +191,7 @@ public class ChatListener {
 
             // Format the message
             Player sendingPlayer = event.getPlayer();
-            Component spyFormat =
+            Component spyMessage =
                     plugin.getConfiguration().getOtherServerChatSpyFormat(sendingPlayer, event.getMessage());
 
             Optional<ServerConnection> currentServer = sendingPlayer.getCurrentServer();
@@ -213,8 +216,9 @@ public class ChatListener {
                 if (!onlinePlayer.hasPermission(Permissions.OTHER_SERVERS_CHAT_SPY)) {
                     continue;
                 }
-                onlinePlayer.sendMessage(spyFormat);
+                onlinePlayer.sendMessage(spyMessage);
             }
+            plugin.getLogger().info(TextUtil.toPlainString(spyMessage));
             continuation.resume();
         });
     }

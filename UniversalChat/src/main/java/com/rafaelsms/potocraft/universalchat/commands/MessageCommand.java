@@ -104,7 +104,7 @@ public class MessageCommand implements RawCommand {
                 onlinePlayer.sendMessage(senderIdentity, spyFormat, MessageType.CHAT);
             }
         }
-        plugin.getServer().getConsoleCommandSource().sendMessage(senderIdentity, spyFormat);
+        plugin.getLogger().info(TextUtil.toPlainString(spyFormat));
 
         // Update reply candidate for receiver
         User receiverUser = plugin.getUserManager().getUser(receiver.getUniqueId());
