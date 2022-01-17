@@ -10,6 +10,7 @@ import com.rafaelsms.potocraft.util.TextUtil;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.RawCommand;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -95,6 +96,21 @@ public class LoginCommand implements RawCommand {
         } catch (Database.DatabaseException ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
         }
+
+        // Attempt to send player to lobby
+        if (player.hasPermission(Permissions.REDIRECT_TO_LAST_SERVER) && profile.getLastServerName().isPresent()) {
+            Optional<RegisteredServer> serverOptional = plugin.getServer().getServer(profile.getLastServerName().get());
+            serverOptional.ifPresent(registeredServer -> player
+                    .createConnectionRequest(registeredServer)
+                    .connectWithIndication()
+                    .whenComplete((success, throwable) -> {
+                        if (throwable != null || success == null || !success) {
+                            Util.sendPlayerToDefault(plugin, player);
+                        }
+                    }));
+            return;
+        }
+        Util.sendPlayerToDefault(plugin, player);
     }
 
     @Override

@@ -93,6 +93,9 @@ public class RegisterCommand implements RawCommand {
         } catch (Database.DatabaseException ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
         }
+
+        // Send player to default server
+        Util.sendPlayerToDefault(plugin, player);
     }
 
     @Override

@@ -23,7 +23,7 @@ public class KickCommand implements RawCommand {
 
     // /kick <name> <reason>
 
-    private final Pattern commandSyntax = Pattern.compile("^\\s*(\\S+)(\\s+(\\S+\\.*))?$");
+    private final Pattern commandSyntax = Pattern.compile("^\\s*(\\S+)(\\s+(\\S+.*))?$");
 
     private final @NotNull LoginManagerPlugin plugin;
 

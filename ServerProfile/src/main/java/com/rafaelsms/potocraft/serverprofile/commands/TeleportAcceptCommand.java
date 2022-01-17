@@ -47,6 +47,9 @@ public class TeleportAcceptCommand implements CommandExecutor {
             if (user.isPlayerTeleportBlocked(true)) {
                 return true;
             }
+            if (user.isPlayerTeleportBlocked(true)) {
+                return true;
+            }
             TeleportRequest request = requests.get(0);
             request.cancel();
             request.getTeleporting().teleport(request.getDestination(), PlayerTeleportEvent.TeleportCause.COMMAND);
@@ -62,6 +65,9 @@ public class TeleportAcceptCommand implements CommandExecutor {
                                                                                         name);
                 if (requestOptional.isEmpty()) {
                     player.sendMessage(plugin.getConfiguration().getTeleportRequestManyFound(requests));
+                    return true;
+                }
+                if (user.isPlayerTeleportBlocked(true)) {
                     return true;
                 }
                 TeleportRequest request = requestOptional.get();

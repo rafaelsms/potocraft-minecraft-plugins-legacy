@@ -6,6 +6,7 @@ import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Continuation;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,6 +47,17 @@ public final class Util {
 
     public static AsyncEventExecutor getExecutor(@NotNull LoginManagerPlugin plugin, @Nullable Continuation continuation) {
         return new AsyncEventExecutor(plugin, continuation);
+    }
+
+    public static void sendPlayerToDefault(@NotNull LoginManagerPlugin plugin, @NotNull Player player) {
+        for (String serverName : plugin.getServer().getConfiguration().getAttemptConnectionOrder()) {
+            Optional<RegisteredServer> serverOptional = plugin.getServer().getServer(serverName);
+            if (serverOptional.isPresent()) {
+                player.createConnectionRequest(serverOptional.get()).fireAndForget();
+                return;
+            }
+        }
+        player.sendMessage(plugin.getConfiguration().getCommandLoginNoServerAvailable());
     }
 
     public static class AsyncEventExecutor implements Executor {

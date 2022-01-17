@@ -127,6 +127,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.COMMAND_LOGIN_REGISTER_INSTEAD,
                      "&6Conta ainda não cadastrada! Digite &e&l/registrar &6para registrar");
         defaults.put(Keys.COMMAND_LOGIN_ALREADY_LOGGED_IN, "&6Já está online, bom jogo :)");
+        defaults.put(Keys.COMMAND_LOGIN_NO_SERVER_AVAILABLE, """
+                                                             &cFalha ao transferir: servidor indisponível.
+                                                             &cDigite &e&l/server &cpara mudar de servidor manualmente.
+                                                             """);
         defaults.put(Keys.COMMAND_BAN_HELP, "&6Uso: &e&l/ban <regex> <razão>");
         defaults.put(Keys.COMMAND_BAN_PLAYER_OFFLINE, "&cJogador está offline, você não possui permissão.");
         defaults.put(Keys.COMMAND_TEMPORARY_BAN_HELP, "&6Uso: &e&l/tempban <regex> <tempo> <razão>");
@@ -307,6 +311,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return TextUtil.toComponent(get(Keys.COMMAND_LOGIN_ALREADY_LOGGED_IN));
     }
 
+    public Component getCommandLoginNoServerAvailable() {
+        return TextUtil.toComponent(get(Keys.COMMAND_LOGIN_NO_SERVER_AVAILABLE));
+    }
+
     public Component getCommandBanHelp() {
         return TextUtil.toComponent(get(Keys.COMMAND_BAN_HELP));
     }
@@ -450,6 +458,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String COMMAND_LOGIN_HELP = "language.commands.login.help";
         public static final String COMMAND_LOGIN_REGISTER_INSTEAD = "language.commands.login.register_instead";
         public static final String COMMAND_LOGIN_ALREADY_LOGGED_IN = "language.commands.login.already_logged_in";
+        public static final String COMMAND_LOGIN_NO_SERVER_AVAILABLE = "language.commands.login.no_server_available";
         public static final String COMMAND_BAN_HELP = "language.commands.ban.help";
         public static final String COMMAND_TEMPORARY_BAN_HELP = "language.commands.temporary_ban.help";
         public static final String COMMAND_TEMPORARY_BAN_PLAYER_OFFLINE =

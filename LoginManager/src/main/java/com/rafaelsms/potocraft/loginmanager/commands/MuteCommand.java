@@ -26,7 +26,7 @@ public class MuteCommand implements RawCommand {
     // /mute <name> <reason>
 
     private final Pattern commandSyntax =
-            Pattern.compile("^\\s*(\\S+)(\\s+([0-9wdhms]+))?(\\s+(\\S+\\.*))?$", Pattern.CASE_INSENSITIVE);
+            Pattern.compile("^\\s*(\\S+)(\\s+([0-9wdhms]+))?(\\s+(\\S+.*))?$", Pattern.CASE_INSENSITIVE);
 
     private final @NotNull LoginManagerPlugin plugin;
 
