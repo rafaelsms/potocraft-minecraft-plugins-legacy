@@ -16,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -112,6 +113,11 @@ public class CombatListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void setOutOfCombat(PlayerDeathEvent event) {
+        plugin.getUserManager().getUser(event.getPlayer()).setCombatTask(null);
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    private void setOutOfCombat(PlayerKickEvent event) {
         plugin.getUserManager().getUser(event.getPlayer()).setCombatTask(null);
     }
 
