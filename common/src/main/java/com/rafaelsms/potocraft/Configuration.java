@@ -80,7 +80,9 @@ public abstract class Configuration {
                 recursionPath = "%s.%s".formatted(path, entry.getKey());
             }
             if (entry.getValue() instanceof Map<?, ?> map) {
-                flattenMap(sinkMap, (Map<String, Object>) map, recursionPath);
+                Map<String, Object> configMap = (Map<String, Object>) map;
+                flattenMap(sinkMap, configMap, recursionPath);
+                sinkMap.put(recursionPath, configMap);
             } else {
                 sinkMap.put(recursionPath, entry.getValue());
             }
