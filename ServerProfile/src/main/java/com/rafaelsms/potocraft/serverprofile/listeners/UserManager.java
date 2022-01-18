@@ -73,13 +73,15 @@ public class UserManager implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     private void removeProfile(PlayerQuitEvent event) {
-        synchronized (lock) {
-            loadedProfiles.remove(event.getPlayer().getUniqueId());
-            User removedUser = users.remove(event.getPlayer().getUniqueId());
-            if (removedUser != null) {
-                plugin.getDatabase().saveProfileCatching(removedUser.getProfile());
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            synchronized (lock) {
+                loadedProfiles.remove(event.getPlayer().getUniqueId());
+                User removedUser = users.remove(event.getPlayer().getUniqueId());
+                if (removedUser != null) {
+                    plugin.getDatabase().saveProfileCatching(removedUser.getProfile());
+                }
             }
-        }
+        }, 1);
     }
 
     public @NotNull User getUser(@NotNull Player player) {
