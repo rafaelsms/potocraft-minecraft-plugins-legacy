@@ -72,6 +72,7 @@ public class ChatFormatter implements Listener {
                     onlinePlayer.sendMessage(senderIdentity, spyMessage, MessageType.CHAT);
                 }
             }
+            plugin.getServer().getConsoleSender().sendMessage(senderIdentity, chatMessage, MessageType.CHAT);
             return;
         }
 
@@ -100,6 +101,7 @@ public class ChatFormatter implements Listener {
             }
             onlinePlayer.sendMessage(senderIdentity, localChatMessage, MessageType.CHAT);
         }
+        plugin.getServer().getConsoleSender().sendMessage(senderIdentity, localChatMessage, MessageType.CHAT);
     }
 
     private boolean isDifferentWorld(@NotNull Location location1, @NotNull Location location2) {
