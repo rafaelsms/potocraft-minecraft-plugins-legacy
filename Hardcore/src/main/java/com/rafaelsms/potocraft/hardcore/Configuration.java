@@ -40,7 +40,6 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.MONGO_DATABASE_FAILURE_FATAL, true);
 
         defaults.put(Keys.DEATH_BAN_TIME, 60 * 60 * 6); // 6 hours
-        defaults.put(Keys.DEATH_CHUNK_ACTIVE_TICKS, 20 * 60 * 3); // 3 minutes
         defaults.put(Keys.DATE_TIME_FORMAT, "H'h'mm");
 
         defaults.put(Keys.LANG_FAILED_TO_RETRIEVE_PROFILE, "&cFalha ao ler seu perfil.");
@@ -73,10 +72,6 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return Duration.of(banTime, ChronoUnit.SECONDS);
     }
 
-    public int getChunkActiveTicksAfterDeath() {
-        return get(Keys.DEATH_CHUNK_ACTIVE_TICKS);
-    }
-
     public DateTimeFormatter getDateTimeFormatter() {
         return DateTimeFormatter.ofPattern(get(Keys.DATE_TIME_FORMAT));
     }
@@ -104,7 +99,6 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String MONGO_DATABASE_FAILURE_FATAL = "configuration.database.is_database_failure_fatal";
 
         public static final String DEATH_BAN_TIME = "configuration.death_ban_time_in_seconds";
-        public static final String DEATH_CHUNK_ACTIVE_TICKS = "configuration.death_chunk_active_time_in_ticks";
         public static final String DATE_TIME_FORMAT = "configuration.death_date_time_format";
 
         public static final String LANG_FAILED_TO_RETRIEVE_PROFILE = "language.failed_to_retrieve_profile";

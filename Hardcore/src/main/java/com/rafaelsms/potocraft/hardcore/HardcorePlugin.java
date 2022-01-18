@@ -1,7 +1,6 @@
 package com.rafaelsms.potocraft.hardcore;
 
 import com.rafaelsms.potocraft.hardcore.listeners.BannedChecker;
-import com.rafaelsms.potocraft.hardcore.listeners.ChunkTicketManager;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,6 @@ public class HardcorePlugin extends JavaPlugin {
     public void onEnable() {
         // Register listeners
         getServer().getPluginManager().registerEvents(new BannedChecker(this), this);
-        getServer().getPluginManager().registerEvents(new ChunkTicketManager(this), this);
 
         logger().info("Hardcore plugin enabled!");
     }
