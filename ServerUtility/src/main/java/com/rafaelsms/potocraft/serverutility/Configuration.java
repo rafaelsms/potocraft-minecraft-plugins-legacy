@@ -4,7 +4,6 @@ import org.bukkit.GameRule;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -15,16 +14,9 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     private final @NotNull ServerUtilityPlugin plugin;
 
     public Configuration(@NotNull ServerUtilityPlugin plugin) throws IOException {
-        super(getConfigurationFile(plugin.getDataFolder()));
+        super(plugin.getDataFolder(), "config.yml");
         loadConfiguration();
         this.plugin = plugin;
-    }
-
-    private static @NotNull File getConfigurationFile(@NotNull File dataFolder) throws IOException {
-        if (!dataFolder.exists() && !dataFolder.mkdir()) {
-            throw new IOException("Failed to create data folder");
-        }
-        return new File(dataFolder, "config.yml");
     }
 
     @Override

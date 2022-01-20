@@ -21,14 +21,17 @@ public abstract class Configuration {
 
     private final File configurationFile;
 
-    public Configuration(@NotNull File configurationFile) {
-        this.configurationFile = configurationFile;
+    public Configuration(@NotNull File dataFolder, @NotNull String fileName) throws IOException {
+        if (!dataFolder.exists() && !dataFolder.mkdir()) {
+            throw new IOException("Failed to create data folder");
+        }
+        this.configurationFile = new File(dataFolder, fileName);
     }
 
     /**
      * Writes the default configuration to be written on file if file does not exists.
      */
-    protected abstract @Nullable Map<String,Object> getDefaults();
+    protected abstract @Nullable Map<String, Object> getDefaults();
 
     /**
      * Get the configuration value for specified key. It may return null if the key is not initialized inside the

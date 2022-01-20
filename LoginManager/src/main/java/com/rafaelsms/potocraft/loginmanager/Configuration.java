@@ -7,7 +7,6 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -21,16 +20,8 @@ import java.util.regex.Pattern;
 public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public Configuration(@NotNull Path dataDirectory) throws IOException {
-        super(getConfigurationFile(dataDirectory));
+        super(dataDirectory.toFile(), "config.yml");
         loadConfiguration();
-    }
-
-    protected static @NotNull File getConfigurationFile(Path dataDirectory) throws IOException {
-        File directory = dataDirectory.toFile();
-        if (!directory.exists() && !directory.mkdir()) {
-            throw new IOException("Couldn't create data folder");
-        }
-        return new File(directory, "config.yml");
     }
 
     @Override
