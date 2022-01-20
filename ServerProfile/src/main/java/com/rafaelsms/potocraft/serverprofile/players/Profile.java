@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -22,7 +23,18 @@ public class Profile extends DatabaseObject {
 
     private @Nullable ZonedDateTime lastTeleportDate = null;
     private @Nullable StoredLocation backLocation = null;
+    private @Nullable ZonedDateTime deathDateTime = null;
     private @Nullable StoredLocation deathLocation = null;
+
+    private @NotNull ZonedDateTime lastJoinDateTime = ZonedDateTime.now();
+    private long playTimeMillis = 0;
+
+    private int mobKills = 0;
+    private int playerKills = 0;
+    private int deathCount = 0;
+    private int blocksPlaced = 0;
+    private int blocksBroken = 0;
+    private long experiencePickedUp = 0;
 
     public Profile(@NotNull UUID playerId) {
         this.playerId = playerId;
@@ -31,13 +43,25 @@ public class Profile extends DatabaseObject {
     public Profile(@NotNull Document document) {
         super(document);
         this.playerId = Util.convertNonNull(document.getString(Keys.PLAYER_ID), UUID::fromString);
+
         List<Home> homes = Util.convertList(document.getList(Keys.HOMES, Document.class), Home::new);
         for (Home home : homes) {
             this.homes.put(home.getName().toLowerCase(), home);
         }
+
         this.lastTeleportDate = Util.toDateTime(document.getString(Keys.LAST_TELEPORT_DATE));
         this.backLocation = Util.convert(document.get(Keys.BACK_LOCATION, Document.class), StoredLocation::new);
+        this.deathDateTime = Util.convert(document.getString(Keys.DEATH_DATE_TIME), Util::toDateTime);
         this.deathLocation = Util.convert(document.get(Keys.DEATH_LOCATION, Document.class), StoredLocation::new);
+
+        this.playTimeMillis = document.getLong(Keys.PLAY_TIME_MILLIS);
+
+        this.mobKills = document.getInteger(Keys.MOB_KILLS);
+        this.playerKills = document.getInteger(Keys.PLAYER_KILLS);
+        this.deathCount = document.getInteger(Keys.DEATH_COUNT);
+        this.blocksPlaced = document.getInteger(Keys.BLOCKS_PLACED);
+        this.blocksBroken = document.getInteger(Keys.BLOCKS_BROKEN);
+        this.experiencePickedUp = document.getLong(Keys.EXPERIENCE_PICKED_UP);
     }
 
     public @NotNull Map<String, Home> getHomes() {
@@ -74,6 +98,38 @@ public class Profile extends DatabaseObject {
 
     public void setDeathLocation(@Nullable Location location) {
         this.deathLocation = Util.convert(location, StoredLocation::new);
+        this.deathDateTime = ZonedDateTime.now();
+    }
+
+    public void setQuitTime() {
+        ZonedDateTime now = ZonedDateTime.now();
+        this.playTimeMillis += Duration.between(now, lastJoinDateTime).toMillis();
+        // Just to make sure we don't have any exploits
+        this.lastJoinDateTime = now;
+    }
+
+    public void incrementMobKill() {
+        this.mobKills += 1;
+    }
+
+    public void incrementPlayerKill() {
+        this.playerKills += 1;
+    }
+
+    public void incrementDeathCount() {
+        this.deathCount += 1;
+    }
+
+    public void incrementBlocksPlaced() {
+        this.blocksPlaced += 1;
+    }
+
+    public void incrementBlocksBroken() {
+        this.blocksBroken += 1;
+    }
+
+    public void incrementExperience(int experience) {
+        this.experiencePickedUp += experience;
     }
 
     public static Bson filterId(@NotNull UUID playerId) {
@@ -105,20 +161,44 @@ public class Profile extends DatabaseObject {
     public @NotNull Document toDocument() {
         Document document = new Document();
         document.put(Keys.PLAYER_ID, Util.convertNonNull(this.playerId, UUID::toString));
+
         document.put(Keys.HOMES, Util.convertList(this.homes.values(), Home::toDocument));
+
         document.put(Keys.LAST_TELEPORT_DATE, Util.fromDateTime(this.lastTeleportDate));
         document.put(Keys.BACK_LOCATION, Util.convert(backLocation, StoredLocation::toDocument));
+        document.put(Keys.DEATH_DATE_TIME, Util.convert(deathDateTime, Util::fromDateTime));
         document.put(Keys.DEATH_LOCATION, Util.convert(deathLocation, StoredLocation::toDocument));
+
+        document.put(Keys.PLAY_TIME_MILLIS, playTimeMillis);
+
+        document.put(Keys.MOB_KILLS, mobKills);
+        document.put(Keys.PLAYER_KILLS, playerKills);
+        document.put(Keys.DEATH_COUNT, deathCount);
+        document.put(Keys.BLOCKS_PLACED, blocksPlaced);
+        document.put(Keys.BLOCKS_BROKEN, blocksBroken);
+        document.put(Keys.EXPERIENCE_PICKED_UP, experiencePickedUp);
         return document;
     }
 
     private static final class Keys {
 
         public static final String PLAYER_ID = "_id";
+
         public static final String HOMES = "homeList";
+
         public static final String LAST_TELEPORT_DATE = "lastTeleportDate";
         public static final String BACK_LOCATION = "backLocation";
+        public static final String DEATH_DATE_TIME = "deathDateTime";
         public static final String DEATH_LOCATION = "deathLocation";
+
+        public static final String PLAY_TIME_MILLIS = "playTimeMillis";
+
+        public static final String MOB_KILLS = "mobKillCount";
+        public static final String PLAYER_KILLS = "playerKillCount";
+        public static final String DEATH_COUNT = "deathCount";
+        public static final String BLOCKS_PLACED = "placedBlocks";
+        public static final String BLOCKS_BROKEN = "brokenBlocks";
+        public static final String EXPERIENCE_PICKED_UP = "experiencePickedUp";
 
         // Private constructor
         private Keys() {

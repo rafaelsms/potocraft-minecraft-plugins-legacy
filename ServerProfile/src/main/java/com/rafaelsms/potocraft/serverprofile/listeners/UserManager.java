@@ -78,7 +78,10 @@ public class UserManager implements Listener {
                 loadedProfiles.remove(event.getPlayer().getUniqueId());
                 User removedUser = users.remove(event.getPlayer().getUniqueId());
                 if (removedUser != null) {
-                    plugin.getDatabase().saveProfileCatching(removedUser.getProfile());
+                    Profile profile = removedUser.getProfile();
+                    // Update play time
+                    profile.setQuitTime();
+                    plugin.getDatabase().saveProfileCatching(profile);
                 }
             }
         }, 1);
