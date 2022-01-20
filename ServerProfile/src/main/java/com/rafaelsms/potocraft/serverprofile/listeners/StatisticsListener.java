@@ -3,6 +3,7 @@ package com.rafaelsms.potocraft.serverprofile.listeners;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.Profile;
+import org.bukkit.Location;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,6 +13,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class StatisticsListener implements Listener {
@@ -65,5 +67,14 @@ public class StatisticsListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void increaseStatistics(PlayerPickupExperienceEvent event) {
         getProfile(event.getPlayer()).incrementExperience(event.getExperienceOrb().getExperience());
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    private void increaseStatistics(PlayerMoveEvent event) {
+        Location from = event.getFrom();
+        Location to = event.getTo();
+        if (from.getWorld().getUID().equals(to.getWorld().getUID())) {
+            getProfile(event.getPlayer()).incrementMovedDistanceSq(to.distanceSquared(from));
+        }
     }
 }

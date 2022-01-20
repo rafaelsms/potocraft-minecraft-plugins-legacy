@@ -35,6 +35,7 @@ public class Profile extends DatabaseObject {
     private int blocksPlaced = 0;
     private int blocksBroken = 0;
     private long experiencePickedUp = 0;
+    private double movedDistanceSq = 0;
 
     public Profile(@NotNull UUID playerId) {
         this.playerId = playerId;
@@ -62,6 +63,7 @@ public class Profile extends DatabaseObject {
         this.blocksPlaced = document.getInteger(Keys.BLOCKS_PLACED);
         this.blocksBroken = document.getInteger(Keys.BLOCKS_BROKEN);
         this.experiencePickedUp = document.getLong(Keys.EXPERIENCE_PICKED_UP);
+        this.movedDistanceSq = document.getDouble(Keys.MOVED_DISTANCE_SQ);
     }
 
     public @NotNull Map<String, Home> getHomes() {
@@ -104,8 +106,6 @@ public class Profile extends DatabaseObject {
     public void setQuitTime() {
         ZonedDateTime now = ZonedDateTime.now();
         this.playTimeMillis += Duration.between(now, lastJoinDateTime).toMillis();
-        // Just to make sure we don't have any exploits
-        this.lastJoinDateTime = now;
     }
 
     public void incrementMobKill() {
@@ -130,6 +130,10 @@ public class Profile extends DatabaseObject {
 
     public void incrementExperience(int experience) {
         this.experiencePickedUp += experience;
+    }
+
+    public void incrementMovedDistanceSq(double movedDistanceSq) {
+        this.movedDistanceSq += movedDistanceSq;
     }
 
     public static Bson filterId(@NotNull UUID playerId) {
@@ -169,6 +173,7 @@ public class Profile extends DatabaseObject {
         document.put(Keys.DEATH_DATE_TIME, Util.convert(deathDateTime, Util::fromDateTime));
         document.put(Keys.DEATH_LOCATION, Util.convert(deathLocation, StoredLocation::toDocument));
 
+        document.put(Keys.LAST_JOIN_DATE, Util.convertNonNull(lastJoinDateTime, Util::fromDateTime));
         document.put(Keys.PLAY_TIME_MILLIS, playTimeMillis);
 
         document.put(Keys.MOB_KILLS, mobKills);
@@ -177,6 +182,7 @@ public class Profile extends DatabaseObject {
         document.put(Keys.BLOCKS_PLACED, blocksPlaced);
         document.put(Keys.BLOCKS_BROKEN, blocksBroken);
         document.put(Keys.EXPERIENCE_PICKED_UP, experiencePickedUp);
+        document.put(Keys.MOVED_DISTANCE_SQ, movedDistanceSq);
         return document;
     }
 
@@ -191,6 +197,7 @@ public class Profile extends DatabaseObject {
         public static final String DEATH_DATE_TIME = "deathDateTime";
         public static final String DEATH_LOCATION = "deathLocation";
 
+        public static final String LAST_JOIN_DATE = "lastJoinDate";
         public static final String PLAY_TIME_MILLIS = "playTimeMillis";
 
         public static final String MOB_KILLS = "mobKillCount";
@@ -199,6 +206,7 @@ public class Profile extends DatabaseObject {
         public static final String BLOCKS_PLACED = "placedBlocks";
         public static final String BLOCKS_BROKEN = "brokenBlocks";
         public static final String EXPERIENCE_PICKED_UP = "experiencePickedUp";
+        public static final String MOVED_DISTANCE_SQ = "distanceMovedSquared";
 
         // Private constructor
         private Keys() {
