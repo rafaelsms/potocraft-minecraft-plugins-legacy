@@ -42,7 +42,7 @@ public interface TeleportDestination {
 
         @Override
         public boolean isUnavailable() {
-            return location.isWorldLoaded();
+            return !location.isWorldLoaded();
         }
     }
 
