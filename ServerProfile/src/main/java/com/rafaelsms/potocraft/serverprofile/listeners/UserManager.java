@@ -29,7 +29,8 @@ public class UserManager implements Listener {
 
     private final @NotNull ServerProfilePlugin plugin;
 
-    private @Nullable BukkitTask task = null;
+    private @Nullable BukkitTask savePlayerTask = null;
+    private @Nullable BukkitTask tickPlayerTask = null;
 
     public UserManager(@NotNull ServerProfilePlugin plugin) {
         this.plugin = plugin;
@@ -37,12 +38,18 @@ public class UserManager implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     private void startSavingTask(ServerLoadEvent event) {
-        if (task != null) {
-            task.cancel();
-            task = null;
+        if (savePlayerTask != null) {
+            savePlayerTask.cancel();
+            savePlayerTask = null;
+        }
+        if (tickPlayerTask != null) {
+            tickPlayerTask.cancel();
+            tickPlayerTask = null;
         }
         int time = plugin.getConfiguration().getSavePlayersTaskTimerTicks();
-        task = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new SavePlayersTask(), time, time);
+        savePlayerTask =
+                plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new SavePlayersTask(), time, time);
+        tickPlayerTask = plugin.getServer().getScheduler().runTaskTimer(plugin, new TickPlayersTask(), 1, 1);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -94,6 +101,19 @@ public class UserManager implements Listener {
     public @NotNull User getUser(@NotNull UUID playerId) {
         synchronized (lock) {
             return users.get(playerId);
+        }
+    }
+
+    private class TickPlayersTask implements Runnable {
+
+        @Override
+        public void run() {
+            synchronized (lock) {
+                // Tick all users synchronously
+                for (User user : users.values()) {
+                    user.runTick();
+                }
+            }
         }
     }
 

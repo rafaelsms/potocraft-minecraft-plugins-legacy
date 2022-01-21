@@ -255,20 +255,17 @@ public class User {
         this.combatTask = combatTask;
     }
 
-    private class UserTickTask implements Runnable {
-
-        @Override
-        public void run() {
-            if (combatTask != null) {
-                combatTask.run();
-            }
-            if (teleportTask != null) {
-                teleportTask.run();
-            }
+    public void runTick() {
+        if (combatTask != null) {
+            combatTask.run();
+        }
+        if (teleportTask != null) {
+            teleportTask.run();
         }
     }
 
     public enum TeleportResult {
+
         PLAYER_UNAVAILABLE,
         IN_COMBAT,
         ALREADY_TELEPORTING,
