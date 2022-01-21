@@ -2,6 +2,9 @@ package com.rafaelsms.potocraft.universalchat;
 
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ServerConnection;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
+import com.velocitypowered.api.proxy.server.ServerInfo;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,15 +31,17 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.COMPARATOR_MIN_LENGTH, 4);
         defaults.put(Keys.COMPARATOR_MIN_DIFFERENCES, 3);
 
-        defaults.put(Keys.UNIVERSAL_CHAT_FORMAT, "&6!! <&e%prefix%%username%%suffix%&6> &f%message%");
+        defaults.put(Keys.UNIVERSAL_CHAT_FORMAT,
+                     "&6!! &7(&6%server%&7)&6 <&e%prefix%%username%%suffix%&6> &f%message%");
         defaults.put(Keys.UNIVERSAL_CHAT_PREFIX, "!!");
         defaults.put(Keys.GLOBAL_CHAT_FORMAT, "&3! <&e%prefix%%username%%suffix%&3> &f%message%");
-        defaults.put(Keys.GLOBAL_CHAT_SPY_FORMAT, "&7! <&e%prefix%%username%%suffix%&7> &f%message%");
+        defaults.put(Keys.GLOBAL_CHAT_SPY_FORMAT, "&7! (%server%) <&e%prefix%%username%%suffix%&7> &f%message%");
         defaults.put(Keys.GLOBAL_CHAT_PREFIX, "!");
         defaults.put(Keys.DIRECT_MESSAGES_REPLY_SECONDS, 60 * 4);
-        defaults.put(Keys.OTHER_SERVER_CHAT_SPY_FORMAT, "&7%prefix%%username%%suffix% &7(outro server) &7%message%");
+        defaults.put(Keys.OTHER_SERVER_CHAT_SPY_FORMAT, "&7(%server%) &e%prefix%%username%%suffix% &7%message%");
 
         defaults.put(Keys.LANG_CONSOLE_NAME, "administração");
+        defaults.put(Keys.LANG_UNKNOWN_SERVER_NAME, "limbo?");
         defaults.put(Keys.LANG_NO_PERMISSION, "&cVocê não possui permissão.");
         defaults.put(Keys.LANG_MESSAGES_TOO_SMALL, "&cMensagens muito pequenas são ignoradas!");
         defaults.put(Keys.LANG_MESSAGES_TOO_FREQUENT, "&cMensagens enviadas muito rapidamente!");
@@ -108,6 +113,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return get(Keys.LANG_CONSOLE_NAME);
     }
 
+    public String getUnknownServer() {
+        return get(Keys.LANG_UNKNOWN_SERVER_NAME);
+    }
+
     public Component getNoPermission() {
         return TextUtil.toComponent(get(Keys.LANG_NO_PERMISSION));
     }
@@ -165,8 +174,15 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     private Component getChatFormat(@NotNull String chatFormat, @NotNull Player player, @NotNull String message) {
+        String serverName = player
+                .getCurrentServer()
+                .map(ServerConnection::getServer)
+                .map(RegisteredServer::getServerInfo)
+                .map(ServerInfo::getName)
+                .orElse(getUnknownServer());
         return TextUtil
                 .toComponent(chatFormat)
+                .replaceText(TextUtil.replaceText("%server%", serverName))
                 .replaceText(TextUtil.replaceText("%prefix%", TextUtil.getPrefix(player.getUniqueId())))
                 .replaceText(TextUtil.replaceText("%suffix%", TextUtil.getSuffix(player.getUniqueId())))
                 .replaceText(TextUtil.replaceText("%username%", player.getUsername()))
@@ -191,6 +207,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String OTHER_SERVER_CHAT_SPY_FORMAT = "configuration.other_server_chat.spy_format";
 
         public static final String LANG_CONSOLE_NAME = "language.console_name";
+        public static final String LANG_UNKNOWN_SERVER_NAME = "language.unknown_server_name";
         public static final String LANG_NO_PERMISSION = "language.no_permission";
         public static final String LANG_MESSAGES_TOO_SMALL = "language.messages_too_small";
         public static final String LANG_MESSAGES_TOO_FREQUENT = "language.messages_too_frequent";
