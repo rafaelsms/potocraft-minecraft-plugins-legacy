@@ -1,10 +1,9 @@
-package com.rafaelsms.potocraft.serverprofile.util;
+package com.rafaelsms.potocraft.util;
 
 import com.rafaelsms.potocraft.database.DatabaseObject;
-import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
-import com.rafaelsms.potocraft.util.Util;
 import org.bson.Document;
 import org.bukkit.Location;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -30,7 +29,7 @@ public class StoredLocation extends DatabaseObject {
         this.z = document.getDouble(Keys.Z_KEY);
     }
 
-    public @NotNull Location toLocation(@NotNull ServerProfilePlugin plugin) {
+    public @NotNull Location toLocation(@NotNull Plugin plugin) {
         return new Location(plugin.getServer().getWorld(worldId), x, y, z);
     }
 

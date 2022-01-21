@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public final class Util {
 
@@ -30,6 +31,25 @@ public final class Util {
             return fallback;
         }
         return first;
+    }
+
+    /**
+     * Get first item catching exceptions or fallback to another one
+     *
+     * @param first    first item to attempt to be returned
+     * @param fallback fallback item
+     * @param <T>      type of items
+     * @return if first item is null, fallback otherwise first item
+     */
+    public static <T> @NotNull T getCatchingOrElse(@NotNull Supplier<T> first, @NotNull T fallback) {
+        try {
+            T returned = first.get();
+            if (returned == null) {
+                return fallback;
+            }
+        } catch (Exception ignored) {
+        }
+        return fallback;
     }
 
     /**

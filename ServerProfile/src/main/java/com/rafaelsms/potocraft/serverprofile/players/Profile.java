@@ -3,7 +3,7 @@ package com.rafaelsms.potocraft.serverprofile.players;
 import com.mongodb.client.model.Filters;
 import com.rafaelsms.potocraft.database.DatabaseObject;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
-import com.rafaelsms.potocraft.serverprofile.util.StoredLocation;
+import com.rafaelsms.potocraft.util.StoredLocation;
 import com.rafaelsms.potocraft.util.Util;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -26,7 +26,7 @@ public class Profile extends DatabaseObject {
     private @Nullable ZonedDateTime deathDateTime = null;
     private @Nullable StoredLocation deathLocation = null;
 
-    private @NotNull ZonedDateTime lastJoinDateTime = ZonedDateTime.now();
+    private final @NotNull ZonedDateTime lastJoinDateTime = ZonedDateTime.now();
     private long playTimeMillis = 0;
 
     private int mobKills = 0;
@@ -55,15 +55,15 @@ public class Profile extends DatabaseObject {
         this.deathDateTime = Util.convert(document.getString(Keys.DEATH_DATE_TIME), Util::toDateTime);
         this.deathLocation = Util.convert(document.get(Keys.DEATH_LOCATION, Document.class), StoredLocation::new);
 
-        this.playTimeMillis = document.getLong(Keys.PLAY_TIME_MILLIS);
+        this.playTimeMillis = Util.getCatchingOrElse(() -> document.getLong(Keys.PLAY_TIME_MILLIS), 0L);
 
-        this.mobKills = document.getInteger(Keys.MOB_KILLS);
-        this.playerKills = document.getInteger(Keys.PLAYER_KILLS);
-        this.deathCount = document.getInteger(Keys.DEATH_COUNT);
-        this.blocksPlaced = document.getInteger(Keys.BLOCKS_PLACED);
-        this.blocksBroken = document.getInteger(Keys.BLOCKS_BROKEN);
-        this.experiencePickedUp = document.getLong(Keys.EXPERIENCE_PICKED_UP);
-        this.movedDistanceSq = document.getDouble(Keys.MOVED_DISTANCE_SQ);
+        this.mobKills = Util.getCatchingOrElse(() -> document.getInteger(Keys.MOB_KILLS), 0);
+        this.playerKills = Util.getCatchingOrElse(() -> document.getInteger(Keys.PLAYER_KILLS), 0);
+        this.deathCount = Util.getCatchingOrElse(() -> document.getInteger(Keys.DEATH_COUNT), 0);
+        this.blocksPlaced = Util.getCatchingOrElse(() -> document.getInteger(Keys.BLOCKS_PLACED), 0);
+        this.blocksBroken = Util.getCatchingOrElse(() -> document.getInteger(Keys.BLOCKS_BROKEN), 0);
+        this.experiencePickedUp = Util.getCatchingOrElse(() -> document.getLong(Keys.EXPERIENCE_PICKED_UP), 0L);
+        this.movedDistanceSq = Util.getCatchingOrElse(() -> document.getDouble(Keys.MOVED_DISTANCE_SQ), 0.0);
     }
 
     public @NotNull Map<String, Home> getHomes() {
@@ -105,7 +105,7 @@ public class Profile extends DatabaseObject {
 
     public void setQuitTime() {
         ZonedDateTime now = ZonedDateTime.now();
-        this.playTimeMillis += Duration.between(now, lastJoinDateTime).toMillis();
+        this.playTimeMillis += Duration.between(lastJoinDateTime, now).toMillis();
     }
 
     public void incrementMobKill() {

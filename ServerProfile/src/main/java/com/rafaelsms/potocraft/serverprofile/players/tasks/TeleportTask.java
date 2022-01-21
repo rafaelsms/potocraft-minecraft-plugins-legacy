@@ -76,6 +76,7 @@ public class TeleportTask implements Runnable {
     @Override
     public void run() {
         if (isUserInvalid(teleportingUser) || isUserInvalid(participantUser)) {
+            // Is already cancelled above
             return;
         }
         if (participantUser != null && participantUser.isTeleporting()) {
