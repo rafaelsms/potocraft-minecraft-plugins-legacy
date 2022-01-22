@@ -62,11 +62,14 @@ public class LoginManagerPlugin {
         commandManager.register("login", new LoginCommand(this), "l", "log");
         commandManager.register("registrar", new RegisterCommand(this), "reg", "register", "cadastrar");
         commandManager.register("mudarsenha", new ChangePinCommand(this), "changepin", "changepassword", "mudarpin");
+        commandManager.register("unban", new UnbanCommand(this), "desbanir");
         commandManager.register("ban", new BanCommand(this), "banir");
         commandManager.register("tempban", new TemporaryBanCommand(this), "temporaryban", "banirtemp");
         commandManager.register("mute", new MuteCommand(this), "silenciar", "silencio");
+        commandManager.register("unmute", new UnmuteCommand(this), "desilenciar");
         commandManager.register("kick", new KickCommand(this), "expulsar");
         commandManager.register("history", new HistoryCommand(this), "historico");
+        commandManager.register("list", new ListCommand(this), "lista", "jogadores", "players", "online");
 
         getLogger().info("LoginManager enabled!");
     }

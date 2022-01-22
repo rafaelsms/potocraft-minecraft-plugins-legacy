@@ -3,6 +3,7 @@ package com.rafaelsms.potocraft.loginmanager;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
+import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,6 +13,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,15 +124,20 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                                                              &cFalha ao transferir: servidor indisponível.
                                                              &cDigite &e&l/server &cpara mudar de servidor manualmente.
                                                              """);
+        defaults.put(Keys.COMMAND_UNBAN_HELP, "&6Uso: &e&l/unban <regex>");
         defaults.put(Keys.COMMAND_BAN_HELP, "&6Uso: &e&l/ban <regex> <razão>");
         defaults.put(Keys.COMMAND_BAN_PLAYER_OFFLINE, "&cJogador está offline, você não possui permissão.");
         defaults.put(Keys.COMMAND_TEMPORARY_BAN_HELP, "&6Uso: &e&l/tempban <regex> <tempo> <razão>");
         defaults.put(Keys.COMMAND_TEMPORARY_BAN_PLAYER_OFFLINE, "&cJogador está offline, você não possui permissão.");
+        defaults.put(Keys.COMMAND_UNMUTE_HELP, "&6Uso: &e&l/unmute <regex>");
         defaults.put(Keys.COMMAND_MUTE_HELP, "&6Uso: &e&l/mute <regex> <tempo> <razão>");
         defaults.put(Keys.COMMAND_MUTE_PLAYER_OFFLINE, "&cJogador está offline, você não possui permissão.");
         defaults.put(Keys.COMMAND_KICK_HELP, "&6Uso: &e&l/kick <regex> <razão>");
         defaults.put(Keys.COMMAND_HISTORY_HELP, "&6Uso: &e&l/history <regex>");
         defaults.put(Keys.COMMAND_PLAYER_PUNISHED, "&6Jogador &e%player% &6punido.");
+        defaults.put(Keys.COMMAND_PLAYER_UNPUNISHED, "&6%player% teve sua punição revogada.");
+        defaults.put(Keys.COMMAND_PLAYER_IS_NOT_PUNISHED, "&c%player% não está punido.");
+        defaults.put(Keys.COMMAND_LIST_SERVER_LIST, "&6Servidor %server_name% (%size%): &e%player_list%");
 
         defaults.put(Keys.KICK_MESSAGE_COULD_NOT_CHECK_MOJANG, """
                                                                &cFalha ao consultar servidor da Microsoft.
@@ -307,6 +314,22 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return TextUtil.toComponent(get(Keys.COMMAND_LOGIN_NO_SERVER_AVAILABLE));
     }
 
+    public Component getCommandUnbanHelp() {
+        return TextUtil.toComponent(get(Keys.COMMAND_UNBAN_HELP));
+    }
+
+    public Component getCommandUnpunished(@NotNull String playerName) {
+        return TextUtil
+                .toComponent(get(Keys.COMMAND_PLAYER_UNPUNISHED))
+                .replaceText(TextUtil.replaceText("%player%", playerName));
+    }
+
+    public Component getCommandPlayerIsNotPunished(@NotNull String playerName) {
+        return TextUtil
+                .toComponent(get(Keys.COMMAND_PLAYER_IS_NOT_PUNISHED))
+                .replaceText(TextUtil.replaceText("%player%", playerName));
+    }
+
     public Component getCommandBanHelp() {
         return TextUtil.toComponent(get(Keys.COMMAND_BAN_HELP));
     }
@@ -321,12 +344,25 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                 .replaceText(TextUtil.replaceText("%player%", playerName));
     }
 
+    public Component getListServerList(@NotNull String serverName, @NotNull Collection<Player> playerList) {
+        return TextUtil
+                .toComponent(get(Keys.COMMAND_LIST_SERVER_LIST))
+                .replaceText(TextUtil.replaceText("%server_name%", serverName))
+                .replaceText(TextUtil.replaceText("%size%", String.valueOf(playerList.size())))
+                .replaceText(TextUtil.replaceText("%player_list%",
+                                                  TextUtil.joinStrings(playerList, ", ", Player::getUsername)));
+    }
+
     public Component getCommandTemporaryBanHelp() {
         return TextUtil.toComponent(get(Keys.COMMAND_TEMPORARY_BAN_HELP));
     }
 
     public Component getCommandTemporaryBanPlayerOffline() {
         return TextUtil.toComponent(get(Keys.COMMAND_TEMPORARY_BAN_PLAYER_OFFLINE));
+    }
+
+    public Component getCommandUnmuteHelp() {
+        return TextUtil.toComponent(get(Keys.COMMAND_UNMUTE_HELP));
     }
 
     public Component getCommandMuteHelp() {
@@ -457,16 +493,21 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String COMMAND_LOGIN_REGISTER_INSTEAD = "language.commands.login.register_instead";
         public static final String COMMAND_LOGIN_ALREADY_LOGGED_IN = "language.commands.login.already_logged_in";
         public static final String COMMAND_LOGIN_NO_SERVER_AVAILABLE = "language.commands.login.no_server_available";
+        public static final String COMMAND_UNBAN_HELP = "language.commands.unban.help";
         public static final String COMMAND_BAN_HELP = "language.commands.ban.help";
         public static final String COMMAND_TEMPORARY_BAN_HELP = "language.commands.temporary_ban.help";
         public static final String COMMAND_TEMPORARY_BAN_PLAYER_OFFLINE =
                 "language.commands.temporary_ban.player_offline";
         public static final String COMMAND_BAN_PLAYER_OFFLINE = "language.commands.ban.player_offline";
+        public static final String COMMAND_UNMUTE_HELP = "language.commands.unmute.help";
         public static final String COMMAND_MUTE_HELP = "language.commands.mute.help";
         public static final String COMMAND_MUTE_PLAYER_OFFLINE = "language.commands.mute.player_offline";
         public static final String COMMAND_KICK_HELP = "language.commands.kick.help";
         public static final String COMMAND_HISTORY_HELP = "language.commands.history.help";
         public static final String COMMAND_PLAYER_PUNISHED = "language.commands.player_punished";
+        public static final String COMMAND_PLAYER_UNPUNISHED = "language.commands.player_unpunished";
+        public static final String COMMAND_PLAYER_IS_NOT_PUNISHED = "language.commands.player_is_not_punished";
+        public static final String COMMAND_LIST_SERVER_LIST = "language.commands.list_server_players";
 
         public static final String KICK_MESSAGE_COULD_NOT_CHECK_MOJANG =
                 "language.kick_messages.could_not_check_mojang";
