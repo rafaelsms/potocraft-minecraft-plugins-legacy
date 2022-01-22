@@ -2,7 +2,9 @@ package com.rafaelsms.potocraft.serverutility;
 
 import com.rafaelsms.potocraft.serverutility.commands.AnvilCommand;
 import com.rafaelsms.potocraft.serverutility.commands.EnderchestCommand;
+import com.rafaelsms.potocraft.serverutility.commands.PlayerTimeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.WorkbenchCommand;
+import com.rafaelsms.potocraft.serverutility.listeners.VanishManager;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldGameRuleApplier;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -16,20 +18,24 @@ import java.io.IOException;
 public class ServerUtilityPlugin extends JavaPlugin {
 
     private final @NotNull Configuration configuration;
+    private final @NotNull VanishManager manager;
 
     public ServerUtilityPlugin() throws IOException {
         this.configuration = new Configuration(this);
+        this.manager = new VanishManager(this);
     }
 
     @Override
     public void onEnable() {
         // Register listeners
         getServer().getPluginManager().registerEvents(new WorldGameRuleApplier(this), this);
+        getServer().getPluginManager().registerEvents(manager, this);
 
         // Register commands
         registerCommand("anvil", new AnvilCommand(this));
         registerCommand("enderchest", new EnderchestCommand(this));
         registerCommand("workbench", new WorkbenchCommand(this));
+        registerCommand("playertime", new PlayerTimeCommand(this));
 
         logger().info("ServerUtility enabled!");
     }
@@ -44,6 +50,10 @@ public class ServerUtilityPlugin extends JavaPlugin {
 
     public @NotNull Configuration getConfiguration() {
         return configuration;
+    }
+
+    public @NotNull VanishManager getVanishManager() {
+        return manager;
     }
 
     public Logger logger() {

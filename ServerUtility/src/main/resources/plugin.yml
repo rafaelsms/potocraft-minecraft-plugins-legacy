@@ -16,3 +16,12 @@ commands:
   anvil:
     description: Opens an anvil wherever you are.
     aliases: [ bigorna ]
+  playertime:
+    description: Sets your world time to your taste.
+    aliases: [ ptime, tempo, time ]
+  playerweather:
+    description: Sets your world weather to your taste.
+    aliases: [ pweather, clima, weather ]
+  vanish:
+    description: Hides/shows yourself to others.
+    aliases: [ v ]
