@@ -9,6 +9,7 @@ import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -85,5 +86,9 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
             }
             return profiles;
         });
+    }
+
+    public @NotNull Long getAddressUsageCount(InetSocketAddress remoteAddress) throws DatabaseException {
+        return throwingWrapper(() -> getPlayerCollection().countDocuments(Profile.filterAddress(remoteAddress)));
     }
 }

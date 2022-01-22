@@ -18,7 +18,8 @@ import java.util.regex.Pattern;
 
 public class RegisterCommand implements RawCommand {
 
-    private final Pattern pinExtractor = Pattern.compile("^\\s*(\\d{6})\\s*(\\d{6})(\\s+.*)?$", Pattern.CASE_INSENSITIVE);
+    private final Pattern pinExtractor =
+            Pattern.compile("^\\s*(\\d{6})\\s*(\\d{6})(\\s+.*)?$", Pattern.CASE_INSENSITIVE);
 
     private final @NotNull LoginManagerPlugin plugin;
 
@@ -60,6 +61,18 @@ public class RegisterCommand implements RawCommand {
             } else {
                 player.sendMessage(plugin.getConfiguration().getCommandRegisterShouldLoginInstead());
             }
+            return;
+        }
+
+        // Check if too many uses for this IP
+        try {
+            long count = plugin.getDatabase().getAddressUsageCount(player.getRemoteAddress());
+            if (count >= plugin.getConfiguration().getMaxAccountsPerAddress()) {
+                player.disconnect(plugin.getConfiguration().getCommandRegisterAccountLimitForAddress());
+                return;
+            }
+        } catch (Exception ignored) {
+            player.disconnect(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
             return;
         }
 

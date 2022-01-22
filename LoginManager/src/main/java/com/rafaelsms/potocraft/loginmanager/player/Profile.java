@@ -181,6 +181,10 @@ public class Profile extends DatabaseObject {
         return Filters.eq(Keys.PLAYER_ID, Util.convertNonNull(playerId, UUID::toString));
     }
 
+    public static Bson filterAddress(@NotNull InetSocketAddress address) {
+        return Filters.eq(Keys.LAST_LOGIN_ADDRESS, TextUtil.getIpAddress(address));
+    }
+
     public Bson filterId() {
         return filterId(playerId);
     }

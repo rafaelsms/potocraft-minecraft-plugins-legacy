@@ -37,6 +37,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
         defaults.put(Keys.OFFLINE_PLAYERS_LOGIN_SERVER, "login");
         defaults.put(Keys.OFFLINE_PLAYERS_AUTO_LOGIN_MINUTES, 45);
+        defaults.put(Keys.OFFLINE_MAX_ACCOUNTS_PER_ADDRESS, 1);
         defaults.put(Keys.OFFLINE_PLAYERS_ALLOWED_COMMANDS,
                      List.of("login", "l", "log", "registrar", "cadastrar", "reg", "register"));
         defaults.put(Keys.MUTED_BLOCKED_COMMANDS,
@@ -111,6 +112,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                                                          &6Sua senha deve conter 6 números e ser digitada duas vezes de forma igual:
                                                          &6Por exemplo: &e&l/registrar 012345 012345
                                                          """);
+        defaults.put(Keys.COMMAND_REGISTER_MAX_ACCOUNT_PER_ADDRESS,
+                     "&cNúmero máximo de contas para seu endereço atingido.");
         defaults.put(Keys.COMMAND_REGISTER_LOGIN_INSTEAD,
                      "&6Conta já cadastrada! Digite &e&l/login &6e sua senha para entrar.");
         defaults.put(Keys.COMMAND_REGISTER_CHANGE_PIN_INSTEAD,
@@ -219,6 +222,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return Duration.ofMinutes(minutes.longValue());
     }
 
+    public int getMaxAccountsPerAddress() {
+        return get(Keys.OFFLINE_MAX_ACCOUNTS_PER_ADDRESS);
+    }
+
     public @NotNull DateTimeFormatter getDateTimeFormatter() {
         return DateTimeFormatter.ofPattern(get(Keys.DATE_TIME_FORMATTER));
     }
@@ -288,6 +295,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public Component getCommandRegisterInvalidPin() {
         return TextUtil.toComponent(get(Keys.COMMAND_REGISTER_INVALID_PINS));
+    }
+
+    public Component getCommandRegisterAccountLimitForAddress() {
+        return TextUtil.toComponent(get(Keys.COMMAND_REGISTER_MAX_ACCOUNT_PER_ADDRESS));
     }
 
     public Component getCommandRegisterShouldChangePinInstead() {
@@ -457,6 +468,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String OFFLINE_PLAYERS_LOGIN_SERVER = "configuration.offline_players_login_server";
         public static final String OFFLINE_PLAYERS_AUTO_LOGIN_MINUTES =
                 "configuration.minutes_between_joins_to_auto_login";
+        public static final String OFFLINE_MAX_ACCOUNTS_PER_ADDRESS =
+                "configuration.max_accounts_registered_per_address";
         public static final String OFFLINE_PLAYERS_ALLOWED_COMMANDS = "configuration.offline_allowed_commands";
         public static final String MUTED_BLOCKED_COMMANDS = "configuration.muted_blocked_commands";
         public static final String ALLOWED_USERNAMES_REGEX = "configuration.allowed_usernames_regex";
@@ -486,6 +499,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String COMMAND_CHANGE_PIN_SUCCESSFUL = "language.commands.change_pin.success";
         public static final String COMMAND_REGISTER_HELP = "language.commands.register.help";
         public static final String COMMAND_REGISTER_INVALID_PINS = "language.commands.register.invalid_pins";
+        public static final String COMMAND_REGISTER_MAX_ACCOUNT_PER_ADDRESS =
+                "language.commands.register.max_accounts_per_address_reached";
         public static final String COMMAND_REGISTER_LOGIN_INSTEAD = "language.commands.register.login_instead";
         public static final String COMMAND_REGISTER_CHANGE_PIN_INSTEAD =
                 "language.commands.register.change_pin_instead";
