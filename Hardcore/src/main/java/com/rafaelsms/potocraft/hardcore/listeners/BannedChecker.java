@@ -28,36 +28,41 @@ public class BannedChecker implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void banPlayerOnDeath(PlayerDeathEvent event) {
-        Player player = event.getPlayer();
-        // Ignore players with permission
-        if (player.hasPermission(Permissions.BAN_BYPASS)) {
-            return;
-        }
+        // Execute a tick after (or items will duplicate)
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            Player player = event.getPlayer();
+            // Ignore players with permission
+            if (player.hasPermission(Permissions.BAN_BYPASS)) {
+                return;
+            }
 
-        // Attempt to get a profile
-        Optional<Profile> profileOptional = plugin.getDatabase().getPlayerProfile(player.getUniqueId());
-        if (profileOptional.isEmpty()) {
-            // Ban through Paper if retrieving failed
-            paperBanPlayer(player);
-            return;
-        }
+            // Attempt to get a profile
+            Optional<Profile> profileOptional = plugin.getDatabase().getPlayerProfile(player.getUniqueId());
+            if (profileOptional.isEmpty()) {
+                // Ban through Paper if retrieving failed
+                paperBanPlayer(player);
+                return;
+            }
 
-        // Update profile and save it
-        Profile profile = profileOptional.get();
-        profile.setDeathDate();
-        try {
-            plugin.getDatabase().savePlayerProfile(profile);
-        } catch (Database.DatabaseException ignored) {
-            // Ban through Paper if saving failed
-            paperBanPlayer(player);
-            return;
-        }
+            // Update profile and save it
+            Profile profile = profileOptional.get();
+            profile.setDeathDate();
+            try {
+                plugin.getDatabase().savePlayerProfile(profile);
+            } catch (Database.DatabaseException ignored) {
+                // Ban through Paper if saving failed
+                paperBanPlayer(player);
+                return;
+            }
 
-        // Kick player after saving profile
-        ZonedDateTime expirationDate =
-                profile.getDeathDate().orElse(ZonedDateTime.now()).plus(plugin.getConfiguration().getDeathBanTime());
-        Component bannedMessage = plugin.getConfiguration().getBannedMessage(expirationDate);
-        player.kick(bannedMessage);
+            // Kick player after saving profile
+            ZonedDateTime expirationDate = profile
+                    .getDeathDate()
+                    .orElse(ZonedDateTime.now())
+                    .plus(plugin.getConfiguration().getDeathBanTime());
+            Component bannedMessage = plugin.getConfiguration().getBannedMessage(expirationDate);
+            player.kick(bannedMessage);
+        }, 1);
     }
 
     private void paperBanPlayer(@NotNull Player player) {
