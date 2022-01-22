@@ -36,17 +36,20 @@ public class HomeCommand implements CommandExecutor {
         }
 
         User user = plugin.getUserManager().getUser(player);
-        List<Home> activeHomes = user.getActiveHomes();
+        int maxHomesSize = user.getMaxHomesSize();
+        int homesSize = user.getProfile().getHomesSize();
+        List<Home> homesSorted = user.getProfile().getHomesSortedByDate();
 
-        if (activeHomes.isEmpty()) {
+        if (homesSize == 0) {
             sender.sendMessage(plugin.getConfiguration().getTeleportHomeHelp());
             return true;
-        } else if (activeHomes.size() > 1) {
+        } else if (homesSize > 1) {
             if (args.length != 1) {
-                sender.sendMessage(plugin.getConfiguration().getTeleportHomeList(activeHomes));
+                sender.sendMessage(plugin.getConfiguration().getTeleportHomeList(homesSorted));
             } else {
                 String homeName = args[0];
-                for (Home home : activeHomes) {
+                for (int i = 0; i < Math.min(maxHomesSize, homesSorted.size()); i++) {
+                    Home home = homesSorted.get(i);
                     if (home.getName().equalsIgnoreCase(homeName)) {
                         if (user.isPlayerTeleportBlocked(true)) {
                             return true;
@@ -55,16 +58,17 @@ public class HomeCommand implements CommandExecutor {
                         return true;
                     }
                 }
-                sender.sendMessage(plugin.getConfiguration().getTeleportHomeNotFound());
             }
-            return true;
-        } else {
+        } else if (maxHomesSize >= 1) {
             if (user.isPlayerTeleportBlocked(true)) {
                 return true;
             }
-            Home home = activeHomes.get(0);
+            Home home = homesSorted.get(0);
             user.teleport(home.toLocation(plugin), PlayerTeleportEvent.TeleportCause.COMMAND);
             return true;
         }
+
+        sender.sendMessage(plugin.getConfiguration().getTeleportHomeNotFound());
+        return true;
     }
 }

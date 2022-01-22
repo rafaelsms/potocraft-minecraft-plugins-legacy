@@ -45,6 +45,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.TELEPORT_REQUEST_DURATION_SECONDS, 60 * 3 + 30);
 
         defaults.put(Keys.DEFAULT_HOME_NUMBER, 1);
+        defaults.put(Keys.HOME_REPLACE_DELAY_TICKS, 20 * 60 * 2);
         defaults.put(Keys.HOME_NUMBER_PERMISSION_GROUPS,
                      Map.of("potocraft.homes.vip", 3, "potocraft.homes.premium", 5));
 
@@ -98,7 +99,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.TELEPORT_HOME_CREATE_HELP, "&6Digite &e&l/criarcasa (nome) &6para criar uma casa.");
         defaults.put(Keys.TELEPORT_HOME_CREATED, "&6Casa criada! Você pode teleportar até ela digitando &e&l/casa&6!");
         defaults.put(Keys.TELEPORT_HOME_ALREADY_EXISTS,
-                     "&cCasa já existe. Para substituí-la, digite &e&l/deletarcasa &ce recrie digitando &e&l/criarcasa&c.");
+                     "&cCasa já existe. &6Para substituí-la, digite o comando novamente nos próximos segundos.");
         defaults.put(Keys.TELEPORT_HOME_NOT_FOUND, "&cCasa não encontrada!");
         defaults.put(Keys.TELEPORT_HOME_DELETED, "&6Casa removida.");
         defaults.put(Keys.TELEPORT_HOME_DELETE_HELP, """
@@ -188,6 +189,11 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public int getDefaultHomeNumber() {
         return get(Keys.DEFAULT_HOME_NUMBER);
+    }
+
+    public long getHomeReplacementTimeout() {
+        Integer integer = get(Keys.HOME_REPLACE_DELAY_TICKS);
+        return integer.longValue();
     }
 
     public Map<String, Integer> getHomePermissionGroups() {
@@ -365,10 +371,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return TextUtil.toComponent(get(Keys.TELEPORT_HOME_DELETED));
     }
 
-    public Component getTeleportHomeDeleteHelp(@NotNull Collection<String> homes) {
+    public Component getTeleportHomeDeleteHelp(@NotNull Collection<Home> homes) {
         return TextUtil
                 .toComponent(get(Keys.TELEPORT_HOME_DELETE_HELP))
-                .replaceText(TextUtil.replaceText("%list%", TextUtil.joinStrings(homes, ", ", string -> string)));
+                .replaceText(TextUtil.replaceText("%list%", TextUtil.joinStrings(homes, ", ", Home::getName)));
     }
 
     public Component getTeleportWarpManageHelp() {
@@ -422,6 +428,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                 "configuration.teleport.teleport_request_duration_in_seconds";
 
         public static final String DEFAULT_HOME_NUMBER = "configuration.homes.default_number_of_homes";
+        public static final String HOME_REPLACE_DELAY_TICKS = "configuration.homes.replace_home_timeout_ticks";
         public static final String HOME_NUMBER_PERMISSION_GROUPS = "configuration.homes.home_number_permission_groups";
 
         public static final String COMBAT_PLAYER_DURATION_TICKS = "configuration.combat.player_combat_duration_ticks";

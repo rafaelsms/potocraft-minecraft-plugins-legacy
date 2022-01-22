@@ -45,10 +45,10 @@ public class User {
         return player.getUniqueId();
     }
 
-    public int getNumberOfHomes() {
+    public int getMaxHomesSize() {
         int currentNumber = plugin.getConfiguration().getDefaultHomeNumber();
         if (player.hasPermission(Permissions.TELEPORT_HOME_UNLIMITED)) {
-            return profile.getHomes().size() + 1;
+            return profile.getHomesSize() + 1;
         }
         for (Map.Entry<String, Integer> entry : plugin.getConfiguration().getHomePermissionGroups().entrySet()) {
             if (player.hasPermission(entry.getKey())) {
@@ -56,17 +56,6 @@ public class User {
             }
         }
         return currentNumber;
-    }
-
-    public List<Home> getActiveHomes() {
-        List<Home> homes = new LinkedList<>(profile.getHomes().values());
-        homes.sort(Comparator.comparing(Home::getCreationDate));
-        // Remove the last home until the number of homes is equal the maximum number of homes allowed for the player
-        int numberOfHomes = getNumberOfHomes();
-        while (homes.size() > numberOfHomes) {
-            homes.remove(homes.size() - 1);
-        }
-        return Collections.unmodifiableList(homes);
     }
 
     public TeleportRequestResponse addTeleportRequest(@NotNull User requester, boolean requesterTeleporting) {

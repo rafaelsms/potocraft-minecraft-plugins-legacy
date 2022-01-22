@@ -32,7 +32,9 @@ public class DeleteHomeCommand implements CommandExecutor {
         }
         User user = plugin.getUserManager().getUser(player);
         if (args.length != 1) {
-            sender.sendMessage(plugin.getConfiguration().getTeleportHomeDeleteHelp(user.getProfile().getHomes().keySet()));
+            sender.sendMessage(plugin
+                                       .getConfiguration()
+                                       .getTeleportHomeDeleteHelp(user.getProfile().getHomesSortedByDate()));
             return true;
         }
 

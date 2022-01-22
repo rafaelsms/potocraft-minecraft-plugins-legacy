@@ -19,7 +19,7 @@ public class Profile extends DatabaseObject {
 
     private final @NotNull UUID playerId;
 
-    private final Map<String, Home> homes = new HashMap<>();
+    private final Map<String, Home> homes = Collections.synchronizedMap(new HashMap<>());
 
     private @Nullable ZonedDateTime lastTeleportDate = null;
     private @Nullable StoredLocation backLocation = null;
@@ -66,8 +66,18 @@ public class Profile extends DatabaseObject {
         this.movedDistanceSq = Util.getCatchingOrElse(() -> document.getDouble(Keys.MOVED_DISTANCE_SQ), 0.0);
     }
 
-    public @NotNull Map<String, Home> getHomes() {
-        return Collections.unmodifiableMap(homes);
+    public List<Home> getHomesSortedByDate() {
+        List<Home> sortedHomes = new LinkedList<>(homes.values());
+        sortedHomes.sort(Comparator.comparing(Home::getCreationDate));
+        return Collections.unmodifiableList(sortedHomes);
+    }
+
+    public Optional<Home> getHome(@NotNull String name) {
+        return Optional.ofNullable(homes.get(name.toLowerCase()));
+    }
+
+    public int getHomesSize() {
+        return homes.size();
     }
 
     public boolean addHome(@NotNull String name, @NotNull Location location) {

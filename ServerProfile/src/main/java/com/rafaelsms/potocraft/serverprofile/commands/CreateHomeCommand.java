@@ -7,9 +7,17 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public class CreateHomeCommand implements CommandExecutor {
+
+    private final Map<UUID, HomeReplacement> replaceHomeAttempt = Collections.synchronizedMap(new HashMap<>());
 
     private final @NotNull ServerProfilePlugin plugin;
 
@@ -36,19 +44,65 @@ public class CreateHomeCommand implements CommandExecutor {
         }
 
         User user = plugin.getUserManager().getUser(player);
-        int numberOfHomes = user.getNumberOfHomes();
-        if (user.getProfile().getHomes().size() >= numberOfHomes) {
+
+        String homeName = args[0];
+
+        // Check if player is home-blocked (exceeds limit)
+        int maxHomesSize = user.getMaxHomesSize();
+        if (user.getProfile().getHomesSize() > maxHomesSize) {
             sender.sendMessage(plugin.getConfiguration().getTeleportHomeMaxCapacity());
             return true;
         }
 
-        String homeName = args[0];
+        // Check if we are replacing a home
+        if (user.getProfile().getHome(homeName).isPresent()) {
+            // Check if player already attempted to replace home recently
+            HomeReplacement homeReplacement = replaceHomeAttempt.get(player.getUniqueId());
+            if (homeReplacement != null) {
+                // Check if the home is the same one he is attempting now
+                if (homeReplacement.homeName().equalsIgnoreCase(homeName)) {
+                    user.getProfile().removeHome(homeName);
+                    user.getProfile().addHome(homeName, player.getLocation());
+                    homeReplacement.task().cancel();
+                    replaceHomeAttempt.remove(player.getUniqueId());
+                    sender.sendMessage(plugin.getConfiguration().getTeleportHomeCreated());
+                    return true;
+                }
+            }
+
+            // Otherwise, insert him on the recent attempt map
+            BukkitTask removeTask = plugin
+                    .getServer()
+                    .getScheduler()
+                    .runTaskLater(plugin,
+                                  () -> replaceHomeAttempt.remove(player.getUniqueId()),
+                                  plugin.getConfiguration().getHomeReplacementTimeout());
+            HomeReplacement oldReplacement =
+                    replaceHomeAttempt.put(player.getUniqueId(), new HomeReplacement(homeName, removeTask));
+            // Cancel previous task if it exist
+            if (oldReplacement != null) {
+                oldReplacement.task().cancel();
+            }
+            sender.sendMessage(plugin.getConfiguration().getTeleportHomeAlreadyExists());
+            return true;
+        }
+
+        // Check if player can create a new home
+        if (user.getProfile().getHomesSize() >= maxHomesSize) {
+            sender.sendMessage(plugin.getConfiguration().getTeleportHomeMaxCapacity());
+            return true;
+        }
+
         if (user.getProfile().addHome(homeName, player.getLocation())) {
             user.setTeleportTask(null);
             sender.sendMessage(plugin.getConfiguration().getTeleportHomeCreated());
             return true;
         }
+        // This should not happen (existing home is already checked above)
         sender.sendMessage(plugin.getConfiguration().getTeleportHomeAlreadyExists());
         return true;
+    }
+
+    private record HomeReplacement(String homeName, BukkitTask task) {
     }
 }
