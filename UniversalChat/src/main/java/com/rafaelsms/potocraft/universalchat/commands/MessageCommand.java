@@ -41,7 +41,7 @@ public class MessageCommand implements RawCommand {
         String message = matcher.group(2);
 
         Optional<Player> optionalPlayer =
-                TextUtil.closestStringMatch(plugin.getServer().getAllPlayers(), Player::getUsername, username);
+                TextUtil.closestMatch(plugin.getServer().getAllPlayers(), Player::getUsername, username);
         if (optionalPlayer.isEmpty()) {
             source.sendMessage(plugin.getConfiguration().getDirectMessagesNoPlayerFound());
             return;

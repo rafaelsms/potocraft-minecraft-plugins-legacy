@@ -42,7 +42,7 @@ public class TeleportCommand implements CommandExecutor {
         // Find closest player by the name
         String playerName = args[0];
         Optional<? extends Player> optionalPlayer =
-                TextUtil.closestStringMatch(plugin.getServer().getOnlinePlayers(), Player::getName, playerName);
+                TextUtil.closestMatch(plugin.getServer().getOnlinePlayers(), Player::getName, playerName);
         if (optionalPlayer.isEmpty()) {
             sender.sendMessage(plugin.getConfiguration().getTeleportPlayerNotFound());
             return true;

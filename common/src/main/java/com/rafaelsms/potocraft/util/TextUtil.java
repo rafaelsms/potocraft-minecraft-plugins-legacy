@@ -7,7 +7,6 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
-import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -120,25 +119,25 @@ public final class TextUtil {
     }
 
     public static @NotNull Optional<String> closestMatch(@NotNull Iterable<String> list, @NotNull String search) {
-        return closestStringMatch(list, string -> string, search);
+        return closestMatch(list, string -> string, search);
     }
 
-    public static <T> @NotNull Optional<T> closestStringMatch(@NotNull Iterable<T> list,
-                                                              Function<T, String> stringFunction,
-                                                              @NotNull String search) {
+    public static <T> @NotNull Optional<T> closestMatch(@NotNull Iterable<T> list,
+                                                        Function<T, String> stringFunction,
+                                                        @NotNull String search) {
         T closestMatch = null;
-        int closesMatchResult = search.length(); // Prevent matching when no character is equal
-        LevenshteinDistance comparator = new LevenshteinDistance(closesMatchResult);
+        int smallestStartIndex = Integer.MAX_VALUE;
+        Pattern searchPattern = Pattern.compile(".*(%s).*".formatted(search), Pattern.CASE_INSENSITIVE);
 
         for (T entry : list) {
-            int compareResult = comparator.apply(stringFunction.apply(entry), search);
-            // Return if exact match
-            if (compareResult == 0) {
-                return Optional.of(entry);
+            Matcher matcher = searchPattern.matcher(stringFunction.apply(entry));
+            if (!matcher.matches()) {
+                continue;
             }
-            if (compareResult >= 0 && compareResult < closesMatchResult) {
+            int startIndex = matcher.start(1);
+            if (startIndex < smallestStartIndex) {
+                smallestStartIndex = startIndex;
                 closestMatch = entry;
-                closesMatchResult = compareResult;
             }
         }
 

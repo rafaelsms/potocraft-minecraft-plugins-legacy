@@ -12,6 +12,7 @@ import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.ServerInfo;
+import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -68,7 +69,7 @@ public class ProfileUpdater {
             Profile profile = optionalProfile.get();
 
             // Check if profile is logged in and set its join date
-            if (!PlayerType.get(player).requiresLogin() || Util.isPlayerLoggedIn(plugin, profile, player)) {
+            if (isLoggedIn(event, profile, player)) {
                 String serverName = event
                         .getPlayer()
                         .getCurrentServer()
@@ -80,5 +81,17 @@ public class ProfileUpdater {
             }
             continuation.resume();
         }, Util.getExecutor(plugin, continuation));
+    }
+
+    private boolean isLoggedIn(@NotNull DisconnectEvent event, @NotNull Profile profile, @NotNull Player player) {
+        String playerPrefix = FloodgateApi.getInstance().getPlayerPrefix();
+        // If player logged in successfully and have Floodgate's prefix, it was surely a Floodgate player
+        if (event.getLoginStatus() == DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN &&
+            !playerPrefix.isBlank() &&
+            player.getUsername().startsWith(playerPrefix)) {
+            return true;
+        }
+        // Otherwise, check if player is online mode or logged in
+        return player.isOnlineMode() || Util.isPlayerLoggedIn(plugin, profile, player);
     }
 }

@@ -53,12 +53,8 @@ public class TeleportDenyCommand implements CommandExecutor {
         } else {
             if (args.length == 1) {
                 String name = args[0];
-                Optional<TeleportRequest> requestOptional = TextUtil.closestStringMatch(requests,
-                                                                                        request -> request
-                                                                                                .getRequester()
-                                                                                                .getPlayer()
-                                                                                                .getName(),
-                                                                                        name);
+                Optional<TeleportRequest> requestOptional =
+                        TextUtil.closestMatch(requests, request -> request.getRequester().getPlayer().getName(), name);
                 if (requestOptional.isEmpty()) {
                     player.sendMessage(plugin.getConfiguration().getTeleportRequestManyFound(requests));
                     return true;

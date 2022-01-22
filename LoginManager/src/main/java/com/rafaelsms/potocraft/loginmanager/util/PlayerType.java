@@ -11,6 +11,14 @@ public enum PlayerType {
     OFFLINE_PLAYER,
     ;
 
+    /**
+     * Checks if a player is using offline, online mode or connected through Floodgate (which may show as offline).
+     * If called on {@link com.velocitypowered.api.event.connection.DisconnectEvent}, it will not be considered
+     * Floodgate.
+     *
+     * @param player player instance
+     * @return enum that represents the player's connection type
+     */
     public static @NotNull PlayerType get(@NotNull Player player) {
         if (FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
             return PlayerType.FLOODGATE_PLAYER;
