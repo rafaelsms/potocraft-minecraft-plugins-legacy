@@ -45,7 +45,8 @@ public final class Util {
         }
     }
 
-    public static AsyncEventExecutor getExecutor(@NotNull LoginManagerPlugin plugin, @Nullable Continuation continuation) {
+    public static AsyncEventExecutor getExecutor(@NotNull LoginManagerPlugin plugin,
+                                                 @Nullable Continuation continuation) {
         return new AsyncEventExecutor(plugin, continuation);
     }
 

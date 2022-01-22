@@ -81,6 +81,7 @@ public class MuteCommand implements RawCommand {
                                    expirationDate,
                                    reason.orElse(null));
             plugin.getDatabase().saveProfile(profile);
+            invocation.source().sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
         } catch (Database.DatabaseException ignored) {
             invocation.source().sendMessage(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
         }

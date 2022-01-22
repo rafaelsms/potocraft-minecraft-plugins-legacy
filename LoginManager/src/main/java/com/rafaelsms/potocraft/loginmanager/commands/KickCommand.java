@@ -73,6 +73,7 @@ public class KickCommand implements RawCommand {
                     .getConfiguration()
                     .getPunishmentMessageKicked(getName(invocation.source()), reason.orElse(null));
             player.disconnect(disconnectReason);
+            invocation.source().sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
         } catch (Database.DatabaseException ignored) {
             invocation.source().sendMessage(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
         }

@@ -74,6 +74,7 @@ public class BanCommand implements RawCommand {
                         .getPunishmentMessageBanned(getName(invocation.source()), null, reason.orElse(null));
                 player.disconnect(messageBanned);
             });
+            invocation.source().sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
         } catch (Database.DatabaseException ignored) {
             invocation.source().sendMessage(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
         }

@@ -130,6 +130,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.COMMAND_MUTE_PLAYER_OFFLINE, "&cJogador está offline, você não possui permissão.");
         defaults.put(Keys.COMMAND_KICK_HELP, "&6Uso: &e&l/kick <regex> <razão>");
         defaults.put(Keys.COMMAND_HISTORY_HELP, "&6Uso: &e&l/history <regex>");
+        defaults.put(Keys.COMMAND_PLAYER_PUNISHED, "&6Jogador &e%player% &6punido.");
 
         defaults.put(Keys.KICK_MESSAGE_COULD_NOT_CHECK_MOJANG, """
                                                                &cFalha ao consultar servidor da Microsoft.
@@ -314,6 +315,12 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return TextUtil.toComponent(get(Keys.COMMAND_BAN_PLAYER_OFFLINE));
     }
 
+    public Component getPlayerPunished(@NotNull String playerName) {
+        return TextUtil
+                .toComponent(get(Keys.COMMAND_PLAYER_PUNISHED))
+                .replaceText(TextUtil.replaceText("%player%", playerName));
+    }
+
     public Component getCommandTemporaryBanHelp() {
         return TextUtil.toComponent(get(Keys.COMMAND_TEMPORARY_BAN_HELP));
     }
@@ -459,6 +466,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String COMMAND_MUTE_PLAYER_OFFLINE = "language.commands.mute.player_offline";
         public static final String COMMAND_KICK_HELP = "language.commands.kick.help";
         public static final String COMMAND_HISTORY_HELP = "language.commands.history.help";
+        public static final String COMMAND_PLAYER_PUNISHED = "language.commands.player_punished";
 
         public static final String KICK_MESSAGE_COULD_NOT_CHECK_MOJANG =
                 "language.kick_messages.could_not_check_mojang";
