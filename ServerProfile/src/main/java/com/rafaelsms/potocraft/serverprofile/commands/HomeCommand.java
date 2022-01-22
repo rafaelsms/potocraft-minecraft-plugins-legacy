@@ -31,7 +31,7 @@ public class HomeCommand implements CommandExecutor {
             return true;
         }
         if (!player.hasPermission(Permissions.TELEPORT_HOME)) {
-            sender.sendMessage(plugin.getConfiguration().getNoPermission());
+            sender.sendMessage(plugin.getServer().getPermissionMessage());
             return true;
         }
 

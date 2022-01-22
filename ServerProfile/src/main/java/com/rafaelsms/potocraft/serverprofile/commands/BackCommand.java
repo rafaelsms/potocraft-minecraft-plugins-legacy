@@ -31,7 +31,7 @@ public class BackCommand implements CommandExecutor {
             return true;
         }
         if (!player.hasPermission(Permissions.TELEPORT_BACK)) {
-            sender.sendMessage(plugin.getConfiguration().getNoPermission());
+            sender.sendMessage(plugin.getServer().getPermissionMessage());
             return true;
         }
 

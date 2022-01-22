@@ -54,7 +54,6 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.COMBAT_BLOCKED_COMMANDS, List.of("tp", "tphere", "warp", "spawn", "tpaccept"));
 
         defaults.put(Keys.COMMAND_PLAYERS_ONLY, "&cComando disponível apenas para jogadores.");
-        defaults.put(Keys.COMMAND_NO_PERMISSION, "&cVocê não tem permissão!");
 
         defaults.put(Keys.COMBAT_BAR_TITLE, "&cSe sair ou se a conexão cair, irá morrer!");
         defaults.put(Keys.COMBAT_BLOCKED_COMMAND, "&cEste comando está bloqueado em combate.");
@@ -214,10 +213,6 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public Component getPlayersOnly() {
         return TextUtil.toComponent(get(Keys.COMMAND_PLAYERS_ONLY));
-    }
-
-    public Component getNoPermission() {
-        return TextUtil.toComponent(get(Keys.COMMAND_NO_PERMISSION));
     }
 
     public Component getCombatBarTitle() {
@@ -436,7 +431,6 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String COMBAT_BLOCKED_COMMANDS = "configuration.combat.blocked_commands";
 
         public static final String COMMAND_PLAYERS_ONLY = "language.players_only";
-        public static final String COMMAND_NO_PERMISSION = "language.no_permission";
 
         public static final String COMBAT_BAR_TITLE = "language.combat.bar_title";
         public static final String COMBAT_BLOCKED_COMMAND = "language.combat.command_is_blocked_while_in_combat";

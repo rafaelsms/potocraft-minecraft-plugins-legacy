@@ -35,7 +35,7 @@ public class CreateHomeCommand implements CommandExecutor {
             return true;
         }
         if (!player.hasPermission(Permissions.TELEPORT_HOME)) {
-            sender.sendMessage(plugin.getConfiguration().getNoPermission());
+            sender.sendMessage(plugin.getServer().getPermissionMessage());
             return true;
         }
         if (args.length != 1) {

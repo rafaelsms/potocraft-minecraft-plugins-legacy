@@ -28,7 +28,7 @@ public class CreateWarpCommand implements CommandExecutor {
             return true;
         }
         if (!player.hasPermission(Permissions.TELEPORT_WARP_MANAGE)) {
-            sender.sendMessage(plugin.getConfiguration().getNoPermission());
+            sender.sendMessage(plugin.getServer().getPermissionMessage());
             return true;
         }
 
