@@ -38,6 +38,7 @@ public class DeleteHomeCommand implements CommandExecutor {
 
         String homeName = args[0];
         if (user.getProfile().removeHome(homeName)) {
+            user.setTeleportTask(null);
             sender.sendMessage(plugin.getConfiguration().getTeleportHomeDeleted());
             return true;
         }

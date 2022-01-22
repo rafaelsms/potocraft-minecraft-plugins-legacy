@@ -44,6 +44,7 @@ public class CreateHomeCommand implements CommandExecutor {
 
         String homeName = args[0];
         if (user.getProfile().addHome(homeName, player.getLocation())) {
+            user.setTeleportTask(null);
             sender.sendMessage(plugin.getConfiguration().getTeleportHomeCreated());
             return true;
         }
