@@ -1,5 +1,7 @@
 package com.rafaelsms.potocraft.serverutility;
 
+import com.rafaelsms.potocraft.util.TextUtil;
+import net.kyori.adventure.text.Component;
 import org.bukkit.GameRule;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +29,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                             Map.of(GameRule.PLAYERS_SLEEPING_PERCENTAGE.getName(), 35),
                             "world",
                             Map.of(GameRule.MAX_ENTITY_CRAMMING.getName(), 4, GameRule.DO_FIRE_TICK.getName(), false)));
+
+        defaults.put(Keys.COMMAND_PLAYER_ONLY, "&cComando disponível apenas para jogadores");
         return defaults;
     }
 
@@ -56,9 +60,15 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return gameRulesMap;
     }
 
+    public Component getPlayerOnly() {
+        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_ONLY));
+    }
+
     private static class Keys {
 
         public static final String GAME_RULES_LIST = "configuration.game_rules_applied";
+
+        public static final String COMMAND_PLAYER_ONLY = "language.player_only";
 
         // Private constructor
         private Keys() {

@@ -6,3 +6,13 @@ author: rafaelsms
 website: rafaelsms.com
 description: Utility plugin for PotoCraft.
 load: STARTUP
+commands:
+  enderchest:
+    description: Opens your enderchest wherever you are.
+    aliases: [ ec, bauender ]
+  workbench:
+    description: Opens a workbench wherever you are.
+    aliases: [ wb, craft, bancada ]
+  anvil:
+    description: Opens an anvil wherever you are.
+    aliases: [ bigorna ]

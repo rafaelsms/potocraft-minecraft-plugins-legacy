@@ -1,6 +1,11 @@
 package com.rafaelsms.potocraft.serverutility;
 
+import com.rafaelsms.potocraft.serverutility.commands.AnvilCommand;
+import com.rafaelsms.potocraft.serverutility.commands.EnderchestCommand;
+import com.rafaelsms.potocraft.serverutility.commands.WorkbenchCommand;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldGameRuleApplier;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +26,11 @@ public class ServerUtilityPlugin extends JavaPlugin {
         // Register listeners
         getServer().getPluginManager().registerEvents(new WorldGameRuleApplier(this), this);
 
+        // Register commands
+        registerCommand("anvil", new AnvilCommand(this));
+        registerCommand("enderchest", new EnderchestCommand(this));
+        registerCommand("workbench", new WorkbenchCommand(this));
+
         logger().info("ServerUtility enabled!");
     }
 
@@ -38,5 +48,13 @@ public class ServerUtilityPlugin extends JavaPlugin {
 
     public Logger logger() {
         return getSLF4JLogger();
+    }
+
+    private void registerCommand(@NotNull String command, @NotNull CommandExecutor executor) {
+        PluginCommand pluginCommand = getServer().getPluginCommand(command);
+        if (pluginCommand == null) {
+            throw new IllegalStateException("Couldn't find command %s. Make sure it is on plugin.yml".formatted(command));
+        }
+        pluginCommand.setExecutor(executor);
     }
 }
