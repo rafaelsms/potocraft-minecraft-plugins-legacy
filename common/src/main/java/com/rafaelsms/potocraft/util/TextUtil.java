@@ -127,17 +127,18 @@ public final class TextUtil {
                                                         @NotNull String search) {
         T closestMatch = null;
         int smallestStartIndex = Integer.MAX_VALUE;
-        Pattern searchPattern = Pattern.compile(".*(%s).*".formatted(search), Pattern.CASE_INSENSITIVE);
+        search = search.toLowerCase();
 
         for (T entry : list) {
-            Matcher matcher = searchPattern.matcher(stringFunction.apply(entry));
-            if (!matcher.matches()) {
-                continue;
-            }
-            int startIndex = matcher.start(1);
-            if (startIndex < smallestStartIndex) {
-                smallestStartIndex = startIndex;
-                closestMatch = entry;
+            String string = stringFunction.apply(entry).toLowerCase();
+            int startIndex = string.indexOf(search);
+            if (startIndex >= 0) {
+                if (startIndex == smallestStartIndex) {
+                    closestMatch = null;
+                } else if (startIndex < smallestStartIndex) {
+                    smallestStartIndex = startIndex;
+                    closestMatch = entry;
+                }
             }
         }
 
