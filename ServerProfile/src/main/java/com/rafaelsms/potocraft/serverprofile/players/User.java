@@ -69,7 +69,7 @@ public class User {
         return Collections.unmodifiableList(homes);
     }
 
-    public boolean addTeleportRequest(@NotNull User requester, boolean requesterTeleporting) {
+    public TeleportRequestResponse addTeleportRequest(@NotNull User requester, boolean requesterTeleporting) {
         synchronized (teleportRequests) {
             Iterator<TeleportRequest> iterator = teleportRequests.iterator();
             while (iterator.hasNext()) {
@@ -81,21 +81,22 @@ public class User {
                 }
                 // Check if we should update it
                 if (teleportRequest.getRequester().getPlayerId().equals(getPlayerId())) {
-                    // If same teleporting player, update it
-                    if ((requesterTeleporting && teleportRequest.getTeleporting().getPlayerId().equals(requester.getPlayerId())) ||
-                        (!requesterTeleporting && teleportRequest.getTeleporting().getPlayerId().equals(getPlayerId()))) {
+                    // If same teleporting player, update it and cancel
+                    if ((requesterTeleporting &&
+                         teleportRequest.getTeleporting().getPlayerId().equals(requester.getPlayerId())) ||
+                        (!requesterTeleporting &&
+                         teleportRequest.getTeleporting().getPlayerId().equals(getPlayerId()))) {
                         teleportRequest.updateAskingTime();
-                        return false;
+                        return TeleportRequestResponse.UPDATED;
                     }
-                    // Other teleporting player, conflicting requests, remove it and add the new one
-                    iterator.remove();
-                    break;
+                    // Otherwise, just cancel
+                    return TeleportRequestResponse.NOT_UPDATED;
                 }
             }
             User teleporting = requesterTeleporting ? requester : this;
             User destination = requesterTeleporting ? this : requester;
             teleportRequests.addLast(new TeleportRequest(requester, teleporting, destination));
-            return true;
+            return TeleportRequestResponse.NEW_REQUEST;
         }
     }
 
@@ -279,5 +280,11 @@ public class User {
         public boolean isBlocked() {
             return !isAllowed();
         }
+    }
+
+    public enum TeleportRequestResponse {
+        NOT_UPDATED,
+        UPDATED,
+        NEW_REQUEST
     }
 }

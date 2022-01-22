@@ -61,12 +61,21 @@ public class TeleportCommand implements CommandExecutor {
         }
 
         User destinationUser = plugin.getUserManager().getUser(destinationPlayer);
-        if (destinationUser.addTeleportRequest(teleportingUser, true)) {
-            destinationPlayer.sendMessage(plugin
-                                                  .getConfiguration()
-                                                  .getTeleportRequestReceived(teleportingPlayer.getName()));
+        User.TeleportRequestResponse requestResponse = destinationUser.addTeleportRequest(teleportingUser, true);
+        switch (requestResponse) {
+            case NEW_REQUEST -> {
+                sender.sendMessage(plugin.getConfiguration().getTeleportRequestSent(destinationPlayer.getName()));
+                destinationPlayer.sendMessage(plugin
+                                                      .getConfiguration()
+                                                      .getTeleportRequestReceived(teleportingPlayer.getName()));
+            }
+            case NOT_UPDATED -> sender.sendMessage(plugin
+                                                           .getConfiguration()
+                                                           .getTeleportRequestNotUpdated(destinationPlayer.getName()));
+            case UPDATED -> sender.sendMessage(plugin
+                                                       .getConfiguration()
+                                                       .getTeleportRequestSent(destinationPlayer.getName()));
         }
-        sender.sendMessage(plugin.getConfiguration().getTeleportRequestSent(destinationPlayer.getName()));
         return true;
     }
 }

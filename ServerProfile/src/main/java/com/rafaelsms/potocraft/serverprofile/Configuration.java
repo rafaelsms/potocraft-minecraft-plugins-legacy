@@ -82,6 +82,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                                                           &6Digite &e&l/teleporteaceitar &6para aceitar ou &e&l/teleporterecusar &6para recusar.
                                                           """);
         defaults.put(Keys.TELEPORT_REQUEST_SENT, "&6Pedido de teleporte enviado a &e%username%&6.");
+        defaults.put(Keys.TELEPORT_REQUEST_NOT_UPDATED,
+                     "&cPedido de teleporte anterior precisa ser cancelado por &e%username% &cprimeiro.");
         defaults.put(Keys.TELEPORT_REQUEST_NO_REQUEST_FOUND, "&cNenhum pedido de teleporte ativo.");
         defaults.put(Keys.TELEPORT_REQUEST_CANCELLED, "&6Pedido de teleporte cancelado!");
         defaults.put(Keys.TELEPORT_REQUEST_MANY_REQUESTS_FOUND, "&6Vários pedidos encontrados: &e%list%");
@@ -302,6 +304,12 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                 .replaceText(TextUtil.replaceText("%username%", username));
     }
 
+    public Component getTeleportRequestNotUpdated(@NotNull String username) {
+        return TextUtil
+                .toComponent(get(Keys.TELEPORT_REQUEST_NOT_UPDATED))
+                .replaceText(TextUtil.replaceText("%username%", username));
+    }
+
     public Component getTeleportRequestNotFound() {
         return TextUtil.toComponent(get(Keys.TELEPORT_REQUEST_NO_REQUEST_FOUND));
     }
@@ -442,6 +450,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String TELEPORT_REQUEST_RECEIVED = "language.teleport.requests.teleport_received";
         public static final String TELEPORT_REQUEST_HERE_RECEIVED = "language.teleport.requests.teleport_here_received";
         public static final String TELEPORT_REQUEST_SENT = "language.teleport.requests.sent";
+        public static final String TELEPORT_REQUEST_NOT_UPDATED = "language.teleport.requests.not_updated";
         public static final String TELEPORT_REQUEST_NO_REQUEST_FOUND = "language.teleport.requests.no_found";
         public static final String TELEPORT_REQUEST_CANCELLED = "language.teleport.requests.request_cancelled";
         public static final String TELEPORT_REQUEST_MANY_REQUESTS_FOUND = "language.teleport.requests.many_found";
