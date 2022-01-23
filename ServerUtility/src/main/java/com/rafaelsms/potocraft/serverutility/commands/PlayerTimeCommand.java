@@ -39,16 +39,16 @@ public class PlayerTimeCommand implements CommandExecutor {
 
         Optional<Long> optionalTime = parseTime(args[0]);
         if (optionalTime.isEmpty()) {
-            if (player.isPlayerTimeRelative()) {
-                player.resetPlayerTime();
-                return true;
-            }
+            player.resetPlayerTime();
             sender.sendMessage(plugin.getConfiguration().getPlayerTimeHelp());
             return true;
         }
 
         boolean fixed = args.length > 1;
         long offsetTime = player.getWorld().getTime() - optionalTime.get();
+        if (fixed) {
+            offsetTime = optionalTime.get();
+        }
 
         player.setPlayerTime(offsetTime, !fixed);
         return true;

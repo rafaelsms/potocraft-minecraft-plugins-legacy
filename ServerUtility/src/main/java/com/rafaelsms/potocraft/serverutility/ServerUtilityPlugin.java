@@ -1,9 +1,6 @@
 package com.rafaelsms.potocraft.serverutility;
 
-import com.rafaelsms.potocraft.serverutility.commands.AnvilCommand;
-import com.rafaelsms.potocraft.serverutility.commands.EnderchestCommand;
-import com.rafaelsms.potocraft.serverutility.commands.PlayerTimeCommand;
-import com.rafaelsms.potocraft.serverutility.commands.WorkbenchCommand;
+import com.rafaelsms.potocraft.serverutility.commands.*;
 import com.rafaelsms.potocraft.serverutility.listeners.VanishManager;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldGameRuleApplier;
 import org.bukkit.command.CommandExecutor;
@@ -36,6 +33,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         registerCommand("enderchest", new EnderchestCommand(this));
         registerCommand("workbench", new WorkbenchCommand(this));
         registerCommand("playertime", new PlayerTimeCommand(this));
+        registerCommand("playerweather", new PlayerWeatherCommand(this));
 
         logger().info("ServerUtility enabled!");
     }
