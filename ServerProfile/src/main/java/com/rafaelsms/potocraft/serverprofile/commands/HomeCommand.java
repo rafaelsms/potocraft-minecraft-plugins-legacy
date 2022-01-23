@@ -46,6 +46,7 @@ public class HomeCommand implements CommandExecutor {
         } else if (homesSize > 1) {
             if (args.length != 1) {
                 sender.sendMessage(plugin.getConfiguration().getTeleportHomeList(homesSorted));
+                return true;
             } else {
                 String homeName = args[0];
                 for (int i = 0; i < Math.min(maxHomesSize, homesSorted.size()); i++) {

@@ -91,7 +91,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                      "&6Para criar uma casa, digite &e&l/criarcasa &6e assim poderá voltar para ela digitando &e&l/casa&6!");
         defaults.put(Keys.TELEPORT_HOME_LIST, """
                                               &6Para criar mais casas, digite &e&l/criarcasa&6. Para apagar, &e&l/deletarcasa&6.
-                                              &6Casas ativas: &e%list%
+                                              &6Casas: &e%list%
                                               """);
         defaults.put(Keys.TELEPORT_HOME_MAX_CAPACITY,
                      "&cVocê atingiu o número máximo de casas, digite &e&l/deletarcasa &cpara removê-las.");
@@ -99,7 +99,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.TELEPORT_HOME_CREATED, "&6Casa criada! Você pode teleportar até ela digitando &e&l/casa&6!");
         defaults.put(Keys.TELEPORT_HOME_ALREADY_EXISTS,
                      "&cCasa já existe. &6Para substituí-la, digite o comando novamente nos próximos segundos.");
-        defaults.put(Keys.TELEPORT_HOME_NOT_FOUND, "&cCasa não encontrada!");
+        defaults.put(Keys.TELEPORT_HOME_NOT_FOUND,
+                     "&cCasa não encontrada ou você perdeu permissão para acessar esta casa.");
         defaults.put(Keys.TELEPORT_HOME_DELETED, "&6Casa removida.");
         defaults.put(Keys.TELEPORT_HOME_DELETE_HELP, """
                                                      &6Para remover uma casa, digite &e&l/deletarcasa (nome)&c.
