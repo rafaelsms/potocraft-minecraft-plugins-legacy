@@ -34,6 +34,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         registerCommand("workbench", new WorkbenchCommand(this));
         registerCommand("playertime", new PlayerTimeCommand(this));
         registerCommand("playerweather", new PlayerWeatherCommand(this));
+        registerCommand("vanish", new VanishCommand(this));
 
         logger().info("ServerUtility enabled!");
     }
