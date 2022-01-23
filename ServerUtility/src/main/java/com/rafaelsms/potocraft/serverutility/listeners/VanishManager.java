@@ -11,6 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -178,6 +179,13 @@ public class VanishManager implements Listener {
     private void preventDamaged(PlayerDeathEvent event) {
         if (isVanished(event.getPlayer())) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    private void hideAdvancements(PlayerAdvancementDoneEvent event) {
+        if (isVanished(event.getPlayer())) {
+            event.message(Component.empty());
         }
     }
 }
