@@ -52,7 +52,7 @@ public class PlayerWeatherCommand implements CommandExecutor {
     private Optional<WeatherType> parseWeather(@NotNull String input) {
         return switch (input.toLowerCase()) {
             case "limpo", "clear" -> Optional.of(WeatherType.CLEAR);
-            case "rain", "thunderstorm", "chuva", "chuvoso" -> Optional.of(WeatherType.DOWNFALL);
+            case "rain", "thunderstorm", "thunder", "storm", "chuva", "chuvoso" -> Optional.of(WeatherType.DOWNFALL);
             default -> Optional.empty();
         };
     }
