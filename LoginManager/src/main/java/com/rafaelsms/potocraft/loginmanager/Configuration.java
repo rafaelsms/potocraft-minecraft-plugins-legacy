@@ -38,6 +38,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.OFFLINE_PLAYERS_LOGIN_SERVER, "login");
         defaults.put(Keys.OFFLINE_PLAYERS_AUTO_LOGIN_MINUTES, 45);
         defaults.put(Keys.OFFLINE_MAX_ACCOUNTS_PER_ADDRESS, 1);
+        defaults.put(Keys.SET_TAB_LIST, false);
         defaults.put(Keys.TAB_LIST_OTHER_SERVER_FORMAT, "&7(%server_name%) &e%prefix%%player_name%%suffix%");
         defaults.put(Keys.TAB_LIST_SAME_SERVER_FORMAT, "&e%prefix%%player_name%%suffix%");
         defaults.put(Keys.OFFLINE_PLAYERS_ALLOWED_COMMANDS,
@@ -219,6 +220,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public int getMaxAccountsPerAddress() {
         return get(Keys.OFFLINE_MAX_ACCOUNTS_PER_ADDRESS);
+    }
+
+    public boolean isSetTabList() {
+        return get(Keys.SET_TAB_LIST);
     }
 
     public Component getTabOtherServerDisplayName(@NotNull Player player, @NotNull String serverName) {
@@ -485,6 +490,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String OFFLINE_PLAYERS_ALLOWED_COMMANDS = "configuration.offline_allowed_commands";
         public static final String MUTED_BLOCKED_COMMANDS = "configuration.muted_blocked_commands";
         public static final String ALLOWED_USERNAMES_REGEX = "configuration.allowed_usernames_regex";
+        public static final String SET_TAB_LIST = "configuration.update_tab_list";
         public static final String TAB_LIST_OTHER_SERVER_FORMAT = "configuration.tab_list_other_server_entry_format";
         public static final String TAB_LIST_SAME_SERVER_FORMAT = "configuration.tab_list_same_server_entry_format";
 

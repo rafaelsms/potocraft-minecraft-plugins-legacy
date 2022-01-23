@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.loginmanager.listeners;
 
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
+import com.rafaelsms.potocraft.loginmanager.util.Util;
 import com.velocitypowered.api.event.Continuation;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
@@ -25,23 +26,31 @@ public class PlayerListListener {
 
     @Subscribe
     private void setPlayerList(ServerConnectedEvent event, Continuation continuation) {
+        if (!plugin.getConfiguration().isSetTabList()) {
+            continuation.resume();
+            return;
+        }
         CompletableFuture.runAsync(() -> {
             // Update everyone's tab list
             createTabList(event.getPlayer(), event.getServer());
             updateTabList(event.getPlayer(), event.getServer());
             // Continue with the event
             continuation.resume();
-        });
+        }, Util.getExecutor(plugin, continuation));
     }
 
     @Subscribe
     private void setPlayerList(DisconnectEvent event, Continuation continuation) {
+        if (!plugin.getConfiguration().isSetTabList()) {
+            continuation.resume();
+            return;
+        }
         CompletableFuture.runAsync(() -> {
             // Update everyone's tab list
             updateTabList(event.getPlayer(), null);
             // Continue with the event
             continuation.resume();
-        });
+        }, Util.getExecutor(plugin, continuation));
     }
 
     private void createTabList(@NotNull Player player, @NotNull RegisteredServer server) {
