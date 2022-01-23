@@ -35,10 +35,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                      "&6!! &7(&6%server%&7)&6 <&e%prefix%%username%%suffix%&6> &f%message%");
         defaults.put(Keys.UNIVERSAL_CHAT_PREFIX, "!!");
         defaults.put(Keys.GLOBAL_CHAT_FORMAT, "&3! <&e%prefix%%username%%suffix%&3> &f%message%");
-        defaults.put(Keys.GLOBAL_CHAT_SPY_FORMAT, "&7! (%server%) <&e%prefix%%username%%suffix%&7> &f%message%");
+        defaults.put(Keys.GLOBAL_CHAT_SPY_FORMAT, "&7! (%server%) <%prefix%&7%username%%suffix%&7> &7%message%");
         defaults.put(Keys.GLOBAL_CHAT_PREFIX, "!");
         defaults.put(Keys.DIRECT_MESSAGES_REPLY_SECONDS, 60 * 4);
-        defaults.put(Keys.OTHER_SERVER_CHAT_SPY_FORMAT, "&7(%server%) &e%prefix%%username%%suffix% &7%message%");
+        defaults.put(Keys.OTHER_SERVER_CHAT_SPY_FORMAT, "&7(%server%) %prefix%&7%username%%suffix% &7%message%");
 
         defaults.put(Keys.LANG_CONSOLE_NAME, "administração");
         defaults.put(Keys.LANG_UNKNOWN_SERVER_NAME, "limbo?");

@@ -36,7 +36,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.LOCAL_CHAT_RANGE, 300.0);
         defaults.put(Keys.LOCAL_CHAT_FORMAT, "&e%prefix%%username%%suffix% &f%message%");
         defaults.put(Keys.CHAT_FORMAT, "&e%prefix%%username%%suffix% &f%message%");
-        defaults.put(Keys.LOCAL_CHAT_SPY_FORMAT, "&e%prefix%%username%%suffix% &7(longe) &f%message%");
+        defaults.put(Keys.LOCAL_CHAT_SPY_FORMAT, "&7(longe) %prefix%&7%username%%suffix% &7%message%");
 
         defaults.put(Keys.SAVE_PLAYERS_TASK_TIMER_TICKS, 20 * 60 * 3);
 
