@@ -24,6 +24,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     @Override
     protected @Nullable Map<String, Object> getDefaults() {
         Map<String, Object> defaults = new LinkedHashMap<>();
+        defaults.put(Keys.HIDE_ALL_JOIN_QUIT_MESSAGES, false);
         defaults.put(Keys.GAME_RULES_LIST,
                      Map.of("default",
                             Map.of(GameRule.PLAYERS_SLEEPING_PERCENTAGE.getName(), 35),
@@ -36,6 +37,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.COMMAND_PLAYER_VANISHED, "&6Ficou invisível.");
         defaults.put(Keys.COMMAND_PLAYER_APPEARED, "&6Ficou visível.");
         return defaults;
+    }
+
+    public boolean isHideJoinQuitMessages() {
+        return get(Keys.HIDE_ALL_JOIN_QUIT_MESSAGES);
     }
 
     @SuppressWarnings("rawtypes")
@@ -86,6 +91,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     private static class Keys {
 
+        public static final String HIDE_ALL_JOIN_QUIT_MESSAGES = "configuration.hide_join_quit_messages";
         public static final String GAME_RULES_LIST = "configuration.game_rules_applied";
 
         public static final String COMMAND_PLAYER_ONLY = "language.commands.player_only";

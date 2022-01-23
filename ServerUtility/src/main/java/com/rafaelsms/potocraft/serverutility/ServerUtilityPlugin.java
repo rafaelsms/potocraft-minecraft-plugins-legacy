@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.serverutility;
 
 import com.rafaelsms.potocraft.serverutility.commands.*;
+import com.rafaelsms.potocraft.serverutility.listeners.HideMessagesListener;
 import com.rafaelsms.potocraft.serverutility.listeners.VanishManager;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldGameRuleApplier;
 import org.bukkit.command.CommandExecutor;
@@ -25,8 +26,9 @@ public class ServerUtilityPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         // Register listeners
-        getServer().getPluginManager().registerEvents(new WorldGameRuleApplier(this), this);
         getServer().getPluginManager().registerEvents(manager, this);
+        getServer().getPluginManager().registerEvents(new WorldGameRuleApplier(this), this);
+        getServer().getPluginManager().registerEvents(new HideMessagesListener(this), this);
 
         // Register commands
         registerCommand("anvil", new AnvilCommand(this));
