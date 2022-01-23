@@ -31,12 +31,14 @@ public class VanishCommand implements CommandExecutor {
         }
 
         // Toggle vanish
-        plugin.getServer().getScheduler().runTask(plugin, () -> plugin.getVanishManager().toggleVanish(player));
-        if (plugin.getVanishManager().isVanished(player)) {
-            sender.sendMessage(plugin.getConfiguration().getPlayerVanished());
-        } else {
-            sender.sendMessage(plugin.getConfiguration().getPlayerAppeared());
-        }
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            plugin.getVanishManager().toggleVanish(player);
+            if (plugin.getVanishManager().isVanished(player)) {
+                sender.sendMessage(plugin.getConfiguration().getPlayerVanished());
+            } else {
+                sender.sendMessage(plugin.getConfiguration().getPlayerAppeared());
+            }
+        });
         return true;
     }
 }
