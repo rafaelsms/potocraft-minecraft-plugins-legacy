@@ -46,6 +46,7 @@ public class ServerProfilePlugin extends JavaPlugin {
         registerCommand("teleporterecusar", new TeleportDenyCommand(this));
         registerCommand("teleporte", new TeleportCommand(this));
         registerCommand("teleporteaqui", new TeleportHereCommand(this));
+        registerCommand("mundo", new WorldCommand(this));
 
         logger().info("ServerProfile enabled!");
     }

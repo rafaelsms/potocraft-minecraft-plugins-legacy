@@ -42,3 +42,6 @@ commands:
   teleporteaqui:
     description: Teleports another player to you.
     aliases: [ tphere, tpahere, tpaqui ]
+  mundo:
+    description: Teleports you to another world.
+    aliases: [ world, worlds, mundos ]

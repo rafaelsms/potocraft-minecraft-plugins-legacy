@@ -110,8 +110,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.TELEPORT_WARP_MANAGE_SUCCESS, "&6Portal alterado com sucesso!");
         defaults.put(Keys.TELEPORT_WARP_MANAGE_FAILURE, "&cFalha ao acessar banco de dados.");
         defaults.put(Keys.TELEPORT_WARP_FAIL_TO_RETRIEVE, "&cFalha ao obter lista.");
-        defaults.put(Keys.TELEPORT_WARP_LIST, "&6Portais disponíveis: &c%list%");
+        defaults.put(Keys.TELEPORT_WARP_LIST, "&6Portais disponíveis: &e%list%");
         defaults.put(Keys.TELEPORT_WARP_NOT_FOUND, "&cPortal não encontrado.");
+        defaults.put(Keys.TELEPORT_WORLD_LIST, "&6Mundos disponíveis: &e%list%");
+        defaults.put(Keys.TELEPORT_WORLD_NOT_FOUND, "&cMundo não encontrado.");
 
         defaults.put(Keys.KICK_MESSAGE_COULD_NOT_LOAD_PROFILE, "&cNão foi possível carregar seu perfil!");
         return defaults;
@@ -399,6 +401,16 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return TextUtil.toComponent(get(Keys.TELEPORT_WARP_NOT_FOUND));
     }
 
+    public Component getTeleportWorldList(@NotNull Collection<World> worlds) {
+        return TextUtil
+                .toComponent(get(Keys.TELEPORT_WORLD_LIST))
+                .replaceText(TextUtil.replaceText("%list%", TextUtil.joinStrings(worlds, ", ", World::getName)));
+    }
+
+    public Component getTeleportWorldNotFound() {
+        return TextUtil.toComponent(get(Keys.TELEPORT_WORLD_NOT_FOUND));
+    }
+
     public Component getKickMessageCouldNotLoadProfile() {
         return TextUtil.toComponent(get(Keys.KICK_MESSAGE_COULD_NOT_LOAD_PROFILE));
     }
@@ -471,6 +483,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String TELEPORT_WARP_FAIL_TO_RETRIEVE = "language.teleport.warps.failed_to_retrieve";
         public static final String TELEPORT_WARP_LIST = "language.teleport.warps.list";
         public static final String TELEPORT_WARP_NOT_FOUND = "language.teleport.warps.not_found";
+        public static final String TELEPORT_WORLD_LIST = "language.teleport.worlds.list";
+        public static final String TELEPORT_WORLD_NOT_FOUND = "language.teleport.worlds.not_found";
 
         public static final String KICK_MESSAGE_COULD_NOT_LOAD_PROFILE =
                 "language.kick_messages.could_not_load_profile";
