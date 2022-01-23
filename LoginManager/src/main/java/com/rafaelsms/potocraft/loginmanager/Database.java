@@ -82,7 +82,12 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
                     .find(Filters.regex(Profile.getLastPlayerNameField(), usernameRegex, "i"))
                     .limit(SEARCH_LIMIT);
             for (Document document : documents) {
-                profiles.add(new Profile(document));
+                Profile profile = new Profile(document);
+                // If it is the exact name, return it
+                if (profile.getLastPlayerName().equalsIgnoreCase(usernameRegex)) {
+                    return List.of(profile);
+                }
+                profiles.add(profile);
             }
             return profiles;
         });
