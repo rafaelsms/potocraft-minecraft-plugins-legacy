@@ -5,7 +5,7 @@ import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.player.ReportEntry;
-import com.rafaelsms.potocraft.loginmanager.util.Util;
+import com.rafaelsms.potocraft.util.TextUtil;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.RawCommand;
 import com.velocitypowered.api.proxy.Player;
@@ -13,7 +13,6 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -39,40 +38,41 @@ public class KickCommand implements RawCommand {
             return;
         }
 
-        String usernameRegex = matcher.group(1);
+        String username = matcher.group(1);
         Optional<String> reason = Optional.ofNullable(matcher.group(3));
 
-        List<Profile> offlineProfiles;
+        Optional<Player> playerOptional =
+                TextUtil.closestMatch(plugin.getServer().getAllPlayers(), Player::getUsername, username);
+        if (playerOptional.isEmpty()) {
+            invocation.source().sendMessage(plugin.getConfiguration().getNoPlayerFound());
+            return;
+        }
+        Player player = playerOptional.get();
+        if (player.hasPermission(Permissions.COMMAND_KICK_EXEMPT)) {
+            invocation.source().sendMessage(plugin.getConfiguration().getNoPermission());
+            return;
+        }
+
+        Profile profile;
         try {
-            offlineProfiles = plugin.getDatabase().getOfflineProfiles(usernameRegex);
+            profile = plugin.getDatabase().getProfile(player.getUniqueId()).orElse(null);
         } catch (Database.DatabaseException ignored) {
             invocation.source().sendMessage(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
             return;
         }
-
-        Optional<Profile> profileOptional = Util.handleUniqueProfile(plugin, invocation.source(), offlineProfiles);
-        if (profileOptional.isEmpty()) {
-            return;
-        }
-        Profile profile = profileOptional.get();
-        Optional<Player> optionalPlayer = getOnlinePlayer(profile.getPlayerId());
-        if (optionalPlayer.isEmpty()) {
-            invocation.source().sendMessage(plugin.getConfiguration().getNoPlayerFound());
-            return;
-        }
-        Player player = optionalPlayer.get();
-        if (player.hasPermission(Permissions.COMMAND_KICK_EXEMPT)) {
-            invocation.source().sendMessage(plugin.getConfiguration().getNoPermission());
+        if (profile == null) {
+            player.disconnect(Component.empty());
+            invocation.source().sendMessage(plugin.getConfiguration().getPlayerPunished(player.getUsername()));
             return;
         }
 
         try {
             profile.addReportEntry(ReportEntry.Type.KICK, getId(invocation.source()), null, reason.orElse(null));
             plugin.getDatabase().saveProfile(profile);
-            Component disconnectReason = plugin
+            Component kickedMessage = plugin
                     .getConfiguration()
                     .getPunishmentMessageKicked(getName(invocation.source()), reason.orElse(null));
-            player.disconnect(disconnectReason);
+            player.disconnect(kickedMessage);
             invocation.source().sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
         } catch (Database.DatabaseException ignored) {
             invocation.source().sendMessage(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
@@ -82,10 +82,6 @@ public class KickCommand implements RawCommand {
     @Override
     public boolean hasPermission(Invocation invocation) {
         return invocation.source().hasPermission(Permissions.COMMAND_KICK);
-    }
-
-    private Optional<Player> getOnlinePlayer(@NotNull UUID playerId) {
-        return plugin.getServer().getPlayer(playerId);
     }
 
     private @Nullable UUID getId(CommandSource source) {
