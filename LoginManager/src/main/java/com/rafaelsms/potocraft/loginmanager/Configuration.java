@@ -38,16 +38,11 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.OFFLINE_PLAYERS_LOGIN_SERVER, "login");
         defaults.put(Keys.OFFLINE_PLAYERS_AUTO_LOGIN_MINUTES, 45);
         defaults.put(Keys.OFFLINE_MAX_ACCOUNTS_PER_ADDRESS, 1);
+        defaults.put(Keys.TAB_LIST_OTHER_SERVER_FORMAT, "&7(%server_name%) &e%prefix%%player_name%%suffix%");
+        defaults.put(Keys.TAB_LIST_SAME_SERVER_FORMAT, "&e%prefix%%player_name%%suffix%");
         defaults.put(Keys.OFFLINE_PLAYERS_ALLOWED_COMMANDS,
                      List.of("login", "l", "log", "registrar", "cadastrar", "reg", "register"));
-        defaults.put(Keys.MUTED_BLOCKED_COMMANDS,
-                     List.of("msg",
-                             "tell",
-                             "pm",
-                             "dm",
-                             "reply",
-                             "r",
-                             "w",
+        defaults.put(Keys.MUTED_BLOCKED_COMMANDS, List.of("msg", "tell", "pm", "dm", "reply", "r", "w",
                              "whisper",
                              "responder",
                              "message",
@@ -224,6 +219,23 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public int getMaxAccountsPerAddress() {
         return get(Keys.OFFLINE_MAX_ACCOUNTS_PER_ADDRESS);
+    }
+
+    public Component getTabOtherServerDisplayName(@NotNull Player player, @NotNull String serverName) {
+        return TextUtil
+                .toComponent(get(Keys.TAB_LIST_OTHER_SERVER_FORMAT))
+                .replaceText(TextUtil.replaceText("%server_name%", serverName))
+                .replaceText(TextUtil.replaceText("%player_name%", player.getUsername()))
+                .replaceText(TextUtil.replaceText("%prefix%", TextUtil.getPrefix(player.getUniqueId())))
+                .replaceText(TextUtil.replaceText("%suffix%", TextUtil.getSuffix(player.getUniqueId())));
+    }
+
+    public Component getTabSameServerDisplayName(@NotNull Player player) {
+        return TextUtil
+                .toComponent(get(Keys.TAB_LIST_SAME_SERVER_FORMAT))
+                .replaceText(TextUtil.replaceText("%player_name%", player.getUsername()))
+                .replaceText(TextUtil.replaceText("%prefix%", TextUtil.getPrefix(player.getUniqueId())))
+                .replaceText(TextUtil.replaceText("%suffix%", TextUtil.getSuffix(player.getUniqueId())));
     }
 
     public @NotNull DateTimeFormatter getDateTimeFormatter() {
@@ -473,6 +485,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String OFFLINE_PLAYERS_ALLOWED_COMMANDS = "configuration.offline_allowed_commands";
         public static final String MUTED_BLOCKED_COMMANDS = "configuration.muted_blocked_commands";
         public static final String ALLOWED_USERNAMES_REGEX = "configuration.allowed_usernames_regex";
+        public static final String TAB_LIST_OTHER_SERVER_FORMAT = "configuration.tab_list_other_server_entry_format";
+        public static final String TAB_LIST_SAME_SERVER_FORMAT = "configuration.tab_list_same_server_entry_format";
 
 
         /* Language */
