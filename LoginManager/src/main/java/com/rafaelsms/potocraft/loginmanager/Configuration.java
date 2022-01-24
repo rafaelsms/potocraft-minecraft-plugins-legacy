@@ -38,7 +38,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.OFFLINE_PLAYERS_LOGIN_SERVER, "login");
         defaults.put(Keys.OFFLINE_PLAYERS_AUTO_LOGIN_MINUTES, 45);
         defaults.put(Keys.OFFLINE_MAX_ACCOUNTS_PER_ADDRESS, 1);
-        defaults.put(Keys.TAB_LIST_OTHER_SERVER_FORMAT, "&7(%server_name%) &e%prefix%%player_name%%suffix%");
+        defaults.put(Keys.TAB_LIST_OTHER_SERVER_FORMAT, "&7(%server_name%) %prefix%%player_name%%suffix%");
         defaults.put(Keys.OFFLINE_PLAYERS_ALLOWED_COMMANDS,
                      List.of("login", "l", "log", "registrar", "cadastrar", "reg", "register"));
         defaults.put(Keys.MUTED_BLOCKED_COMMANDS,
@@ -230,10 +230,11 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     public Component getTabDisplayName(@NotNull Player player, @NotNull String playerServer) {
         return TextUtil
                 .toComponent(get(Keys.TAB_LIST_OTHER_SERVER_FORMAT))
-                .replaceText(TextUtil.replaceText("%server_name%", playerServer))
-                .replaceText(TextUtil.replaceText("%prefix%", TextUtil.getPrefix(player.getUniqueId())))
-                .replaceText(TextUtil.replaceText("%player_name%", player.getUsername()))
-                .replaceText(TextUtil.replaceText("%suffix%", TextUtil.getSuffix(player.getUniqueId())));
+                .replace("%server_name%", playerServer)
+                .replace("%prefix%", TextUtil.getPrefix(player.getUniqueId()))
+                .replace("%player_name%", player.getUsername())
+                .replace("%suffix%", TextUtil.getSuffix(player.getUniqueId()))
+                .build();
     }
 
     public @NotNull DateTimeFormatter getDateTimeFormatter() {
@@ -241,189 +242,183 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     public Component getNoPermission() {
-        return TextUtil.toComponent(get(Keys.GENERIC_NO_PERMISSION));
+        return TextUtil.toComponent(get(Keys.GENERIC_NO_PERMISSION)).build();
     }
 
     public Component getNoPlayerFound() {
-        return TextUtil.toComponent(get(Keys.GENERIC_NO_PLAYER_FOUND));
+        return TextUtil.toComponent(get(Keys.GENERIC_NO_PLAYER_FOUND)).build();
     }
 
     public Component getCommandPlayersOnly() {
-        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_ONLY));
+        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_ONLY)).build();
     }
 
     public Component getCommandOfflinePlayersOnly() {
-        return TextUtil.toComponent(get(Keys.COMMAND_OFFLINE_PLAYER_ONLY));
+        return TextUtil.toComponent(get(Keys.COMMAND_OFFLINE_PLAYER_ONLY)).build();
     }
 
     public Component getCommandIncorrectPin() {
-        return TextUtil.toComponent(get(Keys.COMMAND_INCORRECT_PIN));
+        return TextUtil.toComponent(get(Keys.COMMAND_INCORRECT_PIN)).build();
     }
 
     public Component getCommandIncorrectPinFormat() {
-        return TextUtil.toComponent(get(Keys.COMMAND_INCORRECT_PIN_FORMAT));
+        return TextUtil.toComponent(get(Keys.COMMAND_INCORRECT_PIN_FORMAT)).build();
     }
 
     public Component getCommandLoggedInOnly() {
-        return TextUtil.toComponent(get(Keys.COMMAND_LOGGED_IN_ONLY));
+        return TextUtil.toComponent(get(Keys.COMMAND_LOGGED_IN_ONLY)).build();
     }
 
     public Component getCommandLoggedIn() {
-        return TextUtil.toComponent(get(Keys.COMMAND_LOGGED_IN));
+        return TextUtil.toComponent(get(Keys.COMMAND_LOGGED_IN)).build();
     }
 
     public Component getCommandNoProfileFound() {
-        return TextUtil.toComponent(get(Keys.COMMAND_NO_PROFILE_FOUND));
+        return TextUtil.toComponent(get(Keys.COMMAND_NO_PROFILE_FOUND)).build();
     }
 
     public Component getCommandMultipleProfilesFound(@NotNull List<Profile> profiles) {
         return TextUtil
                 .toComponent(get(Keys.COMMAND_MULTIPLE_PROFILES_FOUND))
-                .replaceText(TextUtil.replaceText("%list%",
-                                                  TextUtil.joinStrings(profiles, ", ", Profile::getLastPlayerName)));
+                .replace("%list%", TextUtil.joinStrings(profiles, ", ", Profile::getLastPlayerName))
+                .build();
     }
 
     public Component getCommandChangePinHelp() {
-        return TextUtil.toComponent(get(Keys.COMMAND_CHANGE_PIN_HELP));
+        return TextUtil.toComponent(get(Keys.COMMAND_CHANGE_PIN_HELP)).build();
     }
 
     public Component getCommandChangePinInvalidPins() {
-        return TextUtil.toComponent(get(Keys.COMMAND_CHANGE_PIN_INVALID_PINS));
+        return TextUtil.toComponent(get(Keys.COMMAND_CHANGE_PIN_INVALID_PINS)).build();
     }
 
     public Component getCommandChangePinRegisterFirst() {
-        return TextUtil.toComponent(get(Keys.COMMAND_CHANGE_PIN_REGISTER_INSTEAD));
+        return TextUtil.toComponent(get(Keys.COMMAND_CHANGE_PIN_REGISTER_INSTEAD)).build();
     }
 
     public Component getCommandChangedPinSuccessful() {
-        return TextUtil.toComponent(get(Keys.COMMAND_CHANGE_PIN_SUCCESSFUL));
+        return TextUtil.toComponent(get(Keys.COMMAND_CHANGE_PIN_SUCCESSFUL)).build();
     }
 
     public Component getCommandRegisterHelp() {
-        return TextUtil.toComponent(get(Keys.COMMAND_REGISTER_HELP));
+        return TextUtil.toComponent(get(Keys.COMMAND_REGISTER_HELP)).build();
     }
 
     public Component getCommandRegisterInvalidPin() {
-        return TextUtil.toComponent(get(Keys.COMMAND_REGISTER_INVALID_PINS));
+        return TextUtil.toComponent(get(Keys.COMMAND_REGISTER_INVALID_PINS)).build();
     }
 
     public Component getCommandRegisterAccountLimitForAddress() {
-        return TextUtil.toComponent(get(Keys.COMMAND_REGISTER_MAX_ACCOUNT_PER_ADDRESS));
+        return TextUtil.toComponent(get(Keys.COMMAND_REGISTER_MAX_ACCOUNT_PER_ADDRESS)).build();
     }
 
     public Component getCommandRegisterShouldChangePinInstead() {
-        return TextUtil.toComponent(get(Keys.COMMAND_REGISTER_CHANGE_PIN_INSTEAD));
+        return TextUtil.toComponent(get(Keys.COMMAND_REGISTER_CHANGE_PIN_INSTEAD)).build();
     }
 
     public Component getCommandRegisterShouldLoginInstead() {
-        return TextUtil.toComponent(get(Keys.COMMAND_REGISTER_LOGIN_INSTEAD));
+        return TextUtil.toComponent(get(Keys.COMMAND_REGISTER_LOGIN_INSTEAD)).build();
     }
 
     public Component getCommandLoginHelp() {
-        return TextUtil.toComponent(get(Keys.COMMAND_LOGIN_HELP));
+        return TextUtil.toComponent(get(Keys.COMMAND_LOGIN_HELP)).build();
     }
 
     public Component getCommandLoginRegisterFirst() {
-        return TextUtil.toComponent(get(Keys.COMMAND_LOGIN_REGISTER_INSTEAD));
+        return TextUtil.toComponent(get(Keys.COMMAND_LOGIN_REGISTER_INSTEAD)).build();
     }
 
     public Component getCommandLoginAlreadyLoggedIn() {
-        return TextUtil.toComponent(get(Keys.COMMAND_LOGIN_ALREADY_LOGGED_IN));
+        return TextUtil.toComponent(get(Keys.COMMAND_LOGIN_ALREADY_LOGGED_IN)).build();
     }
 
     public Component getCommandLoginNoServerAvailable() {
-        return TextUtil.toComponent(get(Keys.COMMAND_LOGIN_NO_SERVER_AVAILABLE));
+        return TextUtil.toComponent(get(Keys.COMMAND_LOGIN_NO_SERVER_AVAILABLE)).build();
     }
 
     public Component getCommandUnbanHelp() {
-        return TextUtil.toComponent(get(Keys.COMMAND_UNBAN_HELP));
+        return TextUtil.toComponent(get(Keys.COMMAND_UNBAN_HELP)).build();
     }
 
     public Component getCommandUnpunished(@NotNull String playerName) {
-        return TextUtil
-                .toComponent(get(Keys.COMMAND_PLAYER_UNPUNISHED))
-                .replaceText(TextUtil.replaceText("%player%", playerName));
+        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_UNPUNISHED)).replace("%player%", playerName).build();
     }
 
     public Component getCommandPlayerIsNotPunished(@NotNull String playerName) {
-        return TextUtil
-                .toComponent(get(Keys.COMMAND_PLAYER_IS_NOT_PUNISHED))
-                .replaceText(TextUtil.replaceText("%player%", playerName));
+        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_IS_NOT_PUNISHED)).replace("%player%", playerName).build();
     }
 
     public Component getCommandBanHelp() {
-        return TextUtil.toComponent(get(Keys.COMMAND_BAN_HELP));
+        return TextUtil.toComponent(get(Keys.COMMAND_BAN_HELP)).build();
     }
 
     public Component getCommandBanPlayerOffline() {
-        return TextUtil.toComponent(get(Keys.COMMAND_BAN_PLAYER_OFFLINE));
+        return TextUtil.toComponent(get(Keys.COMMAND_BAN_PLAYER_OFFLINE)).build();
     }
 
     public Component getPlayerPunished(@NotNull String playerName) {
-        return TextUtil
-                .toComponent(get(Keys.COMMAND_PLAYER_PUNISHED))
-                .replaceText(TextUtil.replaceText("%player%", playerName));
+        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_PUNISHED)).replace("%player%", playerName).build();
     }
 
     public Component getListServerList(@NotNull String serverName, @NotNull Collection<Player> playerList) {
         return TextUtil
                 .toComponent(get(Keys.COMMAND_LIST_SERVER_LIST))
-                .replaceText(TextUtil.replaceText("%server_name%", serverName))
-                .replaceText(TextUtil.replaceText("%size%", String.valueOf(playerList.size())))
-                .replaceText(TextUtil.replaceText("%player_list%",
-                                                  TextUtil.joinStrings(playerList, ", ", Player::getUsername)));
+                .replace("%server_name%", serverName)
+                .replace("%size%", String.valueOf(playerList.size()))
+                .replace("%player_list%", TextUtil.joinStrings(playerList, ", ", Player::getUsername))
+                .build();
     }
 
     public Component getCommandTemporaryBanHelp() {
-        return TextUtil.toComponent(get(Keys.COMMAND_TEMPORARY_BAN_HELP));
+        return TextUtil.toComponent(get(Keys.COMMAND_TEMPORARY_BAN_HELP)).build();
     }
 
     public Component getCommandTemporaryBanPlayerOffline() {
-        return TextUtil.toComponent(get(Keys.COMMAND_TEMPORARY_BAN_PLAYER_OFFLINE));
+        return TextUtil.toComponent(get(Keys.COMMAND_TEMPORARY_BAN_PLAYER_OFFLINE)).build();
     }
 
     public Component getCommandUnmuteHelp() {
-        return TextUtil.toComponent(get(Keys.COMMAND_UNMUTE_HELP));
+        return TextUtil.toComponent(get(Keys.COMMAND_UNMUTE_HELP)).build();
     }
 
     public Component getCommandMuteHelp() {
-        return TextUtil.toComponent(get(Keys.COMMAND_MUTE_HELP));
+        return TextUtil.toComponent(get(Keys.COMMAND_MUTE_HELP)).build();
     }
 
     public Component getCommandMutePlayerOffline() {
-        return TextUtil.toComponent(get(Keys.COMMAND_MUTE_PLAYER_OFFLINE));
+        return TextUtil.toComponent(get(Keys.COMMAND_MUTE_PLAYER_OFFLINE)).build();
     }
 
     public Component getCommandKickHelp() {
-        return TextUtil.toComponent(get(Keys.COMMAND_KICK_HELP));
+        return TextUtil.toComponent(get(Keys.COMMAND_KICK_HELP)).build();
     }
 
     public Component getCommandHistoryHelp() {
-        return TextUtil.toComponent(get(Keys.COMMAND_HISTORY_HELP));
+        return TextUtil.toComponent(get(Keys.COMMAND_HISTORY_HELP)).build();
     }
 
     public Component getKickMessageCouldNotCheckMojangUsername() {
-        return TextUtil.toComponent(get(Keys.KICK_MESSAGE_COULD_NOT_CHECK_MOJANG));
+        return TextUtil.toComponent(get(Keys.KICK_MESSAGE_COULD_NOT_CHECK_MOJANG)).build();
     }
 
     public Component getKickMessageInvalidPrefixForJavaPlayer() {
-        return TextUtil.toComponent(get(Keys.KICK_MESSAGE_INVALID_PREFIX_JAVA_PLAYER));
+        return TextUtil.toComponent(get(Keys.KICK_MESSAGE_INVALID_PREFIX_JAVA_PLAYER)).build();
     }
 
     public Component getKickMessageInvalidUsername() {
-        return TextUtil.toComponent(get(Keys.KICK_MESSAGE_INVALID_USERNAME));
+        return TextUtil.toComponent(get(Keys.KICK_MESSAGE_INVALID_USERNAME)).build();
     }
 
     public Component getKickMessageFailedToRetrieveProfile() {
-        return TextUtil.toComponent(get(Keys.KICK_MESSAGE_FAILED_TO_RETRIEVE_PROFILE));
+        return TextUtil.toComponent(get(Keys.KICK_MESSAGE_FAILED_TO_RETRIEVE_PROFILE)).build();
     }
 
     public Component getKickMessageFailedToSaveProfile() {
-        return TextUtil.toComponent(get(Keys.KICK_MESSAGE_FAILED_TO_SAVE_PROFILE));
+        return TextUtil.toComponent(get(Keys.KICK_MESSAGE_FAILED_TO_SAVE_PROFILE)).build();
     }
 
     public Component getKickMessageLoginServerUnavailable() {
-        return TextUtil.toComponent(get(Keys.KICK_MESSAGE_LOGIN_SERVER_UNAVAILABLE));
+        return TextUtil.toComponent(get(Keys.KICK_MESSAGE_LOGIN_SERVER_UNAVAILABLE)).build();
     }
 
     private Component getPunishmentMessage(@NotNull String baseMessage,
@@ -435,10 +430,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         String expirationDateFallback = get(Keys.GENERIC_NO_EXPIRATION_DATE);
         return TextUtil
                 .toComponent(baseMessage)
-                .replaceText(TextUtil.replaceText("%reporter%", Util.getOrElse(reporterName, reporterFallback)))
-                .replaceText(TextUtil.replaceText("%reason%", Util.getOrElse(reason, reasonFallback)))
-                .replaceText(TextUtil.replaceText("%expiration_date%",
-                                                  Util.getOrElse(expirationDate, expirationDateFallback)));
+                .replace("%reporter%", Util.getOrElse(reporterName, reporterFallback))
+                .replace("%reason%", Util.getOrElse(reason, reasonFallback))
+                .replace("%expiration_date%", Util.getOrElse(expirationDate, expirationDateFallback))
+                .build();
     }
 
     public Component getPunishmentMessageBanned(@Nullable String reporterName,
@@ -456,7 +451,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     public Component getPunishmentMessageBlockedCommandMuted() {
-        return TextUtil.toComponent(get(Keys.PUNISHMENT_COMMANDS_MUTED));
+        return TextUtil.toComponent(get(Keys.PUNISHMENT_COMMANDS_MUTED)).build();
     }
 
     public Component getPunishmentMessageKicked(@Nullable String reporterName, @Nullable String reason) {
@@ -464,7 +459,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     public Component getPunishmentMessageLoggedOff() {
-        return TextUtil.toComponent(get(Keys.PUNISHMENT_LOGGED_OFF));
+        return TextUtil.toComponent(get(Keys.PUNISHMENT_LOGGED_OFF)).build();
     }
 
     private static final class Keys {

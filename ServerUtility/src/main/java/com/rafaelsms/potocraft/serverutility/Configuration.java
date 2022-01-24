@@ -82,23 +82,23 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     public Component getPlayerOnly() {
-        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_ONLY));
+        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_ONLY)).build();
     }
 
     public Component getPlayerTimeHelp() {
-        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_TIME_HELP));
+        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_TIME_HELP)).build();
     }
 
     public Component getPlayerWeatherHelp() {
-        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_WEATHER_HELP));
+        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_WEATHER_HELP)).build();
     }
 
     public Component getPlayerVanished() {
-        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_VANISHED));
+        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_VANISHED)).build();
     }
 
     public Component getPlayerAppeared() {
-        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_APPEARED));
+        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_APPEARED)).build();
     }
 
     private static class Keys {

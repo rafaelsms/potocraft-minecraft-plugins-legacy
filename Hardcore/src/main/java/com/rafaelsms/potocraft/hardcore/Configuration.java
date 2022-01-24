@@ -69,13 +69,14 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     public Component getFailedToRetrieveProfile() {
-        return TextUtil.toComponent(get(Keys.LANG_FAILED_TO_RETRIEVE_PROFILE));
+        return TextUtil.toComponent(get(Keys.LANG_FAILED_TO_RETRIEVE_PROFILE)).build();
     }
 
     public Component getBannedMessage(@NotNull ZonedDateTime expirationDate) {
         return TextUtil
                 .toComponent(get(Keys.LANG_BANNED_MESSAGE))
-                .replaceText(TextUtil.replaceText("%expiration_date%", getDateTimeFormatter().format(expirationDate)));
+                .replace("%expiration_date%", getDateTimeFormatter().format(expirationDate))
+                .build();
     }
 
     public String getDatabaseFailureBanReason() {

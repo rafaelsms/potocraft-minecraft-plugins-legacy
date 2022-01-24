@@ -7,7 +7,6 @@ import com.rafaelsms.potocraft.util.TextUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,8 +37,6 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.LOCAL_CHAT_FORMAT, "&e%prefix%%username%%suffix% &f%message%");
         defaults.put(Keys.CHAT_FORMAT, "&e%prefix%%username%%suffix% &f%message%");
         defaults.put(Keys.LOCAL_CHAT_SPY_FORMAT, "&7(longe) %prefix%&7%username%%suffix% &7%message%");
-
-        defaults.put(Keys.SERVER_TAB_NAME_FORMAT, "%prefix%%username%%suffix%");
 
         defaults.put(Keys.SAVE_PLAYERS_TASK_TIMER_TICKS, 20 * 60 * 3);
 
@@ -167,23 +164,16 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     private Component getChatFormat(@NotNull String format,
-                                    @NotNull UUID senderId, @NotNull String senderName, @NotNull Component message) {
+                                    @NotNull UUID senderId,
+                                    @NotNull String senderName,
+                                    @NotNull Component message) {
         return TextUtil
                 .toComponent(format)
-                .replaceText(TextUtil.replaceText("%username%", senderName))
-                .replaceText(TextUtil.replaceText("%prefix%", TextUtil.getPrefix(senderId)))
-                .replaceText(TextUtil.replaceText("%suffix%", TextUtil.getSuffix(senderId)))
-                .replaceText(TextUtil.replaceText("%message%", message));
-    }
-
-    public Component getServerTabName(@NotNull Player player) {
-        return TextUtil
-                .toComponent(get(Keys.SERVER_TAB_NAME_FORMAT))
-                .replaceText(TextUtil.replaceText("%level%", String.valueOf(player.getLevel())))
-                .replaceText(TextUtil.replaceText("%world%", player.getWorld().getName()))
-                .replaceText(TextUtil.replaceText("%suffix%", TextUtil.getSuffix(player.getUniqueId())))
-                .replaceText(TextUtil.replaceText("%username%", player.getName()))
-                .replaceText(TextUtil.replaceText("%prefix%", TextUtil.getPrefix(player.getUniqueId())));
+                .replace("%username%", senderName)
+                .replace("%prefix%", TextUtil.getPrefix(senderId))
+                .replace("%suffix%", TextUtil.getSuffix(senderId))
+                .replace("%message%", message)
+                .build();
     }
 
     public int getTeleportDelayTicks() {
@@ -226,15 +216,15 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     public Component getPlayersOnly() {
-        return TextUtil.toComponent(get(Keys.COMMAND_PLAYERS_ONLY));
+        return TextUtil.toComponent(get(Keys.COMMAND_PLAYERS_ONLY)).build();
     }
 
     public Component getCombatBarTitle() {
-        return TextUtil.toComponent(get(Keys.COMBAT_BAR_TITLE));
+        return TextUtil.toComponent(get(Keys.COMBAT_BAR_TITLE)).build();
     }
 
     public Component getCombatBlockedCommand() {
-        return get(Keys.COMBAT_BLOCKED_COMMAND);
+        return TextUtil.toComponent(get(Keys.COMBAT_BLOCKED_COMMAND)).build();
     }
 
     public String getUnknownWorldName() {
@@ -249,181 +239,173 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         }
         return TextUtil
                 .toComponent(get(Keys.COMBAT_DEATH_LOCATION))
-                .replaceText(TextUtil.replaceText("%world%", worldName))
-                .replaceText(TextUtil.replaceText("%x%", String.valueOf(location.getBlockX())))
-                .replaceText(TextUtil.replaceText("%y%", String.valueOf(location.getBlockY())))
-                .replaceText(TextUtil.replaceText("%z%", String.valueOf(location.getBlockZ())));
+                .replace("%world%", worldName)
+                .replace("%x%", String.valueOf(location.getBlockX()))
+                .replace("%y%", String.valueOf(location.getBlockY()))
+                .replace("%z%", String.valueOf(location.getBlockZ()))
+                .build();
     }
 
     public Component getTeleportBarTitle() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_BAR_TITLE));
+        return TextUtil.toComponent(get(Keys.TELEPORT_BAR_TITLE)).build();
     }
 
     public Component getTeleportPlayerQuit() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_PLAYER_QUIT));
+        return TextUtil.toComponent(get(Keys.TELEPORT_PLAYER_QUIT)).build();
     }
 
     public Component getTeleportPlayerInCombat() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_ENTERED_COMBAT));
+        return TextUtil.toComponent(get(Keys.TELEPORT_ENTERED_COMBAT)).build();
     }
 
     public Component getTeleportPlayerTeleporting() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_PARTICIPANT_TELEPORTING));
+        return TextUtil.toComponent(get(Keys.TELEPORT_PARTICIPANT_TELEPORTING)).build();
     }
 
     public Component getTeleportAlreadyTeleporting() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_USER_TELEPORTING));
+        return TextUtil.toComponent(get(Keys.TELEPORT_USER_TELEPORTING)).build();
     }
 
     public Component getTeleportDestinationUnavailable() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_DESTINATION_UNAVAILABLE));
+        return TextUtil.toComponent(get(Keys.TELEPORT_DESTINATION_UNAVAILABLE)).build();
     }
 
     public Component getTeleportInCooldown(long cooldownSeconds) {
-        return TextUtil
-                .toComponent(get(Keys.TELEPORT_IN_COOLDOWN))
-                .replaceText(TextUtil.replaceText("%cooldown%", String.valueOf(cooldownSeconds)));
+        String messageFormat = get(Keys.TELEPORT_IN_COOLDOWN);
+        return TextUtil.toComponent(messageFormat).replace("%cooldown%", String.valueOf(cooldownSeconds)).build();
     }
 
     public Component getTeleportFailed() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_FAILED));
+        return TextUtil.toComponent(get(Keys.TELEPORT_FAILED)).build();
     }
 
     public Component getTeleportNoBackLocation() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_NO_BACK_LOCATION));
+        return TextUtil.toComponent(get(Keys.TELEPORT_NO_BACK_LOCATION)).build();
     }
 
     public Component getTeleportPlayerNotFound() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_PLAYER_NOT_FOUND));
+        return TextUtil.toComponent(get(Keys.TELEPORT_PLAYER_NOT_FOUND)).build();
     }
 
     public Component getTeleportHelp() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_HELP));
+        return TextUtil.toComponent(get(Keys.TELEPORT_HELP)).build();
     }
 
     public Component getTeleportRequestReceived(@NotNull String username) {
-        return TextUtil
-                .toComponent(get(Keys.TELEPORT_REQUEST_RECEIVED))
-                .replaceText(TextUtil.replaceText("%username%", username));
+        return TextUtil.toComponent(get(Keys.TELEPORT_REQUEST_RECEIVED)).replace("%username%", username).build();
     }
 
     public Component getTeleportHereRequestReceived(@NotNull String username) {
-        return TextUtil
-                .toComponent(get(Keys.TELEPORT_REQUEST_HERE_RECEIVED))
-                .replaceText(TextUtil.replaceText("%username%", username));
+        return TextUtil.toComponent(get(Keys.TELEPORT_REQUEST_HERE_RECEIVED)).replace("%username%", username).build();
     }
 
     public Component getTeleportRequestSent(@NotNull String username) {
-        return TextUtil
-                .toComponent(get(Keys.TELEPORT_REQUEST_SENT))
-                .replaceText(TextUtil.replaceText("%username%", username));
+        return TextUtil.toComponent(get(Keys.TELEPORT_REQUEST_SENT)).replace("%username%", username).build();
     }
 
     public Component getTeleportRequestNotUpdated(@NotNull String username) {
-        return TextUtil
-                .toComponent(get(Keys.TELEPORT_REQUEST_NOT_UPDATED))
-                .replaceText(TextUtil.replaceText("%username%", username));
+        return TextUtil.toComponent(get(Keys.TELEPORT_REQUEST_NOT_UPDATED)).replace("%username%", username).build();
     }
 
     public Component getTeleportRequestNotFound() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_REQUEST_NO_REQUEST_FOUND));
+        return TextUtil.toComponent(get(Keys.TELEPORT_REQUEST_NO_REQUEST_FOUND)).build();
     }
 
     public Component getTeleportRequestCancelled() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_REQUEST_CANCELLED));
+        return TextUtil.toComponent(get(Keys.TELEPORT_REQUEST_CANCELLED)).build();
     }
 
     public Component getTeleportRequestManyFound(@NotNull Collection<TeleportRequest> requests) {
         return TextUtil
                 .toComponent(get(Keys.TELEPORT_REQUEST_MANY_REQUESTS_FOUND))
-                .replaceText(TextUtil.replaceText("%list%",
-                                                  TextUtil.joinStrings(requests,
-                                                                       ", ",
-                                                                       request -> request
-                                                                               .getRequester()
-                                                                               .getPlayer()
-                                                                               .getName())));
+                .replace("%list%",
+                         TextUtil.joinStrings(requests, ", ", request -> request.getRequester().getPlayer().getName()))
+                .build();
     }
 
     public Component getTeleportHomeHelp() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_HELP));
+        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_HELP)).build();
 
     }
 
     public Component getTeleportHomeList(@NotNull List<Home> homes) {
         return TextUtil
                 .toComponent(get(Keys.TELEPORT_HOME_LIST))
-                .replaceText(TextUtil.replaceText("%list%", TextUtil.joinStrings(homes, ", ", Home::getName)));
+                .replace("%list%", TextUtil.joinStrings(homes, ", ", Home::getName))
+                .build();
     }
 
     public Component getTeleportHomeMaxCapacity() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_MAX_CAPACITY));
+        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_MAX_CAPACITY)).build();
     }
 
     public Component getTeleportHomeCreateHelp() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_CREATE_HELP));
+        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_CREATE_HELP)).build();
     }
 
     public Component getTeleportHomeCreated() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_CREATED));
+        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_CREATED)).build();
     }
 
     public Component getTeleportHomeAlreadyExists() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_ALREADY_EXISTS));
+        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_ALREADY_EXISTS)).build();
     }
 
     public Component getTeleportHomeNotFound() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_NOT_FOUND));
+        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_NOT_FOUND)).build();
     }
 
     public Component getTeleportHomeDeleted() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_DELETED));
+        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_DELETED)).build();
     }
 
     public Component getTeleportHomeDeleteHelp(@NotNull Collection<Home> homes) {
         return TextUtil
                 .toComponent(get(Keys.TELEPORT_HOME_DELETE_HELP))
-                .replaceText(TextUtil.replaceText("%list%", TextUtil.joinStrings(homes, ", ", Home::getName)));
+                .replace("%list%", TextUtil.joinStrings(homes, ", ", Home::getName))
+                .build();
     }
 
     public Component getTeleportWarpManageHelp() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_WARP_MANAGE_HELP));
+        return TextUtil.toComponent(get(Keys.TELEPORT_WARP_MANAGE_HELP)).build();
     }
 
     public Component getTeleportWarpManageSuccess() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_WARP_MANAGE_SUCCESS));
+        return TextUtil.toComponent(get(Keys.TELEPORT_WARP_MANAGE_SUCCESS)).build();
     }
 
     public Component getTeleportWarpManageDatabaseFailure() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_WARP_MANAGE_FAILURE));
+        return TextUtil.toComponent(get(Keys.TELEPORT_WARP_MANAGE_FAILURE)).build();
     }
 
     public Component getTeleportWarpFailedToRetrieve() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_WARP_FAIL_TO_RETRIEVE));
+        return TextUtil.toComponent(get(Keys.TELEPORT_WARP_FAIL_TO_RETRIEVE)).build();
     }
 
     public Component getTeleportWarpList(@NotNull Collection<Warp> warps) {
         return TextUtil
                 .toComponent(get(Keys.TELEPORT_WARP_LIST))
-                .replaceText(TextUtil.replaceText("%list%", TextUtil.joinStrings(warps, ", ", Warp::getName)));
+                .replace("%list%", TextUtil.joinStrings(warps, ", ", Warp::getName))
+                .build();
     }
 
     public Component getTeleportWarpNotFound() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_WARP_NOT_FOUND));
+        return TextUtil.toComponent(get(Keys.TELEPORT_WARP_NOT_FOUND)).build();
     }
 
     public Component getTeleportWorldList(@NotNull Collection<World> worlds) {
         return TextUtil
                 .toComponent(get(Keys.TELEPORT_WORLD_LIST))
-                .replaceText(TextUtil.replaceText("%list%", TextUtil.joinStrings(worlds, ", ", World::getName)));
+                .replace("%list%", TextUtil.joinStrings(worlds, ", ", World::getName))
+                .build();
     }
 
     public Component getTeleportWorldNotFound() {
-        return TextUtil.toComponent(get(Keys.TELEPORT_WORLD_NOT_FOUND));
+        return TextUtil.toComponent(get(Keys.TELEPORT_WORLD_NOT_FOUND)).build();
     }
 
     public Component getKickMessageCouldNotLoadProfile() {
-        return TextUtil.toComponent(get(Keys.KICK_MESSAGE_COULD_NOT_LOAD_PROFILE));
+        return TextUtil.toComponent(get(Keys.KICK_MESSAGE_COULD_NOT_LOAD_PROFILE)).build();
     }
 
     private static final class Keys {
@@ -440,8 +422,6 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String LOCAL_CHAT_FORMAT = "configuration.local_chat.format";
         public static final String LOCAL_CHAT_SPY_FORMAT = "configuration.local_chat.spy_format";
         public static final String CHAT_FORMAT = "configuration.local_chat.global_format";
-
-        public static final String SERVER_TAB_NAME_FORMAT = "configuration.in_server_tab_name_format";
 
         public static final String TELEPORT_COOLDOWN_SECONDS = "configuration.teleport.teleport_cooldown_in_seconds";
         public static final String TELEPORT_DELAY_TICKS = "configuration.teleport.teleport_delay_in_ticks";

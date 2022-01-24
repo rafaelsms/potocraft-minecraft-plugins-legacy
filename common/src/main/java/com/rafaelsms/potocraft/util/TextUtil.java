@@ -26,12 +26,12 @@ public final class TextUtil {
     private TextUtil() {
     }
 
-    public static @NotNull Component toComponent(@NotNull String text) {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(text);
+    public static @NotNull String toColorizedString(@NotNull Component component) {
+        return LegacyComponentSerializer.legacyAmpersand().serializeOrNull(component);
     }
 
     public static @NotNull String toPlainString(@NotNull Component component) {
-        return PlainTextComponentSerializer.plainText().serialize(component);
+        return PlainTextComponentSerializer.plainText().serializeOrNull(component);
     }
 
     public static @NotNull String getIpAddress(@NotNull InetSocketAddress address) {
@@ -110,14 +110,6 @@ public final class TextUtil {
         return builder.toString();
     }
 
-    public static @NotNull TextReplacementConfig replaceText(@NotNull String match, @NotNull String replacement) {
-        return TextReplacementConfig.builder().matchLiteral(match).replacement(replacement).build();
-    }
-
-    public static @NotNull TextReplacementConfig replaceText(@NotNull String match, @NotNull Component replacement) {
-        return TextReplacementConfig.builder().matchLiteral(match).replacement(replacement).build();
-    }
-
     public static @NotNull Optional<String> closestMatch(@NotNull Iterable<String> list, @NotNull String search) {
         return closestMatch(list, string -> string, search);
     }
@@ -145,32 +137,88 @@ public final class TextUtil {
         return Optional.ofNullable(closestMatch);
     }
 
-    public static @NotNull Component getPrefix(@NotNull UUID playerId) {
-        Component prefix = Component.empty();
+    public static @NotNull String getPrefix(@NotNull UUID playerId) {
+        String prefix = "";
         try {
             LuckPerms luckPerms = LuckPermsProvider.get();
             User user = luckPerms.getUserManager().loadUser(playerId).join();
             // Get prefix
             String prefixString = user.getCachedData().getMetaData().getPrefix();
             if (prefixString != null) {
-                prefix = toComponent(prefixString);
+                prefix = prefixString;
             }
         } catch (Exception ignored) {
         }
         return prefix;
     }
 
-    public static @NotNull Component getSuffix(@NotNull UUID playerId) {
-        Component suffix = Component.empty();
+    public static @NotNull String getSuffix(@NotNull UUID playerId) {
+        String suffix = "";
         try {
             LuckPerms luckPerms = LuckPermsProvider.get();
             User user = luckPerms.getUserManager().loadUser(playerId).join();
             String suffixString = user.getCachedData().getMetaData().getSuffix();
             if (suffixString != null) {
-                suffix = toComponent(suffixString);
+                suffix = suffixString;
             }
         } catch (Exception ignored) {
         }
         return suffix;
+    }
+
+    public static ComponentBuilder toComponent(@NotNull String base) {
+        return new ComponentBuilder(base);
+    }
+
+    public static class ComponentBuilder {
+
+        private final @NotNull String base;
+        private HashMap<String, String> stringReplacements = null;
+        private HashMap<String, Component> componentReplacements = null;
+
+        private ComponentBuilder(@NotNull String base) {
+            this.base = base;
+        }
+
+        private static ComponentBuilder builder(@NotNull String base) {
+            return new ComponentBuilder(base);
+        }
+
+        public ComponentBuilder replace(@NotNull String search, @NotNull String replacement) {
+            if (this.stringReplacements == null) {
+                this.stringReplacements = new HashMap<>();
+            }
+            this.stringReplacements.put(search, replacement);
+            return this;
+        }
+
+        public ComponentBuilder replace(@NotNull String search, @NotNull Component replacement) {
+            if (this.componentReplacements == null) {
+                this.componentReplacements = new HashMap<>();
+            }
+            this.componentReplacements.put(search, replacement);
+            return this;
+        }
+
+        public Component build() {
+            String replacedString = base;
+            if (stringReplacements != null) {
+                for (Map.Entry<String, String> entry : stringReplacements.entrySet()) {
+                    replacedString = replacedString.replace(entry.getKey(), entry.getValue());
+                }
+            }
+            Component replacedComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(replacedString);
+            if (componentReplacements != null) {
+                for (Map.Entry<String, Component> entry : componentReplacements.entrySet()) {
+                    replacedComponent = replacedComponent.replaceText(replaceText(entry.getKey(), entry.getValue()));
+                }
+            }
+            return replacedComponent;
+        }
+
+        private static @NotNull TextReplacementConfig replaceText(@NotNull String match,
+                                                                  @NotNull Component replacement) {
+            return TextReplacementConfig.builder().matchLiteral(match).replacement(replacement).build();
+        }
     }
 }

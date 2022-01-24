@@ -118,49 +118,51 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     public Component getNoPermission() {
-        return TextUtil.toComponent(get(Keys.LANG_NO_PERMISSION));
+        return TextUtil.toComponent(get(Keys.LANG_NO_PERMISSION)).build();
     }
 
     public Component getMessagesTooSmall() {
-        return TextUtil.toComponent(get(Keys.LANG_MESSAGES_TOO_SMALL));
+        return TextUtil.toComponent(get(Keys.LANG_MESSAGES_TOO_SMALL)).build();
     }
 
     public Component getMessagesTooFrequent() {
-        return TextUtil.toComponent(get(Keys.LANG_MESSAGES_TOO_FREQUENT));
+        return TextUtil.toComponent(get(Keys.LANG_MESSAGES_TOO_FREQUENT)).build();
     }
 
     public Component getMessagesTooSimilar() {
-        return TextUtil.toComponent(get(Keys.LANG_MESSAGES_TOO_SIMILAR));
+        return TextUtil.toComponent(get(Keys.LANG_MESSAGES_TOO_SIMILAR)).build();
     }
 
     public Component getPlayersOnly() {
-        return TextUtil.toComponent(get(Keys.LANG_PLAYERS_ONLY));
+        return TextUtil.toComponent(get(Keys.LANG_PLAYERS_ONLY)).build();
     }
 
     public Component getDirectMessagesHelp() {
-        return TextUtil.toComponent(get(Keys.LANG_DIRECT_MESSAGES_HELP));
+        return TextUtil.toComponent(get(Keys.LANG_DIRECT_MESSAGES_HELP)).build();
     }
 
     public Component getDirectMessagesReplyHelp() {
-        return TextUtil.toComponent(get(Keys.LANG_DIRECT_MESSAGES_REPLY_HELP));
+        return TextUtil.toComponent(get(Keys.LANG_DIRECT_MESSAGES_REPLY_HELP)).build();
     }
 
     public Component getDirectMessagesNoPlayerFound() {
-        return TextUtil.toComponent(get(Keys.LANG_DIRECT_MESSAGES_NO_PLAYER_FOUND));
+        return TextUtil.toComponent(get(Keys.LANG_DIRECT_MESSAGES_NO_PLAYER_FOUND)).build();
     }
 
     public Component getDirectMessagesOutgoingFormat(@NotNull String receiverName, @NotNull String message) {
         return TextUtil
                 .toComponent(get(Keys.LANG_DIRECT_MESSAGES_OUTGOING_FORMAT))
-                .replaceText(TextUtil.replaceText("%receiver%", receiverName))
-                .replaceText(TextUtil.replaceText("%message%", message));
+                .replace("%receiver%", receiverName)
+                .replace("%message%", message)
+                .build();
     }
 
     public Component getDirectMessagesIncomingFormat(@NotNull String senderName, @NotNull String message) {
         return TextUtil
                 .toComponent(get(Keys.LANG_DIRECT_MESSAGES_INCOMING_FORMAT))
-                .replaceText(TextUtil.replaceText("%sender%", senderName))
-                .replaceText(TextUtil.replaceText("%message%", message));
+                .replace("%sender%", senderName)
+                .replace("%message%", message)
+                .build();
     }
 
     public Component getDirectMessagesSpyFormat(@NotNull String senderName,
@@ -168,9 +170,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                                                 @NotNull String message) {
         return TextUtil
                 .toComponent(get(Keys.LANG_DIRECT_MESSAGES_SPY_FORMAT))
-                .replaceText(TextUtil.replaceText("%sender%", senderName))
-                .replaceText(TextUtil.replaceText("%receiver%", receiverName))
-                .replaceText(TextUtil.replaceText("%message%", message));
+                .replace("%sender%", senderName)
+                .replace("%receiver%", receiverName)
+                .replace("%message%", message)
+                .build();
     }
 
     private Component getChatFormat(@NotNull String chatFormat, @NotNull Player player, @NotNull String message) {
@@ -182,11 +185,12 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                 .orElse(getUnknownServer());
         return TextUtil
                 .toComponent(chatFormat)
-                .replaceText(TextUtil.replaceText("%server%", serverName))
-                .replaceText(TextUtil.replaceText("%prefix%", TextUtil.getPrefix(player.getUniqueId())))
-                .replaceText(TextUtil.replaceText("%suffix%", TextUtil.getSuffix(player.getUniqueId())))
-                .replaceText(TextUtil.replaceText("%username%", player.getUsername()))
-                .replaceText(TextUtil.replaceText("%message%", message));
+                .replace("%server%", serverName)
+                .replace("%prefix%", TextUtil.getPrefix(player.getUniqueId()))
+                .replace("%suffix%", TextUtil.getSuffix(player.getUniqueId()))
+                .replace("%username%", player.getUsername())
+                .replace("%message%", message)
+                .build();
     }
 
     private static final class Keys {
