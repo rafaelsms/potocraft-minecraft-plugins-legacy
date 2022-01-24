@@ -57,6 +57,7 @@ public class LoginManagerPlugin {
         getServer().getEventManager().register(this, new ReportsCheckerListener(this));
         getServer().getEventManager().register(this, new RedirectPlayerListener(this));
         getServer().getEventManager().register(this, new PlayerListListener(this));
+        getServer().getEventManager().register(this, new KickListener(this));
 
         // Register commands
         CommandManager commandManager = getServer().getCommandManager();

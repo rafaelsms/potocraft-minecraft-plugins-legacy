@@ -167,6 +167,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                                                                  &cServidor para login indisponível.
                                                                  &cTente novamente mais tarde!
                                                                  """);
+        defaults.put(Keys.KICK_MESSAGE_GENERIC, "&cVocê foi expulso do servidor");
 
         defaults.put(Keys.PUNISHMENT_MUTED,
                      "&cVocê foi silenciado por &e%reporter% &cpelo motivo &e%reason% &caté &e%expiration_date%");
@@ -421,6 +422,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return TextUtil.toComponent(get(Keys.KICK_MESSAGE_LOGIN_SERVER_UNAVAILABLE)).build();
     }
 
+    public Component getKickMessageGeneric() {
+        return TextUtil.toComponent(get(Keys.KICK_MESSAGE_GENERIC)).build();
+    }
+
     private Component getPunishmentMessage(@NotNull String baseMessage,
                                            @Nullable String reporterName,
                                            @Nullable String reason,
@@ -428,8 +433,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         String reporterFallback = get(Keys.GENERIC_UNKNOWN_PLAYER);
         String reasonFallback = get(Keys.GENERIC_UNKNOWN_REPORT_REASON);
         String expirationDateFallback = get(Keys.GENERIC_NO_EXPIRATION_DATE);
-        return TextUtil
-                .toComponent(baseMessage)
+        return TextUtil.toComponent(baseMessage)
                 .replace("%reporter%", Util.getOrElse(reporterName, reporterFallback))
                 .replace("%reason%", Util.getOrElse(reason, reasonFallback))
                 .replace("%expiration_date%", Util.getOrElse(expirationDate, expirationDateFallback))
@@ -541,6 +545,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                 "language.kick_messages.failed_to_save_player_profile";
         public static final String KICK_MESSAGE_LOGIN_SERVER_UNAVAILABLE =
                 "language.kick_messages.login_server_unavailable";
+        public static final String KICK_MESSAGE_GENERIC = "language.kick_messages.generic_message";
 
         public static final String PUNISHMENT_LOGGED_OFF = "language.punishment.logged_off";
         public static final String PUNISHMENT_MUTED = "language.punishment.muted";
