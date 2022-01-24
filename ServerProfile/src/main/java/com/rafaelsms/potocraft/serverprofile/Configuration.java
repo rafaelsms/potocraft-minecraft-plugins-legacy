@@ -50,6 +50,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                      Map.of("potocraft.homes.vip", 3, "potocraft.homes.premium", 5));
 
         defaults.put(Keys.COMBAT_MOB_DURATION_TICKS, 20 * 13);
+        defaults.put(Keys.COMBAT_LOG_OFF_DESTROYS_TOTEM, false);
         defaults.put(Keys.COMBAT_PLAYER_DURATION_TICKS, 20 * 41);
         defaults.put(Keys.COMBAT_BLOCKED_COMMANDS, List.of("tp", "tphere", "warp", "spawn", "tpaccept"));
 
@@ -209,6 +210,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public int getPlayerCombatDurationTicks() {
         return get(Keys.COMBAT_PLAYER_DURATION_TICKS);
+    }
+
+    public boolean isCombatLogOffDestroysTotemFirst() {
+        return get(Keys.COMBAT_LOG_OFF_DESTROYS_TOTEM);
     }
 
     public List<String> getCombatBlockedCommands() {
@@ -434,6 +439,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
         public static final String COMBAT_PLAYER_DURATION_TICKS = "configuration.combat.player_combat_duration_ticks";
         public static final String COMBAT_MOB_DURATION_TICKS = "configuration.combat.mob_combat_duration_ticks";
+        public static final String COMBAT_LOG_OFF_DESTROYS_TOTEM =
+                "configuration.combat.should_log_off_destroy_totem_first";
         public static final String COMBAT_BLOCKED_COMMANDS = "configuration.combat.blocked_commands";
 
         public static final String COMMAND_PLAYERS_ONLY = "language.players_only";

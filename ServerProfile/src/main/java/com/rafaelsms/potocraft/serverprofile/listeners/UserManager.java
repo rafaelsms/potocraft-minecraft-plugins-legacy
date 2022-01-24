@@ -71,6 +71,7 @@ public class UserManager implements Listener {
         synchronized (lock) {
             Profile profile = loadedProfiles.remove(event.getPlayer().getUniqueId());
             if (profile == null) {
+                plugin.logger().warn("Didn't have a loaded Profile for user {}", event.getPlayer().getName());
                 event.getPlayer().kick(plugin.getConfiguration().getKickMessageCouldNotLoadProfile());
                 return;
             }
@@ -80,7 +81,7 @@ public class UserManager implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     private void removeProfile(PlayerQuitEvent event) {
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
             synchronized (lock) {
                 loadedProfiles.remove(event.getPlayer().getUniqueId());
                 User removedUser = users.remove(event.getPlayer().getUniqueId());
@@ -91,7 +92,7 @@ public class UserManager implements Listener {
                     plugin.getDatabase().saveProfileCatching(profile);
                 }
             }
-        }, 1);
+        });
     }
 
     public @NotNull User getUser(@NotNull Player player) {

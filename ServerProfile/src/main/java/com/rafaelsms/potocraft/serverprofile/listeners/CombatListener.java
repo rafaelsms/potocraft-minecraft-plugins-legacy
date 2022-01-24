@@ -17,6 +17,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -109,6 +110,19 @@ public class CombatListener implements Listener {
             return;
         }
         player.sendMessage(plugin.getConfiguration().getCombatDeathLocation(locationOptional.get()));
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    private void killInCombat(PlayerQuitEvent event) {
+        User user = plugin.getUserManager().getUser(event.getPlayer());
+        if (!user.isInCombat()) {
+            return;
+        }
+        if (plugin.getConfiguration().isCombatLogOffDestroysTotemFirst()) {
+            event.getPlayer().damage(Double.MAX_VALUE, event.getPlayer());
+        } else {
+            event.getPlayer().setHealth(0.0);
+        }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
