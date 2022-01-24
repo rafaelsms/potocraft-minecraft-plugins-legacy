@@ -5,12 +5,16 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.player.TabList;
 import com.velocitypowered.api.proxy.player.TabListEntry;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+import com.velocitypowered.api.proxy.server.ServerInfo;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -21,10 +25,8 @@ public class PlayerListListener {
     public PlayerListListener(@NotNull LoginManagerPlugin plugin) {
         this.plugin = plugin;
         plugin.getServer().getScheduler().buildTask(plugin, () -> {
-            for (RegisteredServer server : plugin.getServer().getAllServers()) {
-                for (Player player : server.getPlayersConnected()) {
-                    setPlayerTabList(player, server.getServerInfo().getName());
-                }
+            for (Player player : plugin.getServer().getAllPlayers()) {
+                updatePlayerTabList(player);
             }
         }).repeat(500, TimeUnit.MILLISECONDS).schedule();
     }
@@ -32,17 +34,17 @@ public class PlayerListListener {
     @Subscribe
     private void updatePlayerList(ServerConnectedEvent event) {
         plugin.getServer().getScheduler().buildTask(plugin, () -> {
-            setPlayerTabList(event.getPlayer(), event.getServer().getServerInfo().getName());
-            updatePlayersTabList(event.getPlayer(), event.getServer().getServerInfo().getName());
+            initPlayerList(event.getPlayer(), event.getServer().getServerInfo().getName());
+            updateChangingPlayerList(event.getPlayer(), event.getServer().getServerInfo().getName());
         }).delay(100, TimeUnit.MILLISECONDS).schedule();
     }
 
     @Subscribe
     private void updatePlayerList(DisconnectEvent event) {
-        updatePlayersTabList(event.getPlayer(), null);
+        updateChangingPlayerList(event.getPlayer(), null);
     }
 
-    private void updatePlayersTabList(@NotNull Player player, @Nullable String playerServer) {
+    private void updateChangingPlayerList(@NotNull Player player, @Nullable String playerServer) {
         // Update other's tab list
         for (RegisteredServer server : plugin.getServer().getAllServers()) {
             String serverName = server.getServerInfo().getName();
@@ -59,7 +61,22 @@ public class PlayerListListener {
         }
     }
 
-    private void setPlayerTabList(@NotNull Player player, @NotNull String playerServer) {
+    private void updatePlayerTabList(Player player) {
+        TabList tabList = player.getTabList();
+        for (TabListEntry listEntry : tabList.getEntries()) {
+            // Update everyone's display name and latency
+            Optional<Player> optionalPlayer = plugin.getServer().getPlayer(listEntry.getProfile().getId());
+            if (optionalPlayer.isPresent()) {
+                Component displayName = plugin
+                        .getConfiguration()
+                        .getTabDisplayName(optionalPlayer.get(), getServerName(optionalPlayer.get()));
+                listEntry.setDisplayName(displayName);
+                listEntry.setLatency((int) Math.min(player.getPing(), Integer.MAX_VALUE));
+            }
+        }
+    }
+
+    private void initPlayerList(@NotNull Player player, @NotNull String playerServer) {
         TabList tabList = player.getTabList();
         for (RegisteredServer server : plugin.getServer().getAllServers()) {
             String serverName = server.getServerInfo().getName();
@@ -73,13 +90,13 @@ public class PlayerListListener {
     }
 
     private void addEntryToList(@NotNull TabList tabList, @NotNull Player player, @NotNull String playerServer) {
-        TabListEntry entry = getEntry(tabList, player, playerServer);
+        TabListEntry entry = getNewEntry(tabList, player, playerServer);
         // We will always update the only changing player
         tabList.removeEntry(player.getUniqueId());
         tabList.addEntry(entry);
     }
 
-    private TabListEntry getEntry(@NotNull TabList tabList, @NotNull Player player, @NotNull String playerServer) {
+    private TabListEntry getNewEntry(@NotNull TabList tabList, @NotNull Player player, @NotNull String playerServer) {
         return TabListEntry
                 .builder()
                 .tabList(tabList)
@@ -91,5 +108,9 @@ public class PlayerListListener {
 
     private void removeEntry(@NotNull TabList tabList, @NotNull UUID playerId) {
         tabList.removeEntry(playerId);
+    }
+
+    private String getServerName(Player player) {
+        return player.getCurrentServer().map(ServerConnection::getServerInfo).map(ServerInfo::getName).orElse("limbo?");
     }
 }
