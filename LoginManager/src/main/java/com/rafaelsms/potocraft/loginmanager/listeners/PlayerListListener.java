@@ -33,10 +33,8 @@ public class PlayerListListener {
 
     @Subscribe
     private void updatePlayerList(ServerConnectedEvent event) {
-        plugin.getServer().getScheduler().buildTask(plugin, () -> {
-            initPlayerList(event.getPlayer(), event.getServer().getServerInfo().getName());
-            updateChangingPlayerList(event.getPlayer(), event.getServer().getServerInfo().getName());
-        }).delay(100, TimeUnit.MILLISECONDS).schedule();
+        initPlayerList(event.getPlayer(), event.getServer().getServerInfo().getName());
+        updateChangingPlayerList(event.getPlayer(), event.getServer().getServerInfo().getName());
     }
 
     @Subscribe
@@ -46,17 +44,11 @@ public class PlayerListListener {
 
     private void updateChangingPlayerList(@NotNull Player player, @Nullable String playerServer) {
         // Update other's tab list
-        for (RegisteredServer server : plugin.getServer().getAllServers()) {
-            String serverName = server.getServerInfo().getName();
-            if (playerServer != null && playerServer.equalsIgnoreCase(serverName)) {
-                continue;
-            }
-            for (Player otherPlayer : server.getPlayersConnected()) {
-                if (playerServer != null) {
-                    addEntryToList(otherPlayer.getTabList(), player, playerServer);
-                } else {
-                    removeEntry(otherPlayer.getTabList(), player.getUniqueId());
-                }
+        for (Player otherPlayer : plugin.getServer().getAllPlayers()) {
+            if (playerServer != null) {
+                addEntryToList(otherPlayer.getTabList(), player, playerServer);
+            } else {
+                removeEntry(otherPlayer.getTabList(), player.getUniqueId());
             }
         }
     }
