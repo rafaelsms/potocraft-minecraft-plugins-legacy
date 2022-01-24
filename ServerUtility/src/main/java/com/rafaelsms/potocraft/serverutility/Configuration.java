@@ -3,13 +3,12 @@ package com.rafaelsms.potocraft.serverutility;
 import com.rafaelsms.potocraft.util.TextUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameRule;
+import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
@@ -25,6 +24,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     protected @Nullable Map<String, Object> getDefaults() {
         Map<String, Object> defaults = new LinkedHashMap<>();
         defaults.put(Keys.HIDE_ALL_JOIN_QUIT_MESSAGES, false);
+        defaults.put(Keys.WORLDS_SYNCED_REAL_TIME, List.of("world"));
         defaults.put(Keys.GAME_RULES_LIST,
                      Map.of("default",
                             Map.of(GameRule.PLAYERS_SLEEPING_PERCENTAGE.getName(), 35),
@@ -41,6 +41,18 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public boolean isHideJoinQuitMessages() {
         return get(Keys.HIDE_ALL_JOIN_QUIT_MESSAGES);
+    }
+
+    public List<World> getSyncedTimeWorlds() {
+        List<World> worlds = new ArrayList<>();
+        List<String> worldNames = get(Keys.WORLDS_SYNCED_REAL_TIME);
+        for (String worldName : worldNames) {
+            World world = plugin.getServer().getWorld(worldName);
+            if (world != null) {
+                worlds.add(world);
+            }
+        }
+        return worlds;
     }
 
     @SuppressWarnings("rawtypes")
@@ -92,6 +104,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     private static class Keys {
 
         public static final String HIDE_ALL_JOIN_QUIT_MESSAGES = "configuration.hide_join_quit_messages";
+        public static final String WORLDS_SYNCED_REAL_TIME = "configuration.worlds_with_synced_real_time";
         public static final String GAME_RULES_LIST = "configuration.game_rules_applied";
 
         public static final String COMMAND_PLAYER_ONLY = "language.commands.player_only";

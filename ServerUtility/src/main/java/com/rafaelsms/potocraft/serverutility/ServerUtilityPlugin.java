@@ -4,6 +4,7 @@ import com.rafaelsms.potocraft.serverutility.commands.*;
 import com.rafaelsms.potocraft.serverutility.listeners.HideMessagesListener;
 import com.rafaelsms.potocraft.serverutility.listeners.VanishManager;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldGameRuleApplier;
+import com.rafaelsms.potocraft.serverutility.tasks.SyncWorldTimeTask;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.HandlerList;
@@ -29,6 +30,9 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(manager, this);
         getServer().getPluginManager().registerEvents(new WorldGameRuleApplier(this), this);
         getServer().getPluginManager().registerEvents(new HideMessagesListener(this), this);
+
+        // Run world sync task
+        getServer().getScheduler().runTaskTimer(this, new SyncWorldTimeTask(this), 10L, 10L);
 
         // Register commands
         registerCommand("anvil", new AnvilCommand(this));
