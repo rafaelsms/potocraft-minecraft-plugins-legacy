@@ -7,6 +7,7 @@ import com.rafaelsms.potocraft.util.TextUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,6 +38,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.LOCAL_CHAT_FORMAT, "&e%prefix%%username%%suffix% &f%message%");
         defaults.put(Keys.CHAT_FORMAT, "&e%prefix%%username%%suffix% &f%message%");
         defaults.put(Keys.LOCAL_CHAT_SPY_FORMAT, "&7(longe) %prefix%&7%username%%suffix% &7%message%");
+
+        defaults.put(Keys.SERVER_TAB_NAME_FORMAT, "%prefix%%username%%suffix%");
 
         defaults.put(Keys.SAVE_PLAYERS_TASK_TIMER_TICKS, 20 * 60 * 3);
 
@@ -164,15 +167,23 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     private Component getChatFormat(@NotNull String format,
-                                    @NotNull UUID senderId,
-                                    @NotNull String senderName,
-                                    @NotNull Component message) {
+                                    @NotNull UUID senderId, @NotNull String senderName, @NotNull Component message) {
         return TextUtil
                 .toComponent(format)
                 .replaceText(TextUtil.replaceText("%username%", senderName))
                 .replaceText(TextUtil.replaceText("%prefix%", TextUtil.getPrefix(senderId)))
                 .replaceText(TextUtil.replaceText("%suffix%", TextUtil.getSuffix(senderId)))
                 .replaceText(TextUtil.replaceText("%message%", message));
+    }
+
+    public Component getServerTabName(@NotNull Player player) {
+        return TextUtil
+                .toComponent(get(Keys.SERVER_TAB_NAME_FORMAT))
+                .replaceText(TextUtil.replaceText("%level%", String.valueOf(player.getLevel())))
+                .replaceText(TextUtil.replaceText("%world%", player.getWorld().getName()))
+                .replaceText(TextUtil.replaceText("%suffix%", TextUtil.getSuffix(player.getUniqueId())))
+                .replaceText(TextUtil.replaceText("%username%", player.getName()))
+                .replaceText(TextUtil.replaceText("%prefix%", TextUtil.getPrefix(player.getUniqueId())));
     }
 
     public int getTeleportDelayTicks() {
@@ -429,6 +440,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String LOCAL_CHAT_FORMAT = "configuration.local_chat.format";
         public static final String LOCAL_CHAT_SPY_FORMAT = "configuration.local_chat.spy_format";
         public static final String CHAT_FORMAT = "configuration.local_chat.global_format";
+
+        public static final String SERVER_TAB_NAME_FORMAT = "configuration.in_server_tab_name_format";
 
         public static final String TELEPORT_COOLDOWN_SECONDS = "configuration.teleport.teleport_cooldown_in_seconds";
         public static final String TELEPORT_DELAY_TICKS = "configuration.teleport.teleport_delay_in_ticks";

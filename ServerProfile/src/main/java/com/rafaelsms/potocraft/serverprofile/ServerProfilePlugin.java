@@ -1,10 +1,7 @@
 package com.rafaelsms.potocraft.serverprofile;
 
 import com.rafaelsms.potocraft.serverprofile.commands.*;
-import com.rafaelsms.potocraft.serverprofile.listeners.ChatFormatter;
-import com.rafaelsms.potocraft.serverprofile.listeners.CombatListener;
-import com.rafaelsms.potocraft.serverprofile.listeners.StatisticsListener;
-import com.rafaelsms.potocraft.serverprofile.listeners.UserManager;
+import com.rafaelsms.potocraft.serverprofile.listeners.*;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.HandlerList;
@@ -33,6 +30,7 @@ public class ServerProfilePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ChatFormatter(this), this);
         getServer().getPluginManager().registerEvents(new CombatListener(this), this);
         getServer().getPluginManager().registerEvents(new StatisticsListener(this), this);
+        getServer().getPluginManager().registerEvents(new DisplayNameSetter(this), this);
 
         // Register commands
         registerCommand("voltar", new BackCommand(this));
