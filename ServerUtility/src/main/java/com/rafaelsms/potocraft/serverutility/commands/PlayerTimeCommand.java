@@ -45,9 +45,12 @@ public class PlayerTimeCommand implements CommandExecutor {
         }
 
         boolean fixed = args.length > 1;
-        long offsetTime = player.getWorld().getTime() - optionalTime.get();
-        if (fixed) {
-            offsetTime = optionalTime.get();
+        // From EssentialsX
+        long offsetTime = player.getPlayerTime();
+        offsetTime -= (offsetTime % 24_000);
+        offsetTime += 24_000 + optionalTime.get();
+        if (!fixed) {
+            offsetTime -= player.getWorld().getTime();
         }
 
         player.setPlayerTime(offsetTime, !fixed);
