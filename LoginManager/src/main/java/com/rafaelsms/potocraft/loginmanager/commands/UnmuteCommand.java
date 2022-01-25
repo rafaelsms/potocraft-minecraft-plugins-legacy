@@ -1,5 +1,6 @@
 package com.rafaelsms.potocraft.loginmanager.commands;
 
+import com.rafaelsms.potocraft.database.Database;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
@@ -48,6 +49,12 @@ public class UnmuteCommand implements RawCommand {
         }
 
         if (changed) {
+            try {
+                plugin.getDatabase().saveProfile(profile);
+            } catch (Database.DatabaseException ignored) {
+                invocation.source().sendMessage(plugin.getConfiguration().getCommandFailedToSaveProfile());
+                return;
+            }
             invocation
                     .source()
                     .sendMessage(plugin.getConfiguration().getCommandUnpunished(profile.getLastPlayerName()));

@@ -61,6 +61,10 @@ public class ReportEntry extends DatabaseObject {
         this.active = active;
     }
 
+    public @NotNull String getType() {
+        return type.name().toLowerCase();
+    }
+
     public boolean isPreventingJoin() {
         return type.isPreventingJoin() && isActive();
     }
