@@ -141,7 +141,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.COMMAND_PLAYER_IS_NOT_PUNISHED, "&c%player% não está punido.");
         defaults.put(Keys.COMMAND_LIST_SERVER_LIST, "&6Servidor %server_name% (%size%): &e%player_list%");
         defaults.put(Keys.COMMAND_SEEN_HELP, "&6Uso: &e&l/seen <nome/uuid>");
-        defaults.put(Keys.COMMAND_SEEN_REPORT_ENTRY, "&6de &e%reporter_id% &6até &e%expiration_date% &6por &e%reason%");
+        defaults.put(Keys.COMMAND_SEEN_REPORT_ENTRY,
+                     "&e%type% &6%active% de &e%reporter_id% &6até &e%expiration_date% &6por &e%reason%");
         defaults.put(Keys.COMMAND_SEEN_PROFILE, """
                                                 &e&l%user_name% &6(%user_id%):
                                                 &6* Último servidor: &e%server_name%
@@ -391,6 +392,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                               .toComponent(get(Keys.COMMAND_SEEN_REPORT_ENTRY))
                               .replace("%reporter_id%",
                                        Util.convertFallback(entry.getReporterId(), UUID::toString, "console"))
+                              .replace("%type%", entry.getType())
+                              .replace("%active%", entry.isActive() ? "enabled" : "disabled")
                               .replace("%expiration_date%",
                                        Util.convertFallback(entry.getExpirationDate(),
                                                             getDateTimeFormatter()::format,
