@@ -5,7 +5,7 @@ import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.player.ReportEntry;
-import com.rafaelsms.potocraft.loginmanager.util.Util;
+import com.rafaelsms.potocraft.loginmanager.util.CommandUtil;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.RawCommand;
 import com.velocitypowered.api.proxy.Player;
@@ -13,7 +13,6 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -39,21 +38,14 @@ public class BanCommand implements RawCommand {
             return;
         }
 
-        String usernameRegex = matcher.group(1);
         Optional<String> reason = Optional.ofNullable(matcher.group(3));
 
-        List<Profile> offlineProfiles;
-        try {
-            offlineProfiles = plugin.getDatabase().getOfflineProfiles(usernameRegex);
-        } catch (Database.DatabaseException ignored) {
-            invocation.source().sendMessage(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
-            return;
-        }
-
-        Optional<Profile> profileOptional = Util.handleUniqueProfile(plugin, invocation.source(), offlineProfiles);
+        Optional<Profile> profileOptional =
+                CommandUtil.handlePlayerSearch(plugin, invocation.source(), matcher.group(1));
         if (profileOptional.isEmpty()) {
             return;
         }
+
         Profile profile = profileOptional.get();
         Optional<Player> optionalPlayer = getOnlinePlayer(profile.getPlayerId());
         if (!invocation.source().hasPermission(Permissions.COMMAND_BAN_OFFLINE) && optionalPlayer.isEmpty()) {
@@ -76,7 +68,7 @@ public class BanCommand implements RawCommand {
             });
             invocation.source().sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
         } catch (Database.DatabaseException ignored) {
-            invocation.source().sendMessage(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
+            invocation.source().sendMessage(plugin.getConfiguration().getCommandFailedToSaveProfile());
         }
     }
 

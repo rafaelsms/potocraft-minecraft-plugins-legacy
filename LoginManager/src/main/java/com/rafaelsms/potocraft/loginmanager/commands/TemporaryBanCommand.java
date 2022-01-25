@@ -5,7 +5,7 @@ import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.player.ReportEntry;
-import com.rafaelsms.potocraft.loginmanager.util.Util;
+import com.rafaelsms.potocraft.loginmanager.util.CommandUtil;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.RawCommand;
@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -42,7 +41,6 @@ public class TemporaryBanCommand implements RawCommand {
             return;
         }
 
-        String usernameRegex = matcher.group(1);
         Optional<Duration> duration = TextUtil.parseTime(matcher.group(2));
         Optional<String> reason = Optional.ofNullable(matcher.group(4));
 
@@ -52,18 +50,12 @@ public class TemporaryBanCommand implements RawCommand {
         }
         ZonedDateTime expirationDate = ZonedDateTime.now().plus(duration.get());
 
-        List<Profile> offlineProfiles;
-        try {
-            offlineProfiles = plugin.getDatabase().getOfflineProfiles(usernameRegex);
-        } catch (Database.DatabaseException ignored) {
-            invocation.source().sendMessage(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
-            return;
-        }
-
-        Optional<Profile> profileOptional = Util.handleUniqueProfile(plugin, invocation.source(), offlineProfiles);
+        Optional<Profile> profileOptional =
+                CommandUtil.handlePlayerSearch(plugin, invocation.source(), matcher.group(1));
         if (profileOptional.isEmpty()) {
             return;
         }
+
         Profile profile = profileOptional.get();
         Optional<Player> optionalPlayer = getOnlinePlayer(profile.getPlayerId());
         if (!invocation.source().hasPermission(Permissions.COMMAND_TEMPORARY_BAN_OFFLINE) && optionalPlayer.isEmpty()) {
@@ -90,7 +82,7 @@ public class TemporaryBanCommand implements RawCommand {
             });
             invocation.source().sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
         } catch (Database.DatabaseException ignored) {
-            invocation.source().sendMessage(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
+            invocation.source().sendMessage(plugin.getConfiguration().getCommandFailedToSaveProfile());
         }
     }
 

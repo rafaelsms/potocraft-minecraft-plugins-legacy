@@ -75,6 +75,18 @@ public class Profile extends DatabaseObject {
         return Optional.ofNullable(lastServerName);
     }
 
+    public Optional<ZonedDateTime> getLastJoinDate() {
+        return Optional.ofNullable(lastJoinDate);
+    }
+
+    public Optional<ZonedDateTime> getLastQuitDate() {
+        return Optional.ofNullable(lastQuitDate);
+    }
+
+    public Optional<Long> getPlayTime() {
+        return Optional.ofNullable(playTime);
+    }
+
     /**
      * Checks if player is logged in and sets logged in flag when auto login detected.
      *
@@ -173,8 +185,12 @@ public class Profile extends DatabaseObject {
         return Collections.unmodifiableList(reportEntries);
     }
 
-    public static String getLastPlayerNameField() {
+    public static String getPlayerNameField() {
         return Keys.LAST_PLAYER_NAME;
+    }
+
+    public static String getIdField() {
+        return Keys.PLAYER_ID;
     }
 
     public static Bson filterId(@NotNull UUID playerId) {

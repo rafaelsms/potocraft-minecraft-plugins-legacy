@@ -70,8 +70,8 @@ public class LoginManagerPlugin {
         commandManager.register("mute", new MuteCommand(this), "silenciar", "silencio");
         commandManager.register("unmute", new UnmuteCommand(this), "desilenciar");
         commandManager.register("kick", new KickCommand(this), "expulsar");
-        commandManager.register("history", new HistoryCommand(this), "historico");
         commandManager.register("list", new ListCommand(this), "lista", "jogadores", "players", "online");
+        commandManager.register("seen", new SeenCommand(this), "info", "search", "buscar", "history", "historico");
 
         getLogger().info("LoginManager enabled!");
     }

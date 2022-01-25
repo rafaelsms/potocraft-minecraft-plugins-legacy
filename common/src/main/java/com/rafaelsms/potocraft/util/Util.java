@@ -96,9 +96,28 @@ public final class Util {
      * @param rsFunction converting function
      * @param <R>        type of input
      * @param <S>        type of output
-     * @return null if input is null, converted item otherwise
+     * @return converted r object
      */
     public static <R, S> @NotNull S convertNonNull(@NotNull R r, @NotNull Function<R, S> rsFunction) {
+        return Objects.requireNonNull(convert(r, rsFunction));
+    }
+
+    /**
+     * Convert a nullable item to another type providing a fallback.
+     *
+     * @param r          input object
+     * @param rsFunction converting function
+     * @param fallback   fallback object if r is null
+     * @param <R>        type of input
+     * @param <S>        type of output
+     * @return converted r item or fallback
+     */
+    public static <R, S> @NotNull S convertFallback(@Nullable R r,
+                                                    @NotNull Function<R, S> rsFunction,
+                                                    @NotNull S fallback) {
+        if (r == null) {
+            return fallback;
+        }
         return Objects.requireNonNull(convert(r, rsFunction));
     }
 

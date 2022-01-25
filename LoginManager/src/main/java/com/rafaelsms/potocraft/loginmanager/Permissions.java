@@ -22,6 +22,7 @@ public final class Permissions {
     public static final String COMMAND_MUTE_OFFLINE = "potocraft.command.mute.offline";
     public static final String COMMAND_MUTE_EXEMPT = "potocraft.command.mute.exempt";
     public static final String COMMAND_HISTORY = "potocraft.command.history";
+    public static final String COMMAND_SEEN = "potocraft.command.seen";
     public static final String COMMAND_LIST = "potocraft.command.list";
 
     // Private constructor
