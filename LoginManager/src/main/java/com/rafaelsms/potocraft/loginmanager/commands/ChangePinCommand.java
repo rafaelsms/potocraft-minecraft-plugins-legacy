@@ -20,8 +20,7 @@ public class ChangePinCommand implements RawCommand {
 
     // /<command> <old pin> <new pin> <new pin>
 
-    private final Pattern
-            pinExtractor =
+    private final Pattern pinExtractor =
             Pattern.compile("^\\s*(\\d{6})\\s*(\\d{6})\\s*(\\d{6})(\\s+.*)?$", Pattern.CASE_INSENSITIVE);
 
     private final @NotNull LoginManagerPlugin plugin;
