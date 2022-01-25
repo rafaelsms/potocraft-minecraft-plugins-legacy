@@ -123,6 +123,11 @@ public final class TextUtil {
 
         for (T entry : list) {
             String string = stringFunction.apply(entry).toLowerCase();
+            // If it is equals, return the best match possible
+            if (string.equalsIgnoreCase(search)) {
+                return Optional.of(entry);
+            }
+            // Else, search inside the text
             int startIndex = string.indexOf(search);
             if (startIndex >= 0) {
                 if (startIndex == smallestStartIndex) {
@@ -167,7 +172,7 @@ public final class TextUtil {
     }
 
     public static ComponentBuilder toComponent(@NotNull String base) {
-        return new ComponentBuilder(base);
+        return ComponentBuilder.builder(base);
     }
 
     public static class ComponentBuilder {

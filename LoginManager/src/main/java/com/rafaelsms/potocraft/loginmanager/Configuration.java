@@ -1,5 +1,7 @@
 package com.rafaelsms.potocraft.loginmanager;
 
+import com.rafaelsms.potocraft.loginmanager.player.Profile;
+import com.rafaelsms.potocraft.loginmanager.player.ReportEntry;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
 import com.velocitypowered.api.proxy.Player;
@@ -12,10 +14,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class Configuration extends com.rafaelsms.potocraft.Configuration {
@@ -128,20 +127,30 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                                                              &cFalha ao transferir: servidor indisponível.
                                                              &cDigite &e&l/server &cpara mudar de servidor manualmente.
                                                              """);
-        defaults.put(Keys.COMMAND_UNBAN_HELP, "&6Uso: &e&l/unban <regex>");
-        defaults.put(Keys.COMMAND_BAN_HELP, "&6Uso: &e&l/ban <regex> <razão>");
+        defaults.put(Keys.COMMAND_UNBAN_HELP, "&6Uso: &e&l/unban <nome>");
+        defaults.put(Keys.COMMAND_BAN_HELP, "&6Uso: &e&l/ban <nome> <razão>");
         defaults.put(Keys.COMMAND_BAN_PLAYER_OFFLINE, "&cJogador está offline, você não possui permissão.");
-        defaults.put(Keys.COMMAND_TEMPORARY_BAN_HELP, "&6Uso: &e&l/tempban <regex> <tempo> <razão>");
+        defaults.put(Keys.COMMAND_TEMPORARY_BAN_HELP, "&6Uso: &e&l/tempban <nome> <tempo> <razão>");
         defaults.put(Keys.COMMAND_TEMPORARY_BAN_PLAYER_OFFLINE, "&cJogador está offline, você não possui permissão.");
-        defaults.put(Keys.COMMAND_UNMUTE_HELP, "&6Uso: &e&l/unmute <regex>");
-        defaults.put(Keys.COMMAND_MUTE_HELP, "&6Uso: &e&l/mute <regex> <tempo> <razão>");
+        defaults.put(Keys.COMMAND_UNMUTE_HELP, "&6Uso: &e&l/unmute <nome>");
+        defaults.put(Keys.COMMAND_MUTE_HELP, "&6Uso: &e&l/mute <nome> <tempo> <razão>");
         defaults.put(Keys.COMMAND_MUTE_PLAYER_OFFLINE, "&cJogador está offline, você não possui permissão.");
-        defaults.put(Keys.COMMAND_KICK_HELP, "&6Uso: &e&l/kick <regex> <razão>");
-        defaults.put(Keys.COMMAND_HISTORY_HELP, "&6Uso: &e&l/history <regex>");
+        defaults.put(Keys.COMMAND_KICK_HELP, "&6Uso: &e&l/kick <nome> <razão>");
         defaults.put(Keys.COMMAND_PLAYER_PUNISHED, "&6Jogador &e%player% &6punido.");
         defaults.put(Keys.COMMAND_PLAYER_UNPUNISHED, "&6%player% teve sua punição revogada.");
         defaults.put(Keys.COMMAND_PLAYER_IS_NOT_PUNISHED, "&c%player% não está punido.");
         defaults.put(Keys.COMMAND_LIST_SERVER_LIST, "&6Servidor %server_name% (%size%): &e%player_list%");
+        defaults.put(Keys.COMMAND_SEEN_HELP, "&6Uso: &e&l/seen <nome/uuid>");
+        defaults.put(Keys.COMMAND_SEEN_REPORT_ENTRY, "&6de &e%reporter_id% &6até &e%expiration_date% &6por &e%reason%");
+        defaults.put(Keys.COMMAND_SEEN_PROFILE, """
+                                                &e&l%user_name% &6(%user_id%):
+                                                &6* Último servidor: &e%server_name%
+                                                &6* Tempo em jogo: &e%play_time%
+                                                &6* Última vez online: &e%join_date%
+                                                &6* Última saída: &e%quit_date%
+                                                &6* Ocorrências:
+                                                %report_entries%
+                                                """);
 
         defaults.put(Keys.KICK_MESSAGE_COULD_NOT_CHECK_MOJANG, """
                                                                &cFalha ao consultar servidor da Microsoft.
@@ -371,6 +380,53 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                 .build();
     }
 
+    public Component getCommandSeenHelp() {
+        return TextUtil.toComponent(get(Keys.COMMAND_SEEN_HELP)).build();
+    }
+
+    public Component getCommandSeenReportEntries(@NotNull Collection<ReportEntry> reportEntries) {
+        List<Component> lines = new ArrayList<>(reportEntries.size());
+        for (ReportEntry entry : reportEntries) {
+            lines.add(TextUtil
+                              .toComponent(get(Keys.COMMAND_SEEN_REPORT_ENTRY))
+                              .replace("%reporter_id%",
+                                       Util.convertFallback(entry.getReporterId(), UUID::toString, "console"))
+                              .replace("%expiration_date%",
+                                       Util.convertFallback(entry.getExpirationDate(),
+                                                            getDateTimeFormatter()::format,
+                                                            "?"))
+                              .replace("%reason%", Util.getOrElse(entry.getReason(), "?"))
+                              .build());
+        }
+        return Component.join(Component.newline(), lines);
+    }
+
+    public Component getCommandSeen(@NotNull Profile profile) {
+        Duration playTimeDuration = Duration.ofMillis(profile.getPlayTime().orElse(0L));
+        String playTime = playTimeDuration.toDaysPart() +
+                          "d" +
+                          playTimeDuration.toHoursPart() +
+                          "h" +
+                          playTimeDuration.toMinutesPart() +
+                          "m" +
+                          playTimeDuration.toSecondsPart() +
+                          "s";
+        String lastJoinDate =
+                Util.convertFallback(profile.getLastJoinDate().orElse(null), getDateTimeFormatter()::format, "?");
+        String lastQuitDate =
+                Util.convertFallback(profile.getLastQuitDate().orElse(null), getDateTimeFormatter()::format, "?");
+        return TextUtil
+                .toComponent(get(Keys.COMMAND_SEEN_PROFILE))
+                .replace("%user_name%", profile.getLastPlayerName())
+                .replace("%user_id%", profile.getPlayerId().toString())
+                .replace("%server_name%", profile.getLastServerName().orElse("?"))
+                .replace("%play_time%", playTime)
+                .replace("%join_date%", lastJoinDate)
+                .replace("%quit_date%", lastQuitDate)
+                .replace("%report_entries%", getCommandSeenReportEntries(profile.getReportEntries()))
+                .build();
+    }
+
     public Component getCommandTemporaryBanHelp() {
         return TextUtil.toComponent(get(Keys.COMMAND_TEMPORARY_BAN_HELP)).build();
     }
@@ -393,10 +449,6 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public Component getCommandKickHelp() {
         return TextUtil.toComponent(get(Keys.COMMAND_KICK_HELP)).build();
-    }
-
-    public Component getCommandHistoryHelp() {
-        return TextUtil.toComponent(get(Keys.COMMAND_HISTORY_HELP)).build();
     }
 
     public Component getKickMessageCouldNotCheckMojangUsername() {
@@ -434,7 +486,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         String reporterFallback = get(Keys.GENERIC_UNKNOWN_PLAYER);
         String reasonFallback = get(Keys.GENERIC_UNKNOWN_REPORT_REASON);
         String expirationDateFallback = get(Keys.GENERIC_NO_EXPIRATION_DATE);
-        return TextUtil.toComponent(baseMessage)
+        return TextUtil
+                .toComponent(baseMessage)
                 .replace("%reporter%", Util.getOrElse(reporterName, reporterFallback))
                 .replace("%reason%", Util.getOrElse(reason, reasonFallback))
                 .replace("%expiration_date%", Util.getOrElse(expirationDate, expirationDateFallback))
@@ -530,11 +583,13 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String COMMAND_MUTE_HELP = "language.commands.mute.help";
         public static final String COMMAND_MUTE_PLAYER_OFFLINE = "language.commands.mute.player_offline";
         public static final String COMMAND_KICK_HELP = "language.commands.kick.help";
-        public static final String COMMAND_HISTORY_HELP = "language.commands.history.help";
         public static final String COMMAND_PLAYER_PUNISHED = "language.commands.player_punished";
         public static final String COMMAND_PLAYER_UNPUNISHED = "language.commands.player_unpunished";
         public static final String COMMAND_PLAYER_IS_NOT_PUNISHED = "language.commands.player_is_not_punished";
         public static final String COMMAND_LIST_SERVER_LIST = "language.commands.list_server_players";
+        public static final String COMMAND_SEEN_HELP = "language.commands.seen.help";
+        public static final String COMMAND_SEEN_REPORT_ENTRY = "language.commands.seen.report_entry";
+        public static final String COMMAND_SEEN_PROFILE = "language.commands.seen.profile";
 
         public static final String KICK_MESSAGE_COULD_NOT_CHECK_MOJANG =
                 "language.kick_messages.could_not_check_mojang";

@@ -75,6 +75,18 @@ public class Profile extends DatabaseObject {
         return Optional.ofNullable(lastServerName);
     }
 
+    public Optional<ZonedDateTime> getLastJoinDate() {
+        return Optional.ofNullable(lastJoinDate);
+    }
+
+    public Optional<ZonedDateTime> getLastQuitDate() {
+        return Optional.ofNullable(lastQuitDate);
+    }
+
+    public Optional<Long> getPlayTime() {
+        return Optional.ofNullable(playTime);
+    }
+
     /**
      * Checks if player is logged in and sets logged in flag when auto login detected.
      *
