@@ -1,8 +1,24 @@
 package com.rafaelsms.potocraft.loginmanager;
 
 import com.google.inject.Inject;
-import com.rafaelsms.potocraft.loginmanager.commands.*;
-import com.rafaelsms.potocraft.loginmanager.listeners.*;
+import com.rafaelsms.potocraft.loginmanager.commands.BanCommand;
+import com.rafaelsms.potocraft.loginmanager.commands.ChangePinCommand;
+import com.rafaelsms.potocraft.loginmanager.commands.KickCommand;
+import com.rafaelsms.potocraft.loginmanager.commands.ListCommand;
+import com.rafaelsms.potocraft.loginmanager.commands.LoginCommand;
+import com.rafaelsms.potocraft.loginmanager.commands.MuteCommand;
+import com.rafaelsms.potocraft.loginmanager.commands.RegisterCommand;
+import com.rafaelsms.potocraft.loginmanager.commands.SeenCommand;
+import com.rafaelsms.potocraft.loginmanager.commands.TemporaryBanCommand;
+import com.rafaelsms.potocraft.loginmanager.commands.UnbanCommand;
+import com.rafaelsms.potocraft.loginmanager.commands.UnmuteCommand;
+import com.rafaelsms.potocraft.loginmanager.listeners.KickListener;
+import com.rafaelsms.potocraft.loginmanager.listeners.LoggedOffPlayerListener;
+import com.rafaelsms.potocraft.loginmanager.listeners.OfflineCheckerListener;
+import com.rafaelsms.potocraft.loginmanager.listeners.PlayerListListener;
+import com.rafaelsms.potocraft.loginmanager.listeners.ProfileUpdater;
+import com.rafaelsms.potocraft.loginmanager.listeners.RedirectPlayerListener;
+import com.rafaelsms.potocraft.loginmanager.listeners.ReportsCheckerListener;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;

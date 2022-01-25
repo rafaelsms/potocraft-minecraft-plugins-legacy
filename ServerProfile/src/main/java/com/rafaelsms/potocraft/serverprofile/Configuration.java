@@ -12,7 +12,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
@@ -168,13 +172,12 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                                     @NotNull UUID senderId,
                                     @NotNull String senderName,
                                     @NotNull Component message) {
-        return TextUtil
-                .toComponent(format)
-                .replace("%username%", senderName)
-                .replace("%prefix%", TextUtil.getPrefix(senderId))
-                .replace("%suffix%", TextUtil.getSuffix(senderId))
-                .replace("%message%", message)
-                .build();
+        return TextUtil.toComponent(format)
+                       .replace("%username%", senderName)
+                       .replace("%prefix%", TextUtil.getPrefix(senderId))
+                       .replace("%suffix%", TextUtil.getSuffix(senderId))
+                       .replace("%message%", message)
+                       .build();
     }
 
     public int getTeleportDelayTicks() {
@@ -242,13 +245,12 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         if (world != null) {
             worldName = world.getName().replaceAll("_", " ");
         }
-        return TextUtil
-                .toComponent(get(Keys.COMBAT_DEATH_LOCATION))
-                .replace("%world%", worldName)
-                .replace("%x%", String.valueOf(location.getBlockX()))
-                .replace("%y%", String.valueOf(location.getBlockY()))
-                .replace("%z%", String.valueOf(location.getBlockZ()))
-                .build();
+        return TextUtil.toComponent(get(Keys.COMBAT_DEATH_LOCATION))
+                       .replace("%world%", worldName)
+                       .replace("%x%", String.valueOf(location.getBlockX()))
+                       .replace("%y%", String.valueOf(location.getBlockY()))
+                       .replace("%z%", String.valueOf(location.getBlockZ()))
+                       .build();
     }
 
     public Component getTeleportBarTitle() {
@@ -321,11 +323,12 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     public Component getTeleportRequestManyFound(@NotNull Collection<TeleportRequest> requests) {
-        return TextUtil
-                .toComponent(get(Keys.TELEPORT_REQUEST_MANY_REQUESTS_FOUND))
-                .replace("%list%",
-                         TextUtil.joinStrings(requests, ", ", request -> request.getRequester().getPlayer().getName()))
-                .build();
+        return TextUtil.toComponent(get(Keys.TELEPORT_REQUEST_MANY_REQUESTS_FOUND))
+                       .replace("%list%",
+                                TextUtil.joinStrings(requests,
+                                                     ", ",
+                                                     request -> request.getRequester().getPlayer().getName()))
+                       .build();
     }
 
     public Component getTeleportHomeHelp() {
@@ -334,10 +337,9 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     public Component getTeleportHomeList(@NotNull List<Home> homes) {
-        return TextUtil
-                .toComponent(get(Keys.TELEPORT_HOME_LIST))
-                .replace("%list%", TextUtil.joinStrings(homes, ", ", Home::getName))
-                .build();
+        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_LIST))
+                       .replace("%list%", TextUtil.joinStrings(homes, ", ", Home::getName))
+                       .build();
     }
 
     public Component getTeleportHomeMaxCapacity() {
@@ -365,10 +367,9 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     public Component getTeleportHomeDeleteHelp(@NotNull Collection<Home> homes) {
-        return TextUtil
-                .toComponent(get(Keys.TELEPORT_HOME_DELETE_HELP))
-                .replace("%list%", TextUtil.joinStrings(homes, ", ", Home::getName))
-                .build();
+        return TextUtil.toComponent(get(Keys.TELEPORT_HOME_DELETE_HELP))
+                       .replace("%list%", TextUtil.joinStrings(homes, ", ", Home::getName))
+                       .build();
     }
 
     public Component getTeleportWarpManageHelp() {
@@ -388,10 +389,9 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     public Component getTeleportWarpList(@NotNull Collection<Warp> warps) {
-        return TextUtil
-                .toComponent(get(Keys.TELEPORT_WARP_LIST))
-                .replace("%list%", TextUtil.joinStrings(warps, ", ", Warp::getName))
-                .build();
+        return TextUtil.toComponent(get(Keys.TELEPORT_WARP_LIST))
+                       .replace("%list%", TextUtil.joinStrings(warps, ", ", Warp::getName))
+                       .build();
     }
 
     public Component getTeleportWarpNotFound() {
@@ -399,10 +399,9 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     public Component getTeleportWorldList(@NotNull Collection<World> worlds) {
-        return TextUtil
-                .toComponent(get(Keys.TELEPORT_WORLD_LIST))
-                .replace("%list%", TextUtil.joinStrings(worlds, ", ", World::getName))
-                .build();
+        return TextUtil.toComponent(get(Keys.TELEPORT_WORLD_LIST))
+                       .replace("%list%", TextUtil.joinStrings(worlds, ", ", World::getName))
+                       .build();
     }
 
     public Component getTeleportWorldNotFound() {
