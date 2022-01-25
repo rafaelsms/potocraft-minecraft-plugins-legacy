@@ -14,7 +14,12 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class Configuration extends com.rafaelsms.potocraft.Configuration {
@@ -239,13 +244,12 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     public Component getTabDisplayName(@NotNull Player player, @NotNull String playerServer) {
-        return TextUtil
-                .toComponent(get(Keys.TAB_LIST_OTHER_SERVER_FORMAT))
-                .replace("%server_name%", playerServer)
-                .replace("%prefix%", TextUtil.getPrefix(player.getUniqueId()))
-                .replace("%player_name%", player.getUsername())
-                .replace("%suffix%", TextUtil.getSuffix(player.getUniqueId()))
-                .build();
+        return TextUtil.toComponent(get(Keys.TAB_LIST_OTHER_SERVER_FORMAT))
+                       .replace("%server_name%", playerServer)
+                       .replace("%prefix%", TextUtil.getPrefix(player.getUniqueId()))
+                       .replace("%player_name%", player.getUsername())
+                       .replace("%suffix%", TextUtil.getSuffix(player.getUniqueId()))
+                       .build();
     }
 
     public @NotNull DateTimeFormatter getDateTimeFormatter() {
@@ -373,12 +377,11 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     public Component getListServerList(@NotNull String serverName, @NotNull Collection<Player> playerList) {
-        return TextUtil
-                .toComponent(get(Keys.COMMAND_LIST_SERVER_LIST))
-                .replace("%server_name%", serverName)
-                .replace("%size%", String.valueOf(playerList.size()))
-                .replace("%player_list%", TextUtil.joinStrings(playerList, ", ", Player::getUsername))
-                .build();
+        return TextUtil.toComponent(get(Keys.COMMAND_LIST_SERVER_LIST))
+                       .replace("%server_name%", serverName)
+                       .replace("%size%", String.valueOf(playerList.size()))
+                       .replace("%player_list%", TextUtil.joinStrings(playerList, ", ", Player::getUsername))
+                       .build();
     }
 
     public Component getCommandSeenHelp() {
@@ -388,8 +391,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     public Component getCommandSeenReportEntries(@NotNull Collection<ReportEntry> reportEntries) {
         List<Component> lines = new ArrayList<>(reportEntries.size());
         for (ReportEntry entry : reportEntries) {
-            lines.add(TextUtil
-                              .toComponent(get(Keys.COMMAND_SEEN_REPORT_ENTRY))
+            lines.add(TextUtil.toComponent(get(Keys.COMMAND_SEEN_REPORT_ENTRY))
                               .replace("%reporter_id%",
                                        Util.convertFallback(entry.getReporterId(), UUID::toString, "console"))
                               .replace("%type%", entry.getType())
@@ -406,28 +408,21 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public Component getCommandSeen(@NotNull Profile profile) {
         Duration playTimeDuration = Duration.ofMillis(profile.getPlayTime().orElse(0L));
-        String playTime = playTimeDuration.toDaysPart() +
-                          "d" +
-                          playTimeDuration.toHoursPart() +
-                          "h" +
-                          playTimeDuration.toMinutesPart() +
-                          "m" +
-                          playTimeDuration.toSecondsPart() +
-                          "s";
+        String playTime = playTimeDuration.toDaysPart() + "d" + playTimeDuration.toHoursPart() + "h" +
+                          playTimeDuration.toMinutesPart() + "m" + playTimeDuration.toSecondsPart() + "s";
         String lastJoinDate =
                 Util.convertFallback(profile.getLastJoinDate().orElse(null), getDateTimeFormatter()::format, "?");
         String lastQuitDate =
                 Util.convertFallback(profile.getLastQuitDate().orElse(null), getDateTimeFormatter()::format, "?");
-        return TextUtil
-                .toComponent(get(Keys.COMMAND_SEEN_PROFILE))
-                .replace("%user_name%", profile.getLastPlayerName())
-                .replace("%user_id%", profile.getPlayerId().toString())
-                .replace("%server_name%", profile.getLastServerName().orElse("?"))
-                .replace("%play_time%", playTime)
-                .replace("%join_date%", lastJoinDate)
-                .replace("%quit_date%", lastQuitDate)
-                .replace("%report_entries%", getCommandSeenReportEntries(profile.getReportEntries()))
-                .build();
+        return TextUtil.toComponent(get(Keys.COMMAND_SEEN_PROFILE))
+                       .replace("%user_name%", profile.getLastPlayerName())
+                       .replace("%user_id%", profile.getPlayerId().toString())
+                       .replace("%server_name%", profile.getLastServerName().orElse("?"))
+                       .replace("%play_time%", playTime)
+                       .replace("%join_date%", lastJoinDate)
+                       .replace("%quit_date%", lastQuitDate)
+                       .replace("%report_entries%", getCommandSeenReportEntries(profile.getReportEntries()))
+                       .build();
     }
 
     public Component getCommandTemporaryBanHelp() {
@@ -489,12 +484,11 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         String reporterFallback = get(Keys.GENERIC_UNKNOWN_PLAYER);
         String reasonFallback = get(Keys.GENERIC_UNKNOWN_REPORT_REASON);
         String expirationDateFallback = get(Keys.GENERIC_NO_EXPIRATION_DATE);
-        return TextUtil
-                .toComponent(baseMessage)
-                .replace("%reporter%", Util.getOrElse(reporterName, reporterFallback))
-                .replace("%reason%", Util.getOrElse(reason, reasonFallback))
-                .replace("%expiration_date%", Util.getOrElse(expirationDate, expirationDateFallback))
-                .build();
+        return TextUtil.toComponent(baseMessage)
+                       .replace("%reporter%", Util.getOrElse(reporterName, reporterFallback))
+                       .replace("%reason%", Util.getOrElse(reason, reasonFallback))
+                       .replace("%expiration_date%", Util.getOrElse(expirationDate, expirationDateFallback))
+                       .build();
     }
 
     public Component getPunishmentMessageBanned(@Nullable String reporterName,
