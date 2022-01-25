@@ -57,7 +57,7 @@ public class KickCommand implements RawCommand {
         try {
             profile = plugin.getDatabase().getProfile(player.getUniqueId()).orElse(null);
         } catch (Database.DatabaseException ignored) {
-            invocation.source().sendMessage(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
+            invocation.source().sendMessage(plugin.getConfiguration().getCommandFailedToSearchProfile());
             return;
         }
         if (profile == null) {
@@ -75,7 +75,7 @@ public class KickCommand implements RawCommand {
             player.disconnect(kickedMessage);
             invocation.source().sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
         } catch (Database.DatabaseException ignored) {
-            invocation.source().sendMessage(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
+            invocation.source().sendMessage(plugin.getConfiguration().getCommandFailedToSaveProfile());
         }
     }
 

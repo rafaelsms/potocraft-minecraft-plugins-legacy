@@ -173,8 +173,12 @@ public class Profile extends DatabaseObject {
         return Collections.unmodifiableList(reportEntries);
     }
 
-    public static String getLastPlayerNameField() {
+    public static String getPlayerNameField() {
         return Keys.LAST_PLAYER_NAME;
+    }
+
+    public static String getIdField() {
+        return Keys.PLAYER_ID;
     }
 
     public static Bson filterId(@NotNull UUID playerId) {

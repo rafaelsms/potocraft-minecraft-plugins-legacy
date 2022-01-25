@@ -3,7 +3,6 @@ package com.rafaelsms.potocraft.loginmanager.util;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
-import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Continuation;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
@@ -11,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
@@ -29,20 +27,6 @@ public final class Util {
             return profile.isLoggedIn(player.getRemoteAddress(), autoLoginWindow);
         }
         return profile.isLoggedIn(player.getRemoteAddress(), Duration.ZERO);
-    }
-
-    public static @NotNull Optional<Profile> handleUniqueProfile(@NotNull LoginManagerPlugin plugin,
-                                                                 @NotNull CommandSource source,
-                                                                 @NotNull List<Profile> profiles) {
-        if (profiles.isEmpty()) {
-            source.sendMessage(plugin.getConfiguration().getCommandNoProfileFound());
-            return Optional.empty();
-        } else if (profiles.size() > 1) {
-            source.sendMessage(plugin.getConfiguration().getCommandMultipleProfilesFound(profiles));
-            return Optional.empty();
-        } else {
-            return Optional.of(profiles.get(0));
-        }
     }
 
     public static AsyncEventExecutor getExecutor(@NotNull LoginManagerPlugin plugin,

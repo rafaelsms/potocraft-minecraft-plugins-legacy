@@ -1,14 +1,12 @@
 package com.rafaelsms.potocraft.loginmanager.commands;
 
-import com.rafaelsms.potocraft.database.Database;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
-import com.rafaelsms.potocraft.loginmanager.util.Util;
+import com.rafaelsms.potocraft.loginmanager.util.CommandUtil;
 import com.velocitypowered.api.command.RawCommand;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,17 +31,8 @@ public class HistoryCommand implements RawCommand {
             return;
         }
 
-        String usernameRegex = matcher.group(1);
-
-        List<Profile> offlineProfiles;
-        try {
-            offlineProfiles = plugin.getDatabase().getOfflineProfiles(usernameRegex);
-        } catch (Database.DatabaseException ignored) {
-            invocation.source().sendMessage(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
-            return;
-        }
-
-        Optional<Profile> profileOptional = Util.handleUniqueProfile(plugin, invocation.source(), offlineProfiles);
+        Optional<Profile> profileOptional =
+                CommandUtil.handlePlayerSearch(plugin, invocation.source(), matcher.group(1));
         if (profileOptional.isEmpty()) {
             return;
         }

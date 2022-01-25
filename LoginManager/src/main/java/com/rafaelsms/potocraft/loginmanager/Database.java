@@ -1,17 +1,14 @@
 package com.rafaelsms.potocraft.loginmanager;
 
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
+import com.rafaelsms.potocraft.util.TextUtil;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,7 +21,7 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
     protected Database(@NotNull LoginManagerPlugin plugin) throws DatabaseException {
         super(plugin.getConfiguration().getMongoURI(), plugin.getConfiguration().getMongoDatabase());
         this.plugin = plugin;
-        getPlayerCollection().createIndex(Indexes.text(Profile.getLastPlayerNameField()),
+        getPlayerCollection().createIndex(Indexes.text(Profile.getPlayerNameField()),
                                           new IndexOptions().background(false));
     }
 
@@ -75,22 +72,14 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
         });
     }
 
-    public @NotNull List<Profile> getOfflineProfiles(@NotNull String usernameRegex) throws DatabaseException {
-        return throwingWrapper(() -> {
-            ArrayList<Profile> profiles = new ArrayList<>(SEARCH_LIMIT);
-            FindIterable<Document> documents = getPlayerCollection()
-                    .find(Filters.regex(Profile.getLastPlayerNameField(), usernameRegex, "i"))
-                    .limit(SEARCH_LIMIT);
-            for (Document document : documents) {
-                Profile profile = new Profile(document);
-                // If it is the exact name, return it
-                if (profile.getLastPlayerName().equalsIgnoreCase(usernameRegex)) {
-                    return List.of(profile);
-                }
-                profiles.add(profile);
-            }
-            return profiles;
-        });
+    public @NotNull Optional<Profile> searchOfflineProfile(@NotNull String search) throws DatabaseException {
+        // It'll search all players and match the closest name
+        // Since there are no more than a few thousand, this should not be too heavy
+        return throwingWrapper(() -> TextUtil
+                .closestMatch(getPlayerCollection().find(),
+                              document -> document.getString(Profile.getPlayerNameField()),
+                              search)
+                .map(Profile::new));
     }
 
     public @NotNull Long getAddressUsageCount(InetSocketAddress remoteAddress) throws DatabaseException {

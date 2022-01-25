@@ -1,6 +1,5 @@
 package com.rafaelsms.potocraft.loginmanager;
 
-import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
 import com.velocitypowered.api.proxy.Player;
@@ -89,7 +88,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.COMMAND_LOGGED_IN, "&aLogin com sucesso!");
         defaults.put(Keys.COMMAND_INCORRECT_PIN_FORMAT, "&cSua senha deve ter 6 números.");
         defaults.put(Keys.COMMAND_NO_PROFILE_FOUND, "&6Não encontramos usuários com este nome.");
-        defaults.put(Keys.COMMAND_MULTIPLE_PROFILES_FOUND, "&6Várias respostas: &e%list%");
+        defaults.put(Keys.COMMAND_FAILED_TO_SEARCH_PROFILE, "&cFalha ao procurar perfil.");
+        defaults.put(Keys.COMMAND_FAILED_TO_SAVE_PROFILE, "&cFalha ao salvar perfil.");
         defaults.put(Keys.COMMAND_CHANGE_PIN_HELP, """
                                                    &6Lembre da sua senha anterior, pense numa senha nova de 6 números e digite:
                                                    &e&l/mudarsenha <antiga> <nova> <nova>
@@ -274,15 +274,16 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return TextUtil.toComponent(get(Keys.COMMAND_LOGGED_IN)).build();
     }
 
+    public Component getCommandFailedToSearchProfile() {
+        return TextUtil.toComponent(get(Keys.COMMAND_FAILED_TO_SEARCH_PROFILE)).build();
+    }
+
     public Component getCommandNoProfileFound() {
         return TextUtil.toComponent(get(Keys.COMMAND_NO_PROFILE_FOUND)).build();
     }
 
-    public Component getCommandMultipleProfilesFound(@NotNull List<Profile> profiles) {
-        return TextUtil
-                .toComponent(get(Keys.COMMAND_MULTIPLE_PROFILES_FOUND))
-                .replace("%list%", TextUtil.joinStrings(profiles, ", ", Profile::getLastPlayerName))
-                .build();
+    public Component getCommandFailedToSaveProfile() {
+        return TextUtil.toComponent(get(Keys.COMMAND_FAILED_TO_SAVE_PROFILE)).build();
     }
 
     public Component getCommandChangePinHelp() {
@@ -501,7 +502,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String COMMAND_INCORRECT_PIN_FORMAT = "language.commands.incorrect_pin_format";
         public static final String COMMAND_LOGGED_IN = "language.commands.logged_in";
         public static final String COMMAND_NO_PROFILE_FOUND = "language.commands.no_profile_found";
-        public static final String COMMAND_MULTIPLE_PROFILES_FOUND = "language.commands.multiple_profiles_found";
+        public static final String COMMAND_FAILED_TO_SEARCH_PROFILE = "language.commands.failed_to_search_profile";
+        public static final String COMMAND_FAILED_TO_SAVE_PROFILE = "language.commands.failed_to_save_profile";
         public static final String COMMAND_CHANGE_PIN_HELP = "language.commands.change_pin.help";
         public static final String COMMAND_CHANGE_PIN_INVALID_PINS = "language.commands.change_pin.invalid_pins";
         public static final String COMMAND_CHANGE_PIN_REGISTER_INSTEAD =
