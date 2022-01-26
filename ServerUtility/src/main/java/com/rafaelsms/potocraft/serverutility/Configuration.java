@@ -27,6 +27,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     @Override
     protected @Nullable Map<String, Object> getDefaults() {
         Map<String, Object> defaults = new LinkedHashMap<>();
+        defaults.put(Keys.ALLOW_LAVA_FLOW, false);
         defaults.put(Keys.HIDE_ALL_JOIN_QUIT_MESSAGES, false);
         defaults.put(Keys.WORLDS_SYNCED_REAL_TIME, List.of("world"));
         defaults.put(Keys.GAME_RULES_LIST,
@@ -41,6 +42,18 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.COMMAND_PLAYER_VANISHED, "&6Ficou invisível.");
         defaults.put(Keys.COMMAND_PLAYER_APPEARED, "&6Ficou visível.");
         return defaults;
+    }
+
+    public boolean isRemoveSpecialEnchantmentsFromVillagers() {
+        return get(Keys.SPECIAL_ENCHANTMENTS_REMOVE_FROM_VILLAGERS);
+    }
+
+    public boolean isRemoveSpecialEnchantmentsFromInventory() {
+        return get(Keys.SPECIAL_ENCHANTMENTS_REMOVE_FROM_INVENTORY);
+    }
+
+    public boolean isAllowLavaFlow() {
+        return get(Keys.ALLOW_LAVA_FLOW);
     }
 
     public boolean isHideJoinQuitMessages() {
@@ -107,6 +120,12 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     private static class Keys {
 
+        public static final String SPECIAL_ENCHANTMENTS_REMOVE_FROM_VILLAGERS =
+                "configuration.special_enchantments.remove_from_villagers";
+        public static final String SPECIAL_ENCHANTMENTS_REMOVE_FROM_INVENTORY =
+                "configuration.special_enchantments.remove_from_inventory";
+
+        public static final String ALLOW_LAVA_FLOW = "configuration.allow_lava_flow";
         public static final String HIDE_ALL_JOIN_QUIT_MESSAGES = "configuration.hide_join_quit_messages";
         public static final String WORLDS_SYNCED_REAL_TIME = "configuration.worlds_with_synced_real_time";
         public static final String GAME_RULES_LIST = "configuration.game_rules_applied";
