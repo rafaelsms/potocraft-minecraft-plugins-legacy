@@ -54,15 +54,15 @@ public class UserManager implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     private void loadProfile(AsyncPlayerPreLoginEvent event) {
-        synchronized (lock) {
-            try {
-                Profile profile =
-                        plugin.getDatabase().loadProfile(event.getUniqueId()).orElse(new Profile(event.getUniqueId()));
+        try {
+            Profile profile =
+                    plugin.getDatabase().loadProfile(event.getUniqueId()).orElse(new Profile(event.getUniqueId()));
+            synchronized (lock) {
                 loadedProfiles.put(event.getUniqueId(), profile);
-            } catch (Database.DatabaseException ignored) {
-                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
-                               plugin.getConfiguration().getKickMessageCouldNotLoadProfile());
             }
+        } catch (Database.DatabaseException ignored) {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
+                           plugin.getConfiguration().getKickMessageCouldNotLoadProfile());
         }
     }
 
@@ -100,9 +100,7 @@ public class UserManager implements Listener {
     }
 
     public @NotNull User getUser(@NotNull UUID playerId) {
-        synchronized (lock) {
-            return users.get(playerId);
-        }
+        return users.get(playerId);
     }
 
     private class TickPlayersTask implements Runnable {

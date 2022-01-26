@@ -43,7 +43,6 @@ public class Profile extends DatabaseObject {
     private int blocksPlaced = 0;
     private int blocksBroken = 0;
     private long experiencePickedUp = 0;
-    private double movedDistanceSq = 0;
 
     public Profile(@NotNull UUID playerId) {
         this.playerId = playerId;
@@ -71,7 +70,6 @@ public class Profile extends DatabaseObject {
         this.blocksPlaced = Util.getCatchingOrElse(() -> document.getInteger(Keys.BLOCKS_PLACED), 0);
         this.blocksBroken = Util.getCatchingOrElse(() -> document.getInteger(Keys.BLOCKS_BROKEN), 0);
         this.experiencePickedUp = Util.getCatchingOrElse(() -> document.getLong(Keys.EXPERIENCE_PICKED_UP), 0L);
-        this.movedDistanceSq = Util.getCatchingOrElse(() -> document.getDouble(Keys.MOVED_DISTANCE_SQ), 0.0);
     }
 
     public List<Home> getHomesSortedByDate() {
@@ -150,10 +148,6 @@ public class Profile extends DatabaseObject {
         this.experiencePickedUp += experience;
     }
 
-    public void incrementMovedDistanceSq(double movedDistanceSq) {
-        this.movedDistanceSq += movedDistanceSq;
-    }
-
     public static Bson filterId(@NotNull UUID playerId) {
         return Filters.eq(Keys.PLAYER_ID, Util.convertNonNull(playerId, UUID::toString));
     }
@@ -200,7 +194,6 @@ public class Profile extends DatabaseObject {
         document.put(Keys.BLOCKS_PLACED, blocksPlaced);
         document.put(Keys.BLOCKS_BROKEN, blocksBroken);
         document.put(Keys.EXPERIENCE_PICKED_UP, experiencePickedUp);
-        document.put(Keys.MOVED_DISTANCE_SQ, movedDistanceSq);
         return document;
     }
 
@@ -224,7 +217,6 @@ public class Profile extends DatabaseObject {
         public static final String BLOCKS_PLACED = "placedBlocks";
         public static final String BLOCKS_BROKEN = "brokenBlocks";
         public static final String EXPERIENCE_PICKED_UP = "experiencePickedUp";
-        public static final String MOVED_DISTANCE_SQ = "distanceMovedSquared";
 
         // Private constructor
         private Keys() {
