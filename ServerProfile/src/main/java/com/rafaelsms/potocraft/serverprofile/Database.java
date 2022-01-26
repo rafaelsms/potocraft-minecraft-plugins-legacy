@@ -46,7 +46,6 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
     public void saveProfileCatching(@NotNull Profile profile) {
         catchingWrapper(() -> {
             getPlayerProfiles().replaceOne(profile.filterId(), profile.toDocument(), UPSERT);
-            return null;
         });
     }
 
@@ -67,14 +66,12 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
     public void deleteWarp(@NotNull String warpName) throws DatabaseException {
         throwingWrapper(() -> {
             getWarpsCollection().deleteOne(Warp.filterName(warpName));
-            return null;
         });
     }
 
     public void replaceWarp(@NotNull Warp warp) throws DatabaseException {
         throwingWrapper(() -> {
             getWarpsCollection().replaceOne(warp.filterName(), warp.toDocument(), UPSERT);
-            return null;
         });
     }
 }
