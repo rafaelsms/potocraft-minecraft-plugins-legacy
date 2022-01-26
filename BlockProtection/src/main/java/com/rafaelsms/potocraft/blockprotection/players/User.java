@@ -3,11 +3,11 @@ package com.rafaelsms.potocraft.blockprotection.players;
 import com.rafaelsms.potocraft.blockprotection.BlockProtectionPlugin;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,14 +15,16 @@ public class User {
 
     private final @NotNull BlockProtectionPlugin plugin;
     private final @NotNull Player player;
+    private final @NotNull Profile profile;
 
     private final @NotNull BlockChangeCache blockChangeCache;
-    private @Nullable Selection selection = null;
+    private @Nullable PlayerSelection selection = null;
 
-    public User(@NotNull BlockProtectionPlugin plugin, @NotNull Player player) {
+    public User(@NotNull BlockProtectionPlugin plugin, @NotNull Player player, @NotNull Profile profile) {
         this.plugin = plugin;
         this.player = player;
         this.blockChangeCache = new BlockChangeCache(plugin, this);
+        this.profile = profile;
     }
 
     public @NotNull Player getPlayer() {
@@ -33,15 +35,65 @@ public class User {
         return player.getUniqueId();
     }
 
-    public void addSelection(@NotNull Location blockLocation) {
-        if (this.selection == null) {
-            this.selection = new Selection(blockLocation);
-        } else {
-            this.selection.select(blockLocation);
+    public @NotNull Profile getProfile() {
+        return profile;
+    }
+
+    public double getVolumePerBlock() {
+        double volume = plugin.getConfiguration().getSelectionVolumeDefaultReward();
+        // Check if player has any special permission
+        for (Map.Entry<String, Double> entry : plugin.getConfiguration().getSelectionVolumeGroupReward().entrySet()) {
+            if (player.hasPermission(entry.getKey())) {
+                volume = Math.max(entry.getValue(), volume);
+            }
         }
+        return volume;
+    }
+
+    private int getMaxVolumeAllowed() {
+        int volume = plugin.getConfiguration().getSelectionVolumeDefaultMaximum();
+        // Check if player has any special permission
+        for (Map.Entry<String, Integer> entry : plugin.getConfiguration().getSelectionVolumeGroupMaximum().entrySet()) {
+            if (player.hasPermission(entry.getKey())) {
+                volume = Math.max(entry.getValue(), volume);
+            }
+        }
+        return volume;
+    }
+
+    public void incrementVolume() {
+        this.profile.incrementVolume(getVolumePerBlock(), getMaxVolumeAllowed());
+    }
+
+    /**
+     * Selects a block to start protecting. It'll increase current selection if it is in the same world and if there is
+     * enough volume available on the profile.
+     *
+     * @param blockLocation block selected
+     * @return true if selection was successfully increased, false if it was volume-limited.
+     * @see Profile#getVolumeAvailable() for current volume available
+     */
+    public boolean addSelection(@NotNull Location blockLocation) {
+        boolean allowed = true;
+        // Create or increase selection
+        if (this.selection == null || !this.selection.getWorldId().equals(blockLocation.getWorld().getUID())) {
+            // Create a new one in case world changed or wasn't selecting
+            PlayerSelection selection = new PlayerSelection(plugin, blockLocation);
+            // Ignore if volume exceed maximum volume
+            if (selection.getVolume() > profile.getVolumeAvailable()) {
+                this.blockChangeCache.clearBlocks();
+                this.selection = null;
+                return false;
+            }
+            this.selection = selection;
+        } else {
+            allowed = this.selection.limitedSelect(blockLocation, getMaxVolumeAllowed());
+        }
+        // Show current selection
         this.blockChangeCache.showRectangle(selection.getCorner1(),
                                             selection.getCorner2(),
                                             Material.GLOWSTONE.createBlockData());
+        return allowed;
     }
 
     public void clearSelection() {
@@ -49,57 +101,7 @@ public class User {
         this.blockChangeCache.clearBlocks();
     }
 
-    public Optional<Selection> getSelection() {
+    public Optional<PlayerSelection> getSelection() {
         return Optional.ofNullable(selection);
-    }
-
-    private class Selection {
-
-        private @NotNull World world;
-        private @NotNull Location corner1;
-        private @NotNull Location corner2;
-
-        private Selection(@NotNull Location location) {
-            this.world = location.getWorld();
-            this.corner1 = getSelectionMin(location);
-            this.corner2 = getSelectionMax(location);
-        }
-
-        public @NotNull Location getCorner1() {
-            return corner1;
-        }
-
-        public @NotNull Location getCorner2() {
-            return corner2;
-        }
-
-        private Location getSelectionMin(@NotNull Location location) {
-            int xzOffset = plugin.getConfiguration().getSelectionXZOffset();
-            int minYOffset = plugin.getConfiguration().getSelectionMinYOffset();
-            return location.clone().subtract(xzOffset, minYOffset, xzOffset);
-        }
-
-        private Location getSelectionMax(@NotNull Location location) {
-            int xzOffset = plugin.getConfiguration().getSelectionXZOffset();
-            int maxYOffset = plugin.getConfiguration().getSelectionMaxYOffset();
-            return location.clone().add(xzOffset, maxYOffset, xzOffset);
-        }
-
-        private void select(@NotNull Location location) {
-            if (!location.getWorld().getUID().equals(world.getUID())) {
-                throw new IllegalStateException("Different worlds on selection!");
-            }
-            Location selection1 = getSelectionMin(location);
-            Location selection2 = getSelectionMax(location);
-            this.corner1 = new Location(world,
-                                        Math.min(selection1.getBlockX(), corner1.getBlockX()),
-                                        Math.min(selection1.getBlockY(), corner1.getBlockY()),
-                                        Math.min(selection1.getBlockZ(), corner1.getBlockZ()));
-            this.corner2 = new Location(world,
-                                        Math.max(selection2.getBlockX(), corner2.getBlockX()),
-                                        Math.max(selection2.getBlockY(), corner2.getBlockY()),
-                                        Math.max(selection2.getBlockZ(), corner2.getBlockZ()));
-        }
-
     }
 }

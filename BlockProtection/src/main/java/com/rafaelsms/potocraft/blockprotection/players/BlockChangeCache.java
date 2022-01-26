@@ -44,8 +44,6 @@ public class BlockChangeCache {
         int startZ = Math.min(corner1.getBlockZ(), corner2.getBlockZ());
         int endZ = Math.max(corner1.getBlockZ(), corner2.getBlockZ());
 
-        player.sendMessage("Volume: %d".formatted((endX - startX) * (endY - startY) * (endZ - startZ)));
-
         // For every X, we draw 4 lines (at each yz corner)
         for (int dx = 0; dx <= (endX - startX); dx++) {
             insertBlock(new Location(world, startX + dx, startY, startZ), blockData);
@@ -88,12 +86,12 @@ public class BlockChangeCache {
         return changeMap;
     }
 
-    private void insertBlock(@NotNull Location position, @NotNull BlockData sentData) {
-        blockChanges.add(new BlockChange(position, position.getBlock().getBlockData().clone(), sentData));
-    }
-
     public synchronized void clearBlocks() {
         user.getPlayer().sendMultiBlockChange(getBlockChangeMap());
+    }
+
+    private void insertBlock(@NotNull Location position, @NotNull BlockData sentData) {
+        blockChanges.add(new BlockChange(position, position.getBlock().getBlockData().clone(), sentData));
     }
 
     private record BlockChange(@NotNull Location location, @NotNull BlockData original, @NotNull BlockData sent) {

@@ -25,7 +25,10 @@ public class ProtectionListener implements Listener {
             return;
         }
         Location clickedLocation = clickedBlock.getLocation();
-        plugin.getUserManager().getUser(event.getPlayer()).addSelection(clickedLocation);
+        event.getPlayer()
+             .sendMessage(String.valueOf(plugin.getUserManager()
+                                               .getUser(event.getPlayer())
+                                               .addSelection(clickedLocation)));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
