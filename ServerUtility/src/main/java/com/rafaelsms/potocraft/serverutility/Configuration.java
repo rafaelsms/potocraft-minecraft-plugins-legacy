@@ -29,14 +29,19 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         Map<String, Object> defaults = new LinkedHashMap<>();
         defaults.put(Keys.NERF_MENDING, true);
         defaults.put(Keys.HIDE_ALL_JOIN_QUIT_MESSAGES, false);
-        defaults.put(Keys.ALLOW_LAVA_FLOW, false);
-        defaults.put(Keys.ALLOW_LAVA_FLOW_WORLDS, List.of("world_nether"));
         defaults.put(Keys.WORLDS_SYNCED_REAL_TIME, List.of("world"));
         defaults.put(Keys.GAME_RULES_LIST,
                      Map.of("default",
                             Map.of(GameRule.PLAYERS_SLEEPING_PERCENTAGE.getName(), 35),
                             "world",
                             Map.of(GameRule.MAX_ENTITY_CRAMMING.getName(), 4, GameRule.DO_FIRE_TICK.getName(), false)));
+
+        defaults.put(Keys.ALLOW_LAVA_FLOW, false);
+        defaults.put(Keys.ALLOW_LAVA_FLOW_WORLDS, List.of("world_nether"));
+
+        defaults.put(Keys.EXPERIENCE_MODIFIER_ENABLED, true);
+        defaults.put(Keys.EXPERIENCE_MODIFIER_DEFAULT, 0.8);
+        defaults.put(Keys.EXPERIENCE_MODIFIER_GROUPS, Map.of("potocraft.exp_modifier.vip", 1.4));
 
         defaults.put(Keys.COMMAND_PLAYER_ONLY, "&cComando disponível apenas para jogadores");
         defaults.put(Keys.COMMAND_PLAYER_TIME_HELP, "&6Uso: &e/tempo (dia/meiodia/noite/meianoite) [fixo]");
@@ -48,38 +53,6 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public boolean isMendingNerfed() {
         return get(Keys.NERF_MENDING);
-    }
-
-    public boolean isAllowLavaFlow() {
-        return get(Keys.ALLOW_LAVA_FLOW);
-    }
-
-    public List<World> getLavaFlowWorlds() {
-        List<World> worlds = new ArrayList<>();
-        List<String> worldNames = get(Keys.ALLOW_LAVA_FLOW_WORLDS);
-        for (String worldName : worldNames) {
-            World world = plugin.getServer().getWorld(worldName);
-            if (world != null) {
-                worlds.add(world);
-            }
-        }
-        return worlds;
-    }
-
-    public boolean isHideJoinQuitMessages() {
-        return get(Keys.HIDE_ALL_JOIN_QUIT_MESSAGES);
-    }
-
-    public List<World> getSyncedTimeWorlds() {
-        List<World> worlds = new ArrayList<>();
-        List<String> worldNames = get(Keys.WORLDS_SYNCED_REAL_TIME);
-        for (String worldName : worldNames) {
-            World world = plugin.getServer().getWorld(worldName);
-            if (world != null) {
-                worlds.add(world);
-            }
-        }
-        return worlds;
     }
 
     @SuppressWarnings("rawtypes")
@@ -108,6 +81,50 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return gameRulesMap;
     }
 
+    public boolean isAllowLavaFlow() {
+        return get(Keys.ALLOW_LAVA_FLOW);
+    }
+
+    public List<World> getLavaFlowWorlds() {
+        List<World> worlds = new ArrayList<>();
+        List<String> worldNames = get(Keys.ALLOW_LAVA_FLOW_WORLDS);
+        for (String worldName : worldNames) {
+            World world = plugin.getServer().getWorld(worldName);
+            if (world != null) {
+                worlds.add(world);
+            }
+        }
+        return worlds;
+    }
+
+    public boolean isExperienceModifierEnabled() {
+        return get(Keys.EXPERIENCE_MODIFIER_ENABLED);
+    }
+
+    public double getExperienceModifierDefault() {
+        return get(Keys.EXPERIENCE_MODIFIER_DEFAULT);
+    }
+
+    public Map<String, Double> getExperienceModifierGroups() {
+        return get(Keys.EXPERIENCE_MODIFIER_GROUPS);
+    }
+
+    public boolean isHideJoinQuitMessages() {
+        return get(Keys.HIDE_ALL_JOIN_QUIT_MESSAGES);
+    }
+
+    public List<World> getSyncedTimeWorlds() {
+        List<World> worlds = new ArrayList<>();
+        List<String> worldNames = get(Keys.WORLDS_SYNCED_REAL_TIME);
+        for (String worldName : worldNames) {
+            World world = plugin.getServer().getWorld(worldName);
+            if (world != null) {
+                worlds.add(world);
+            }
+        }
+        return worlds;
+    }
+
     public Component getPlayerOnly() {
         return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_ONLY)).build();
     }
@@ -131,11 +148,16 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     private static class Keys {
 
         public static final String NERF_MENDING = "configuration.nerf_mending_to_one_repair_point_only";
-        public static final String ALLOW_LAVA_FLOW = "configuration.lava_flow.allow_lava_flow";
-        public static final String ALLOW_LAVA_FLOW_WORLDS = "configuration.lava_flow.allow_lava_flow_worlds";
         public static final String HIDE_ALL_JOIN_QUIT_MESSAGES = "configuration.hide_join_quit_messages";
         public static final String WORLDS_SYNCED_REAL_TIME = "configuration.worlds_with_synced_real_time";
         public static final String GAME_RULES_LIST = "configuration.game_rules_applied";
+
+        public static final String ALLOW_LAVA_FLOW = "configuration.lava_flow.allow_lava_flow";
+        public static final String ALLOW_LAVA_FLOW_WORLDS = "configuration.lava_flow.allow_lava_flow_worlds";
+
+        public static final String EXPERIENCE_MODIFIER_ENABLED = "configuration.experience_modifier.enabled";
+        public static final String EXPERIENCE_MODIFIER_DEFAULT = "configuration.experience_modifier.default_modifier";
+        public static final String EXPERIENCE_MODIFIER_GROUPS = "configuration.experience_modifier.groups";
 
         public static final String COMMAND_PLAYER_ONLY = "language.commands.player_only";
         public static final String COMMAND_PLAYER_TIME_HELP = "language.commands.player_time.help";

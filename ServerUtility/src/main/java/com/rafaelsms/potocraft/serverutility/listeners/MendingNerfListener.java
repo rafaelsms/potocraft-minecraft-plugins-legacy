@@ -20,6 +20,10 @@ public class MendingNerfListener implements Listener {
         if (!plugin.getConfiguration().isMendingNerfed()) {
             return;
         }
-        event.setRepairAmount(1);
+        // The default formula: half is going to the repair (which repairs double the amount) and half is going to the player
+        // What we will do: half will be consumed to repair 1 point only and half will go to the player
+        int halfExperience = event.getExperienceOrb().getExperience() / 2;
+        event.getExperienceOrb().setExperience(halfExperience);
+        event.setRepairAmount(Math.min(event.getRepairAmount(), 1));
     }
 }

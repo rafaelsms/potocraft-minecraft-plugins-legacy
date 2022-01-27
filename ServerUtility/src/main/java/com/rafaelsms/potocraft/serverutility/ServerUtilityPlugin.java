@@ -6,6 +6,7 @@ import com.rafaelsms.potocraft.serverutility.commands.PlayerTimeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerWeatherCommand;
 import com.rafaelsms.potocraft.serverutility.commands.VanishCommand;
 import com.rafaelsms.potocraft.serverutility.commands.WorkbenchCommand;
+import com.rafaelsms.potocraft.serverutility.listeners.ExperienceModifier;
 import com.rafaelsms.potocraft.serverutility.listeners.HideMessagesListener;
 import com.rafaelsms.potocraft.serverutility.listeners.LavaListener;
 import com.rafaelsms.potocraft.serverutility.listeners.MendingNerfListener;
@@ -39,6 +40,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new HideMessagesListener(this), this);
         getServer().getPluginManager().registerEvents(new LavaListener(this), this);
         getServer().getPluginManager().registerEvents(new MendingNerfListener(this), this);
+        getServer().getPluginManager().registerEvents(new ExperienceModifier(this), this);
 
         // Run world sync task
         getServer().getScheduler().runTaskTimer(this, new SyncWorldTimeTask(this), 10L, 10L);
