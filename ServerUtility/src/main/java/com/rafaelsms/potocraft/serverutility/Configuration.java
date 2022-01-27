@@ -27,6 +27,9 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     @Override
     protected @Nullable Map<String, Object> getDefaults() {
         Map<String, Object> defaults = new LinkedHashMap<>();
+        defaults.put(Keys.SPECIAL_ENCHANTMENTS_REMOVE_FROM_INVENTORY, false);
+        defaults.put(Keys.SPECIAL_ENCHANTMENTS_REMOVE_FROM_VILLAGERS, false);
+        defaults.put(Keys.SINGLE_TOTEM_ONLY, false);
         defaults.put(Keys.ALLOW_LAVA_FLOW, false);
         defaults.put(Keys.HIDE_ALL_JOIN_QUIT_MESSAGES, false);
         defaults.put(Keys.WORLDS_SYNCED_REAL_TIME, List.of("world"));
@@ -50,6 +53,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public boolean isRemoveSpecialEnchantmentsFromInventory() {
         return get(Keys.SPECIAL_ENCHANTMENTS_REMOVE_FROM_INVENTORY);
+    }
+
+    public boolean isSingleTotemOnly() {
+        return get(Keys.SINGLE_TOTEM_ONLY);
     }
 
     public boolean isAllowLavaFlow() {
@@ -125,6 +132,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String SPECIAL_ENCHANTMENTS_REMOVE_FROM_INVENTORY =
                 "configuration.special_enchantments.remove_from_inventory";
 
+        public static final String SINGLE_TOTEM_ONLY = "configuration.single_totem_only";
         public static final String ALLOW_LAVA_FLOW = "configuration.allow_lava_flow";
         public static final String HIDE_ALL_JOIN_QUIT_MESSAGES = "configuration.hide_join_quit_messages";
         public static final String WORLDS_SYNCED_REAL_TIME = "configuration.worlds_with_synced_real_time";

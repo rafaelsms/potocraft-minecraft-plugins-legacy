@@ -9,6 +9,7 @@ import com.rafaelsms.potocraft.serverutility.commands.WorkbenchCommand;
 import com.rafaelsms.potocraft.serverutility.listeners.HideMessagesListener;
 import com.rafaelsms.potocraft.serverutility.listeners.LavaListener;
 import com.rafaelsms.potocraft.serverutility.listeners.SpecialEnchantmentsListener;
+import com.rafaelsms.potocraft.serverutility.listeners.TotemListener;
 import com.rafaelsms.potocraft.serverutility.listeners.VanishManager;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldGameRuleApplier;
 import com.rafaelsms.potocraft.serverutility.tasks.SyncWorldTimeTask;
@@ -39,6 +40,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new HideMessagesListener(this), this);
         getServer().getPluginManager().registerEvents(new LavaListener(this), this);
         getServer().getPluginManager().registerEvents(new SpecialEnchantmentsListener(this), this);
+        getServer().getPluginManager().registerEvents(new TotemListener(this), this);
 
         // Run world sync task
         getServer().getScheduler().runTaskTimer(this, new SyncWorldTimeTask(this), 10L, 10L);
