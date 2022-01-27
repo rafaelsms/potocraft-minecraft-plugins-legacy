@@ -28,8 +28,9 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     protected @Nullable Map<String, Object> getDefaults() {
         Map<String, Object> defaults = new LinkedHashMap<>();
         defaults.put(Keys.NERF_MENDING, true);
-        defaults.put(Keys.ALLOW_LAVA_FLOW, false);
         defaults.put(Keys.HIDE_ALL_JOIN_QUIT_MESSAGES, false);
+        defaults.put(Keys.ALLOW_LAVA_FLOW, false);
+        defaults.put(Keys.ALLOW_LAVA_FLOW_WORLDS, List.of("world_nether"));
         defaults.put(Keys.WORLDS_SYNCED_REAL_TIME, List.of("world"));
         defaults.put(Keys.GAME_RULES_LIST,
                      Map.of("default",
@@ -51,6 +52,18 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public boolean isAllowLavaFlow() {
         return get(Keys.ALLOW_LAVA_FLOW);
+    }
+
+    public List<World> getLavaFlowWorlds() {
+        List<World> worlds = new ArrayList<>();
+        List<String> worldNames = get(Keys.ALLOW_LAVA_FLOW_WORLDS);
+        for (String worldName : worldNames) {
+            World world = plugin.getServer().getWorld(worldName);
+            if (world != null) {
+                worlds.add(world);
+            }
+        }
+        return worlds;
     }
 
     public boolean isHideJoinQuitMessages() {
@@ -118,7 +131,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     private static class Keys {
 
         public static final String NERF_MENDING = "configuration.nerf_mending_to_one_repair_point_only";
-        public static final String ALLOW_LAVA_FLOW = "configuration.allow_lava_flow";
+        public static final String ALLOW_LAVA_FLOW = "configuration.lava_flow.allow_lava_flow";
+        public static final String ALLOW_LAVA_FLOW_WORLDS = "configuration.lava_flow.allow_lava_flow_worlds";
         public static final String HIDE_ALL_JOIN_QUIT_MESSAGES = "configuration.hide_join_quit_messages";
         public static final String WORLDS_SYNCED_REAL_TIME = "configuration.worlds_with_synced_real_time";
         public static final String GAME_RULES_LIST = "configuration.game_rules_applied";

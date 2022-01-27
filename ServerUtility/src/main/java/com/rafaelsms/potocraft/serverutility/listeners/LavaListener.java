@@ -24,6 +24,9 @@ public class LavaListener implements Listener {
         if (plugin.getConfiguration().isAllowLavaFlow()) {
             return;
         }
+        if (plugin.getConfiguration().getLavaFlowWorlds().contains(event.getBlock().getWorld())) {
+            return;
+        }
         event.setCancelled(true);
     }
 }
