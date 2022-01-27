@@ -20,9 +20,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * We will:
- * - prevent offline players which are not logged in from joining a server different from the login server;
- * - redirect online/logged in players to their last server.
+ * We will: - prevent offline players which are not logged in from joining a server different from the login server; -
+ * redirect online/logged in players to their last server.
  * <p>
  * In these events, setting the server to null doesn't disconnect the player, instead keep they in a limbo.
  */
@@ -74,12 +73,11 @@ public class RedirectPlayerListener {
 
     @Subscribe
     private void printPlayerType(PostLoginEvent event) {
-        plugin
-                .getLogger()
-                .info("Player {} (uuid = {}) connection type is {}",
-                      event.getPlayer().getUsername(),
-                      event.getPlayer().getUniqueId(),
-                      PlayerType.get(event.getPlayer()));
+        plugin.getLogger()
+              .info("Player {} (uuid = {}) connection type is {}",
+                    event.getPlayer().getUsername(),
+                    event.getPlayer().getUniqueId(),
+                    PlayerType.get(event.getPlayer()));
     }
 
     @Subscribe

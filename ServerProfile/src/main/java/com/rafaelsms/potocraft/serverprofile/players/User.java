@@ -146,13 +146,11 @@ public class User {
         TeleportResult playerCanTeleport = isPlayerCanTeleport();
         if (warnPlayer) {
             switch (playerCanTeleport) {
-                case IN_COOLDOWN -> player.sendMessage(plugin
-                                                               .getConfiguration()
-                                                               .getTeleportInCooldown(getTeleportCooldownSeconds()));
+                case IN_COOLDOWN -> player.sendMessage(plugin.getConfiguration()
+                                                             .getTeleportInCooldown(getTeleportCooldownSeconds()));
                 case PLAYER_UNAVAILABLE -> player.sendMessage(plugin.getConfiguration().getTeleportFailed());
-                case ALREADY_TELEPORTING -> player.sendMessage(plugin
-                                                                       .getConfiguration()
-                                                                       .getTeleportPlayerTeleporting());
+                case ALREADY_TELEPORTING -> player.sendMessage(plugin.getConfiguration()
+                                                                     .getTeleportAlreadyTeleporting());
                 case IN_COMBAT -> player.sendMessage(plugin.getConfiguration().getTeleportPlayerInCombat());
             }
         }
@@ -260,11 +258,7 @@ public class User {
 
     public enum TeleportResult {
 
-        PLAYER_UNAVAILABLE,
-        IN_COMBAT,
-        ALREADY_TELEPORTING,
-        IN_COOLDOWN,
-        ALLOWED;
+        PLAYER_UNAVAILABLE, IN_COMBAT, ALREADY_TELEPORTING, IN_COOLDOWN, ALLOWED;
 
         public boolean isAllowed() {
             return this == ALLOWED;
@@ -276,8 +270,6 @@ public class User {
     }
 
     public enum TeleportRequestResponse {
-        NOT_UPDATED,
-        UPDATED,
-        NEW_REQUEST
+        NOT_UPDATED, UPDATED, NEW_REQUEST
     }
 }

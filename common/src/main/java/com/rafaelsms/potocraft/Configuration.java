@@ -34,8 +34,8 @@ public abstract class Configuration {
     protected abstract @Nullable Map<String, Object> getDefaults();
 
     /**
-     * Get the configuration value for specified key. It may return null if the key is not initialized inside the
-     * {@link #getDefaults()} method or if the configuration file was generated on a older file version.
+     * Get the configuration value for specified key. It may return null if the key is not initialized inside the {@link
+     * #getDefaults()} method or if the configuration file was generated on a older file version.
      *
      * @param key configuration key
      * @param <T> expected type of the configuration

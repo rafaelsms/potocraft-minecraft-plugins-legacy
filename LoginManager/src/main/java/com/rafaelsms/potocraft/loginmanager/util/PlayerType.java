@@ -6,15 +6,12 @@ import org.jetbrains.annotations.NotNull;
 
 public enum PlayerType {
 
-    ONLINE_PLAYER,
-    FLOODGATE_PLAYER,
-    OFFLINE_PLAYER,
+    ONLINE_PLAYER, FLOODGATE_PLAYER, OFFLINE_PLAYER,
     ;
 
     /**
-     * Checks if a player is using offline, online mode or connected through Floodgate (which may show as offline).
-     * If called on {@link com.velocitypowered.api.event.connection.DisconnectEvent}, it will not be considered
-     * Floodgate.
+     * Checks if a player is using offline, online mode or connected through Floodgate (which may show as offline). If
+     * called on {@link com.velocitypowered.api.event.connection.DisconnectEvent}, it will not be considered Floodgate.
      *
      * @param player player instance
      * @return enum that represents the player's connection type

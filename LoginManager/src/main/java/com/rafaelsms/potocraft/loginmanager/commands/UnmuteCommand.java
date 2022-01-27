@@ -55,13 +55,12 @@ public class UnmuteCommand implements RawCommand {
                 invocation.source().sendMessage(plugin.getConfiguration().getCommandFailedToSaveProfile());
                 return;
             }
-            invocation
-                    .source()
-                    .sendMessage(plugin.getConfiguration().getCommandUnpunished(profile.getLastPlayerName()));
+            invocation.source()
+                      .sendMessage(plugin.getConfiguration().getCommandUnpunished(profile.getLastPlayerName()));
         } else {
-            invocation
-                    .source()
-                    .sendMessage(plugin.getConfiguration().getCommandPlayerIsNotPunished(profile.getLastPlayerName()));
+            invocation.source()
+                      .sendMessage(plugin.getConfiguration()
+                                         .getCommandPlayerIsNotPunished(profile.getLastPlayerName()));
         }
     }
 

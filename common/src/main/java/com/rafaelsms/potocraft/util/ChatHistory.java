@@ -72,9 +72,7 @@ public abstract class ChatHistory {
 
     public enum ChatResult {
 
-        SIMILAR_MESSAGES,
-        TOO_FREQUENT,
-        ALLOWED,
+        SIMILAR_MESSAGES, TOO_FREQUENT, ALLOWED,
         ;
 
         public boolean isAllowed() {

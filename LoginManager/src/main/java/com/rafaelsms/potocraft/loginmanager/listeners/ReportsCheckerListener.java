@@ -23,9 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * We will:
- * - prevent chat if player trying to chat is muted;
- * - prevent join if player is banned.
+ * We will: - prevent chat if player trying to chat is muted; - prevent join if player is banned.
  */
 public class ReportsCheckerListener {
 
@@ -68,9 +66,10 @@ public class ReportsCheckerListener {
             for (ReportEntry entry : profile.getReportEntries()) {
                 if (entry.isPreventingJoin()) {
                     String reporterName = Util.convert(entry.getReporterId(), this::getReporterName);
-                    Component reason = plugin
-                            .getConfiguration()
-                            .getPunishmentMessageBanned(reporterName, entry.getExpirationDate(), entry.getReason());
+                    Component reason = plugin.getConfiguration()
+                                             .getPunishmentMessageBanned(reporterName,
+                                                                         entry.getExpirationDate(),
+                                                                         entry.getReason());
                     event.setResult(ResultedEvent.ComponentResult.denied(reason));
                     continuation.resume();
                     return;
@@ -114,9 +113,10 @@ public class ReportsCheckerListener {
             for (ReportEntry entry : profile.getReportEntries()) {
                 if (entry.isPreventingChat()) {
                     String reporterName = Util.convert(entry.getReporterId(), this::getReporterName);
-                    Component reason = plugin
-                            .getConfiguration()
-                            .getPunishmentMessageMuted(reporterName, entry.getExpirationDate(), entry.getReason());
+                    Component reason = plugin.getConfiguration()
+                                             .getPunishmentMessageMuted(reporterName,
+                                                                        entry.getExpirationDate(),
+                                                                        entry.getReason());
                     player.sendMessage(reason);
                     event.setResult(PlayerChatEvent.ChatResult.denied());
                     continuation.resume();
@@ -144,9 +144,8 @@ public class ReportsCheckerListener {
             // Attempt to fit into the regex
             Matcher matcher = commandPattern.matcher(event.getCommand());
             if (!matcher.matches()) {
-                plugin
-                        .getLogger()
-                        .warn("Didn't expected to not find a command match: \"%s\"".formatted(event.getCommand()));
+                plugin.getLogger()
+                      .warn("Didn't expected to not find a command match: \"%s\"".formatted(event.getCommand()));
                 continuation.resume();
                 return;
             }

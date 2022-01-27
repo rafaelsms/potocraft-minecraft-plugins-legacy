@@ -33,8 +33,9 @@ public class UniversalChatPlugin {
     private final @NotNull UserManager userManager;
 
     @Inject
-    public UniversalChatPlugin(@NotNull ProxyServer server, @NotNull Logger logger, @DataDirectory Path dataDirectory)
-            throws IOException {
+    public UniversalChatPlugin(@NotNull ProxyServer server,
+                               @NotNull Logger logger,
+                               @DataDirectory Path dataDirectory) throws IOException {
         this.server = server;
         this.logger = logger;
         this.configuration = new Configuration(dataDirectory);

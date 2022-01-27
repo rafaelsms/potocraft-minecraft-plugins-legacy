@@ -69,9 +69,9 @@ public class KickCommand implements RawCommand {
         try {
             profile.addReportEntry(ReportEntry.Type.KICK, getId(invocation.source()), null, reason.orElse(null));
             plugin.getDatabase().saveProfile(profile);
-            Component kickedMessage = plugin
-                    .getConfiguration()
-                    .getPunishmentMessageKicked(getName(invocation.source()), reason.orElse(null));
+            Component kickedMessage = plugin.getConfiguration()
+                                            .getPunishmentMessageKicked(getName(invocation.source()),
+                                                                        reason.orElse(null));
             player.disconnect(kickedMessage);
             invocation.source().sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
         } catch (Database.DatabaseException ignored) {

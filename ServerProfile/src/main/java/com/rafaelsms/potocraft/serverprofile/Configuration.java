@@ -20,12 +20,9 @@ import java.util.UUID;
 
 public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
-    private final @NotNull ServerProfilePlugin plugin;
-
     public Configuration(@NotNull ServerProfilePlugin plugin) throws IOException {
         super(plugin.getDataFolder(), "config.yml");
         loadConfiguration();
-        this.plugin = plugin;
     }
 
     @Override
@@ -265,7 +262,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return TextUtil.toComponent(get(Keys.TELEPORT_ENTERED_COMBAT)).build();
     }
 
-    public Component getTeleportPlayerTeleporting() {
+    public Component getTeleportParticipantTeleporting() {
         return TextUtil.toComponent(get(Keys.TELEPORT_PARTICIPANT_TELEPORTING)).build();
     }
 

@@ -66,16 +66,13 @@ public class TeleportHereCommand implements CommandExecutor {
         switch (requestResponse) {
             case NEW_REQUEST -> {
                 sender.sendMessage(plugin.getConfiguration().getTeleportRequestSent(destinationPlayer.getName()));
-                destinationPlayer.sendMessage(plugin
-                                                      .getConfiguration()
-                                                      .getTeleportRequestReceived(teleportingPlayer.getName()));
+                destinationPlayer.sendMessage(plugin.getConfiguration()
+                                                    .getTeleportHereRequestReceived(teleportingPlayer.getName()));
             }
-            case NOT_UPDATED -> sender.sendMessage(plugin
-                                                           .getConfiguration()
-                                                           .getTeleportRequestNotUpdated(destinationPlayer.getName()));
-            case UPDATED -> sender.sendMessage(plugin
-                                                       .getConfiguration()
-                                                       .getTeleportRequestSent(destinationPlayer.getName()));
+            case NOT_UPDATED -> sender.sendMessage(plugin.getConfiguration()
+                                                         .getTeleportRequestNotUpdated(destinationPlayer.getName()));
+            case UPDATED -> sender.sendMessage(plugin.getConfiguration()
+                                                     .getTeleportRequestSent(destinationPlayer.getName()));
         }
         return true;
     }

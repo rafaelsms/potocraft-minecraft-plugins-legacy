@@ -408,8 +408,14 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public Component getCommandSeen(@NotNull Profile profile) {
         Duration playTimeDuration = Duration.ofMillis(profile.getPlayTime().orElse(0L));
-        String playTime = playTimeDuration.toDaysPart() + "d" + playTimeDuration.toHoursPart() + "h" +
-                          playTimeDuration.toMinutesPart() + "m" + playTimeDuration.toSecondsPart() + "s";
+        String playTime = playTimeDuration.toDaysPart() +
+                          "d" +
+                          playTimeDuration.toHoursPart() +
+                          "h" +
+                          playTimeDuration.toMinutesPart() +
+                          "m" +
+                          playTimeDuration.toSecondsPart() +
+                          "s";
         String lastJoinDate =
                 Util.convertFallback(profile.getLastJoinDate().orElse(null), getDateTimeFormatter()::format, "?");
         String lastQuitDate =

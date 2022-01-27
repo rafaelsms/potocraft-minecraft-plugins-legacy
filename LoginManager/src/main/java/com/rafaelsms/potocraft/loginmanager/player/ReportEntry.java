@@ -103,9 +103,7 @@ public class ReportEntry extends DatabaseObject {
     }
 
     public enum Type {
-        KICK(false, false),
-        MUTE(false, true),
-        BAN(true, true),
+        KICK(false, false), MUTE(false, true), BAN(true, true),
         ;
 
         private final boolean preventsJoin;

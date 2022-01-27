@@ -80,7 +80,7 @@ public class TeleportTask implements Runnable {
             return;
         }
         if (participantUser != null && participantUser.isTeleporting()) {
-            cancelTask(plugin.getConfiguration().getTeleportPlayerTeleporting());
+            cancelTask(plugin.getConfiguration().getTeleportParticipantTeleporting());
             return;
         }
 

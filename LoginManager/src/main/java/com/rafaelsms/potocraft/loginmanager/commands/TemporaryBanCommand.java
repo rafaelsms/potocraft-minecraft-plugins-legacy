@@ -75,9 +75,10 @@ public class TemporaryBanCommand implements RawCommand {
                                    reason.orElse(null));
             plugin.getDatabase().saveProfile(profile);
             optionalPlayer.ifPresent(player -> {
-                Component messageBanned = plugin
-                        .getConfiguration()
-                        .getPunishmentMessageBanned(getName(invocation.source()), expirationDate, reason.orElse(null));
+                Component messageBanned = plugin.getConfiguration()
+                                                .getPunishmentMessageBanned(getName(invocation.source()),
+                                                                            expirationDate,
+                                                                            reason.orElse(null));
                 player.disconnect(messageBanned);
             });
             invocation.source().sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));

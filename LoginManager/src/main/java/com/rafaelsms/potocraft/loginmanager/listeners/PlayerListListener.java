@@ -59,9 +59,9 @@ public class PlayerListListener {
             // Update everyone's display name and latency
             Optional<Player> optionalPlayer = plugin.getServer().getPlayer(listEntry.getProfile().getId());
             if (optionalPlayer.isPresent()) {
-                Component displayName = plugin
-                        .getConfiguration()
-                        .getTabDisplayName(optionalPlayer.get(), getServerName(optionalPlayer.get()));
+                Component displayName = plugin.getConfiguration()
+                                              .getTabDisplayName(optionalPlayer.get(),
+                                                                 getServerName(optionalPlayer.get()));
                 listEntry.setDisplayName(displayName);
                 listEntry.setLatency((int) Math.min(player.getPing(), Integer.MAX_VALUE));
             }
@@ -89,13 +89,12 @@ public class PlayerListListener {
     }
 
     private TabListEntry getNewEntry(@NotNull TabList tabList, @NotNull Player player, @NotNull String playerServer) {
-        return TabListEntry
-                .builder()
-                .tabList(tabList)
-                .latency((int) Math.min(player.getPing(), Integer.MAX_VALUE))
-                .profile(player.getGameProfile())
-                .displayName(plugin.getConfiguration().getTabDisplayName(player, playerServer))
-                .build();
+        return TabListEntry.builder()
+                           .tabList(tabList)
+                           .latency((int) Math.min(player.getPing(), Integer.MAX_VALUE))
+                           .profile(player.getGameProfile())
+                           .displayName(plugin.getConfiguration().getTabDisplayName(player, playerServer))
+                           .build();
     }
 
     private void removeEntry(@NotNull TabList tabList, @NotNull UUID playerId) {

@@ -150,47 +150,42 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
     }
 
     public Component getDirectMessagesOutgoingFormat(@NotNull String receiverName, @NotNull String message) {
-        return TextUtil
-                .toComponent(get(Keys.LANG_DIRECT_MESSAGES_OUTGOING_FORMAT))
-                .replace("%receiver%", receiverName)
-                .replace("%message%", message)
-                .build();
+        return TextUtil.toComponent(get(Keys.LANG_DIRECT_MESSAGES_OUTGOING_FORMAT))
+                       .replace("%receiver%", receiverName)
+                       .replace("%message%", message)
+                       .build();
     }
 
     public Component getDirectMessagesIncomingFormat(@NotNull String senderName, @NotNull String message) {
-        return TextUtil
-                .toComponent(get(Keys.LANG_DIRECT_MESSAGES_INCOMING_FORMAT))
-                .replace("%sender%", senderName)
-                .replace("%message%", message)
-                .build();
+        return TextUtil.toComponent(get(Keys.LANG_DIRECT_MESSAGES_INCOMING_FORMAT))
+                       .replace("%sender%", senderName)
+                       .replace("%message%", message)
+                       .build();
     }
 
     public Component getDirectMessagesSpyFormat(@NotNull String senderName,
                                                 @NotNull String receiverName,
                                                 @NotNull String message) {
-        return TextUtil
-                .toComponent(get(Keys.LANG_DIRECT_MESSAGES_SPY_FORMAT))
-                .replace("%sender%", senderName)
-                .replace("%receiver%", receiverName)
-                .replace("%message%", message)
-                .build();
+        return TextUtil.toComponent(get(Keys.LANG_DIRECT_MESSAGES_SPY_FORMAT))
+                       .replace("%sender%", senderName)
+                       .replace("%receiver%", receiverName)
+                       .replace("%message%", message)
+                       .build();
     }
 
     private Component getChatFormat(@NotNull String chatFormat, @NotNull Player player, @NotNull String message) {
-        String serverName = player
-                .getCurrentServer()
-                .map(ServerConnection::getServer)
-                .map(RegisteredServer::getServerInfo)
-                .map(ServerInfo::getName)
-                .orElse(getUnknownServer());
-        return TextUtil
-                .toComponent(chatFormat)
-                .replace("%server%", serverName)
-                .replace("%prefix%", TextUtil.getPrefix(player.getUniqueId()))
-                .replace("%suffix%", TextUtil.getSuffix(player.getUniqueId()))
-                .replace("%username%", player.getUsername())
-                .replace("%message%", message)
-                .build();
+        String serverName = player.getCurrentServer()
+                                  .map(ServerConnection::getServer)
+                                  .map(RegisteredServer::getServerInfo)
+                                  .map(ServerInfo::getName)
+                                  .orElse(getUnknownServer());
+        return TextUtil.toComponent(chatFormat)
+                       .replace("%server%", serverName)
+                       .replace("%prefix%", TextUtil.getPrefix(player.getUniqueId()))
+                       .replace("%suffix%", TextUtil.getSuffix(player.getUniqueId()))
+                       .replace("%username%", player.getUsername())
+                       .replace("%message%", message)
+                       .build();
     }
 
     private static final class Keys {

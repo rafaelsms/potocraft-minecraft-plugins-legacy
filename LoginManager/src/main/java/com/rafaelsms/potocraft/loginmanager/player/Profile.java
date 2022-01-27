@@ -96,8 +96,8 @@ public class Profile extends DatabaseObject {
      *
      * @param address         player's current address
      * @param autoLoginWindow time window to auto login to work
-     * @return true if player logged in using the same address or if player joined within auto login time using the
-     * same address
+     * @return true if player logged in using the same address or if player joined within auto login time using the same
+     * address
      * @see com.rafaelsms.potocraft.loginmanager.util.Util#isPlayerLoggedIn(LoginManagerPlugin, Profile, Player) helper
      */
     public boolean isLoggedIn(@NotNull InetSocketAddress address, @NotNull Duration autoLoginWindow) {

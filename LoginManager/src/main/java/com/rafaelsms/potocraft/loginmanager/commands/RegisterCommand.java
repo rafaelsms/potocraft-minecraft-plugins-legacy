@@ -44,10 +44,9 @@ public class RegisterCommand implements RawCommand {
         // Retrieve profile
         Profile profile;
         try {
-            profile = plugin
-                    .getDatabase()
-                    .getProfile(player.getUniqueId())
-                    .orElse(new Profile(player.getUniqueId(), player.getUsername()));
+            profile = plugin.getDatabase()
+                            .getProfile(player.getUniqueId())
+                            .orElse(new Profile(player.getUniqueId(), player.getUsername()));
         } catch (Exception ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
             return;

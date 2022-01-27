@@ -19,12 +19,9 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * We will:
- * - check if offline profiles are still logged in;
- * - update offline profiles' login date if needed;
- * - update offline profiles' logged in status if needed;
- * - validate profiles' logged in status on startup;
- * - update join/quit date for online players.
+ * We will: - check if offline profiles are still logged in; - update offline profiles' login date if needed; - update
+ * offline profiles' logged in status if needed; - validate profiles' logged in status on startup; - update join/quit
+ * date for online players.
  */
 public class ProfileUpdater {
 
@@ -70,12 +67,11 @@ public class ProfileUpdater {
 
             // Check if profile is logged in and set its join date
             if (isLoggedIn(event, profile, player)) {
-                String serverName = event
-                        .getPlayer()
-                        .getCurrentServer()
-                        .map(ServerConnection::getServerInfo)
-                        .map(ServerInfo::getName)
-                        .orElse(null);
+                String serverName = event.getPlayer()
+                                         .getCurrentServer()
+                                         .map(ServerConnection::getServerInfo)
+                                         .map(ServerInfo::getName)
+                                         .orElse(null);
                 profile.setQuitDate(serverName);
                 plugin.getDatabase().saveProfileCatching(profile);
             }

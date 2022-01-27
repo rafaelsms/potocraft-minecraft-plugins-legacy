@@ -79,11 +79,10 @@ public class ChatListener {
         }
 
         // Add message to history
-        plugin
-                .getUserManager()
-                .getUser(event.getPlayer().getUniqueId())
-                .getChatHistory()
-                .sentMessage(event.getMessage());
+        plugin.getUserManager()
+              .getUser(event.getPlayer().getUniqueId())
+              .getChatHistory()
+              .sentMessage(event.getMessage());
     }
 
     @Subscribe(order = PostOrder.LATE)
@@ -126,11 +125,10 @@ public class ChatListener {
             String serverName = server.getServerInfo().getName();
             // Check for any spy
             for (Player onlinePlayer : plugin.getServer().getAllPlayers()) {
-                Optional<String> nameOptional = onlinePlayer
-                        .getCurrentServer()
-                        .map(ServerConnection::getServer)
-                        .map(RegisteredServer::getServerInfo)
-                        .map(ServerInfo::getName);
+                Optional<String> nameOptional = onlinePlayer.getCurrentServer()
+                                                            .map(ServerConnection::getServer)
+                                                            .map(RegisteredServer::getServerInfo)
+                                                            .map(ServerInfo::getName);
                 // Skip if player is on another server
                 if (nameOptional.isPresent() && nameOptional.get().equalsIgnoreCase(serverName)) {
                     continue;

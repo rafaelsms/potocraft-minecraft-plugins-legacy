@@ -17,9 +17,8 @@ import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * We will:
- * - allow offline players to join if their name is not used by Mojang;
- * - allow online and floodgate players to join normally.
+ * We will: - allow offline players to join if their name is not used by Mojang; - allow online and floodgate players to
+ * join normally.
  */
 public class OfflineCheckerListener {
 

@@ -17,9 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * We will prevent logged off players from:
- * - issuing certain commands;
- * - speaking.
+ * We will prevent logged off players from: - issuing certain commands; - speaking.
  */
 public class LoggedOffPlayerListener {
 
@@ -59,9 +57,8 @@ public class LoggedOffPlayerListener {
             // Attempt to fit into the regex
             Matcher matcher = commandPattern.matcher(event.getCommand());
             if (!matcher.matches()) {
-                plugin
-                        .getLogger()
-                        .warn("Didn't expected to not find a command match: \"%s\"".formatted(event.getCommand()));
+                plugin.getLogger()
+                      .warn("Didn't expected to not find a command match: \"%s\"".formatted(event.getCommand()));
                 player.sendMessage(plugin.getConfiguration().getPunishmentMessageLoggedOff());
                 event.setResult(CommandExecuteEvent.CommandResult.denied());
                 continuation.resume();

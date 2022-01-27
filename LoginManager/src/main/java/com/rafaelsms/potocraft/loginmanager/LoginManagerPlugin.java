@@ -48,8 +48,11 @@ public class LoginManagerPlugin {
     private final @NotNull Database database;
 
     @Inject
-    public LoginManagerPlugin(@NotNull ProxyServer server, @NotNull Logger logger, @DataDirectory Path dataDirectory)
-            throws IOException, com.rafaelsms.potocraft.database.Database.DatabaseException {
+    public LoginManagerPlugin(@NotNull ProxyServer server,
+                              @NotNull Logger logger,
+                              @DataDirectory Path dataDirectory) throws
+                                                                 IOException,
+                                                                 com.rafaelsms.potocraft.database.Database.DatabaseException {
         this.server = server;
         this.logger = logger;
         this.configuration = new Configuration(dataDirectory);

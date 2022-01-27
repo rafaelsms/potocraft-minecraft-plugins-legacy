@@ -77,9 +77,8 @@ public class ReplyCommand implements RawCommand {
                 plugin.getConfiguration().getDirectMessagesOutgoingFormat(receiver.getUsername(), message);
         Component incomingFormat =
                 plugin.getConfiguration().getDirectMessagesIncomingFormat(sender.getUsername(), message);
-        Component spyFormat = plugin
-                .getConfiguration()
-                .getDirectMessagesSpyFormat(sender.getUsername(), receiver.getUsername(), message);
+        Component spyFormat = plugin.getConfiguration()
+                                    .getDirectMessagesSpyFormat(sender.getUsername(), receiver.getUsername(), message);
 
         // Send to players
         sender.sendMessage(sender.identity(), outgoingFormat, MessageType.CHAT);
