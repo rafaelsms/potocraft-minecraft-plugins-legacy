@@ -503,8 +503,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String TELEPORT_WORLD_LIST = "language.teleport.worlds.list";
         public static final String TELEPORT_WORLD_NOT_FOUND = "language.teleport.worlds.not_found";
 
-        public static final String TOTEM_IN_COOLDOWN = "language.totem_in_cooldown";
-        public static final String TOTEM_ENTERED_COOLDOWN = "language.totem_entered_in_cooldown";
+        public static final String TOTEM_IN_COOLDOWN = "language.totem.totem_in_cooldown";
+        public static final String TOTEM_ENTERED_COOLDOWN = "language.totem.totem_entered_in_cooldown";
 
         public static final String KICK_MESSAGE_COULD_NOT_LOAD_PROFILE =
                 "language.kick_messages.could_not_load_profile";
