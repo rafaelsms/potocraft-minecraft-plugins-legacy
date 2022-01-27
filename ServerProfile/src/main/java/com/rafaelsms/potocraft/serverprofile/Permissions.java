@@ -20,6 +20,8 @@ public final class Permissions {
     public static final String COMBAT_SHOW_DEATH_LOCATION = "potocraft.server.combat.show_death_location";
     public static final String COMBAT_BYPASS = "potocraft.server.combat.bypass";
 
+    public static final String UNLIMITED_TOTEM_USAGE = "potocraft.server.unlimited_totem_usage";
+
     // Private constructor
     private Permissions() {
     }

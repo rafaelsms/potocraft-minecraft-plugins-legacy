@@ -45,6 +45,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.TELEPORT_DELAY_TICKS, 20 * 16);
         defaults.put(Keys.TELEPORT_REQUEST_DURATION_SECONDS, 60 * 3 + 30);
 
+        defaults.put(Keys.TOTEM_USAGE_COOLDOWN_SECONDS, 60 * 6);
+
         defaults.put(Keys.DEFAULT_HOME_NUMBER, 1);
         defaults.put(Keys.HOME_REPLACE_DELAY_TICKS, 20 * 60 * 2);
         defaults.put(Keys.HOME_NUMBER_PERMISSION_GROUPS,
@@ -117,6 +119,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.TELEPORT_WORLD_LIST, "&6Mundos disponíveis: &e%list%");
         defaults.put(Keys.TELEPORT_WORLD_NOT_FOUND, "&cMundo não encontrado.");
 
+        defaults.put(Keys.TOTEM_IN_COOLDOWN, "&cSeu totem está em cooldown e não fez efeito.");
+        defaults.put(Keys.TOTEM_ENTERED_COOLDOWN,
+                     "&cSeu totem entrou em cooldown e não fará efeito por alguns minutos.");
+
         defaults.put(Keys.KICK_MESSAGE_COULD_NOT_LOAD_PROFILE, "&cNão foi possível carregar seu perfil!");
         return defaults;
     }
@@ -188,6 +194,11 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public Duration getTeleportRequestDuration() {
         Integer cooldown = get(Keys.TELEPORT_REQUEST_DURATION_SECONDS);
+        return Duration.ofSeconds(cooldown.longValue());
+    }
+
+    public Duration getTotemCooldown() {
+        Integer cooldown = get(Keys.TOTEM_USAGE_COOLDOWN_SECONDS);
         return Duration.ofSeconds(cooldown.longValue());
     }
 
@@ -405,6 +416,14 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return TextUtil.toComponent(get(Keys.TELEPORT_WORLD_NOT_FOUND)).build();
     }
 
+    public Component getTotemInCooldown() {
+        return TextUtil.toComponent(get(Keys.TOTEM_IN_COOLDOWN)).build();
+    }
+
+    public Component getTotemEnteredCooldown() {
+        return TextUtil.toComponent(get(Keys.TOTEM_ENTERED_COOLDOWN)).build();
+    }
+
     public Component getKickMessageCouldNotLoadProfile() {
         return TextUtil.toComponent(get(Keys.KICK_MESSAGE_COULD_NOT_LOAD_PROFILE)).build();
     }
@@ -428,6 +447,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String TELEPORT_DELAY_TICKS = "configuration.teleport.teleport_delay_in_ticks";
         public static final String TELEPORT_REQUEST_DURATION_SECONDS =
                 "configuration.teleport.teleport_request_duration_in_seconds";
+
+        public static final String TOTEM_USAGE_COOLDOWN_SECONDS = "configuration.totem_usage_cooldown_in_seconds";
 
         public static final String DEFAULT_HOME_NUMBER = "configuration.homes.default_number_of_homes";
         public static final String HOME_REPLACE_DELAY_TICKS = "configuration.homes.replace_home_timeout_ticks";
@@ -481,6 +502,9 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String TELEPORT_WARP_NOT_FOUND = "language.teleport.warps.not_found";
         public static final String TELEPORT_WORLD_LIST = "language.teleport.worlds.list";
         public static final String TELEPORT_WORLD_NOT_FOUND = "language.teleport.worlds.not_found";
+
+        public static final String TOTEM_IN_COOLDOWN = "language.totem_in_cooldown";
+        public static final String TOTEM_ENTERED_COOLDOWN = "language.totem_entered_in_cooldown";
 
         public static final String KICK_MESSAGE_COULD_NOT_LOAD_PROFILE =
                 "language.kick_messages.could_not_load_profile";

@@ -16,6 +16,7 @@ import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -245,6 +246,15 @@ public class User {
             oldTask.cancelTask(); // this will call setCombatTask(null)
         }
         this.combatTask = combatTask;
+    }
+
+    public boolean isTotemInCooldown() {
+        Optional<ZonedDateTime> optionalDate = profile.getLastTotemUsedDate();
+        if (optionalDate.isEmpty()) {
+            return false;
+        }
+        ZonedDateTime cooldownEndDate = optionalDate.get().plus(plugin.getConfiguration().getTotemCooldown());
+        return ZonedDateTime.now().isBefore(cooldownEndDate);
     }
 
     public void runTick() {

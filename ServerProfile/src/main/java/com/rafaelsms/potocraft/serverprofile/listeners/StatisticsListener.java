@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,5 +66,13 @@ public class StatisticsListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void increaseStatistics(PlayerPickupExperienceEvent event) {
         getProfile(event.getPlayer()).incrementExperience(event.getExperienceOrb().getExperience());
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    private void increaseStatistics(EntityResurrectEvent event) {
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+        getProfile(player).incrementTotemUsage();
     }
 }

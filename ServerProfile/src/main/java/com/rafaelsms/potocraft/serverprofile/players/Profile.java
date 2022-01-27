@@ -33,6 +33,7 @@ public class Profile extends DatabaseObject {
     private @Nullable StoredLocation backLocation = null;
     private @Nullable ZonedDateTime deathDateTime = null;
     private @Nullable StoredLocation deathLocation = null;
+    private @Nullable ZonedDateTime lastTotemUsage = null;
 
     private final @NotNull ZonedDateTime lastJoinDateTime = ZonedDateTime.now();
     private long playTimeMillis = 0;
@@ -43,6 +44,7 @@ public class Profile extends DatabaseObject {
     private int blocksPlaced = 0;
     private int blocksBroken = 0;
     private long experiencePickedUp = 0;
+    private int totemUsages = 0;
 
     public Profile(@NotNull UUID playerId) {
         this.playerId = playerId;
@@ -61,6 +63,7 @@ public class Profile extends DatabaseObject {
         this.backLocation = Util.convert(document.get(Keys.BACK_LOCATION, Document.class), StoredLocation::new);
         this.deathDateTime = Util.convert(document.getString(Keys.DEATH_DATE_TIME), Util::toDateTime);
         this.deathLocation = Util.convert(document.get(Keys.DEATH_LOCATION, Document.class), StoredLocation::new);
+        this.lastTotemUsage = Util.convert(document.getString(Keys.TOTEM_USED_DATE), Util::toDateTime);
 
         this.playTimeMillis = Util.getCatchingOrElse(() -> document.getLong(Keys.PLAY_TIME_MILLIS), 0L);
 
@@ -70,6 +73,7 @@ public class Profile extends DatabaseObject {
         this.blocksPlaced = Util.getCatchingOrElse(() -> document.getInteger(Keys.BLOCKS_PLACED), 0);
         this.blocksBroken = Util.getCatchingOrElse(() -> document.getInteger(Keys.BLOCKS_BROKEN), 0);
         this.experiencePickedUp = Util.getCatchingOrElse(() -> document.getLong(Keys.EXPERIENCE_PICKED_UP), 0L);
+        this.totemUsages = Util.getCatchingOrElse(() -> document.getInteger(Keys.TOTEM_USAGES), 0);
     }
 
     public List<Home> getHomesSortedByDate() {
@@ -148,6 +152,18 @@ public class Profile extends DatabaseObject {
         this.experiencePickedUp += experience;
     }
 
+    public void incrementTotemUsage() {
+        this.totemUsages += 1;
+    }
+
+    public Optional<ZonedDateTime> getLastTotemUsedDate() {
+        return Optional.ofNullable(lastTotemUsage);
+    }
+
+    public void setTotemUsage() {
+        this.lastTotemUsage = ZonedDateTime.now();
+    }
+
     public static Bson filterId(@NotNull UUID playerId) {
         return Filters.eq(Keys.PLAYER_ID, Util.convertNonNull(playerId, UUID::toString));
     }
@@ -184,6 +200,7 @@ public class Profile extends DatabaseObject {
         document.put(Keys.BACK_LOCATION, Util.convert(backLocation, StoredLocation::toDocument));
         document.put(Keys.DEATH_DATE_TIME, Util.convert(deathDateTime, Util::fromDateTime));
         document.put(Keys.DEATH_LOCATION, Util.convert(deathLocation, StoredLocation::toDocument));
+        document.put(Keys.TOTEM_USED_DATE, Util.convert(lastTotemUsage, Util::fromDateTime));
 
         document.put(Keys.LAST_JOIN_DATE, Util.convertNonNull(lastJoinDateTime, Util::fromDateTime));
         document.put(Keys.PLAY_TIME_MILLIS, playTimeMillis);
@@ -194,6 +211,7 @@ public class Profile extends DatabaseObject {
         document.put(Keys.BLOCKS_PLACED, blocksPlaced);
         document.put(Keys.BLOCKS_BROKEN, blocksBroken);
         document.put(Keys.EXPERIENCE_PICKED_UP, experiencePickedUp);
+        document.put(Keys.TOTEM_USAGES, totemUsages);
         return document;
     }
 
@@ -207,6 +225,7 @@ public class Profile extends DatabaseObject {
         public static final String BACK_LOCATION = "backLocation";
         public static final String DEATH_DATE_TIME = "deathDateTime";
         public static final String DEATH_LOCATION = "deathLocation";
+        public static final String TOTEM_USED_DATE = "lastTotemUsedDate";
 
         public static final String LAST_JOIN_DATE = "lastJoinDate";
         public static final String PLAY_TIME_MILLIS = "playTimeMillis";
@@ -217,6 +236,7 @@ public class Profile extends DatabaseObject {
         public static final String BLOCKS_PLACED = "placedBlocks";
         public static final String BLOCKS_BROKEN = "brokenBlocks";
         public static final String EXPERIENCE_PICKED_UP = "experiencePickedUp";
+        public static final String TOTEM_USAGES = "totemUsages";
 
         // Private constructor
         private Keys() {
