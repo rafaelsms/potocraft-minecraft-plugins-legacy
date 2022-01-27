@@ -28,9 +28,9 @@ public abstract class Database {
      *
      * @param databaseException database exception thrown
      * @throws DatabaseException in case the user needs to do a database operation
-     * @see #throwingWrapper(DatabaseOperation) to catch and handle the exception while still being able to tell if
-     * database threw
-     * @see #catchingWrapper(DatabaseOperation) to ignore the exception and receiving null instead of failing
+     * @see #throwingWrapper(DatabaseOperationSupplier) to catch and handle the exception while still being able to tell
+     * if database threw
+     * @see #catchingWrapper(DatabaseOperationSupplier) to ignore the exception and receiving null instead of failing
      */
     protected abstract void handleException(@NotNull DatabaseException databaseException) throws DatabaseException;
 
@@ -41,9 +41,9 @@ public abstract class Database {
      * @param <T>      type of value expected from the database
      * @return returned value from supplier if succeeded
      * @throws DatabaseException if database operation failed
-     * @see #handleException(DatabaseException) executed method in case of a exception
+     * @see #handleException(DatabaseException) executed method in case of an exception
      */
-    protected <T> T throwingWrapper(@NotNull DatabaseOperation<T> supplier) throws DatabaseException {
+    protected <T> T throwingWrapper(@NotNull Database.DatabaseOperationSupplier<T> supplier) throws DatabaseException {
         try {
             return supplier.executeOperation();
         } catch (MongoException | DatabaseException exception) {
@@ -54,6 +54,20 @@ public abstract class Database {
     }
 
     /**
+     * Wrapper to a database operation that doesn't return any value. The wrapper throws any database related exceptions
+     * after handling them
+     *
+     * @param runnable database operation to be executed
+     * @throws DatabaseException if database operation failed
+     */
+    protected void throwingWrapper(@NotNull DatabaseOperationRunnable runnable) throws DatabaseException {
+        throwingWrapper(() -> {
+            runnable.executeOperation();
+            return null;
+        });
+    }
+
+    /**
      * Wrapper to a database operation that may return a value. The wrapper catches any database related exception and
      * returns an empty optional in this case.
      *
@@ -61,12 +75,25 @@ public abstract class Database {
      * @param <T>      type of value expected from the database
      * @return an optional to the database value, it'll be empty if the database failed.
      */
-    protected <T> Optional<T> catchingWrapper(@NotNull DatabaseOperation<T> supplier) {
+    protected <T> Optional<T> catchingWrapper(@NotNull Database.DatabaseOperationSupplier<T> supplier) {
         try {
             return Optional.ofNullable(supplier.executeOperation());
         } catch (MongoException | DatabaseException exception) {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Wrapper to a database operation that doesn't return any value. The wrapper catches any database-related
+     * exceptions.
+     *
+     * @param runnable database operation to be executed
+     */
+    protected void catchingWrapper(@NotNull DatabaseOperationRunnable runnable) {
+        catchingWrapper(() -> {
+            runnable.executeOperation();
+            return null;
+        });
     }
 
     /**
@@ -100,9 +127,18 @@ public abstract class Database {
      *
      * @param <T> return type of the operation
      */
-    public interface DatabaseOperation<T> {
+    public interface DatabaseOperationSupplier<T> {
 
         T executeOperation() throws DatabaseException, MongoException;
+
+    }
+
+    /**
+     * Runnable that may throw a database exception for us to catch.
+     */
+    public interface DatabaseOperationRunnable {
+
+        void executeOperation() throws DatabaseException, MongoException;
 
     }
 
@@ -113,48 +149,4 @@ public abstract class Database {
         }
 
     }
-
-    /*public Database(@NotNull Plugin<?, ?, ?> plugin) {
-        this.plugin = plugin;
-        try {
-            getUserProfiles().createIndex(Indexes.text(Profile.lastNameField()), new IndexOptions().background(false));
-        } catch (DatabaseException exception) {
-            plugin.logger().warn("Failed to create text index for player names!");
-            exception.printStackTrace();
-        }
-    }
-
-    private MongoCollection<Document> getUserProfiles() throws DatabaseException {
-        return getDatabase().getCollection(Constants.USER_PROFILE_COLLECTION);
-    }
-
-    protected abstract @NotNull T makeProfile(@NotNull Document document);
-
-    protected Optional<T> getProfile(@NotNull UUID playerId) throws DatabaseException {
-        return handleException(() -> {
-            Document document = getUserProfiles().find(Profile.filterId(playerId)).first();
-            if (document == null) {
-                return Optional.empty();
-            }
-            return Optional.of(makeProfile(document));
-        });
-    }
-
-    protected List<T> searchOfflineProfile(@NotNull String namePattern) throws DatabaseException {
-        return handleException(() -> {
-            List<T> profiles = new ArrayList<>();
-            getUserProfiles().find(Filters.regex(Profile.lastNameField(), namePattern, "i"))
-                    //.projection(Projections.metaTextScore("textScore"))
-                    //.sort(Sorts.metaTextScore("textScore"))
-                    .limit(6).forEach((Consumer<? super Document>) document -> profiles.add(makeProfile(document)));
-            return profiles;
-        });
-    }
-
-    protected void saveProfile(T profile) throws DatabaseException {
-        handleException(() -> {
-            getUserProfiles().replaceOne(profile.filterId(), profile.toDocument(), UPSERT);
-            return null;
-        });
-    }*/
 }
