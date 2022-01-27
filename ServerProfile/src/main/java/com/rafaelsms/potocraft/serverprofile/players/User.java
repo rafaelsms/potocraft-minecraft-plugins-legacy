@@ -96,6 +96,9 @@ public class User {
 
     public List<TeleportRequest> getTeleportRequests() {
         synchronized (teleportRequests) {
+            // Remove expired requests
+            teleportRequests.removeIf(teleportRequest -> teleportRequest.isExpired(plugin.getConfiguration()
+                                                                                         .getTeleportRequestDuration()));
             return List.copyOf(teleportRequests);
         }
     }

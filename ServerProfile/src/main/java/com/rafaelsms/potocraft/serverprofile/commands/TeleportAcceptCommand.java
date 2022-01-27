@@ -44,13 +44,13 @@ public class TeleportAcceptCommand implements CommandExecutor {
             sender.sendMessage(plugin.getConfiguration().getTeleportRequestNotFound());
             return true;
         } else if (requests.size() == 1) {
-            if (user.isPlayerTeleportBlocked(true)) {
-                return true;
-            }
-            if (user.isPlayerTeleportBlocked(true)) {
-                return true;
-            }
             TeleportRequest request = requests.get(0);
+            if (request.getDestination().isPlayerTeleportBlocked(true)) {
+                return true;
+            }
+            if (request.getTeleporting().isPlayerTeleportBlocked(true)) {
+                return true;
+            }
             request.cancel();
             request.getTeleporting().teleport(request.getDestination(), PlayerTeleportEvent.TeleportCause.COMMAND);
             return true;
@@ -63,10 +63,13 @@ public class TeleportAcceptCommand implements CommandExecutor {
                     player.sendMessage(plugin.getConfiguration().getTeleportRequestManyFound(requests));
                     return true;
                 }
-                if (user.isPlayerTeleportBlocked(true)) {
+                TeleportRequest request = requestOptional.get();
+                if (request.getTeleporting().isPlayerTeleportBlocked(true)) {
                     return true;
                 }
-                TeleportRequest request = requestOptional.get();
+                if (request.getDestination().isPlayerTeleportBlocked(true)) {
+                    return true;
+                }
                 request.cancel();
                 request.getTeleporting().teleport(request.getDestination(), PlayerTeleportEvent.TeleportCause.COMMAND);
                 return true;
