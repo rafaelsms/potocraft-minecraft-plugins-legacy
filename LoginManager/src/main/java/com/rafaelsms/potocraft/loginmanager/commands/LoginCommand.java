@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 public class LoginCommand implements RawCommand {
 
     private final Pattern pinExtractor = Pattern.compile("^\\s*(\\d{6})(\\s+.*)?$", Pattern.CASE_INSENSITIVE);
+    private final Pattern tabCompletable = Pattern.compile("^\\s*\\S*$", Pattern.CASE_INSENSITIVE);
 
     private final @NotNull LoginManagerPlugin plugin;
 
@@ -116,7 +117,11 @@ public class LoginCommand implements RawCommand {
 
     @Override
     public List<String> suggest(Invocation invocation) {
-        return List.of("123456", "000000");
+        Matcher matcher = tabCompletable.matcher(invocation.arguments());
+        if (matcher.matches()) {
+            return List.of("123456", "981354");
+        }
+        return List.of();
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.rafaelsms.potocraft.universalchat.commands;
 import com.rafaelsms.potocraft.universalchat.Permissions;
 import com.rafaelsms.potocraft.universalchat.UniversalChatPlugin;
 import com.rafaelsms.potocraft.universalchat.player.User;
+import com.rafaelsms.potocraft.universalchat.util.ProxyUtil;
 import com.rafaelsms.potocraft.util.ChatHistory;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.velocitypowered.api.command.CommandSource;
@@ -13,6 +14,7 @@ import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -21,6 +23,7 @@ import java.util.regex.Pattern;
 public class MessageCommand implements RawCommand {
 
     private final Pattern commandSyntax = Pattern.compile("^\\s*(\\S+)\\s+(\\S+.*)$", Pattern.CASE_INSENSITIVE);
+    private final Pattern tabCompletable = Pattern.compile("^\\s*\\S*$", Pattern.CASE_INSENSITIVE);
 
     private final @NotNull UniversalChatPlugin plugin;
 
@@ -117,5 +120,14 @@ public class MessageCommand implements RawCommand {
     @Override
     public boolean hasPermission(Invocation invocation) {
         return invocation.source().hasPermission(Permissions.DIRECT_MESSAGES);
+    }
+
+    @Override
+    public List<String> suggest(Invocation invocation) {
+        Matcher matcher = tabCompletable.matcher(invocation.arguments());
+        if (matcher.matches()) {
+            return ProxyUtil.getNameSuggester(plugin.getServer()).getSuggestions(invocation);
+        }
+        return List.of();
     }
 }

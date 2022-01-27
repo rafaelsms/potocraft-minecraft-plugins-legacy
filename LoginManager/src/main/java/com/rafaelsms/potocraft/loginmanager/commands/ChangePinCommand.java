@@ -22,6 +22,8 @@ public class ChangePinCommand implements RawCommand {
 
     private final Pattern pinExtractor =
             Pattern.compile("^\\s*(\\d{6})\\s*(\\d{6})\\s*(\\d{6})(\\s+.*)?$", Pattern.CASE_INSENSITIVE);
+    private final Pattern tabCompletable =
+            Pattern.compile("^\\s*(\\S+)?\\s*(\\S+)?\\s*(\\S+)?\\s*$", Pattern.CASE_INSENSITIVE);
 
     private final @NotNull LoginManagerPlugin plugin;
 
@@ -112,6 +114,10 @@ public class ChangePinCommand implements RawCommand {
 
     @Override
     public List<String> suggest(Invocation invocation) {
+        Matcher matcher = tabCompletable.matcher(invocation.arguments());
+        if (matcher.matches()) {
+            return List.of("123456", "834712");
+        }
         return List.of();
     }
 

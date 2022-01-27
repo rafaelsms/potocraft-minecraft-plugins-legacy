@@ -54,6 +54,7 @@ public class VanishManager implements Listener {
                                                 false,
                                                 false,
                                                 true));
+        player.setInvisible(true);
         for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
             if (onlinePlayer.hasPermission(Permissions.COMMAND_VANISH_SEE_OTHERS)) {
                 continue;
@@ -65,6 +66,7 @@ public class VanishManager implements Listener {
     public void showPlayer(@NotNull Player player) {
         hiddenPlayers.remove(player.getUniqueId());
         player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+        player.setInvisible(false);
         for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
             onlinePlayer.showPlayer(plugin, player);
         }

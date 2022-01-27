@@ -4,16 +4,19 @@ import com.rafaelsms.potocraft.serverprofile.Permissions;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.Home;
 import com.rafaelsms.potocraft.serverprofile.players.User;
+import com.rafaelsms.potocraft.util.Util;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class HomeCommand implements CommandExecutor {
+public class HomeCommand implements CommandExecutor, TabCompleter {
 
     private final @NotNull ServerProfilePlugin plugin;
 
@@ -22,8 +25,7 @@ public class HomeCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender,
-                             @NotNull Command command,
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
                              @NotNull String label,
                              @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
@@ -71,5 +73,25 @@ public class HomeCommand implements CommandExecutor {
 
         sender.sendMessage(plugin.getConfiguration().getTeleportHomeNotFound());
         return true;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender,
+                                                @NotNull Command command,
+                                                @NotNull String alias,
+                                                @NotNull String[] args) {
+        if (!(sender instanceof Player player)) {
+            return List.of();
+        }
+        if (!player.hasPermission(Permissions.TELEPORT_HOME)) {
+            return List.of();
+        }
+
+        User user = plugin.getUserManager().getUser(player);
+        int maxHomesSize = user.getMaxHomesSize();
+        int homesSize = user.getProfile().getHomesSize();
+        List<Home> homesSorted = user.getProfile().getHomesSortedByDate();
+        // Suggest only available homes
+        return Util.convertList(homesSorted.subList(0, Math.min(homesSize, maxHomesSize) - 1), Home::getName);
     }
 }

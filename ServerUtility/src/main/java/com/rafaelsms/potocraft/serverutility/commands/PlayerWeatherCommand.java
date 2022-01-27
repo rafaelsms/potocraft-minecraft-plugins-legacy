@@ -6,12 +6,15 @@ import org.bukkit.WeatherType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
-public class PlayerWeatherCommand implements CommandExecutor {
+public class PlayerWeatherCommand implements CommandExecutor, TabCompleter {
 
     private final @NotNull ServerUtilityPlugin plugin;
 
@@ -20,8 +23,7 @@ public class PlayerWeatherCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender,
-                             @NotNull Command command,
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
                              @NotNull String label,
                              @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
@@ -55,5 +57,19 @@ public class PlayerWeatherCommand implements CommandExecutor {
             case "rain", "thunderstorm", "thunder", "storm", "chuva", "chuvoso" -> Optional.of(WeatherType.DOWNFALL);
             default -> Optional.empty();
         };
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender,
+                                                @NotNull Command command,
+                                                @NotNull String alias,
+                                                @NotNull String[] args) {
+        if (!(sender instanceof Player)) {
+            return List.of();
+        }
+        if (!sender.hasPermission(Permissions.COMMAND_PLAYER_WEATHER)) {
+            return List.of();
+        }
+        return List.of("limpo", "chuvoso");
     }
 }

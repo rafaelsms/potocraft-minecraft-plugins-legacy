@@ -6,16 +6,19 @@ import com.rafaelsms.potocraft.serverprofile.players.User;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class CreateHomeCommand implements CommandExecutor {
+public class CreateHomeCommand implements CommandExecutor, TabCompleter {
 
     private final Map<UUID, HomeReplacement> replaceHomeAttempt = Collections.synchronizedMap(new HashMap<>());
 
@@ -101,6 +104,17 @@ public class CreateHomeCommand implements CommandExecutor {
         // This should not happen (existing home is already checked above)
         sender.sendMessage(plugin.getConfiguration().getTeleportHomeAlreadyExists());
         return true;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender,
+                                                @NotNull Command command,
+                                                @NotNull String alias,
+                                                @NotNull String[] args) {
+        if (!(sender instanceof Player)) {
+            return List.of();
+        }
+        return List.of("casa", "base", "farm");
     }
 
     private record HomeReplacement(String homeName, BukkitTask task) {

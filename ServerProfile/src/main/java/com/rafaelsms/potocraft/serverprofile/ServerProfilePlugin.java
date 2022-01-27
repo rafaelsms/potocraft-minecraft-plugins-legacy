@@ -12,6 +12,9 @@ import com.rafaelsms.potocraft.serverprofile.commands.TeleportDenyCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.TeleportHereCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.WarpCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.WorldCommand;
+import com.rafaelsms.potocraft.serverprofile.commands.completers.PlayerNameCompleter;
+import com.rafaelsms.potocraft.serverprofile.commands.completers.TeleportRequesterCompleter;
+import com.rafaelsms.potocraft.serverprofile.commands.completers.WarpNameCompleter;
 import com.rafaelsms.potocraft.serverprofile.listeners.ChatFormatter;
 import com.rafaelsms.potocraft.serverprofile.listeners.CombatListener;
 import com.rafaelsms.potocraft.serverprofile.listeners.EssentialsImporter;
@@ -20,9 +23,11 @@ import com.rafaelsms.potocraft.serverprofile.listeners.TotemLimiter;
 import com.rafaelsms.potocraft.serverprofile.listeners.UserManager;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -51,16 +56,23 @@ public class ServerProfilePlugin extends JavaPlugin {
 
         // Register commands
         registerCommand("voltar", new BackCommand(this));
+
         registerCommand("criarcasa", new CreateHomeCommand(this));
         registerCommand("apagarcasa", new DeleteHomeCommand(this));
         registerCommand("casa", new HomeCommand(this));
+
         registerCommand("criarportal", new CreateWarpCommand(this));
-        registerCommand("apagarportal", new DeleteWarpCommand(this));
-        registerCommand("portal", new WarpCommand(this));
-        registerCommand("teleporteaceitar", new TeleportAcceptCommand(this));
-        registerCommand("teleporterecusar", new TeleportDenyCommand(this));
-        registerCommand("teleporte", new TeleportCommand(this));
-        registerCommand("teleporteaqui", new TeleportHereCommand(this));
+        WarpNameCompleter warpNameCompleter = new WarpNameCompleter(this);
+        registerCommand("apagarportal", new DeleteWarpCommand(this), warpNameCompleter);
+        registerCommand("portal", new WarpCommand(this), warpNameCompleter);
+
+        TeleportRequesterCompleter teleportRequesterCompleter = new TeleportRequesterCompleter(this);
+        registerCommand("teleporteaceitar", new TeleportAcceptCommand(this), teleportRequesterCompleter);
+        registerCommand("teleporterecusar", new TeleportDenyCommand(this), teleportRequesterCompleter);
+        registerCommand("teleporte", new TeleportCommand(this), new PlayerNameCompleter(this, Permissions.TELEPORT));
+        registerCommand("teleporteaqui",
+                        new TeleportHereCommand(this),
+                        new PlayerNameCompleter(this, Permissions.TELEPORT_HERE));
         registerCommand("mundo", new WorldCommand(this));
 
         logger().info("ServerProfile enabled!");
@@ -91,10 +103,17 @@ public class ServerProfilePlugin extends JavaPlugin {
     }
 
     private void registerCommand(@NotNull String name, @NotNull CommandExecutor executor) {
+        registerCommand(name, executor, null);
+    }
+
+    private void registerCommand(@NotNull String name,
+                                 @NotNull CommandExecutor executor,
+                                 @Nullable TabCompleter tabCompleter) {
         PluginCommand pluginCommand = getCommand(name);
         if (pluginCommand == null) {
             throw new IllegalStateException("Command couldn't be registered: %s".formatted(name));
         }
         pluginCommand.setExecutor(executor);
+        pluginCommand.setTabCompleter(tabCompleter);
     }
 }

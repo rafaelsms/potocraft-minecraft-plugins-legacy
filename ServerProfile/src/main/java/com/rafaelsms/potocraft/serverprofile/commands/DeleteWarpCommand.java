@@ -6,7 +6,6 @@ import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class DeleteWarpCommand implements CommandExecutor {
@@ -22,11 +21,7 @@ public class DeleteWarpCommand implements CommandExecutor {
                              @NotNull Command command,
                              @NotNull String label,
                              @NotNull String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(plugin.getConfiguration().getPlayersOnly());
-            return true;
-        }
-        if (!player.hasPermission(Permissions.TELEPORT_WARP_MANAGE)) {
+        if (!sender.hasPermission(Permissions.TELEPORT_WARP_MANAGE)) {
             sender.sendMessage(plugin.getServer().getPermissionMessage());
             return true;
         }
