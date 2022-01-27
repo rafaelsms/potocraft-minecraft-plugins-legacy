@@ -33,8 +33,12 @@ public class PlayerListListener {
 
     @Subscribe
     private void updatePlayerList(ServerConnectedEvent event) {
-        initPlayerList(event.getPlayer(), event.getServer().getServerInfo().getName());
         updateChangingPlayerList(event.getPlayer(), event.getServer().getServerInfo().getName());
+        plugin.getServer()
+              .getScheduler()
+              .buildTask(plugin, () -> initPlayerList(event.getPlayer(), event.getServer().getServerInfo().getName()))
+              .delay(1, TimeUnit.SECONDS)
+              .schedule();
     }
 
     @Subscribe
