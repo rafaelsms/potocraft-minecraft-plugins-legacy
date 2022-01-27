@@ -8,6 +8,7 @@ description: Custom plugin for PotoCraft Server
 load: POSTWORLD
 softdepend:
   - LuckPerms
+  - Essentials
 commands:
   voltar:
     description: Go back to your location prior to teleport.

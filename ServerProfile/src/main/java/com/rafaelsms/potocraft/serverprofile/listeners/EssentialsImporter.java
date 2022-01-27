@@ -3,6 +3,7 @@ package com.rafaelsms.potocraft.serverprofile.listeners;
 import com.earth2me.essentials.Essentials;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.User;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,7 +23,7 @@ public class EssentialsImporter implements Listener {
 
     @EventHandler
     private void getEssentials(ServerLoadEvent event) {
-        Plugin plugin = this.plugin.getServer().getPluginManager().getPlugin("EssentialsX");
+        Plugin plugin = this.plugin.getServer().getPluginManager().getPlugin("Essentials");
         if (plugin == null) {
             return;
         }
@@ -40,7 +41,16 @@ public class EssentialsImporter implements Listener {
 
         // Import all homes
         for (String homeName : essentialsUser.getHomes()) {
-            user.getProfile().addHome(homeName, essentialsUser.getHome(homeName));
+            Location location = essentialsUser.getHome(homeName);
+            user.getProfile().addHome(homeName, location);
+            plugin.logger()
+                  .info("Imported home \"{}\" for player {} at world={}, {} {} {}",
+                        homeName,
+                        player.getName(),
+                        location.getWorld().getName(),
+                        location.getBlockX(),
+                        location.getBlockY(),
+                        location.getBlockZ());
         }
     }
 }
