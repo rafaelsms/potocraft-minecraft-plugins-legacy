@@ -4,6 +4,4 @@ include 'common'
 include 'UniversalChat'
 include 'ServerProfile'
 include 'ServerUtility'
-include 'Hardcore'
 include 'BlockProtection'
-
