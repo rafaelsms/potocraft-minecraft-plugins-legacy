@@ -3,7 +3,10 @@ package com.rafaelsms.potocraft.serverutility;
 import com.rafaelsms.potocraft.util.TextUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameRule;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,6 +38,21 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                             Map.of(GameRule.PLAYERS_SLEEPING_PERCENTAGE.getName(), 35),
                             "world",
                             Map.of(GameRule.MAX_ENTITY_CRAMMING.getName(), 4, GameRule.DO_FIRE_TICK.getName(), false)));
+
+        defaults.put(Keys.RAINY_NIGHT_ENABLED, false);
+        defaults.put(Keys.RAINY_NIGHT_POTION_EFFECTS,
+                     List.of(Map.of("type",
+                                    PotionEffectType.HEALTH_BOOST.getName(),
+                                    "duration",
+                                    20 * 60 * 6,
+                                    "amplifier",
+                                    4),
+                             Map.of("type",
+                                    PotionEffectType.INCREASE_DAMAGE.getKey().getKey(),
+                                    "duration",
+                                    20 * 60 * 6,
+                                    "amplifier",
+                                    1)));
 
         defaults.put(Keys.ALLOW_LAVA_FLOW, false);
         defaults.put(Keys.ALLOW_LAVA_FLOW_WORLDS, List.of("world_nether"));
@@ -79,6 +97,31 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
             gameRulesMap.put(gameRule, entry.getValue());
         }
         return gameRulesMap;
+    }
+
+    public boolean isRainyNightEnabled() {
+        return get(Keys.RAINY_NIGHT_ENABLED);
+    }
+
+    public List<PotionEffect> getRainyNightPotionEffects() {
+        List<PotionEffect> potionEffects = new ArrayList<>();
+        List<Map<String, Object>> effects = get(Keys.RAINY_NIGHT_POTION_EFFECTS);
+        for (Map<String, Object> effect : effects) {
+            String effectType = (String) effect.get("type");
+            PotionEffectType potionEffectType = PotionEffectType.getByName(effectType);
+            if (potionEffectType == null) {
+                potionEffectType = PotionEffectType.getByKey(NamespacedKey.fromString(effectType));
+                if (potionEffectType == null) {
+                    plugin.logger().warn("Failed to identify potion effect: \"{}\"", effectType);
+                    continue;
+                }
+            }
+            int durationTicks = (int) effect.get("duration");
+            int amplifier = (int) effect.get("amplifier");
+            PotionEffect potionEffect = new PotionEffect(potionEffectType, durationTicks, amplifier);
+            potionEffects.add(potionEffect);
+        }
+        return potionEffects;
     }
 
     public boolean isAllowLavaFlow() {
@@ -151,6 +194,9 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String HIDE_ALL_JOIN_QUIT_MESSAGES = "configuration.hide_join_quit_messages";
         public static final String WORLDS_SYNCED_REAL_TIME = "configuration.worlds_with_synced_real_time";
         public static final String GAME_RULES_LIST = "configuration.game_rules_applied";
+
+        public static final String RAINY_NIGHT_ENABLED = "configuration.rainy_night_event.enabled";
+        public static final String RAINY_NIGHT_POTION_EFFECTS = "configuration.rainy_night_event.potion_effects";
 
         public static final String ALLOW_LAVA_FLOW = "configuration.lava_flow.allow_lava_flow";
         public static final String ALLOW_LAVA_FLOW_WORLDS = "configuration.lava_flow.allow_lava_flow_worlds";
