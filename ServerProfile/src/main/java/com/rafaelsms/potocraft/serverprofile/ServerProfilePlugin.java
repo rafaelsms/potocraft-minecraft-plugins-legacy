@@ -7,6 +7,7 @@ import com.rafaelsms.potocraft.serverprofile.commands.DeleteHomeCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.DeleteWarpCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.HomeCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.TeleportAcceptCommand;
+import com.rafaelsms.potocraft.serverprofile.commands.TeleportCancelCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.TeleportCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.TeleportDenyCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.TeleportHereCommand;
@@ -69,6 +70,7 @@ public class ServerProfilePlugin extends JavaPlugin {
         TeleportRequesterCompleter teleportRequesterCompleter = new TeleportRequesterCompleter(this);
         registerCommand("teleporteaceitar", new TeleportAcceptCommand(this), teleportRequesterCompleter);
         registerCommand("teleporterecusar", new TeleportDenyCommand(this), teleportRequesterCompleter);
+        registerCommand("teleportecancelar", new TeleportCancelCommand(this));
         registerCommand("teleporte", new TeleportCommand(this), new PlayerNameCompleter(this, Permissions.TELEPORT));
         registerCommand("teleporteaqui",
                         new TeleportHereCommand(this),

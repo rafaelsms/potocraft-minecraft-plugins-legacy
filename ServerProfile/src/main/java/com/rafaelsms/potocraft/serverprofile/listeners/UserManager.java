@@ -16,6 +16,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -101,6 +102,10 @@ public class UserManager implements Listener {
 
     public @NotNull User getUser(@NotNull UUID playerId) {
         return users.get(playerId);
+    }
+
+    public @NotNull Collection<User> getUsers() {
+        return Collections.unmodifiableCollection(users.values());
     }
 
     private class TickPlayersTask implements Runnable {

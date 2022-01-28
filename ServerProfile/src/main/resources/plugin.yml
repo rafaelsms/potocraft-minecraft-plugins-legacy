@@ -37,6 +37,9 @@ commands:
   teleporterecusar:
     description: Denies a teleport request.
     aliases: [ tpdeny, tpnao, tprecusar, teleportdeny ]
+  teleportecancelar:
+    description: Cancels a sent teleport request.
+    aliases: [ tpcancel, tpacancel, tpcancelar, tpacancelar ]
   teleporte:
     description: Teleports you to another player.
     aliases: [ tp, tpa, teleport, tpask ]

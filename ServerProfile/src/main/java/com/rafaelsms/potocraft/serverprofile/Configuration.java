@@ -91,6 +91,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.TELEPORT_REQUEST_NO_REQUEST_FOUND, "&cNenhum pedido de teleporte ativo.");
         defaults.put(Keys.TELEPORT_REQUEST_CANCELLED, "&6Pedido de teleporte cancelado!");
         defaults.put(Keys.TELEPORT_REQUEST_MANY_REQUESTS_FOUND, "&6Vários pedidos encontrados: &e%list%");
+        defaults.put(Keys.TELEPORT_REQUEST_SENT_CANCELLED, "&6Os pedidos enviados foram cancelados.");
         defaults.put(Keys.TELEPORT_HOME_HELP,
                      "&6Para criar uma casa, digite &e&l/criarcasa &6e assim poderá voltar para ela digitando &e&l/casa&6!");
         defaults.put(Keys.TELEPORT_HOME_LIST, """
@@ -339,6 +340,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                        .build();
     }
 
+    public Component getTeleportRequestsSentCancelled() {
+        return TextUtil.toComponent(get(Keys.TELEPORT_REQUEST_SENT_CANCELLED)).build();
+    }
+
     public Component getTeleportHomeHelp() {
         return TextUtil.toComponent(get(Keys.TELEPORT_HOME_HELP)).build();
 
@@ -485,6 +490,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String TELEPORT_REQUEST_NO_REQUEST_FOUND = "language.teleport.requests.no_found";
         public static final String TELEPORT_REQUEST_CANCELLED = "language.teleport.requests.request_cancelled";
         public static final String TELEPORT_REQUEST_MANY_REQUESTS_FOUND = "language.teleport.requests.many_found";
+        public static final String TELEPORT_REQUEST_SENT_CANCELLED =
+                "language.teleport.requests.sent_requests_cancelled";
         public static final String TELEPORT_HOME_HELP = "language.teleport.homes.help";
         public static final String TELEPORT_HOME_LIST = "language.teleport.homes.list";
         public static final String TELEPORT_HOME_MAX_CAPACITY = "language.teleport.homes.at_max_capacity";
