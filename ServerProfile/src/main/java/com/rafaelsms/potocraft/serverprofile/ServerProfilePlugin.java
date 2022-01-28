@@ -105,7 +105,11 @@ public class ServerProfilePlugin extends JavaPlugin {
     }
 
     private void registerCommand(@NotNull String name, @NotNull CommandExecutor executor) {
-        registerCommand(name, executor, null);
+        if (executor instanceof TabCompleter tabCompleter) {
+            registerCommand(name, executor, tabCompleter);
+        } else {
+            registerCommand(name, executor, null);
+        }
     }
 
     private void registerCommand(@NotNull String name,
