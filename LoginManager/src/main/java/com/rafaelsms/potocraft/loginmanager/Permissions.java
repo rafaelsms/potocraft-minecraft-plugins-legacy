@@ -4,6 +4,7 @@ public final class Permissions {
 
     public static final String OFFLINE_AUTO_LOGIN = "potocraft.proxy.auto_login";
     public static final String REDIRECT_TO_LAST_SERVER = "potocraft.proxy.redirect_to_last_server";
+    public static final String HIDDEN_ON_PLAYER_LIST = "potocraft.proxy.player_list_hidden";
 
     public static final String COMMAND_CHANGE_PIN = "potocraft.command.change_pin";
     public static final String COMMAND_LOGIN = "potocraft.command.login";

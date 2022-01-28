@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.loginmanager.listeners;
 
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
+import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
@@ -80,6 +81,9 @@ public class PlayerListListener {
                 continue;
             }
             for (Player otherPlayer : server.getPlayersConnected()) {
+                if (otherPlayer.hasPermission(Permissions.HIDDEN_ON_PLAYER_LIST)) {
+                    continue;
+                }
                 addEntryToList(tabList, otherPlayer, serverName);
             }
         }
@@ -89,7 +93,9 @@ public class PlayerListListener {
         TabListEntry entry = getNewEntry(tabList, player, playerServer);
         // We will always update the only changing player
         tabList.removeEntry(player.getUniqueId());
-        tabList.addEntry(entry);
+        if (!player.hasPermission(Permissions.HIDDEN_ON_PLAYER_LIST)) {
+            tabList.addEntry(entry);
+        }
     }
 
     private TabListEntry getNewEntry(@NotNull TabList tabList, @NotNull Player player, @NotNull String playerServer) {
