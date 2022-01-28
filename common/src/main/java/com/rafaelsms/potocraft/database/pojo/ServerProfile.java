@@ -2,7 +2,7 @@ package com.rafaelsms.potocraft.database.pojo;
 
 import java.time.ZonedDateTime;
 
-public class ServerProfile {
+public class ServerProfile extends PlayerObject {
 
     private ZonedDateTime lastTeleportDate;
     private LocationObject lastTeleportLocation;

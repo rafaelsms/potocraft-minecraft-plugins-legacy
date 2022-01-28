@@ -5,9 +5,17 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.ReplaceOptions;
 import com.rafaelsms.potocraft.database.pojo.BaseObject;
+import com.rafaelsms.potocraft.database.pojo.HomeObject;
+import com.rafaelsms.potocraft.database.pojo.LocationObject;
+import com.rafaelsms.potocraft.database.pojo.PlayerObject;
+import com.rafaelsms.potocraft.database.pojo.ProxyProfile;
+import com.rafaelsms.potocraft.database.pojo.ReportEntryObject;
+import com.rafaelsms.potocraft.database.pojo.ServerProfile;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.ClassModel;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +27,8 @@ import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 public abstract class Database {
+
+    protected static final ReplaceOptions UPSERT = new ReplaceOptions().upsert(true);
 
     private final @NotNull String uri;
     private final @NotNull String databaseName;
@@ -103,13 +113,26 @@ public abstract class Database {
         });
     }
 
+    private <T> ClassModel<T> withDiscriminator(Class<T> tClass) {
+        return ClassModel.builder(tClass).enableDiscriminator(true).build();
+    }
+
     /**
      * @return a mongo database instance if succeeded
      * @throws DatabaseException if connection failed
      */
     private MongoDatabase getDatabase() throws DatabaseException {
         try {
-            CodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).build();
+            CodecProvider pojoCodecProvider = PojoCodecProvider.builder()
+                                                               .automatic(true)
+                                                               .register(withDiscriminator(BaseObject.class),
+                                                                         withDiscriminator(ReportEntryObject.class),
+                                                                         withDiscriminator(LocationObject.class),
+                                                                         withDiscriminator(HomeObject.class),
+                                                                         withDiscriminator(PlayerObject.class),
+                                                                         withDiscriminator(ServerProfile.class),
+                                                                         withDiscriminator(ProxyProfile.class))
+                                                               .build();
             CodecRegistry pojoCodecRegistry =
                     fromRegistries(getDefaultCodecRegistry(), fromProviders(pojoCodecProvider));
             if (mongoClient == null) {
@@ -128,9 +151,8 @@ public abstract class Database {
      * @return a mongo database collection converting its class to a
      * @throws DatabaseException if anything failed
      */
-    protected <T extends BaseObject> MongoCollection<T> getCollection(@NotNull String collectionName,
-                                                                      @NotNull Class<T> tClass) throws
-                                                                                                DatabaseException {
+    protected <T> MongoCollection<T> getCollection(@NotNull String collectionName, @NotNull Class<T> tClass) throws
+                                                                                                             DatabaseException {
         return getDatabase().getCollection(collectionName, tClass);
     }
 

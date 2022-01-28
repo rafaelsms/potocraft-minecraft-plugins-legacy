@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-public class ProxyProfile {
+public class ProxyProfile extends PlayerObject {
 
     private boolean offlineProfile = false;
     private Boolean loggedIn = null;

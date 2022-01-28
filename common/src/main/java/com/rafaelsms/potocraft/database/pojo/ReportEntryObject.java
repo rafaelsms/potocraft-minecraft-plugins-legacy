@@ -3,6 +3,7 @@ package com.rafaelsms.potocraft.database.pojo;
 import org.bson.types.ObjectId;
 
 import java.time.ZonedDateTime;
+import java.util.Set;
 
 public class ReportEntryObject {
 
@@ -21,6 +22,9 @@ public class ReportEntryObject {
     }
 
     public void setType(String type) {
+        if (!Type.values().contains(type)) {
+            throw new IllegalArgumentException("Invalid type");
+        }
         this.type = type;
     }
 
@@ -72,6 +76,10 @@ public class ReportEntryObject {
 
         // Private constructor
         private Type() {
+        }
+
+        public static Set<String> values() {
+            return Set.of(BAN, KICK, MUTE);
         }
     }
 }
