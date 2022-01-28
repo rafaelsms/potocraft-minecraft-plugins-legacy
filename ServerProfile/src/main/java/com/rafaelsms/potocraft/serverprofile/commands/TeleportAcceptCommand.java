@@ -45,7 +45,12 @@ public class TeleportAcceptCommand implements CommandExecutor {
             return true;
         } else if (requests.size() == 1) {
             TeleportRequest request = requests.get(0);
-            if (request.getDestination().isPlayerTeleportBlocked(true)) {
+            if (request.getDestination().isTeleporting()) {
+                sender.sendMessage(plugin.getConfiguration().getTeleportParticipantTeleporting());
+                return true;
+            }
+            if (request.getDestination().isInCombat()) {
+                sender.sendMessage(plugin.getConfiguration().getTeleportParticipantInCombat());
                 return true;
             }
             if (request.getTeleporting().isPlayerTeleportBlocked(true)) {
@@ -64,7 +69,12 @@ public class TeleportAcceptCommand implements CommandExecutor {
                     return true;
                 }
                 TeleportRequest request = requestOptional.get();
-                if (request.getTeleporting().isPlayerTeleportBlocked(true)) {
+                if (request.getDestination().isTeleporting()) {
+                    sender.sendMessage(plugin.getConfiguration().getTeleportParticipantTeleporting());
+                    return true;
+                }
+                if (request.getDestination().isInCombat()) {
+                    sender.sendMessage(plugin.getConfiguration().getTeleportParticipantInCombat());
                     return true;
                 }
                 if (request.getDestination().isPlayerTeleportBlocked(true)) {

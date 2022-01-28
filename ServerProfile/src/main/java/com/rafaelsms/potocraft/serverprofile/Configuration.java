@@ -69,6 +69,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.TELEPORT_PLAYER_QUIT, "&cTeleporte cancelado: pessoa saiu!");
         defaults.put(Keys.TELEPORT_ENTERED_COMBAT, "&cTeleporte cancelado: combate iniciado!");
         defaults.put(Keys.TELEPORT_PARTICIPANT_TELEPORTING, "&cTeleporte cancelado: outra pessoa teleportando!");
+        defaults.put(Keys.TELEPORT_PARTICIPANT_IN_COMBAT, "&cTeleporte cancelado: outra pessoa em combate!");
         defaults.put(Keys.TELEPORT_USER_TELEPORTING, "&cTeleporte cancelado: já teleportando!");
         defaults.put(Keys.TELEPORT_DESTINATION_UNAVAILABLE,
                      "&cTeleporte cancelado: destino do teleporte não está disponível!");
@@ -87,7 +88,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
                                                           """);
         defaults.put(Keys.TELEPORT_REQUEST_SENT, "&6Pedido de teleporte enviado a &e%username%&6.");
         defaults.put(Keys.TELEPORT_REQUEST_NOT_UPDATED,
-                     "&cPedido de teleporte anterior precisa ser cancelado por &e%username% &cprimeiro.");
+                     "&cPedido de teleporte anterior precisa ser cancelado por &e%username% &cprimeiro ou digitando &e&l/teleportecancelar&c.");
         defaults.put(Keys.TELEPORT_REQUEST_NO_REQUEST_FOUND, "&cNenhum pedido de teleporte ativo.");
         defaults.put(Keys.TELEPORT_REQUEST_CANCELLED, "&6Pedido de teleporte cancelado!");
         defaults.put(Keys.TELEPORT_REQUEST_MANY_REQUESTS_FOUND, "&6Vários pedidos encontrados: &e%list%");
@@ -276,6 +277,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
     public Component getTeleportParticipantTeleporting() {
         return TextUtil.toComponent(get(Keys.TELEPORT_PARTICIPANT_TELEPORTING)).build();
+    }
+
+    public Component getTeleportParticipantInCombat() {
+        return TextUtil.toComponent(get(Keys.TELEPORT_PARTICIPANT_IN_COMBAT)).build();
     }
 
     public Component getTeleportAlreadyTeleporting() {
@@ -475,7 +480,8 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String TELEPORT_BAR_TITLE = "language.teleport.bar_title";
         public static final String TELEPORT_PLAYER_QUIT = "language.teleport.player_quit";
         public static final String TELEPORT_ENTERED_COMBAT = "language.teleport.entered_combat";
-        public static final String TELEPORT_PARTICIPANT_TELEPORTING = "language.teleport.player_is_teleporting";
+        public static final String TELEPORT_PARTICIPANT_TELEPORTING = "language.teleport.other_player_is_teleporting";
+        public static final String TELEPORT_PARTICIPANT_IN_COMBAT = "language.teleport.other_player_is_in_combat";
         public static final String TELEPORT_USER_TELEPORTING = "language.teleport.user_is_teleporting";
         public static final String TELEPORT_DESTINATION_UNAVAILABLE = "language.teleport.destination_unavailable";
         public static final String TELEPORT_IN_COOLDOWN = "language.teleport.in_cooldown";
