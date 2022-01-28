@@ -37,9 +37,12 @@ public class EssentialsImporter implements Listener {
         }
         Player player = event.getPlayer();
         User user = plugin.getUserManager().getUser(player);
-        com.earth2me.essentials.User essentialsUser = essentials.getUser(player);
+        if (user.getProfile().isImportedEssentials()) {
+            return;
+        }
 
         // Import all homes
+        com.earth2me.essentials.User essentialsUser = essentials.getUser(player);
         for (String homeName : essentialsUser.getHomes()) {
             Location location = essentialsUser.getHome(homeName);
             user.getProfile().addHome(homeName, location);
@@ -52,5 +55,6 @@ public class EssentialsImporter implements Listener {
                         location.getBlockY(),
                         location.getBlockZ());
         }
+        user.getProfile().setImportedEssentials();
     }
 }

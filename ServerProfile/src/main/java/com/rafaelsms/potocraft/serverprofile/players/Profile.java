@@ -46,6 +46,8 @@ public class Profile extends DatabaseObject {
     private long experiencePickedUp = 0;
     private int totemUsages = 0;
 
+    private boolean importedEssentials = false;
+
     public Profile(@NotNull UUID playerId) {
         this.playerId = playerId;
     }
@@ -74,6 +76,8 @@ public class Profile extends DatabaseObject {
         this.blocksBroken = Util.getCatchingOrElse(() -> document.getInteger(Keys.BLOCKS_BROKEN), 0);
         this.experiencePickedUp = Util.getCatchingOrElse(() -> document.getLong(Keys.EXPERIENCE_PICKED_UP), 0L);
         this.totemUsages = Util.getCatchingOrElse(() -> document.getInteger(Keys.TOTEM_USAGES), 0);
+
+        this.importedEssentials = Util.getCatchingOrElse(() -> document.getBoolean(Keys.IMPORTED_ESSENTIALS), false);
     }
 
     public List<Home> getHomesSortedByDate() {
@@ -164,6 +168,14 @@ public class Profile extends DatabaseObject {
         this.lastTotemUsage = ZonedDateTime.now();
     }
 
+    public boolean isImportedEssentials() {
+        return importedEssentials;
+    }
+
+    public void setImportedEssentials() {
+        this.importedEssentials = true;
+    }
+
     public static Bson filterId(@NotNull UUID playerId) {
         return Filters.eq(Keys.PLAYER_ID, Util.convertNonNull(playerId, UUID::toString));
     }
@@ -212,6 +224,8 @@ public class Profile extends DatabaseObject {
         document.put(Keys.BLOCKS_BROKEN, blocksBroken);
         document.put(Keys.EXPERIENCE_PICKED_UP, experiencePickedUp);
         document.put(Keys.TOTEM_USAGES, totemUsages);
+
+        document.put(Keys.IMPORTED_ESSENTIALS, importedEssentials);
         return document;
     }
 
@@ -237,6 +251,8 @@ public class Profile extends DatabaseObject {
         public static final String BLOCKS_BROKEN = "brokenBlocks";
         public static final String EXPERIENCE_PICKED_UP = "experiencePickedUp";
         public static final String TOTEM_USAGES = "totemUsages";
+
+        public static final String IMPORTED_ESSENTIALS = "importedEssentials";
 
         // Private constructor
         private Keys() {
