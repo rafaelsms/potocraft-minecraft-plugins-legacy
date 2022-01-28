@@ -86,12 +86,16 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         if (!player.hasPermission(Permissions.TELEPORT_HOME)) {
             return List.of();
         }
-
+        // Check if player has no homes
         User user = plugin.getUserManager().getUser(player);
-        int maxHomesSize = user.getMaxHomesSize();
         int homesSize = user.getProfile().getHomesSize();
-        List<Home> homesSorted = user.getProfile().getHomesSortedByDate();
+        if (homesSize == 0) {
+            return List.of();
+        }
+
         // Suggest only available homes
+        int maxHomesSize = user.getMaxHomesSize();
+        List<Home> homesSorted = user.getProfile().getHomesSortedByDate();
         return Util.convertList(homesSorted.subList(0, Math.min(homesSize, maxHomesSize) - 1), Home::getName);
     }
 }
