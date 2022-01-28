@@ -3,20 +3,27 @@ package com.rafaelsms.potocraft.database;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.ReplaceOptions;
+import com.rafaelsms.potocraft.database.pojo.BaseObject;
+import org.bson.codecs.configuration.CodecProvider;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
+import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+
 public abstract class Database {
 
-    protected static final @NotNull ReplaceOptions UPSERT = new ReplaceOptions().upsert(true);
-
-    private @Nullable MongoClient mongoClient = null;
     private final @NotNull String uri;
     private final @NotNull String databaseName;
+
+    private @Nullable MongoClient mongoClient = null;
 
     protected Database(@NotNull String uri, @NotNull String databaseName) {
         this.uri = uri;
@@ -99,17 +106,32 @@ public abstract class Database {
     /**
      * @return a mongo database instance if succeeded
      * @throws DatabaseException if connection failed
-     * @see #UPSERT useful {@link ReplaceOptions} replace option
      */
-    protected MongoDatabase getDatabase() throws DatabaseException {
+    private MongoDatabase getDatabase() throws DatabaseException {
         try {
+            CodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).build();
+            CodecRegistry pojoCodecRegistry =
+                    fromRegistries(getDefaultCodecRegistry(), fromProviders(pojoCodecProvider));
             if (mongoClient == null) {
                 mongoClient = new MongoClient(new MongoClientURI(uri));
             }
-            return mongoClient.getDatabase(databaseName);
+            return mongoClient.getDatabase(databaseName).withCodecRegistry(pojoCodecRegistry);
         } catch (MongoException exception) {
             throw new DatabaseException(exception);
         }
+    }
+
+    /**
+     * @param collectionName collection's name
+     * @param tClass         type's class instance
+     * @param <T>            type to convert mongo JSON to
+     * @return a mongo database collection converting its class to a
+     * @throws DatabaseException if anything failed
+     */
+    protected <T extends BaseObject> MongoCollection<T> getCollection(@NotNull String collectionName,
+                                                                      @NotNull Class<T> tClass) throws
+                                                                                                DatabaseException {
+        return getDatabase().getCollection(collectionName, tClass);
     }
 
     /**

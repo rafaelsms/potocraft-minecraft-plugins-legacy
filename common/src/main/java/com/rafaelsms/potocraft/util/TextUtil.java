@@ -10,12 +10,9 @@ import net.luckperms.api.model.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.net.InetSocketAddress;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,35 +22,10 @@ import java.util.regex.Pattern;
 
 public final class TextUtil {
 
-    private static final Pattern SPACED_STRING_PATTERN = Pattern.compile("\\s*(\\S+)");
     private static final Pattern TIME_PATTERN = Pattern.compile("((\\d+)([wdhms]))+", Pattern.CASE_INSENSITIVE);
 
     // Private constructor
     private TextUtil() {
-    }
-
-    public static @NotNull String toColorizedString(@NotNull Component component) {
-        return LegacyComponentSerializer.legacyAmpersand().serializeOrNull(component);
-    }
-
-    public static @NotNull String toPlainString(@NotNull Component component) {
-        return PlainTextComponentSerializer.plainText().serializeOrNull(component);
-    }
-
-    public static @NotNull String getIpAddress(@NotNull InetSocketAddress address) {
-        if (address.getAddress() != null) {
-            return address.getAddress().getHostAddress();
-        }
-        return address.getHostString();
-    }
-
-    public static @NotNull List<String> parseArguments(@NotNull String string) {
-        Matcher matcher = SPACED_STRING_PATTERN.matcher(string);
-        List<String> arguments = new ArrayList<>();
-        while (matcher.find()) {
-            arguments.add(matcher.group(1));
-        }
-        return arguments;
     }
 
     public static @NotNull Optional<Duration> parseTime(@Nullable String string) {
@@ -175,6 +147,14 @@ public final class TextUtil {
         } catch (Exception ignored) {
         }
         return suffix;
+    }
+
+    public static @NotNull String toColorizedString(@NotNull Component component) {
+        return LegacyComponentSerializer.legacyAmpersand().serializeOrNull(component);
+    }
+
+    public static @NotNull String toPlainString(@NotNull Component component) {
+        return PlainTextComponentSerializer.plainText().serializeOrNull(component);
     }
 
     public static ComponentBuilder toComponent(@NotNull String base) {

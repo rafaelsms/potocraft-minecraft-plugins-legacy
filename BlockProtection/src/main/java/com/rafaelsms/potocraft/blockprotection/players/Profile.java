@@ -2,7 +2,6 @@ package com.rafaelsms.potocraft.blockprotection.players;
 
 import com.mongodb.client.model.Filters;
 import com.rafaelsms.potocraft.blockprotection.BlockProtectionPlugin;
-import com.rafaelsms.potocraft.database.DatabaseObject;
 import com.rafaelsms.potocraft.util.Util;
 import org.bson.Document;
 import org.bson.conversions.Bson;

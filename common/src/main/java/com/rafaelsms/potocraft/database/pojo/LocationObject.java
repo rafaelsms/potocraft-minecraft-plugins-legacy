@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class LocationObject {
+public class LocationObject extends BaseObject {
 
     private UUID worldId;
     private double x, y, z;
@@ -74,5 +74,23 @@ public class LocationObject {
 
     public void setPitch(float pitch) {
         this.pitch = pitch;
+    }
+
+    @Override
+    public String toString() {
+        return "LocationObject{" +
+               "worldId=" +
+               worldId +
+               ", x=" +
+               x +
+               ", y=" +
+               y +
+               ", z=" +
+               z +
+               ", yaw=" +
+               yaw +
+               ", pitch=" +
+               pitch +
+               '}';
     }
 }

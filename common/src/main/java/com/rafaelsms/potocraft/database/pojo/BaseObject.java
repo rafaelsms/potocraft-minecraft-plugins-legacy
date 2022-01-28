@@ -16,4 +16,9 @@ public abstract class BaseObject {
     public void setId(ObjectId id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "BaseObject{" + "id=" + id + '}';
+    }
 }
