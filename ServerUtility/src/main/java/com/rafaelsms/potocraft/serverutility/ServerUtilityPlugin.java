@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.serverutility;
 
 import com.rafaelsms.potocraft.serverutility.commands.AnvilCommand;
+import com.rafaelsms.potocraft.serverutility.commands.EnchantCommand;
 import com.rafaelsms.potocraft.serverutility.commands.EnderchestCommand;
 import com.rafaelsms.potocraft.serverutility.commands.GameModeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerTimeCommand;
@@ -56,7 +57,8 @@ public class ServerUtilityPlugin extends JavaPlugin {
         registerCommand("playertime", new PlayerTimeCommand(this));
         registerCommand("playerweather", new PlayerWeatherCommand(this));
         registerCommand("vanish", new VanishCommand(this));
-        registerCommand("vanish", new GameModeCommand(this));
+        registerCommand("gamemode", new GameModeCommand(this));
+        registerCommand("enchant", new EnchantCommand(this));
 
         logger().info("ServerUtility enabled!");
     }

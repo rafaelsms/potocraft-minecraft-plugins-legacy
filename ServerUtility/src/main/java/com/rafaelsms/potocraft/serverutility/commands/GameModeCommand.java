@@ -57,7 +57,7 @@ public class GameModeCommand implements CommandExecutor, TabCompleter {
             return true;
         }
         GameMode gameMode = gameModeOptional.get();
-        if (player.hasPermission(gamemodePermissions.get(gameMode))) {
+        if (!player.hasPermission(gamemodePermissions.get(gameMode))) {
             sender.sendMessage(plugin.getServer().getPermissionMessage());
             return true;
         }

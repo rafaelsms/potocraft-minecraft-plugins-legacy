@@ -28,3 +28,6 @@ commands:
   gamemode:
     description: Change your gamemode.
     aliases: [ gm, gmc, gms, gmsp, gma ]
+  enchant:
+    description: Enchant your item in hand.
+    aliases: [ enchantment, encantar, encantamento ]

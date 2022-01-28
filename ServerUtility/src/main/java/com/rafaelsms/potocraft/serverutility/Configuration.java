@@ -62,11 +62,14 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.EXPERIENCE_MODIFIER_GROUPS, Map.of("potocraft.exp_modifier.vip", 1.4));
 
         defaults.put(Keys.COMMAND_PLAYER_ONLY, "&cComando disponível apenas para jogadores");
+        defaults.put(Keys.COMMAND_PLAYER_NOT_FOUND, "&cJogador não encontrado.");
         defaults.put(Keys.COMMAND_PLAYER_TIME_HELP, "&6Uso: &e/tempo (dia/meiodia/noite/meianoite) [fixo]");
         defaults.put(Keys.COMMAND_PLAYER_WEATHER_HELP, "&6Uso: &e/clima (limpo/chuvoso)");
         defaults.put(Keys.COMMAND_PLAYER_VANISHED, "&6Ficou invisível.");
         defaults.put(Keys.COMMAND_PLAYER_APPEARED, "&6Ficou visível.");
         defaults.put(Keys.COMMAND_GAMEMODE_HELP, "&6Uso: &e&l/gamemode (creative/spectator/survival/adventure)");
+        defaults.put(Keys.COMMAND_ENCHANT_HELP, "&6Uso: &e&l/enchant (encantamento)");
+        defaults.put(Keys.COMMAND_ENCHANT_CANT_ENCHANT_ITEM, "&cNão é possível encantar este item");
         return defaults;
     }
 
@@ -173,6 +176,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_ONLY)).build();
     }
 
+    public Component getPlayerNotFound() {
+        return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_NOT_FOUND)).build();
+    }
+
     public Component getPlayerTimeHelp() {
         return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_TIME_HELP)).build();
     }
@@ -193,6 +200,14 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return TextUtil.toComponent(get(Keys.COMMAND_GAMEMODE_HELP)).build();
     }
 
+    public Component getEnchantHelp() {
+        return TextUtil.toComponent(get(Keys.COMMAND_ENCHANT_HELP)).build();
+    }
+
+    public Component getEnchantCantEnchantItem() {
+        return TextUtil.toComponent(get(Keys.COMMAND_ENCHANT_CANT_ENCHANT_ITEM)).build();
+    }
+
     private static class Keys {
 
         public static final String NERF_MENDING = "configuration.nerf_mending_to_one_repair_point_only";
@@ -211,11 +226,14 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String EXPERIENCE_MODIFIER_GROUPS = "configuration.experience_modifier.groups";
 
         public static final String COMMAND_PLAYER_ONLY = "language.commands.player_only";
+        public static final String COMMAND_PLAYER_NOT_FOUND = "language.commands.player_not_found";
         public static final String COMMAND_PLAYER_TIME_HELP = "language.commands.player_time.help";
         public static final String COMMAND_PLAYER_WEATHER_HELP = "language.commands.player_weather.help";
         public static final String COMMAND_PLAYER_VANISHED = "language.commands.vanish.player_vanished";
         public static final String COMMAND_PLAYER_APPEARED = "language.commands.vanish.player_appeared";
         public static final String COMMAND_GAMEMODE_HELP = "language.commands.gamemode.help";
+        public static final String COMMAND_ENCHANT_HELP = "language.commands.enchant.help";
+        public static final String COMMAND_ENCHANT_CANT_ENCHANT_ITEM = "language.commands.enchant.cant_enchant_item";
 
         // Private constructor
         private Keys() {
