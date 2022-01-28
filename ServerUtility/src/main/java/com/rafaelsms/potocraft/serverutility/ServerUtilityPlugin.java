@@ -2,6 +2,7 @@ package com.rafaelsms.potocraft.serverutility;
 
 import com.rafaelsms.potocraft.serverutility.commands.AnvilCommand;
 import com.rafaelsms.potocraft.serverutility.commands.EnderchestCommand;
+import com.rafaelsms.potocraft.serverutility.commands.GameModeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerTimeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerWeatherCommand;
 import com.rafaelsms.potocraft.serverutility.commands.VanishCommand;
@@ -16,6 +17,7 @@ import com.rafaelsms.potocraft.serverutility.listeners.WorldGameRuleApplier;
 import com.rafaelsms.potocraft.serverutility.tasks.SyncWorldTimeTask;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +56,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         registerCommand("playertime", new PlayerTimeCommand(this));
         registerCommand("playerweather", new PlayerWeatherCommand(this));
         registerCommand("vanish", new VanishCommand(this));
+        registerCommand("vanish", new GameModeCommand(this));
 
         logger().info("ServerUtility enabled!");
     }
@@ -84,5 +87,8 @@ public class ServerUtilityPlugin extends JavaPlugin {
             throw new IllegalStateException("Couldn't find command %s. Make sure it is on plugin.yml".formatted(command));
         }
         pluginCommand.setExecutor(executor);
+        if (executor instanceof TabCompleter tabCompleter) {
+            pluginCommand.setTabCompleter(tabCompleter);
+        }
     }
 }

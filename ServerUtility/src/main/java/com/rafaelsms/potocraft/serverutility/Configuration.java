@@ -66,6 +66,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         defaults.put(Keys.COMMAND_PLAYER_WEATHER_HELP, "&6Uso: &e/clima (limpo/chuvoso)");
         defaults.put(Keys.COMMAND_PLAYER_VANISHED, "&6Ficou invisível.");
         defaults.put(Keys.COMMAND_PLAYER_APPEARED, "&6Ficou visível.");
+        defaults.put(Keys.COMMAND_GAMEMODE_HELP, "&6Uso: &e&l/gamemode (creative/spectator/survival/adventure)");
         return defaults;
     }
 
@@ -188,6 +189,10 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         return TextUtil.toComponent(get(Keys.COMMAND_PLAYER_APPEARED)).build();
     }
 
+    public Component getGameModeHelp() {
+        return TextUtil.toComponent(get(Keys.COMMAND_GAMEMODE_HELP)).build();
+    }
+
     private static class Keys {
 
         public static final String NERF_MENDING = "configuration.nerf_mending_to_one_repair_point_only";
@@ -210,6 +215,7 @@ public class Configuration extends com.rafaelsms.potocraft.Configuration {
         public static final String COMMAND_PLAYER_WEATHER_HELP = "language.commands.player_weather.help";
         public static final String COMMAND_PLAYER_VANISHED = "language.commands.vanish.player_vanished";
         public static final String COMMAND_PLAYER_APPEARED = "language.commands.vanish.player_appeared";
+        public static final String COMMAND_GAMEMODE_HELP = "language.commands.gamemode.help";
 
         // Private constructor
         private Keys() {

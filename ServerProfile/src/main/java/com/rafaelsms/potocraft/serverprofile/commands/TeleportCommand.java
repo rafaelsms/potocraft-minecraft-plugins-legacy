@@ -4,6 +4,7 @@ import com.rafaelsms.potocraft.serverprofile.Permissions;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.User;
 import com.rafaelsms.potocraft.util.TextUtil;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -34,12 +35,21 @@ public class TeleportCommand implements CommandExecutor {
             sender.sendMessage(plugin.getServer().getPermissionMessage());
             return true;
         }
+
+        // /tp <x> <y> <z>
+        if (args.length == 3 && sender.hasPermission(Permissions.TELEPORT_POSITION)) {
+            if (handleTeleportPosition(teleportingPlayer, args)) {
+                return true;
+            }
+        }
+
+        // Fallback to teleport command
         if (args.length != 1) {
             sender.sendMessage(plugin.getConfiguration().getTeleportHelp());
             return true;
         }
 
-        // Find closest player by the name
+        // Find the closest player by the name
         String playerName = args[0];
         Optional<? extends Player> optionalPlayer =
                 TextUtil.closestMatch(plugin.getServer().getOnlinePlayers(), Player::getName, playerName);
@@ -74,5 +84,21 @@ public class TeleportCommand implements CommandExecutor {
                                                      .getTeleportRequestSent(destinationPlayer.getName()));
         }
         return true;
+    }
+
+    private boolean handleTeleportPosition(Player player, String[] args) {
+        assert args.length == 3;
+        try {
+            double x = Double.parseDouble(args[0]);
+            double y = Double.parseDouble(args[1]);
+            double z = Double.parseDouble(args[2]);
+
+            plugin.getUserManager()
+                  .getUser(player)
+                  .teleport(new Location(player.getWorld(), x, y, z), PlayerTeleportEvent.TeleportCause.COMMAND);
+            return true;
+        } catch (NumberFormatException ignored) {
+            return false;
+        }
     }
 }

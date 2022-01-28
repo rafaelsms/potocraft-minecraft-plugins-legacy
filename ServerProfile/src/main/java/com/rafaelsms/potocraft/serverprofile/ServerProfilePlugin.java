@@ -120,6 +120,8 @@ public class ServerProfilePlugin extends JavaPlugin {
             throw new IllegalStateException("Command couldn't be registered: %s".formatted(name));
         }
         pluginCommand.setExecutor(executor);
-        pluginCommand.setTabCompleter(tabCompleter);
+        if (tabCompleter != null) {
+            pluginCommand.setTabCompleter(tabCompleter);
+        }
     }
 }
