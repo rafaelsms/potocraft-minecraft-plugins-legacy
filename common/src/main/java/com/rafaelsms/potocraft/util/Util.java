@@ -3,8 +3,6 @@ package com.rafaelsms.potocraft.util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -119,13 +117,5 @@ public final class Util {
             return fallback;
         }
         return Objects.requireNonNull(convert(r, rsFunction));
-    }
-
-    public static @Nullable ZonedDateTime toDateTime(@Nullable String string) {
-        return convert(string, str -> ZonedDateTime.parse(str, DateTimeFormatter.ISO_ZONED_DATE_TIME));
-    }
-
-    public static @Nullable String fromDateTime(@Nullable ZonedDateTime zonedDateTime) {
-        return convert(zonedDateTime, dateTime -> dateTime.format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
     }
 }
