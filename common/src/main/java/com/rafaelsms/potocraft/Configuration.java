@@ -52,8 +52,9 @@ public abstract class Configuration {
      * @throws IOException if file reading fails
      */
     public void loadConfiguration() throws IOException {
+        // Insert defaults first, avoiding NullPointerExceptions if any configuration is added
+        configuration.putAll(Util.getOrElse(getDefaults(), Map.of()));
         if (!configurationFile.exists()) {
-            configuration.putAll(Util.getOrElse(getDefaults(), Map.of()));
             writeConfiguration();
         }
 

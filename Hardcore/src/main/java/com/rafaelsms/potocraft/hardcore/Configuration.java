@@ -15,12 +15,9 @@ import java.util.Map;
 
 public class Configuration extends com.rafaelsms.potocraft.Configuration {
 
-    private final @NotNull HardcorePlugin plugin;
-
     public Configuration(@NotNull HardcorePlugin plugin) throws IOException {
         super(plugin.getDataFolder(), "config.yml");
         loadConfiguration();
-        this.plugin = plugin;
     }
 
     @Override
