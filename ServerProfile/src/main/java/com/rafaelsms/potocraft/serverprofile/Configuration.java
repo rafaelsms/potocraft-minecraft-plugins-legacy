@@ -58,7 +58,7 @@ public class Configuration extends YamlFile {
     public Component getLocalChatFormat(@NotNull UUID senderId,
                                         @NotNull String senderName,
                                         @NotNull Component message) {
-        return getChatFormat(get("configuration.local_chat.format"), senderId, senderName, message);
+        return getChatFormat(get("configuration.local_chat.local_format"), senderId, senderName, message);
     }
 
     public Component getLocalChatSpyFormat(@NotNull UUID senderId,
@@ -68,7 +68,7 @@ public class Configuration extends YamlFile {
     }
 
     public Component getChatFormat(@NotNull UUID senderId, @NotNull String senderName, @NotNull Component message) {
-        return getChatFormat(get("configuration.local_chat.global_format"), senderId, senderName, message);
+        return getChatFormat(get("configuration.local_chat.no_range_format"), senderId, senderName, message);
     }
 
     private Component getChatFormat(@Nullable String format, @NotNull UUID senderId,
