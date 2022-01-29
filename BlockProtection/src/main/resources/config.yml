@@ -1,0 +1,21 @@
+configuration:
+  database:
+    mongo_uri: "mongodb://localhost:27017"
+    database_name: "serverNameDb"
+    player_profile_collection: "protectionProfiles"
+    is_exception_fatal: false
+  protection:
+    selection:
+      xz_offset: 6
+      min_y_offset: 2
+      max_y_offset: 5
+    volume:
+      default_reward_per_block: 0.2
+      groups_reward_per_block:
+        potocraft.protection.reward.vip: 0.75
+      default_maximum_volume: 15000
+      groups_maximum_volume:
+        potocraft.protection.volume.vip: 50000
+language:
+  errors:
+    failed_to_fetch_profile: "&cFalha ao carregar perfil."

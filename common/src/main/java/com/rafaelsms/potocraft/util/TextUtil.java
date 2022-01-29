@@ -177,8 +177,8 @@ public final class TextUtil {
         return suffix;
     }
 
-    public static ComponentBuilder toComponent(@NotNull String base) {
-        return ComponentBuilder.builder(base);
+    public static ComponentBuilder toComponent(@Nullable String base) {
+        return ComponentBuilder.builder(Util.getOrElse(base, "&cFailed to load message"));
     }
 
     public static class ComponentBuilder {

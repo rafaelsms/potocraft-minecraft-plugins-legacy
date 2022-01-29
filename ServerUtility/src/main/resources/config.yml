@@ -1,0 +1,45 @@
+configuration:
+  nerf_mending_to_one_repair_point_only: true
+  hide_join_quit_messages: false
+  experience_modifier:
+    enabled: true
+    default_modifier: 0.8
+    groups:
+      potocraft.exp_modifier.vip: 1.4
+  rainy_night_event:
+    enabled: false
+    potion_effects:
+      - type: 'health_boost'
+        duration: 7200
+        amplifier: 4
+      - type: 'strength'
+        duration: 7200
+        amplifier: 1
+  lava_flow:
+    allow_lava_flow: false
+    allow_lava_flow_worlds:
+      - mundo_nether
+  game_rules_applied:
+    default:
+      playersSleepingPercentage: 35
+    world:
+      doFireTick: false
+      maxEntityCramming: 4
+  worlds_with_synced_real_time:
+    - world
+
+language:
+  commands:
+    player_only: "&cComando disponível apenas para jogadores"
+    player_time:
+      help: "&6Uso: &e/tempo (dia/meiodia/noite/meianoite) [fixo]"
+    player_weather:
+      help: "&6Uso: &e/clima (limpo/chuvoso)"
+    vanish:
+      player_vanished: "&6Ficou invisível."
+      player_appeared: "&6Ficou visível."
+    gamemode:
+      help: "&6Uso: &e&l/gamemode (creative/spectator/survival/adventure)"
+    enchant:
+      help: "&6Uso: &e&l/enchant (encantamento)"
+      cant_enchant_item: "&cNão é possível encantar este item"

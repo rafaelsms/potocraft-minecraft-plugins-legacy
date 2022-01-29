@@ -1,0 +1,158 @@
+configuration:
+  database:
+    mongo_uri: 'mongodb://localhost:27017'
+    mongo_database: 'proxyDb'
+    player_profile_collection: 'loginProfiles'
+    is_exception_fatal: false
+  allowed_usernames_regex: '^*?[A-Za-z0-9_]{3,16}$'
+  offline_players:
+    offline_players_login_server: 'login'
+    offline_allowed_commands:
+      - login
+      - l
+      - log
+      - registrar
+      - cadastrar
+      - reg
+      - register
+    minutes_between_joins_to_auto_login: 45
+    max_accounts_registered_per_address: 1
+  tab_list_other_server_entry_format: '&7(%server_name%) %prefix%%player_name%%suffix%'
+  muted_blocked_commands:
+    - msg
+    - tell
+    - pm
+    - dm
+    - reply
+    - r
+    - w
+    - whisper
+    - responder
+    - message
+    - mensagem
+    - tp
+    - tpa
+    - tpyes
+    - tpsim
+    - tpask
+    - tpaqui
+    - tphere
+    - tpahere
+    - tpaccept
+    - tpaceitar
+    - teleporteaqui
+    - teleporthere
+    - teleporte
+    - teleport
+    - teleportaccept
+    - teleporteaceitar
+    - teleportaceitar
+
+language:
+  generic:
+    date_time_formatter: "EEE', 'dd' de 'MMM' às 'H'h'mm"
+    no_permission: "&cVocê não possui permissão."
+    no_player_found: "&cNenhum jogador encontrado."
+    console_name: "Console (administração)"
+    report_reason_unknown: "não especificado"
+    no_expiration_date: "data não especificada"
+  commands:
+    players_only: "&cComando pode ser executado apenas por jogadores!"
+    offline_players_only: "&cComando pode ser executado apenas por jogadores piratas!"
+    incorrect_pin: "&cSenha inválida!"
+    incorrect_pin_format: "&cSua senha deve ter 6 números."
+    logged_in: "&aLogin efetuado com sucesso!"
+    logged_in_players_only: "&cComando pode ser executado apenas por jogadores que usaram &e&l/login&c!"
+    no_profile_found: "&6Não encontramos usuários com este nome."
+    failed_to_search_profile: "&cFalha ao procurar perfil."
+    failed_to_save_profile: "&cFalha ao salvar perfil."
+    change_pin:
+      help: |
+        &6Lembre da sua senha anterior, pense numa senha nova de 6 números e digite:
+        &e&l/mudarsenha <antiga> <nova> <nova>
+        &6Por exemplo: &e/mudarsenha 000000 123456 123456
+      invalid_pins: |
+        &cSua senha nova precisa ser digitada igualmente duas vezes.
+        &cA senha precisa ser 6 números.
+        &6Exemplo: &a&l/mudarsenha <antiga> 123456 123456
+      register_instead: |
+        &6Você ainda não tem senha cadastrada, digite para cadastrar:
+        &a&l/registrar
+      success: "&6Senha alterada com sucesso!"
+    register:
+      help: |
+        &6Pense e memorize uma senha de 6 números e digite duas vezes:
+        &6Por exemplo: &e&l/registrar 123456 123456
+      invalid_pins: |
+        &6Sua senha deve conter 6 números e ser digitada duas vezes de forma igual:
+        &6Por exemplo: &e&l/registrar 012345 012345
+      max_accounts_per_address_reached: "&cNúmero máximo de contas para seu endereço atingido."
+      login_instead: "&6Conta já cadastrada! Digite &e&l/login &6e sua senha para entrar."
+      change_pin_instead: "&6Conta já cadastrada! Digite &e&l/mudarsenha &6para alterar a senha."
+    login:
+      help: "&6Lembre-se da senha cadastrada e digite: &e&l/login 123456 &6trocando pela &esua &6senha de 6 números."
+      register_instead: "&6Conta ainda não cadastrada! Digite &e&l/registrar &6para registrar"
+      already_logged_in: "&6Já está online, bom jogo :)"
+      no_server_available: |
+        &cFalha ao transferir: servidor indisponível.
+        &cDigite &e&l/server &cpara mudar de servidor manualmente.
+    unban:
+      help: "&6Uso: &e&l/unban <nome>"
+    ban:
+      help: "&6Uso: &e&l/ban <nome> <razão>"
+      player_offline: "&cJogador está offline, você não possui permissão."
+    seen:
+      help: "&6Uso: &e&l/seen <nome/uuid>"
+      profile: |
+        &e&l%user_name% &6(%user_id%):
+        &6* Último servidor: &e%server_name%
+        &6* Tempo em jogo: &e%play_time%
+        &6* Última vez online: &e%join_date%
+        &6* Última saída: &e%quit_date%
+        &6* Ocorrências:
+        %report_entries%
+      report_entry: "&e%type% &6%active% de &e%reporter_id% &6até &e%expiration_date% &6por &e%reason%"
+    temporary_ban:
+      help: "&6Uso: &e&l/tempban <nome> <tempo> <razão>"
+      player_offline: "&cJogador está offline, você não possui permissão."
+    unmute:
+      help: "&6Uso: &e&l/unmute <nome>"
+    mute:
+      help: "&6Uso: &e&l/mute <nome> <tempo> <razão>"
+      player_offline: "&cJogador está offline, você não possui permissão."
+    kick:
+      help: "&6Uso: &e&l/kick <nome> <razão>"
+    list_server_players: "&6Servidor %server_name% (%size%): &e%player_list%"
+    player_punished: "&6Jogador &e%player% &6punido."
+    player_unpunished: "&6%player% teve sua punição revogada."
+    player_is_not_punished: "&c%player% não está punido."
+  kick_messages:
+    could_not_check_mojang: |
+      &cFalha ao consultar servidor da Microsoft.
+      &cTente novamente mais tarde!
+    invalid_java_prefix: |
+      &cNome inválido para Java Edition.
+      &cTroque de nome e entre novamente.
+    invalid_username: |
+      &cNome inválido.
+      &cTroque de nome e entre novamente.
+    failed_to_retrieve_player_profile: |
+      &cFalha ao consultar seu perfil.
+      &cTente novamente mais tarde!
+    failed_to_save_player_profile: |
+      &cFalha ao salvar seu perfil.
+      &cTente novamente mais tarde!
+    login_server_unavailable: |
+      &cServidor para login indisponível.
+      &cTente novamente mais tarde!
+  punishment:
+    logged_off: "&6Você não efetuou login! Digite &e&l/registrar &6ou &e&l/login&6!"
+    kicked: |
+      &cVocê foi expulso por &e%reporter%
+      &cpor &e%reason%
+    banned: |
+      &cVocê foi banido por &e%reporter%
+      &cpelo motivo &e%reason%
+      &caté &e%expiration_date%
+    muted: "&cVocê foi silenciado por &e%reporter% &cpelo motivo &e%reason% &caté &e%expiration_date%"
+    commands_muted: "&cVocê não pode executar este comando enquanto está silenciado."

@@ -96,7 +96,7 @@ public class LoginManagerPlugin {
     @Subscribe
     private void onReload(ProxyReloadEvent event) {
         try {
-            this.configuration.loadConfiguration();
+            this.configuration.loadFile();
         } catch (IOException exception) {
             getLogger().warn("Failed to load configuration:", exception);
         }

@@ -1,0 +1,97 @@
+configuration:
+  database:
+    mongo_uri: 'mongodb://localhost:27017'
+    database_name: 'serverNameDb'
+    is_exception_fatal: false
+    player_profiles_collection: 'playerProfiles'
+    warps_collection: 'warps'
+  save_players_task_timer_in_ticks: 3600
+  local_chat:
+    range: 300.0
+    spy_format: "&7(longe) %prefix%&7%username%%suffix% &7%message%"
+    global_format: "&e%prefix%%username%%suffix% &f%message%"
+  teleport:
+    teleport_delay_in_ticks: 140
+    teleport_cooldown_in_seconds: 120
+    teleport_request_duration_in_seconds: 210
+  totem_usage_cooldown_in_seconds: 360
+  homes:
+    default_number_of_homes: 1
+    replace_home_timeout_ticks: 2400
+    home_number_permission_groups:
+      potocraft.homes.vip: 5
+  combat:
+    player_combat_duration_ticks: 820
+    mob_combat_duration_ticks: 260
+    should_log_off_destroy_totem_first: false
+    blocked_commands:
+      - tp
+      - tphere
+      - warp
+      - spawn
+      - tpaccept
+
+language:
+  players_only: "&cComando disponível apenas para jogadores."
+  combat:
+    bar_title: "&cSe sair ou se a conexão cair, irá morrer!"
+    command_is_blocked_while_in_combat: "&cEste comando está bloqueado em combate."
+    unknown_world_name: "mundo desconhecido"
+    your_death_location_is: "&cVocê morreu no &e%world% &cnas coordenadas &ex = %x%&c, &ey = %y%&c, &ez = %z%&c."
+  teleport:
+    bar_title: "&eTeleportando... Não entre em combate!"
+    player_quit: "&cTeleporte cancelado: pessoa saiu!"
+    entered_combat: "&cTeleporte cancelado: combate iniciado!"
+    other_player_is_teleporting: "&cTeleporte cancelado: outra pessoa teleportando!"
+    other_player_is_in_combat: "&cTeleporte cancelado: outra pessoa em combate!"
+    already_teleporting: "&cTeleporte cancelado: já teleportando!"
+    destination_unavailable: "&cTeleporte cancelado: destino do teleporte não está disponível!"
+    in_cooldown: "&cTeleporte estará indisponível por mais &e%cooldown% segundos&c."
+    failed: "&cTeleporte falhou!"
+    player_not_found: "&cNão encontramos alguém com este nome."
+    help: "&6Para teleportar até alguém, digite &e&l/teleporte (nome)&6."
+    requests:
+      teleport_received: |
+        &6Você recebeu um pedido para &e%username% &6se teleportar até &evocê&6..
+        &6Digite &e&l/teleporteaceitar &6para aceitar ou &e&l/teleporterecusar &6para recusar.
+      not_updated: "&cPedido de teleporte anterior precisa ser cancelado por &e%username% &cprimeiro ou digitando &e&l/teleportecancelar&c."
+      sent: "&6Pedido de teleporte enviado a &e%username%&6."
+      no_found: "&cNenhum pedido de teleporte ativo."
+      many_found: "&6Vários pedidos encontrados: &e%list%"
+      teleport_here_received: |
+        &6Você recebeu um pedido para &evocê &6se teleportar até &3%username%&6.
+        &6Digite &e&l/teleporteaceitar &6para aceitar ou &e&l/teleporterecusar &6para recusar.
+      request_cancelled: "&6Pedido de teleporte cancelado!"
+      sent_requests_cancelled: "&6Os pedidos enviados foram cancelados."
+    back:
+      no_back_location: "&cNão há localização para voltar."
+    homes:
+      help: "&6Para criar uma casa, digite &e&l/criarcasa &6e assim poderá voltar para ela digitando &e&l/casa&6!"
+      list: |
+        &6Para criar mais casas, digite &e&l/criarcasa&6. Para apagar, &e&l/deletarcasa&6.
+        &6Casas: &e%list%
+      at_max_capacity: "&cVocê atingiu o número máximo de casas, digite &e&l/deletarcasa &cpara removê-las."
+      create_help: "&6Digite &e&l/criarcasa (nome) &6para criar uma casa."
+      created: "&6Casa criada! Você pode teleportar até ela digitando &e&l/casa&6!"
+      already_exists: "&cCasa já existe. &6Para substituí-la, digite o comando novamente nos próximos segundos."
+      deleted: "&6Casa removida."
+      not_found: "&cCasa não encontrada ou você perdeu permissão para acessar esta casa."
+      delete_help: |
+        &6Para remover uma casa, digite &e&l/deletarcasa (nome)&c.
+        &6Casas: &e%list%
+    warps:
+      manage:
+        help: "&6Uso: &e/criarportal (nome) &6ou &e/deletarportal (nome)&6."
+        success: "&6Portal alterado com sucesso!"
+        failure: "&cFalha ao acessar banco de dados."
+      list: "&6Portais disponíveis: &e%list%"
+      failed_to_retrieve: "&cFalha ao obter lista."
+      not_found: "&cPortal não encontrado."
+    worlds:
+      list: "&6Mundos disponíveis: &e%list%"
+      not_found: "&cMundo não encontrado."
+  totem:
+    totem_in_cooldown: "&cSeu totem está em cooldown e não fez efeito."
+    totem_entered_in_cooldown: "&cSeu totem entrou em cooldown e não fará efeito por alguns minutos."
+  kick_messages:
+    could_not_load_profile: "&cNão foi possível carregar seu perfil!"

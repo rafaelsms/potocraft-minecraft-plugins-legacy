@@ -1,0 +1,35 @@
+configuration:
+  chat_limiter:
+    message_amount: 4
+    time_amount_millis: 12000
+    min_message_length: 3
+  comparator:
+    min_length_to_compare: 4
+    min_char_differences: 3
+  universal_chat:
+    format: "&6!! &7(&6%server%&7)&6 <&e%prefix%%username%%suffix%&6> &f%message%"
+    prefix: '!!'
+  global_chat:
+    format: "&3! <&e%prefix%%username%%suffix%&3> &f%message%"
+    spy_format: "&7! (%server%) <%prefix%%username%%suffix%&7> &7%message%"
+    prefix: '!'
+  other_server_chat:
+    spy_format: "&7(%server%) %prefix%&7%username%%suffix% &7%message%"
+  direct_messages:
+    reply_time_amount_seconds: 240
+
+language:
+  console_name: 'administração'
+  unknown_server_name: 'limbo?'
+  no_permission: "&cVocê não possui permissão."
+  messages_too_small: "&cMensagens muito pequenas são ignoradas!"
+  messages_too_frequent: "&cMensagens enviadas muito rapidamente!"
+  messages_too_similar: "&cMensagens muito parecidas!"
+  players_only: "&cComando disponível apenas para jogadores!"
+  direct_messages:
+    help: "&6Digite &e&l/mensagem <nome> <mensagem>"
+    reply_help: "&6Digite &e&l/responder <mensagem>&6, a mensagem irá para a última pessoa com quem falou."
+    no_player_found: "&cJogador não encontrado!"
+    outgoing_format: "&3você &7-> &3%receiver% &7%message%"
+    incoming_format: "&3%sender% &7-> &3você &7%message%"
+    spy_format: "&3%sender% &7-> &3%receiver% &7%message%"
