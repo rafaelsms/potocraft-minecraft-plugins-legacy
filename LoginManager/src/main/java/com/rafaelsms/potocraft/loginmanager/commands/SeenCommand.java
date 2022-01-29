@@ -60,7 +60,7 @@ public class SeenCommand implements RawCommand {
             }
             profile = profileOptional.get();
         }
-        invocation.source().sendMessage(plugin.getConfiguration().getCommandSeen(profile));
+        invocation.source().sendMessage(plugin.getConfiguration().getCommandSeen(plugin, profile));
     }
 
     @Override

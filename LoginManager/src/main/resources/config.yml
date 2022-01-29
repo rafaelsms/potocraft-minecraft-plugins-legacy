@@ -111,7 +111,7 @@ language:
         &6* Última saída: &e%quit_date%
         &6* Ocorrências:
         %report_entries%
-      report_entry: "&e%type% &6%active% de &e%reporter_id% &6até &e%expiration_date% &6por &e%reason%"
+      report_entry: "&e%type% &6%active% de &e%reporter_name% &6até &e%expiration_date% &6por &e%reason%"
     temporary_ban:
       help: "&6Uso: &e&l/tempban <nome> <tempo> <razão>"
       player_offline: "&cJogador está offline, você não possui permissão."

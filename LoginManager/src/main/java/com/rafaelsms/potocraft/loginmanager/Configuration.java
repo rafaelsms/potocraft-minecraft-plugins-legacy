@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -217,17 +218,26 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponent(get("language.commands.seen.help")).build();
     }
 
-    public Component getCommandSeenReportEntries(@NotNull Collection<ReportEntry> reportEntries) {
+    public Component getCommandSeenReportEntries(@NotNull LoginManagerPlugin plugin,
+                                                 @NotNull Collection<ReportEntry> reportEntries) {
         List<Component> lines = new ArrayList<>(reportEntries.size());
         for (ReportEntry entry : reportEntries) {
+            String reporterName = "console";
+            if (entry.getReporterId() != null) {
+                Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(entry.getReporterId());
+                if (optionalProfile.isPresent()) {
+                    reporterName = optionalProfile.get().getLastPlayerName();
+                }
+            }
+
             lines.add(TextUtil.toComponent(get("language.commands.seen.report_entry"))
                               .replace("%reporter_id%",
                                        Util.convertFallback(entry.getReporterId(), UUID::toString, "console"))
+                              .replace("%reporter_name%", reporterName)
                               .replace("%type%", entry.getType())
                               .replace("%active%", entry.isActive() ? "enabled" : "disabled")
                               .replace("%expiration_date%",
-                                       Util.convertFallback(entry.getExpirationDate(),
-                                                            getDateTimeFormatter()::format,
+                                       Util.convertFallback(entry.getExpirationDate(), getDateTimeFormatter()::format,
                                                             "?"))
                               .replace("%reason%", Util.getOrElse(entry.getReason(), "?"))
                               .build());
@@ -235,7 +245,7 @@ public class Configuration extends YamlFile {
         return Component.join(Component.newline(), lines);
     }
 
-    public Component getCommandSeen(@NotNull Profile profile) {
+    public Component getCommandSeen(@NotNull LoginManagerPlugin plugin, @NotNull Profile profile) {
         Duration playTimeDuration = Duration.ofMillis(profile.getPlayTime().orElse(0L));
         String playTime = playTimeDuration.toDaysPart() +
                           "d" +
@@ -256,7 +266,7 @@ public class Configuration extends YamlFile {
                        .replace("%play_time%", playTime)
                        .replace("%join_date%", lastJoinDate)
                        .replace("%quit_date%", lastQuitDate)
-                       .replace("%report_entries%", getCommandSeenReportEntries(profile.getReportEntries()))
+                       .replace("%report_entries%", getCommandSeenReportEntries(plugin, profile.getReportEntries()))
                        .build();
     }
 
