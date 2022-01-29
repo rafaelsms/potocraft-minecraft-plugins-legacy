@@ -44,9 +44,7 @@ public final class Util {
     public static <T> @NotNull T getCatchingOrElse(@NotNull Supplier<T> first, @NotNull T fallback) {
         try {
             T returned = first.get();
-            if (returned == null) {
-                return fallback;
-            }
+            return Objects.requireNonNullElse(returned, fallback);
         } catch (Exception ignored) {
         }
         return fallback;
