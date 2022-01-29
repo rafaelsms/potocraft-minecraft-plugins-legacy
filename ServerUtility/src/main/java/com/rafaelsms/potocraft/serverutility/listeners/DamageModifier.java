@@ -20,9 +20,10 @@ public class DamageModifier implements Listener {
         if (!(event.getDamager() instanceof Player player)) {
             return;
         }
+        double multiplier = plugin.getConfiguration().getOverallDamageMultiplier();
         double factor = plugin.getConfiguration().getCooldownDamageFactor();
         float attackCooldown = player.getAttackCooldown();
-        double damageMultiplier = Math.max((attackCooldown - factor) / (1.0 - factor), 0.0);
+        double damageMultiplier = multiplier * Math.max((attackCooldown - factor) / (1.0 - factor), 0.0);
         event.setDamage(event.getDamage() * damageMultiplier);
     }
 }

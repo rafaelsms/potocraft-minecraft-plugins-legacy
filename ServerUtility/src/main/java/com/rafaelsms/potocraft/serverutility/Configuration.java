@@ -26,8 +26,12 @@ public class Configuration extends YamlFile {
         this.plugin = plugin;
     }
 
+    public Double getOverallDamageMultiplier() {
+        return getDouble("configuration.damage_modifiers.overall_damage_multiplier");
+    }
+
     public Double getCooldownDamageFactor() {
-        return getDouble("configuration.damage_cooldown_factor");
+        return getDouble("configuration.damage_modifiers.damage_cooldown_factor");
     }
 
     public Boolean isMendingNerfed() {
