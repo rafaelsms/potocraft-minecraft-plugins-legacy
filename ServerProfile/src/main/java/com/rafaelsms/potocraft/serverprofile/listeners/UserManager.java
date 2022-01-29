@@ -73,7 +73,8 @@ public class UserManager implements Listener {
             Profile profile = loadedProfiles.remove(event.getPlayer().getUniqueId());
             if (profile == null) {
                 plugin.logger().warn("Didn't have a loaded Profile for user {}", event.getPlayer().getName());
-                event.getPlayer().kick(plugin.getConfiguration().getKickMessageCouldNotLoadProfile());
+                event.disallow(PlayerLoginEvent.Result.KICK_OTHER,
+                               plugin.getConfiguration().getKickMessageCouldNotLoadProfile());
                 return;
             }
             users.put(event.getPlayer().getUniqueId(), new User(plugin, event.getPlayer(), profile));
