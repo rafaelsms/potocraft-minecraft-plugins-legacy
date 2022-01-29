@@ -26,8 +26,16 @@ public class Configuration extends YamlFile {
         this.plugin = plugin;
     }
 
+    public Double getCooldownDamageFactor() {
+        return getDouble("configuration.damage_cooldown_factor");
+    }
+
     public Boolean isMendingNerfed() {
         return get("configuration.nerf_mending_to_one_repair_point_only");
+    }
+
+    public Boolean isPreventingTreasureEnchantedBooks() {
+        return get("configuration.prevent_treasure_enchanted_books_on_villagers");
     }
 
     @SuppressWarnings("rawtypes")

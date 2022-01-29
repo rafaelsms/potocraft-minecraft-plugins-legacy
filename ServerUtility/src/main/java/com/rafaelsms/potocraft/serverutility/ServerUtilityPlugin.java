@@ -8,12 +8,14 @@ import com.rafaelsms.potocraft.serverutility.commands.PlayerTimeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerWeatherCommand;
 import com.rafaelsms.potocraft.serverutility.commands.VanishCommand;
 import com.rafaelsms.potocraft.serverutility.commands.WorkbenchCommand;
+import com.rafaelsms.potocraft.serverutility.listeners.DamageModifier;
 import com.rafaelsms.potocraft.serverutility.listeners.ExperienceModifier;
 import com.rafaelsms.potocraft.serverutility.listeners.HideMessagesListener;
 import com.rafaelsms.potocraft.serverutility.listeners.LavaListener;
 import com.rafaelsms.potocraft.serverutility.listeners.MendingNerfListener;
 import com.rafaelsms.potocraft.serverutility.listeners.RainyNightListener;
 import com.rafaelsms.potocraft.serverutility.listeners.VanishManager;
+import com.rafaelsms.potocraft.serverutility.listeners.VillagerListener;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldGameRuleApplier;
 import com.rafaelsms.potocraft.serverutility.tasks.SyncWorldTimeTask;
 import org.bukkit.command.CommandExecutor;
@@ -46,6 +48,8 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MendingNerfListener(this), this);
         getServer().getPluginManager().registerEvents(new ExperienceModifier(this), this);
         getServer().getPluginManager().registerEvents(new RainyNightListener(this), this);
+        getServer().getPluginManager().registerEvents(new VillagerListener(this), this);
+        getServer().getPluginManager().registerEvents(new DamageModifier(this), this);
 
         // Run world sync task
         getServer().getScheduler().runTaskTimer(this, new SyncWorldTimeTask(this), 10L, 10L);
