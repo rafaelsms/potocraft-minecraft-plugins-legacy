@@ -135,7 +135,7 @@ public class Configuration extends YamlFile {
         return getLong("configuration.combat.hardcore.default_ban_time_in_seconds");
     }
 
-    public Map<String, Long> getHardcoreBanTimeGroups() {
+    public Map<String, Integer> getHardcoreBanTimeGroups() {
         return get("configuration.combat.hardcore.permission_ban_time_groups");
     }
 

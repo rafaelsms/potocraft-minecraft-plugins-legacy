@@ -261,7 +261,7 @@ public class User {
             return Duration.ZERO;
         }
         long seconds = plugin.getConfiguration().getHardcoreDefaultBanTime();
-        for (Map.Entry<String, Long> entry : plugin.getConfiguration().getHardcoreBanTimeGroups().entrySet()) {
+        for (Map.Entry<String, Integer> entry : plugin.getConfiguration().getHardcoreBanTimeGroups().entrySet()) {
             if (player.hasPermission(entry.getKey())) {
                 seconds = Math.min(entry.getValue(), seconds);
             }
