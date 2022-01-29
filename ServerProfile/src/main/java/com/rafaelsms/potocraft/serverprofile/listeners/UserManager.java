@@ -9,7 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.scheduler.BukkitTask;
@@ -68,7 +68,7 @@ public class UserManager implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    private void insertProfile(PlayerJoinEvent event) {
+    private void insertProfile(PlayerLoginEvent event) {
         synchronized (lock) {
             Profile profile = loadedProfiles.remove(event.getPlayer().getUniqueId());
             if (profile == null) {

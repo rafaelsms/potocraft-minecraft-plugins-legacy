@@ -33,7 +33,7 @@ public class HardcoreListener implements Listener {
 
             // Kick banned player
             Component message = plugin.getConfiguration().getHardcoreBanMessage(expirationDate);
-            event.getPlayer().kick(message);
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, message);
         });
     }
 
