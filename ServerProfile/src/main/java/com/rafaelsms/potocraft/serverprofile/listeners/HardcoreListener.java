@@ -43,12 +43,15 @@ public class HardcoreListener implements Listener {
             return;
         }
 
-        // Kick player if expiration date is in the future
-        User user = plugin.getUserManager().getUser(event.getPlayer());
-        user.getHardcoreExpirationDate().ifPresent(expirationDate -> {
-            if (expirationDate.isAfter(ZonedDateTime.now())) {
-                event.getPlayer().kick(plugin.getConfiguration().getHardcoreBanMessage(expirationDate));
-            }
+        // Do in the end of tick or items will duplicate
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            // Kick player if expiration date is in the future
+            User user = plugin.getUserManager().getUser(event.getPlayer());
+            user.getHardcoreExpirationDate().ifPresent(expirationDate -> {
+                if (expirationDate.isAfter(ZonedDateTime.now())) {
+                    event.getPlayer().kick(plugin.getConfiguration().getHardcoreBanMessage(expirationDate));
+                }
+            });
         });
     }
 }
