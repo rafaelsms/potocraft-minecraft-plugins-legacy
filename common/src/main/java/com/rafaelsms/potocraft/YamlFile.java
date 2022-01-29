@@ -7,6 +7,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashMap;
@@ -79,7 +80,8 @@ public abstract class YamlFile {
         File yamlFile = new File(dataFolder, fileName);
         if (!yamlFile.exists()) {
             // Copy from resources folder
-            Files.copy(Objects.requireNonNull(getClass().getResourceAsStream(this.fileName)), yamlFile.toPath());
+            InputStream resource = this.getClass().getClassLoader().getResourceAsStream(fileName);
+            Files.copy(Objects.requireNonNull(resource), yamlFile.toPath());
         }
 
         // Read file
