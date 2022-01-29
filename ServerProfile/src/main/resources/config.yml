@@ -30,14 +30,24 @@ configuration:
       - warp
       - spawn
       - tpaccept
+    hardcore:
+      enabled: false
+      default_ban_time_in_seconds: 21600
+      permission_ban_time_groups:
+        potocraft.combat.hardcore.vip: 7200
 
 language:
+  date_time_format: "dd' de 'MMM' às 'H'h'mm"
   players_only: "&cComando disponível apenas para jogadores."
   combat:
     bar_title: "&cSe sair ou se a conexão cair, irá morrer!"
     command_is_blocked_while_in_combat: "&cEste comando está bloqueado em combate."
     unknown_world_name: "mundo desconhecido"
     your_death_location_is: "&cVocê morreu no &e%world% &cnas coordenadas &ex = %x%&c, &ey = %y%&c, &ez = %z%&c."
+    hardcore:
+      banned: |
+        &cVocê morreu no modo hardcore.
+        &cPoderá entrar às &e%expiration_date%&c.
   teleport:
     bar_title: "&eTeleportando... Não entre em combate!"
     player_quit: "&cTeleporte cancelado: pessoa saiu!"

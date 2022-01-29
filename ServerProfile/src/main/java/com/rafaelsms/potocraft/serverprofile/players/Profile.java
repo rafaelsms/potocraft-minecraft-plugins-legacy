@@ -118,6 +118,10 @@ public class Profile extends DatabaseObject {
         this.backLocation = Util.convert(location, StoredLocation::new);
     }
 
+    public Optional<ZonedDateTime> getDeathDateTime() {
+        return Optional.ofNullable(deathDateTime);
+    }
+
     public @NotNull Optional<Location> getDeathLocation(@NotNull ServerProfilePlugin plugin) {
         return Optional.ofNullable(Util.convert(deathLocation, storedLocation -> storedLocation.toLocation(plugin)));
     }

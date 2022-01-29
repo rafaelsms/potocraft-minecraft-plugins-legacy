@@ -13,6 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +61,8 @@ public class Configuration extends YamlFile {
         return getChatFormat(get("configuration.local_chat.format"), senderId, senderName, message);
     }
 
-    public Component getLocalChatSpyFormat(@NotNull UUID senderId, @NotNull String senderName,
+    public Component getLocalChatSpyFormat(@NotNull UUID senderId,
+                                           @NotNull String senderName,
                                            @NotNull Component message) {
         return getChatFormat(get("configuration.local_chat.spy_format"), senderId, senderName, message);
     }
@@ -68,8 +71,7 @@ public class Configuration extends YamlFile {
         return getChatFormat(get("configuration.local_chat.global_format"), senderId, senderName, message);
     }
 
-    private Component getChatFormat(@Nullable String format,
-                                    @NotNull UUID senderId,
+    private Component getChatFormat(@Nullable String format, @NotNull UUID senderId,
                                     @NotNull String senderName,
                                     @NotNull Component message) {
         return TextUtil.toComponent(format)
@@ -125,6 +127,22 @@ public class Configuration extends YamlFile {
         return get("configuration.combat.blocked_commands");
     }
 
+    public Boolean isHardcoreModeEnabled() {
+        return get("configuration.combat.hardcore.enabled");
+    }
+
+    public Long getHardcoreDefaultBanTime() {
+        return getLong("configuration.combat.hardcore.default_ban_time_in_seconds");
+    }
+
+    public Map<String, Long> getHardcoreBanTimeGroups() {
+        return get("configuration.combat.hardcore.permission_ban_time_groups");
+    }
+
+    public DateTimeFormatter getDateTimeFormatter() {
+        return DateTimeFormatter.ofPattern(Objects.requireNonNull(get("language.date_time_format")));
+    }
+
     public Component getPlayersOnly() {
         return TextUtil.toComponent(get("language.players_only")).build();
     }
@@ -152,6 +170,12 @@ public class Configuration extends YamlFile {
                        .replace("%x%", String.valueOf(location.getBlockX()))
                        .replace("%y%", String.valueOf(location.getBlockY()))
                        .replace("%z%", String.valueOf(location.getBlockZ()))
+                       .build();
+    }
+
+    public Component getHardcoreBanMessage(@NotNull ZonedDateTime expirationDate) {
+        return TextUtil.toComponent(get("language.combat.hardcore.banned"))
+                       .replace("%expiration_date%", getDateTimeFormatter().format(expirationDate))
                        .build();
     }
 

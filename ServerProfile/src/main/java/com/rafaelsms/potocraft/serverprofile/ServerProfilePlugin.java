@@ -19,6 +19,7 @@ import com.rafaelsms.potocraft.serverprofile.commands.completers.WarpNameComplet
 import com.rafaelsms.potocraft.serverprofile.listeners.ChatFormatter;
 import com.rafaelsms.potocraft.serverprofile.listeners.CombatListener;
 import com.rafaelsms.potocraft.serverprofile.listeners.EssentialsImporter;
+import com.rafaelsms.potocraft.serverprofile.listeners.HardcoreListener;
 import com.rafaelsms.potocraft.serverprofile.listeners.StatisticsListener;
 import com.rafaelsms.potocraft.serverprofile.listeners.TotemLimiter;
 import com.rafaelsms.potocraft.serverprofile.listeners.UserManager;
@@ -54,6 +55,7 @@ public class ServerProfilePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new StatisticsListener(this), this);
         getServer().getPluginManager().registerEvents(new TotemLimiter(this), this);
         getServer().getPluginManager().registerEvents(new EssentialsImporter(this), this);
+        getServer().getPluginManager().registerEvents(new HardcoreListener(this), this);
 
         // Register commands
         registerCommand("voltar", new BackCommand(this));

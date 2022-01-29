@@ -53,7 +53,7 @@ public class UserManager implements Listener {
         tickPlayerTask = plugin.getServer().getScheduler().runTaskTimer(plugin, new TickPlayersTask(), 1, 1);
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     private void loadProfile(AsyncPlayerPreLoginEvent event) {
         try {
             Profile profile =

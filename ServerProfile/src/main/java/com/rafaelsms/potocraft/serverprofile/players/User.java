@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayDeque;
@@ -249,6 +250,23 @@ public class User {
             oldTask.cancelTask(); // this will call setCombatTask(null)
         }
         this.combatTask = combatTask;
+    }
+
+    public Optional<ZonedDateTime> getHardcoreExpirationDate() {
+        return profile.getDeathDateTime().map(time -> time.plus(getHardcoreBanTime()));
+    }
+
+    private Duration getHardcoreBanTime() {
+        if (player.hasPermission(Permissions.HARDCORE_BYPASS)) {
+            return Duration.ZERO;
+        }
+        long seconds = plugin.getConfiguration().getHardcoreDefaultBanTime();
+        for (Map.Entry<String, Long> entry : plugin.getConfiguration().getHardcoreBanTimeGroups().entrySet()) {
+            if (player.hasPermission(entry.getKey())) {
+                seconds = Math.min(entry.getValue(), seconds);
+            }
+        }
+        return Duration.ofSeconds(seconds);
     }
 
     public boolean isTotemInCooldown() {
