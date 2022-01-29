@@ -66,10 +66,10 @@ public class VanishManager implements Listener {
     public void showPlayer(@NotNull Player player) {
         hiddenPlayers.remove(player.getUniqueId());
         player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-        player.setInvisible(false);
         for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
             onlinePlayer.showPlayer(plugin, player);
         }
+        player.setInvisible(false);
     }
 
     public boolean isVanished(Player player) {
