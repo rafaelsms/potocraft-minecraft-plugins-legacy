@@ -43,7 +43,7 @@ public class PlayerLogging implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void log(PlayerPortalEvent event) {
-        logPlayer(event.getPlayer(), event.getTo(), "entered portal");
+        logPlayer(event.getPlayer(), event.getPlayer().getLocation(), "entered portal");
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
