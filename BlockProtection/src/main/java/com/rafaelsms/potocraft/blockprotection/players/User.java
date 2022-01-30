@@ -1,8 +1,8 @@
 package com.rafaelsms.potocraft.blockprotection.players;
 
 import com.rafaelsms.potocraft.blockprotection.BlockProtectionPlugin;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import com.rafaelsms.potocraft.blockprotection.util.Box;
+import com.rafaelsms.potocraft.blockprotection.util.LocationBox;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,12 +18,12 @@ public class User {
     private final @NotNull Profile profile;
 
     private final @NotNull BlockChangeCache blockChangeCache;
-    private @Nullable PlayerSelection selection = null;
+    private @Nullable LocationBox selection = null;
 
     public User(@NotNull BlockProtectionPlugin plugin, @NotNull Player player, @NotNull Profile profile) {
         this.plugin = plugin;
         this.player = player;
-        this.blockChangeCache = new BlockChangeCache(plugin, this);
+        this.blockChangeCache = new BlockChangeCache(this);
         this.profile = profile;
     }
 
@@ -62,38 +62,15 @@ public class User {
     }
 
     public void incrementVolume() {
-        this.profile.incrementVolume(getVolumePerBlock(), getMaxVolumeAllowed());
-    }
-
-    /**
-     * Selects a block to start protecting. It'll increase current selection if it is in the same world and if there is
-     * enough volume available on the profile.
-     *
-     * @param blockLocation block selected
-     * @return true if selection was successfully increased, false if it was volume-limited.
-     * @see Profile#getVolumeAvailable() for current volume available
-     */
-    public boolean addSelection(@NotNull Location blockLocation) {
-        boolean allowed = true;
-        // Create or increase selection
-        if (this.selection == null || !this.selection.getWorldId().equals(blockLocation.getWorld().getUID())) {
-            // Create a new one in case world changed or wasn't selecting
-            PlayerSelection selection = new PlayerSelection(plugin, blockLocation);
-            // Ignore if volume exceed maximum volume
-            if (selection.getVolume() > profile.getVolumeAvailable()) {
-                this.blockChangeCache.clearBlocks();
-                this.selection = null;
-                return false;
-            }
-            this.selection = selection;
-        } else {
-            allowed = this.selection.limitedSelect(blockLocation, getMaxVolumeAllowed());
+        double volumeAvailable = this.profile.getVolumeAvailable();
+        double volumePerBlock = getVolumePerBlock();
+        int maxVolumeAllowed = getMaxVolumeAllowed();
+        // If exceeded volume, return
+        if (volumeAvailable >= maxVolumeAllowed) {
+            return;
         }
-        // Show current selection
-        this.blockChangeCache.showRectangle(selection.getCorner1(),
-                                            selection.getCorner2(),
-                                            Material.GLOWSTONE.createBlockData());
-        return allowed;
+        // Else, increment volume per block or remaining value to get to maximum volume allowed
+        this.profile.incrementVolume(Math.min(volumePerBlock, Math.max(0.0, maxVolumeAllowed - volumeAvailable)));
     }
 
     public void clearSelection() {
@@ -101,7 +78,7 @@ public class User {
         this.blockChangeCache.clearBlocks();
     }
 
-    public Optional<PlayerSelection> getSelection() {
+    public Optional<Box> getSelection() {
         return Optional.ofNullable(selection);
     }
 }

@@ -3,6 +3,7 @@ configuration:
     mongo_uri: "mongodb://localhost:27017"
     database_name: "serverNameDb"
     player_profile_collection: "protectionProfiles"
+    region_collection: "regions"
     is_exception_fatal: false
   protection:
     selection:

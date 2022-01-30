@@ -26,6 +26,10 @@ public class Configuration extends YamlFile {
         return get("configuration.database.player_profile_collection");
     }
 
+    public String getMongoRegionCollection() {
+        return get("configuration.database.region_collection");
+    }
+
     public Boolean isMongoDatabaseExceptionFatal() {
         return get("configuration.database.is_exception_fatal");
     }

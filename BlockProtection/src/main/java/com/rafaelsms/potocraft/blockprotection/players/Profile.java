@@ -41,9 +41,9 @@ public class Profile extends DatabaseObject {
         return volumeAvailable;
     }
 
-    public void incrementVolume(double volume, int maximumVolume) {
-        // Don't decrease, but don't increase it either
-        if (this.volumeAvailable >= maximumVolume) {
+    public void incrementVolume(double volume) {
+        // Don't allow volume decrease through this method
+        if (volume < 0.0) {
             return;
         }
         this.volumeAvailable += volume;

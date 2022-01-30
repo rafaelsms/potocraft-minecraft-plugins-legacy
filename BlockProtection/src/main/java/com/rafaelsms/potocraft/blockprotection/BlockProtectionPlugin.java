@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.blockprotection;
 
 import com.rafaelsms.potocraft.blockprotection.listeners.ProtectionListener;
+import com.rafaelsms.potocraft.blockprotection.listeners.ProtectionManager;
 import com.rafaelsms.potocraft.blockprotection.listeners.UserManager;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,17 +15,20 @@ public class BlockProtectionPlugin extends JavaPlugin {
     private final @NotNull Configuration configuration;
     private final @NotNull Database database;
     private final @NotNull UserManager userManager;
+    private final @NotNull ProtectionManager protectionManager;
 
     public BlockProtectionPlugin() throws IOException {
         this.configuration = new Configuration(this);
         this.database = new Database(this);
         this.userManager = new UserManager(this);
+        this.protectionManager = new ProtectionManager(this);
     }
 
     @Override
     public void onEnable() {
         // Register events
         getServer().getPluginManager().registerEvents(userManager, this);
+        getServer().getPluginManager().registerEvents(protectionManager, this);
         getServer().getPluginManager().registerEvents(new ProtectionListener(this), this);
 
         logger().info("BlockProtection enabled!");
@@ -48,6 +52,10 @@ public class BlockProtectionPlugin extends JavaPlugin {
 
     public @NotNull UserManager getUserManager() {
         return userManager;
+    }
+
+    public @NotNull ProtectionManager getProtectionManager() {
+        return protectionManager;
     }
 
     public Logger logger() {

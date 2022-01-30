@@ -1,7 +1,7 @@
 package com.rafaelsms.potocraft.blockprotection.players;
 
 import com.google.common.collect.Sets;
-import com.rafaelsms.potocraft.blockprotection.BlockProtectionPlugin;
+import com.rafaelsms.potocraft.blockprotection.util.LocationBox;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
@@ -16,33 +16,30 @@ import java.util.Set;
 
 public class BlockChangeCache {
 
-    private final @NotNull BlockProtectionPlugin plugin;
     private final @NotNull User user;
 
     private Set<BlockChange> sentBlockChanges = new HashSet<>();
     private Set<BlockChange> blockChanges = new HashSet<>();
 
-    public BlockChangeCache(@NotNull BlockProtectionPlugin plugin, @NotNull User user) {
-        this.plugin = plugin;
+    public BlockChangeCache(@NotNull User user) {
         this.user = user;
     }
 
-    public synchronized void showRectangle(@NotNull Location corner1,
-                                           @NotNull Location corner2,
-                                           @NotNull BlockData blockData) {
+    public synchronized void showRectangle(@NotNull LocationBox box, @NotNull BlockData blockData) {
         Player player = user.getPlayer();
-        // Retrieve data
-        World world = corner1.getWorld();
-        if (!corner2.getWorld().getUID().equals(world.getUID())) {
+        World world = box.getLowerCorner().getWorld();
+
+        // If different worlds, gracefully reset block change
+        if (!box.getHigherCorner().getWorld().getUID().equals(world.getUID())) {
             player.sendMultiBlockChange(getBlockChangeMap());
             return;
         }
-        int startX = Math.min(corner1.getBlockX(), corner2.getBlockX());
-        int endX = Math.max(corner1.getBlockX(), corner2.getBlockX());
-        int startY = Math.min(corner1.getBlockY(), corner2.getBlockY());
-        int endY = Math.max(corner1.getBlockY(), corner2.getBlockY());
-        int startZ = Math.min(corner1.getBlockZ(), corner2.getBlockZ());
-        int endZ = Math.max(corner1.getBlockZ(), corner2.getBlockZ());
+        int startX = box.getLowerCorner().getBlockX();
+        int endX = box.getHigherCorner().getBlockX();
+        int startY = box.getLowerCorner().getBlockY();
+        int endY = box.getHigherCorner().getBlockY();
+        int startZ = box.getLowerCorner().getBlockZ();
+        int endZ = box.getHigherCorner().getBlockZ();
 
         // For every X, we draw 4 lines (at each yz corner)
         for (int dx = 0; dx <= (endX - startX); dx++) {
