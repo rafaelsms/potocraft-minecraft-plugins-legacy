@@ -13,6 +13,7 @@ import com.rafaelsms.potocraft.serverutility.listeners.ExperienceModifier;
 import com.rafaelsms.potocraft.serverutility.listeners.HideMessagesListener;
 import com.rafaelsms.potocraft.serverutility.listeners.LavaListener;
 import com.rafaelsms.potocraft.serverutility.listeners.MendingNerfListener;
+import com.rafaelsms.potocraft.serverutility.listeners.PlayerLogging;
 import com.rafaelsms.potocraft.serverutility.listeners.RainyNightListener;
 import com.rafaelsms.potocraft.serverutility.listeners.VanishManager;
 import com.rafaelsms.potocraft.serverutility.listeners.VillagerListener;
@@ -50,6 +51,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RainyNightListener(this), this);
         getServer().getPluginManager().registerEvents(new VillagerListener(this), this);
         getServer().getPluginManager().registerEvents(new DamageModifier(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerLogging(this), this);
 
         // Run world sync task
         getServer().getScheduler().runTaskTimer(this, new SyncWorldTimeTask(this), 10L, 10L);

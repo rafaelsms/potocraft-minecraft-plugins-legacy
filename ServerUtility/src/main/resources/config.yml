@@ -3,6 +3,7 @@ configuration:
     overall_damage_multiplier: 0.75
     damage_cooldown_factor: 0.72
   nerf_mending_to_one_repair_point_only: true
+  enable_player_logging: true
   prevent_treasure_enchanted_books_on_villagers: true
   hide_join_quit_messages: false
   experience_modifier:

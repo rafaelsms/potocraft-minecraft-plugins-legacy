@@ -34,6 +34,10 @@ public class Configuration extends YamlFile {
         return getDouble("configuration.damage_modifiers.damage_cooldown_factor");
     }
 
+    public Boolean isPlayerLoggingEnabled() {
+        return get("configuration.enable_player_logging");
+    }
+
     public Boolean isMendingNerfed() {
         return get("configuration.nerf_mending_to_one_repair_point_only");
     }
