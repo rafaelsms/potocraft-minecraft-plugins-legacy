@@ -36,6 +36,9 @@ public class VillagerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     private void removeTreasureBooks(PlayerInteractEntityEvent event) {
+        if (!plugin.getConfiguration().isPreventingTreasureEnchantedBooks()) {
+            return;
+        }
         if (!(event.getRightClicked() instanceof Merchant merchant)) {
             return;
         }
