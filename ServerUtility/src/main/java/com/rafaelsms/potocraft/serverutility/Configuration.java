@@ -42,8 +42,16 @@ public class Configuration extends YamlFile {
         return get("configuration.nerf_mending_to_one_repair_point_only");
     }
 
+    public Boolean isPreventingAllEnchantedBooks() {
+        return get("configuration.villager.prevent_all_enchanted_books");
+    }
+
     public Boolean isPreventingTreasureEnchantedBooks() {
-        return get("configuration.prevent_treasure_enchanted_books_on_villagers");
+        return get("configuration.villager.prevent_treasure_enchanted_books");
+    }
+
+    public Boolean isNerfVillagerEnchantedBooks() {
+        return get("configuration.villager.nerf_enchanted_books");
     }
 
     @SuppressWarnings("rawtypes")
