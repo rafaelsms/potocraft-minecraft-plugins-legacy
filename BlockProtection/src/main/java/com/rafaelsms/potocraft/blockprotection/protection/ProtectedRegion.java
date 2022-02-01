@@ -1,6 +1,7 @@
-package com.rafaelsms.potocraft.blockprotection.util;
+package com.rafaelsms.potocraft.blockprotection.protection;
 
 import com.mongodb.client.model.Filters;
+import com.rafaelsms.potocraft.blockprotection.util.Box;
 import com.rafaelsms.potocraft.database.DatabaseObject;
 import com.rafaelsms.potocraft.util.Util;
 import org.bson.Document;

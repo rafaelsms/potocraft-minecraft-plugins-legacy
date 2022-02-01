@@ -2,8 +2,8 @@ package com.rafaelsms.potocraft.blockprotection;
 
 import com.mongodb.client.MongoCollection;
 import com.rafaelsms.potocraft.blockprotection.players.Profile;
+import com.rafaelsms.potocraft.blockprotection.protection.ProtectedRegion;
 import com.rafaelsms.potocraft.blockprotection.util.Box;
-import com.rafaelsms.potocraft.blockprotection.util.ProtectedRegion;
 import com.rafaelsms.potocraft.util.Util;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +50,8 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
         });
     }
 
-    public boolean collidesWith(Box box) throws DatabaseException {
+    public boolean collidesWith(@NotNull Box box) throws DatabaseException {
+        // We wrap around using ProtectedRegion because the box is a document inside the protected region's document
         return throwingWrapper(() -> getRegionCollection().find(ProtectedRegion.filterColliding(box.filterColliding()))
                                                           .first() != null);
     }

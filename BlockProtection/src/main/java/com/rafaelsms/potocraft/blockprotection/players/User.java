@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.blockprotection.players;
 
 import com.rafaelsms.potocraft.blockprotection.BlockProtectionPlugin;
+import com.rafaelsms.potocraft.blockprotection.Permissions;
 import com.rafaelsms.potocraft.blockprotection.util.Box;
 import com.rafaelsms.potocraft.blockprotection.util.LocationBox;
 import org.bukkit.entity.Player;
@@ -37,6 +38,13 @@ public class User {
 
     public @NotNull Profile getProfile() {
         return profile;
+    }
+
+    public boolean hasVolume(int volume) {
+        if (player.hasPermission(Permissions.BYPASS_VOLUME_CHECKER)) {
+            return true;
+        }
+        return profile.getVolumeAvailable() >= volume;
     }
 
     public double getVolumePerBlock() {

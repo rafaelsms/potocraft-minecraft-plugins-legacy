@@ -4,5 +4,9 @@ version: 0.1
 api-version: 1.18
 author: rafaelsms
 website: www.potocraft.com
-description: Custom plugin for PotoCraft Server
+description: Custom plugin for block protection at PotoCraft Server
 load: STARTUP
+commands:
+  protect:
+    description: Enables and manages protected world regions.
+    aliases: [ proteger, protecao, protege, protection ]
