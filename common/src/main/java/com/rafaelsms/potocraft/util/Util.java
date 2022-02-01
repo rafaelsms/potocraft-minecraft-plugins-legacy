@@ -1,5 +1,6 @@
 package com.rafaelsms.potocraft.util;
 
+import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -125,5 +126,10 @@ public final class Util {
 
     public static @Nullable String fromDateTime(@Nullable ZonedDateTime zonedDateTime) {
         return convert(zonedDateTime, dateTime -> dateTime.format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
+    }
+
+    public static int getManhattanDistance(Location location, Location otherLocation) {
+        return Math.abs(location.getBlockX() - otherLocation.getBlockX()) +
+               Math.abs(location.getBlockZ() - otherLocation.getBlockZ());
     }
 }
