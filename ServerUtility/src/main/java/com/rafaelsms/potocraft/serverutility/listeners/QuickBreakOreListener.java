@@ -56,6 +56,9 @@ public class QuickBreakOreListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void quickBreakOreVein(BlockBreakEvent event) {
         Player player = event.getPlayer();
+        if (player.isSneaking()) {
+            return;
+        }
         if (!player.hasPermission(Permissions.QUICK_BREAK_ORES)) {
             return;
         }
