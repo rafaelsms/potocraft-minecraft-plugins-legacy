@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class FastBreakStorage {
 
@@ -19,6 +20,21 @@ public class FastBreakStorage {
     private final Map<Player, ItemStack> playerTools = Collections.synchronizedMap(new HashMap<>());
     private final Map<Player, Map<Location, Block>> playerBlocks = Collections.synchronizedMap(new HashMap<>());
     private final Map<Location, Block> blocks = Collections.synchronizedMap(new HashMap<>());
+
+    private final @NotNull Consumer<Block> consumeOnBreak;
+
+    public FastBreakStorage() {
+        this.consumeOnBreak = (block) -> {
+        };
+    }
+
+    public FastBreakStorage(@NotNull Consumer<Block> consumeOnBreak) {
+        this.consumeOnBreak = consumeOnBreak;
+    }
+
+    public boolean isEmpty() {
+        return blocks.isEmpty();
+    }
 
     public void addBlocks(@NotNull Player player, @NotNull Map<Location, Block> blocks) {
         if (blocks.isEmpty()) {
@@ -58,9 +74,10 @@ public class FastBreakStorage {
             while (blockIterator.hasNext()) {
                 Block block = blockIterator.next();
                 ItemStack tool = playerTools.get(player);
-                block.breakNaturally(tool);
                 blocks.remove(block.getLocation());
                 blockIterator.remove();
+                block.breakNaturally(tool);
+                consumeOnBreak.accept(block);
 
                 // Stop if broke too many blocks this tick already
                 processedBlocks++;

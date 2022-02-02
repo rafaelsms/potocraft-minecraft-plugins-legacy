@@ -14,7 +14,9 @@ import java.util.function.Predicate;
 
 public class BlockSearch {
 
-    private final static BlockFace[] blockFaces;
+    private static final int MAX_BLOCKS = 1000;
+
+    private static final BlockFace[] BLOCK_FACES;
 
     static {
         ArrayList<BlockFace> blockFaceArrayList = new ArrayList<>();
@@ -28,7 +30,7 @@ public class BlockSearch {
                 }
             }
         }
-        blockFaces = blockFaceArrayList.toArray(new BlockFace[0]);
+        BLOCK_FACES = blockFaceArrayList.toArray(new BlockFace[0]);
     }
 
     private final Set<Location> executedBlocks = new LinkedHashSet<>();
@@ -50,13 +52,13 @@ public class BlockSearch {
 
     public Map<Location, Block> search() {
         blockQueue.add(startingBlock);
-        while (!blockQueue.isEmpty()) {
+        while (!blockQueue.isEmpty() && selectedBlocks.size() < MAX_BLOCKS) {
             Block block = blockQueue.pop();
             Location blockLocation = block.getLocation();
             // Execute block
             selectedBlocks.put(blockLocation, block);
             // Check if we should add more blocks
-            for (BlockFace blockFace : blockFaces) {
+            for (BlockFace blockFace : BLOCK_FACES) {
                 Block relative = block.getRelative(blockFace.modX(), blockFace.modY(), blockFace.modZ());
                 Location relativeLocation = relative.getLocation();
                 if (executedBlocks.contains(relativeLocation)) {

@@ -16,6 +16,7 @@ import com.rafaelsms.potocraft.serverutility.listeners.MendingNerfListener;
 import com.rafaelsms.potocraft.serverutility.listeners.PlayerLogging;
 import com.rafaelsms.potocraft.serverutility.listeners.QuickBreakOreListener;
 import com.rafaelsms.potocraft.serverutility.listeners.QuickBreakTreeListener;
+import com.rafaelsms.potocraft.serverutility.listeners.QuickReplantListener;
 import com.rafaelsms.potocraft.serverutility.listeners.RainyNightListener;
 import com.rafaelsms.potocraft.serverutility.listeners.VanishManager;
 import com.rafaelsms.potocraft.serverutility.listeners.VillagerListener;
@@ -56,6 +57,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerLogging(this), this);
         getServer().getPluginManager().registerEvents(new QuickBreakTreeListener(this), this);
         getServer().getPluginManager().registerEvents(new QuickBreakOreListener(this), this);
+        getServer().getPluginManager().registerEvents(new QuickReplantListener(this), this);
 
         // Run world sync task
         getServer().getScheduler().runTaskTimer(this, new SyncWorldTimeTask(this), 10L, 10L);

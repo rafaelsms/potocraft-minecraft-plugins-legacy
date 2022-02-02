@@ -4,6 +4,7 @@ public final class Permissions {
 
     public static final String QUICK_BREAK_TREES = "potocraft.server.quick_break.trees";
     public static final String QUICK_BREAK_ORES = "potocraft.server.quick_break.ores";
+    public static final String QUICK_BREAK_CROP = "potocraft.server.quick_break.crop";
 
     public static final String COMMAND_ANVIL = "potocraft.server.anvil";
     public static final String COMMAND_ENDERCHEST = "potocraft.server.enderchest";
