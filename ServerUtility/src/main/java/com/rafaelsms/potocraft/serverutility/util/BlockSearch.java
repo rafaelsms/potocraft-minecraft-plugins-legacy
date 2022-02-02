@@ -1,18 +1,38 @@
 package com.rafaelsms.potocraft.serverutility.util;
 
+import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
 public class BlockSearch {
 
-    private final Set<Block> executedBlocks = new LinkedHashSet<>();
-    private final Set<Block> selectedBlocks = new LinkedHashSet<>();
+    private final static BlockFace[] blockFaces;
+
+    static {
+        ArrayList<BlockFace> blockFaceArrayList = new ArrayList<>();
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    if (dx == 0 && dy == 0 && dz == 0) {
+                        continue;
+                    }
+                    blockFaceArrayList.add(new BlockFace(dx, dy, dz));
+                }
+            }
+        }
+        blockFaces = blockFaceArrayList.toArray(new BlockFace[0]);
+    }
+
+    private final Set<Location> executedBlocks = new LinkedHashSet<>();
+    private final Map<Location, Block> selectedBlocks = new LinkedHashMap<>();
     private final ArrayDeque<Block> blockQueue = new ArrayDeque<>();
 
     private final @NotNull Block startingBlock;
@@ -23,28 +43,34 @@ public class BlockSearch {
         this.selectionPredicate = selectionPredicate;
     }
 
-    public static Set<Block> searchBlocks(@NotNull Block block, @NotNull Predicate<Block> selectionPredicate) {
+    public static Map<Location, Block> searchBlocks(@NotNull Block block,
+                                                    @NotNull Predicate<Block> selectionPredicate) {
         return new BlockSearch(block, selectionPredicate).search();
     }
 
-    public Set<Block> search() {
+    public Map<Location, Block> search() {
         blockQueue.add(startingBlock);
         while (!blockQueue.isEmpty()) {
             Block block = blockQueue.pop();
+            Location blockLocation = block.getLocation();
             // Execute block
-            selectedBlocks.add(block);
+            selectedBlocks.put(blockLocation, block);
             // Check if we should add more blocks
-            for (BlockFace blockFace : BlockFace.values()) {
-                Block relative = block.getRelative(blockFace);
-                if (executedBlocks.contains(relative)) {
+            for (BlockFace blockFace : blockFaces) {
+                Block relative = block.getRelative(blockFace.modX(), blockFace.modY(), blockFace.modZ());
+                Location relativeLocation = relative.getLocation();
+                if (executedBlocks.contains(relativeLocation)) {
                     continue;
                 }
-                executedBlocks.add(block);
+                executedBlocks.add(relativeLocation);
                 if (selectionPredicate.test(relative)) {
                     blockQueue.add(relative);
                 }
             }
         }
         return selectedBlocks;
+    }
+
+    private record BlockFace(int modX, int modY, int modZ) {
     }
 }

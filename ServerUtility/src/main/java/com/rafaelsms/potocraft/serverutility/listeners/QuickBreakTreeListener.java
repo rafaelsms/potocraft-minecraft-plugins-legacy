@@ -1,6 +1,5 @@
 package com.rafaelsms.potocraft.serverutility.listeners;
 
-import com.google.common.collect.Sets;
 import com.rafaelsms.potocraft.serverutility.Permissions;
 import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
 import com.rafaelsms.potocraft.serverutility.util.BlockSearch;
@@ -9,7 +8,6 @@ import com.rafaelsms.potocraft.util.Util;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,6 +16,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -29,8 +28,6 @@ public class QuickBreakTreeListener implements Listener {
     private static final int MAX_SEARCH_DISTANCE = 33;
     private static final int MAX_MANHATTAN_DISTANCE = 2;
 
-    private final FastBreakStorage fastBreakStorage = new FastBreakStorage();
-
     private final Set<TreeMaterial> treeMaterials = Set.of(TreeMaterial.of(Material.OAK_LOG, Material.OAK_LEAVES),
                                                            TreeMaterial.of(Material.DARK_OAK_LOG,
                                                                            Material.DARK_OAK_LEAVES),
@@ -41,6 +38,7 @@ public class QuickBreakTreeListener implements Listener {
                                                                            Material.JUNGLE_LEAVES));
 
     private final @NotNull ServerUtilityPlugin plugin;
+    private final FastBreakStorage fastBreakStorage = new FastBreakStorage();
 
     public QuickBreakTreeListener(@NotNull ServerUtilityPlugin plugin) {
         this.plugin = plugin;
@@ -65,31 +63,31 @@ public class QuickBreakTreeListener implements Listener {
             return;
         }
 
-        Optional<Set<Block>> optionalTree = getTree(event.getBlock());
+        Optional<Map<Location, Block>> optionalTree = getTree(block);
         if (optionalTree.isEmpty()) {
             return;
         }
         fastBreakStorage.addBlocks(player, optionalTree.get());
     }
 
-
-    private Optional<Set<Block>> getTree(@NotNull Block block) {
+    private Optional<Map<Location, Block>> getTree(@NotNull Block block) {
         for (TreeMaterial treeMaterial : treeMaterials) {
             if (!treeMaterial.isTreeLog(block.getType())) {
                 continue;
             }
-            Set<Block> logs = BlockSearch.searchBlocks(block,
-                                                       new TreeLogPredicate(treeMaterial,
-                                                                            block.getLocation(),
-                                                                            MAX_MANHATTAN_DISTANCE,
-                                                                            MAX_SEARCH_DISTANCE));
-            Set<Block> leaves = BlockSearch.searchBlocks(block,
-                                                         new TreePredicate(treeMaterial,
-                                                                           logs,
-                                                                           block.getLocation(),
-                                                                           MAX_MANHATTAN_DISTANCE,
-                                                                           MAX_SEARCH_DISTANCE));
-            return Optional.of(Sets.union(logs, leaves));
+            Map<Location, Block> logs = BlockSearch.searchBlocks(block,
+                                                                 new TreeLogPredicate(treeMaterial,
+                                                                                      block.getLocation(),
+                                                                                      MAX_MANHATTAN_DISTANCE,
+                                                                                      MAX_SEARCH_DISTANCE));
+            Map<Location, Block> leaves = BlockSearch.searchBlocks(block,
+                                                                   new TreePredicate(treeMaterial,
+                                                                                     logs,
+                                                                                     block.getLocation(),
+                                                                                     MAX_MANHATTAN_DISTANCE,
+                                                                                     MAX_SEARCH_DISTANCE));
+            logs.putAll(leaves);
+            return Optional.of(logs);
         }
         return Optional.empty();
     }
@@ -101,36 +99,22 @@ public class QuickBreakTreeListener implements Listener {
 
         @Override
         public boolean test(Block block) {
+            // Select just connected logs, ignoring xz distance
             return treeMaterial.isTreeLog(block.getType()) &&
-                   Math.abs(block.getY() - startingLocation.getBlockY()) <= yDistance &&
-                   (Util.getManhattanDistance(startingLocation, block.getLocation()) <= xzDistance ||
-                    isSurroundedByLeavesOrAir(block));
-        }
-
-        private boolean isSurroundedByLeavesOrAir(@NotNull Block block) {
-            int countingBlocks = 0;
-            for (BlockFace blockFace : BlockFace.values()) {
-                Material material = block.getRelative(blockFace).getType();
-                if (treeMaterial.isTreeLeave(material) || material.isAir()) {
-                    countingBlocks++;
-                    if (countingBlocks > 6) {
-                        return true;
-                    }
-                }
-            }
-            return false;
+                   Math.abs(block.getY() - startingLocation.getBlockY()) <= yDistance;
         }
     }
 
     private record TreePredicate(@NotNull TreeMaterial treeMaterial,
-                                 @NotNull Set<Block> logs,
+                                 @NotNull Map<Location, Block> logs,
                                  @NotNull Location startingLocation,
                                  int xzDistance,
                                  int yDistance) implements Predicate<Block> {
 
         @Override
         public boolean test(Block block) {
-            return logs.contains(block) ||
+            // Select existing logs and surrounding leaves
+            return logs.containsKey(block.getLocation()) ||
                    (treeMaterial.isTreeLeave(block.getType()) &&
                     Math.abs(block.getY() - startingLocation.getBlockY()) <= yDistance &&
                     Util.getManhattanDistance(startingLocation, block.getLocation()) <= xzDistance);
