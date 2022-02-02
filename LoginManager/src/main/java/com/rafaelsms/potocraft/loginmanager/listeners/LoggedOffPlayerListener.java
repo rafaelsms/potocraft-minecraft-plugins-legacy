@@ -12,7 +12,6 @@ import com.velocitypowered.api.proxy.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,48 +30,44 @@ public class LoggedOffPlayerListener {
 
     @Subscribe
     private void preventLoggedOffChat(PlayerChatEvent event, Continuation continuation) {
-        CompletableFuture.runAsync(() -> {
-            if (isPlayerLoggedOn(event.getPlayer())) {
-                continuation.resume();
-                return;
-            }
-            // Just cancel chatting
-            event.setResult(PlayerChatEvent.ChatResult.denied());
+        if (isPlayerLoggedOn(event.getPlayer())) {
             continuation.resume();
-        }, Util.getExecutor(plugin, continuation));
+            return;
+        }
+        // Just cancel chatting
+        event.setResult(PlayerChatEvent.ChatResult.denied());
+        continuation.resume();
     }
 
     @Subscribe
     private void preventLoggedOffUsingCommands(CommandExecuteEvent event, Continuation continuation) {
-        CompletableFuture.runAsync(() -> {
-            if (!event.getResult().isAllowed()) {
-                continuation.resume();
-                return;
-            }
-            if (!(event.getCommandSource() instanceof Player player) || isPlayerLoggedOn(player)) {
-                continuation.resume();
-                return;
-            }
-
-            // Attempt to fit into the regex
-            Matcher matcher = commandPattern.matcher(event.getCommand());
-            if (!matcher.matches()) {
-                plugin.getLogger()
-                      .warn("Didn't expected to not find a command match: \"%s\"".formatted(event.getCommand()));
-                player.sendMessage(plugin.getConfiguration().getPunishmentMessageLoggedOff());
-                event.setResult(CommandExecuteEvent.CommandResult.denied());
-                continuation.resume();
-                return;
-            }
-
-            // Filter out any commands that aren't on the allowed list
-            String command = matcher.group(1).toLowerCase();
-            if (!plugin.getConfiguration().getAllowedCommandsLoggedOff().contains(command)) {
-                player.sendMessage(plugin.getConfiguration().getPunishmentMessageLoggedOff());
-                event.setResult(CommandExecuteEvent.CommandResult.denied());
-            }
+        if (!event.getResult().isAllowed()) {
             continuation.resume();
-        }, Util.getExecutor(plugin, continuation));
+            return;
+        }
+        if (!(event.getCommandSource() instanceof Player player) || isPlayerLoggedOn(player)) {
+            continuation.resume();
+            return;
+        }
+
+        // Attempt to fit into the regex
+        Matcher matcher = commandPattern.matcher(event.getCommand());
+        if (!matcher.matches()) {
+            plugin.getLogger()
+                  .warn("Didn't expected to not find a command match: \"%s\"".formatted(event.getCommand()));
+            player.sendMessage(plugin.getConfiguration().getPunishmentMessageLoggedOff());
+            event.setResult(CommandExecuteEvent.CommandResult.denied());
+            continuation.resume();
+            return;
+        }
+
+        // Filter out any commands that aren't on the allowed list
+        String command = matcher.group(1).toLowerCase();
+        if (!plugin.getConfiguration().getAllowedCommandsLoggedOff().contains(command)) {
+            player.sendMessage(plugin.getConfiguration().getPunishmentMessageLoggedOff());
+            event.setResult(CommandExecuteEvent.CommandResult.denied());
+        }
+        continuation.resume();
     }
 
     private boolean isPlayerLoggedOn(@NotNull Player player) {

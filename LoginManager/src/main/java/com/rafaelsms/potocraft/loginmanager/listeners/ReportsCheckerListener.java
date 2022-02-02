@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,42 +42,40 @@ public class ReportsCheckerListener {
             return;
         }
 
-        CompletableFuture.runAsync(() -> {
-            Player player = event.getPlayer();
-            Optional<Profile> profileOptional;
-            try {
-                profileOptional = plugin.getDatabase().getProfile(player.getUniqueId());
-            } catch (Database.DatabaseException ignored) {
-                Component reason = plugin.getConfiguration().getKickMessageFailedToRetrieveProfile();
+        Player player = event.getPlayer();
+        Optional<Profile> profileOptional;
+        try {
+            profileOptional = plugin.getDatabase().getProfile(player.getUniqueId());
+        } catch (Database.DatabaseException ignored) {
+            Component reason = plugin.getConfiguration().getKickMessageFailedToRetrieveProfile();
+            event.setResult(ResultedEvent.ComponentResult.denied(reason));
+            continuation.resume();
+            return;
+        }
+
+        // Continue if player doesn't have a profile yet
+        if (profileOptional.isEmpty()) {
+            continuation.resume();
+            return;
+        }
+
+        // Check if there is a report that prevents joining
+        Profile profile = profileOptional.get();
+        for (ReportEntry entry : profile.getReportEntries()) {
+            if (entry.isPreventingJoin()) {
+                String reporterName = Util.convert(entry.getReporterId(), this::getReporterName);
+                Component reason = plugin.getConfiguration()
+                                         .getPunishmentMessageBanned(reporterName,
+                                                                     entry.getExpirationDate(),
+                                                                     entry.getReason());
                 event.setResult(ResultedEvent.ComponentResult.denied(reason));
                 continuation.resume();
                 return;
             }
+        }
 
-            // Continue if player doesn't have a profile yet
-            if (profileOptional.isEmpty()) {
-                continuation.resume();
-                return;
-            }
-
-            // Check if there is a report that prevents joining
-            Profile profile = profileOptional.get();
-            for (ReportEntry entry : profile.getReportEntries()) {
-                if (entry.isPreventingJoin()) {
-                    String reporterName = Util.convert(entry.getReporterId(), this::getReporterName);
-                    Component reason = plugin.getConfiguration()
-                                             .getPunishmentMessageBanned(reporterName,
-                                                                         entry.getExpirationDate(),
-                                                                         entry.getReason());
-                    event.setResult(ResultedEvent.ComponentResult.denied(reason));
-                    continuation.resume();
-                    return;
-                }
-            }
-
-            // Allow if player wasn't kicked
-            continuation.resume();
-        }, com.rafaelsms.potocraft.loginmanager.util.Util.getExecutor(plugin, continuation));
+        // Allow if player wasn't kicked
+        continuation.resume();
     }
 
     @Subscribe
@@ -89,75 +86,71 @@ public class ReportsCheckerListener {
             return;
         }
 
-        CompletableFuture.runAsync(() -> {
-            Player player = event.getPlayer();
-            Optional<Profile> profileOptional;
-            try {
-                profileOptional = plugin.getDatabase().getProfile(player.getUniqueId());
-            } catch (Database.DatabaseException ignored) {
-                Component reason = plugin.getConfiguration().getKickMessageFailedToRetrieveProfile();
+        Player player = event.getPlayer();
+        Optional<Profile> profileOptional;
+        try {
+            profileOptional = plugin.getDatabase().getProfile(player.getUniqueId());
+        } catch (Database.DatabaseException ignored) {
+            Component reason = plugin.getConfiguration().getKickMessageFailedToRetrieveProfile();
+            player.sendMessage(reason);
+            event.setResult(PlayerChatEvent.ChatResult.denied());
+            continuation.resume();
+            return;
+        }
+
+        // Continue if player doesn't have a profile yet
+        if (profileOptional.isEmpty()) {
+            continuation.resume();
+            return;
+        }
+
+        // Check if there is a report that prevents joining
+        Profile profile = profileOptional.get();
+        for (ReportEntry entry : profile.getReportEntries()) {
+            if (entry.isPreventingChat()) {
+                String reporterName = Util.convert(entry.getReporterId(), this::getReporterName);
+                Component reason = plugin.getConfiguration()
+                                         .getPunishmentMessageMuted(reporterName,
+                                                                    entry.getExpirationDate(),
+                                                                    entry.getReason());
                 player.sendMessage(reason);
                 event.setResult(PlayerChatEvent.ChatResult.denied());
                 continuation.resume();
                 return;
             }
+        }
 
-            // Continue if player doesn't have a profile yet
-            if (profileOptional.isEmpty()) {
-                continuation.resume();
-                return;
-            }
-
-            // Check if there is a report that prevents joining
-            Profile profile = profileOptional.get();
-            for (ReportEntry entry : profile.getReportEntries()) {
-                if (entry.isPreventingChat()) {
-                    String reporterName = Util.convert(entry.getReporterId(), this::getReporterName);
-                    Component reason = plugin.getConfiguration()
-                                             .getPunishmentMessageMuted(reporterName,
-                                                                        entry.getExpirationDate(),
-                                                                        entry.getReason());
-                    player.sendMessage(reason);
-                    event.setResult(PlayerChatEvent.ChatResult.denied());
-                    continuation.resume();
-                    return;
-                }
-            }
-
-            // Allow if player wasn't kicked
-            continuation.resume();
-        }, com.rafaelsms.potocraft.loginmanager.util.Util.getExecutor(plugin, continuation));
+        // Allow if player wasn't kicked
+        continuation.resume();
     }
 
     @Subscribe
     private void preventMutedFromUsingCommands(CommandExecuteEvent event, Continuation continuation) {
-        CompletableFuture.runAsync(() -> {
-            if (!event.getResult().isAllowed()) {
-                continuation.resume();
-                return;
-            }
-            if (!(event.getCommandSource() instanceof Player player) || !isPlayerMuted(player)) {
-                continuation.resume();
-                return;
-            }
-
-            // Attempt to fit into the regex
-            Matcher matcher = commandPattern.matcher(event.getCommand());
-            if (!matcher.matches()) {
-                plugin.getLogger()
-                      .warn("Didn't expected to not find a command match: \"%s\"".formatted(event.getCommand()));
-                continuation.resume();
-                return;
-            }
-
-            // Filter out any commands that aren't on the allowed list
-            String command = matcher.group(1).toLowerCase();
-            if (plugin.getConfiguration().getBlockedCommandsMuted().contains(command)) {
-                player.sendMessage(plugin.getConfiguration().getPunishmentMessageBlockedCommandMuted());
-                event.setResult(CommandExecuteEvent.CommandResult.denied());
-            }
+        if (!event.getResult().isAllowed()) {
             continuation.resume();
-        }, com.rafaelsms.potocraft.loginmanager.util.Util.getExecutor(plugin, continuation));
+            return;
+        }
+        if (!(event.getCommandSource() instanceof Player player) || !isPlayerMuted(player)) {
+            continuation.resume();
+            return;
+        }
+
+        // Attempt to fit into the regex
+        Matcher matcher = commandPattern.matcher(event.getCommand());
+        if (!matcher.matches()) {
+            plugin.getLogger()
+                  .warn("Didn't expected to not find a command match: \"%s\"".formatted(event.getCommand()));
+            continuation.resume();
+            return;
+        }
+
+        // Filter out any commands that aren't on the allowed list
+        String command = matcher.group(1).toLowerCase();
+        if (plugin.getConfiguration().getBlockedCommandsMuted().contains(command)) {
+            player.sendMessage(plugin.getConfiguration().getPunishmentMessageBlockedCommandMuted());
+            event.setResult(CommandExecuteEvent.CommandResult.denied());
+        }
+        continuation.resume();
     }
 
 

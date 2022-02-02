@@ -16,7 +16,6 @@ import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * We will: - check if offline profiles are still logged in; - update offline profiles' login date if needed; - update
@@ -33,50 +32,46 @@ public class ProfileUpdater {
 
     @Subscribe(order = PostOrder.FIRST)
     private void updateJoinDate(PostLoginEvent event, Continuation continuation) {
-        CompletableFuture.runAsync(() -> {
-            Player player = event.getPlayer();
-            boolean playerTypeRequiresLogin = PlayerType.get(player).requiresLogin();
-            Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
-            // Don't create profile for offline players, just return
-            if (optionalProfile.isEmpty() && playerTypeRequiresLogin) {
-                continuation.resume();
-                return;
-            }
-            // The new profile will only be created for online players
-            Profile profile = optionalProfile.orElse(new Profile(player.getUniqueId(), player.getUsername()));
-
-            // Check if profile is logged in and set its join date
-            if (!playerTypeRequiresLogin || Util.isPlayerLoggedIn(plugin, profile, player)) {
-                profile.setJoinDate(player.getUsername());
-                plugin.getDatabase().saveProfileCatching(profile);
-            }
+        Player player = event.getPlayer();
+        boolean playerTypeRequiresLogin = PlayerType.get(player).requiresLogin();
+        Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
+        // Don't create profile for offline players, just return
+        if (optionalProfile.isEmpty() && playerTypeRequiresLogin) {
             continuation.resume();
-        }, Util.getExecutor(plugin, continuation));
+            return;
+        }
+        // The new profile will only be created for online players
+        Profile profile = optionalProfile.orElse(new Profile(player.getUniqueId(), player.getUsername()));
+
+        // Check if profile is logged in and set its join date
+        if (!playerTypeRequiresLogin || Util.isPlayerLoggedIn(plugin, profile, player)) {
+            profile.setJoinDate(player.getUsername());
+            plugin.getDatabase().saveProfileCatching(profile);
+        }
+        continuation.resume();
     }
 
     @Subscribe(order = PostOrder.LAST)
     private void updateQuitDate(DisconnectEvent event, Continuation continuation) {
-        CompletableFuture.runAsync(() -> {
-            Player player = event.getPlayer();
-            Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
-            if (optionalProfile.isEmpty()) {
-                continuation.resume();
-                return;
-            }
-            Profile profile = optionalProfile.get();
-
-            // Check if profile is logged in and set its join date
-            if (isLoggedIn(event, profile, player)) {
-                String serverName = event.getPlayer()
-                                         .getCurrentServer()
-                                         .map(ServerConnection::getServerInfo)
-                                         .map(ServerInfo::getName)
-                                         .orElse(null);
-                profile.setQuitDate(serverName);
-                plugin.getDatabase().saveProfileCatching(profile);
-            }
+        Player player = event.getPlayer();
+        Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
+        if (optionalProfile.isEmpty()) {
             continuation.resume();
-        }, Util.getExecutor(plugin, continuation));
+            return;
+        }
+        Profile profile = optionalProfile.get();
+
+        // Check if profile is logged in and set its join date
+        if (isLoggedIn(event, profile, player)) {
+            String serverName = event.getPlayer()
+                                     .getCurrentServer()
+                                     .map(ServerConnection::getServerInfo)
+                                     .map(ServerInfo::getName)
+                                     .orElse(null);
+            profile.setQuitDate(serverName);
+            plugin.getDatabase().saveProfileCatching(profile);
+        }
+        continuation.resume();
     }
 
     private boolean isLoggedIn(@NotNull DisconnectEvent event, @NotNull Profile profile, @NotNull Player player) {

@@ -4,7 +4,7 @@ configuration:
     mongo_database: 'proxyDb'
     player_profile_collection: 'loginProfiles'
     is_exception_fatal: false
-  allowed_usernames_regex: '^*?[A-Za-z0-9_]{3,16}$'
+  allowed_usernames_regex: '^\*?[A-Za-z0-9_]{3,16}$'
   offline_players:
     offline_players_login_server: 'login'
     offline_allowed_commands:
