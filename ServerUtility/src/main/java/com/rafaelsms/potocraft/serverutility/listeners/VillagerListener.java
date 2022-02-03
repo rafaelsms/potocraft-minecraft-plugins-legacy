@@ -52,15 +52,17 @@ public class VillagerListener implements Listener {
             }
             // Copy all recipe but nerf the item
             // God, please just add a MerchantRecipe#setResult
-            event.setRecipe(new MerchantRecipe(optional.get(),
-                                               recipe.getUses(),
-                                               recipe.getMaxUses(),
-                                               recipe.hasExperienceReward(),
-                                               recipe.getVillagerExperience(),
-                                               recipe.getPriceMultiplier(),
-                                               recipe.getDemand(),
-                                               recipe.getSpecialPrice(),
-                                               recipe.shouldIgnoreDiscounts()));
+            MerchantRecipe newMerchantRecipe = new MerchantRecipe(optional.get(),
+                                                                  recipe.getUses(),
+                                                                  recipe.getMaxUses(),
+                                                                  recipe.hasExperienceReward(),
+                                                                  recipe.getVillagerExperience(),
+                                                                  recipe.getPriceMultiplier(),
+                                                                  recipe.getDemand(),
+                                                                  recipe.getSpecialPrice(),
+                                                                  recipe.shouldIgnoreDiscounts());
+            newMerchantRecipe.setIngredients(recipe.getIngredients());
+            event.setRecipe(newMerchantRecipe);
         }
     }
 
@@ -100,15 +102,17 @@ public class VillagerListener implements Listener {
                     continue;
                 }
                 // Otherwise, add a new recipe but with nerfed enchantments
-                recipesToAdd.add(new MerchantRecipe(optional.get(),
-                                                    recipe.getUses(),
-                                                    recipe.getMaxUses(),
-                                                    recipe.hasExperienceReward(),
-                                                    recipe.getVillagerExperience(),
-                                                    recipe.getPriceMultiplier(),
-                                                    recipe.getDemand(),
-                                                    recipe.getSpecialPrice(),
-                                                    recipe.shouldIgnoreDiscounts()));
+                MerchantRecipe newMerchantRecipe = new MerchantRecipe(optional.get(),
+                                                                      recipe.getUses(),
+                                                                      recipe.getMaxUses(),
+                                                                      recipe.hasExperienceReward(),
+                                                                      recipe.getVillagerExperience(),
+                                                                      recipe.getPriceMultiplier(),
+                                                                      recipe.getDemand(),
+                                                                      recipe.getSpecialPrice(),
+                                                                      recipe.shouldIgnoreDiscounts());
+                newMerchantRecipe.setIngredients(recipe.getIngredients());
+                recipesToAdd.add(newMerchantRecipe);
             }
             recipes.addAll(recipesToAdd);
         }
@@ -136,24 +140,25 @@ public class VillagerListener implements Listener {
         }
         EnchantmentStorageMeta itemMeta = (EnchantmentStorageMeta) itemStack.getItemMeta();
         HashMap<Enchantment, Integer> map = new HashMap<>(itemMeta.getStoredEnchants());
-        Iterator<Map.Entry<Enchantment, Integer>> iterator = map.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Enchantment, Integer> entry = iterator.next();
+        for (Map.Entry<Enchantment, Integer> entry : map.entrySet()) {
             Enchantment enchantment = entry.getKey();
             int maxLevel = enchantment.getMaxLevel();
             if (maxLevel <= 2) {
-                iterator.remove();
+                itemMeta.removeStoredEnchant(enchantment);
                 continue;
             }
             int level = entry.getValue();
-            if (maxLevel - level <= 2) {
+            while (maxLevel - level <= 2 && level > 1) {
                 // The difference is too low, decrease its level
-                entry.setValue(Math.max(1, maxLevel - level));
+                level = level - 1;
             }
+            itemMeta.removeStoredEnchant(enchantment);
+            itemMeta.addStoredEnchant(enchantment, Math.max(1, level), false);
         }
-        if (map.isEmpty()) {
+        if (itemMeta.getStoredEnchants().isEmpty()) {
             return Optional.empty();
         }
+        itemStack.setItemMeta(itemMeta);
         return Optional.of(itemStack);
     }
 }
