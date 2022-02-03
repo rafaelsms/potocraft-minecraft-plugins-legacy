@@ -53,8 +53,8 @@ public class Configuration extends YamlFile {
         return get("configuration.muted_blocked_commands");
     }
 
-    public Pattern getAllowedUsernamesRegex() {
-        return Pattern.compile(Objects.requireNonNull(get("configuration.allowed_usernames_regex")),
+    public Pattern getAllowedJavaUsernamesRegex() {
+        return Pattern.compile(Objects.requireNonNull(get("configuration.allowed_java_usernames_regex")),
                                Pattern.CASE_INSENSITIVE);
     }
 
@@ -302,8 +302,8 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponent(get("language.kick_messages.invalid_java_prefix")).build();
     }
 
-    public Component getKickMessageInvalidUsername() {
-        return TextUtil.toComponent(get("language.kick_messages.invalid_username")).build();
+    public Component getKickMessageInvalidJavaUsername() {
+        return TextUtil.toComponent(get("language.kick_messages.invalid_java_username")).build();
     }
 
     public Component getKickMessageFailedToRetrieveProfile() {

@@ -9,6 +9,7 @@ import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.connection.PreLoginEvent;
 import net.kyori.adventure.text.Component;
 import org.geysermc.floodgate.api.FloodgateApi;
+import org.geysermc.floodgate.api.player.FloodgatePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -27,7 +28,7 @@ public class OfflineCheckerListener {
         this.plugin = plugin;
     }
 
-    @Subscribe(order = PostOrder.EARLY)
+    @Subscribe(order = PostOrder.FIRST)
     private void denyJavaWithBedrockPrefix(LoginEvent event, Continuation continuation) {
         // Ignore cancelled events already
         if (!event.getResult().isAllowed()) {
@@ -35,12 +36,29 @@ public class OfflineCheckerListener {
             return;
         }
 
-        // If is not a floodgate player and is using Floodgate's prefix, deny login
+        // If is a floodgate player, allow without checking
         FloodgateApi floodgateApi = FloodgateApi.getInstance();
-        if (floodgateApi.getPlayer(event.getPlayer().getUniqueId()) == null &&
-            floodgateApi.getPlayerPrefix().length() > 0 &&
+        FloodgatePlayer floodgatePlayer = floodgateApi.getPlayer(event.getPlayer().getUniqueId());
+        if (floodgatePlayer != null) {
+            continuation.resume();
+            return;
+        }
+
+        // If is not a floodgate player and is using Floodgate's prefix, deny login
+        if (floodgateApi.getPlayerPrefix().length() > 0 &&
             event.getPlayer().getUsername().startsWith(floodgateApi.getPlayerPrefix())) {
             Component reason = plugin.getConfiguration().getKickMessageInvalidPrefixForJavaPlayer();
+            event.setResult(ResultedEvent.ComponentResult.denied(reason));
+            continuation.resume();
+            return;
+        }
+
+        // Validate username against configuration regex for Java players
+        if (!plugin.getConfiguration()
+                   .getAllowedJavaUsernamesRegex()
+                   .matcher(event.getPlayer().getUsername())
+                   .matches()) {
+            Component reason = plugin.getConfiguration().getKickMessageInvalidJavaUsername();
             event.setResult(ResultedEvent.ComponentResult.denied(reason));
         }
         continuation.resume();
@@ -54,23 +72,19 @@ public class OfflineCheckerListener {
             return;
         }
 
-        // Validate username against configuration regex
-        if (!plugin.getConfiguration().getAllowedUsernamesRegex().matcher(event.getUsername()).matches()) {
-            Component reason = plugin.getConfiguration().getKickMessageInvalidUsername();
-            event.setResult(PreLoginEvent.PreLoginComponentResult.denied(reason));
-            continuation.resume();
-            return;
-        }
-
-        // Just ignore if using Floodgate's prefix (we will ensure the player is from floodgate on LoginEvent)
-        if (FloodgateApi.getInstance().getPlayerPrefix().length() > 0 &&
-            event.getUsername().startsWith(FloodgateApi.getInstance().getPlayerPrefix())) {
-            // Always force offline mode when using prefix:
-            // 1. Floodgate already does this
-            // 2. We can show our error message
-            event.setResult(PreLoginEvent.PreLoginComponentResult.forceOfflineMode());
-            continuation.resume();
-            return;
+        try {
+            // FloodgateAPI#getPlayers was throwing under unknown conditions
+            // If this is not caught, players will default to online mode and offline players can't join
+            for (FloodgatePlayer player : FloodgateApi.getInstance().getPlayers()) {
+                // If player has the same name as Floodgate's player, allow join without changing the event
+                if (player.getCorrectUsername().equalsIgnoreCase(event.getUsername())) {
+                    continuation.resume();
+                    return;
+                }
+            }
+        } catch (Exception exception) {
+            plugin.getLogger().warn("Failed to check if player is Floodgate player: {}", exception.getMessage());
+            exception.printStackTrace();
         }
 
         // Check if player has existing account
@@ -82,11 +96,12 @@ public class OfflineCheckerListener {
                 // If it doesn't exist, force offline mode, so we can require authentication
                 event.setResult(PreLoginEvent.PreLoginComponentResult.forceOfflineMode());
             }
-        } catch (IOException e) {
+        } catch (IOException exception) {
             // If we failed to request, disconnect player
-            plugin.getLogger().warn("Failed to access Mojang's username API: {}", e.getMessage());
+            plugin.getLogger().warn("Failed to access Mojang's username API: {}", exception.getMessage());
             Component reason = plugin.getConfiguration().getKickMessageCouldNotCheckMojangUsername();
             event.setResult(PreLoginEvent.PreLoginComponentResult.denied(reason));
+            exception.printStackTrace();
         }
         continuation.resume();
     }
