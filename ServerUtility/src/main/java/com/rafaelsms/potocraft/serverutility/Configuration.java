@@ -38,8 +38,8 @@ public class Configuration extends YamlFile {
         return get("configuration.enable_player_logging");
     }
 
-    public Boolean isMendingNerfed() {
-        return get("configuration.nerf_mending_to_one_repair_point_only");
+    public Integer getMendingMaxRepairAmount() {
+        return getInt("configuration.nerf_mending_max_repair_amount");
     }
 
     public Boolean isPreventingAllEnchantedBooks() {

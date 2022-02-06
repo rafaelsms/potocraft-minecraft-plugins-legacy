@@ -6,7 +6,7 @@ configuration:
     prevent_all_enchanted_books: false
     prevent_treasure_enchanted_books: true
     nerf_enchanted_books: true
-  nerf_mending_to_one_repair_point_only: true
+  nerf_mending_max_repair_amount: 6
   enable_player_logging: true
   hide_join_quit_messages: false
   experience_modifier:

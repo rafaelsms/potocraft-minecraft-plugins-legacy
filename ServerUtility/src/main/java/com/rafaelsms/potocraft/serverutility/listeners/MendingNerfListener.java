@@ -20,7 +20,7 @@ public class MendingNerfListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void nerfMending(PlayerItemMendEvent event) {
-        if (!plugin.getConfiguration().isMendingNerfed()) {
+        if (plugin.getConfiguration().getMendingMaxRepairAmount() < 0) {
             return;
         }
         // The default formula: half is going to the repair (which repairs double the amount) and half is going to the player
@@ -32,7 +32,7 @@ public class MendingNerfListener implements Listener {
         experienceOrbId.add(event.getExperienceOrb().getEntityId());
         int halfExperience = event.getExperienceOrb().getExperience() / 2;
         event.getExperienceOrb().setExperience(halfExperience);
-        event.setRepairAmount(Math.min(event.getRepairAmount(), 1));
+        event.setRepairAmount(Math.min(event.getRepairAmount(), plugin.getConfiguration().getMendingMaxRepairAmount()));
         plugin.getServer()
               .getScheduler()
               .runTaskLater(plugin, () -> experienceOrbId.remove(event.getExperienceOrb().getEntityId()), 20);
