@@ -273,6 +273,10 @@ configuration:
     - barata
     - barato
     - easy
+    - monobola
+    - monoball
+    - boludo
+    - boluda
 
 language:
   console_name: 'administração'
