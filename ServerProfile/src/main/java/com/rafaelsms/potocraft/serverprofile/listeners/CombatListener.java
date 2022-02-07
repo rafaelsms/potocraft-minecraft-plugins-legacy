@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerKickEvent;
@@ -23,12 +24,24 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CombatListener implements Listener {
 
     private final Pattern commandPattern = Pattern.compile("^\\s*(\\S+)(\\s.*)?$", Pattern.CASE_INSENSITIVE);
+    private final Set<EntityDamageEvent.DamageCause> combatDamageCauses = Set.of(EntityDamageEvent.DamageCause.LAVA,
+                                                                                 EntityDamageEvent.DamageCause.MELTING,
+                                                                                 EntityDamageEvent.DamageCause.PROJECTILE,
+                                                                                 EntityDamageEvent.DamageCause.ENTITY_EXPLOSION,
+                                                                                 EntityDamageEvent.DamageCause.BLOCK_EXPLOSION,
+                                                                                 EntityDamageEvent.DamageCause.DRAGON_BREATH,
+                                                                                 EntityDamageEvent.DamageCause.FALLING_BLOCK,
+                                                                                 EntityDamageEvent.DamageCause.FIRE,
+                                                                                 EntityDamageEvent.DamageCause.FIRE_TICK,
+                                                                                 EntityDamageEvent.DamageCause.POISON,
+                                                                                 EntityDamageEvent.DamageCause.THORNS);
 
     private final @NotNull ServerProfilePlugin plugin;
 
@@ -78,13 +91,12 @@ public class CombatListener implements Listener {
         Location location = event.getEntity().getLocation();
         user.getProfile().setDeathLocation(location);
         // Log death information
-        plugin
-                .logger()
-                .info("Player %s died at world = %s, %d %d %d".formatted(player.getName(),
-                                                                         location.getWorld().getName(),
-                                                                         location.getBlockX(),
-                                                                         location.getBlockY(),
-                                                                         location.getBlockZ()));
+        plugin.logger()
+              .info("Player %s died at world = %s, %d %d %d".formatted(player.getName(),
+                                                                       location.getWorld().getName(),
+                                                                       location.getBlockX(),
+                                                                       location.getBlockY(),
+                                                                       location.getBlockZ()));
         // List player drops with enchantments to console
         for (ItemStack itemStack : event.getDrops()) {
             if (itemStack.getEnchantments().size() == 0) {
@@ -156,6 +168,18 @@ public class CombatListener implements Listener {
         } else {
             int combatDuration = plugin.getConfiguration().getMobCombatDurationTicks();
             userDamaged.setCombatTask(CombatTask.Type.MOB, combatDuration);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    private void setInCombat(EntityDamageEvent event) {
+        Entity damaged = event.getEntity();
+        if (!(damaged instanceof Player playerDamaged)) {
+            return;
+        }
+        if (combatDamageCauses.contains(event.getCause())) {
+            int combatDuration = plugin.getConfiguration().getMobCombatDurationTicks();
+            plugin.getUserManager().getUser(playerDamaged).setCombatTask(CombatTask.Type.MOB, combatDuration);
         }
     }
 }
