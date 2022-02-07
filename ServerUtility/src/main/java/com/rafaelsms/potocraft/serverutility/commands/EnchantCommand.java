@@ -106,7 +106,7 @@ public class EnchantCommand implements CommandExecutor, TabCompleter {
                     enchantments.add(enchantment);
                 }
             }
-            Util.convertList(enchantments, enchantment -> enchantment.getKey().getKey().toLowerCase());
+            return Util.convertList(enchantments, enchantment -> enchantment.getKey().getKey().toLowerCase());
         }
         return Util.convertList(Arrays.asList(Enchantment.values()),
                                 enchantment -> enchantment.getKey().getKey().toLowerCase());
