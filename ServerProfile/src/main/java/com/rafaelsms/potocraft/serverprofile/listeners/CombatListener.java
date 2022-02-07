@@ -90,6 +90,7 @@ public class CombatListener implements Listener {
         User user = plugin.getUserManager().getUser(player);
         Location location = event.getEntity().getLocation();
         user.getProfile().setDeathLocation(location);
+        user.getProfile().setBackLocation(location);
         // Log death information
         plugin.logger()
               .info("Player %s died at world = %s, %d %d %d".formatted(player.getName(),
