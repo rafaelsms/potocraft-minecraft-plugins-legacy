@@ -39,11 +39,7 @@ public class TeleportOfflineCommand implements CommandExecutor {
 
         // Find the closest player by the name
         String playerName = args[0];
-        OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayerIfCached(playerName);
-        if (offlinePlayer == null) {
-            sender.sendMessage(plugin.getConfiguration().getTeleportPlayerNotFound());
-            return true;
-        }
+        @SuppressWarnings("deprecation") OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(playerName);
         Location location = offlinePlayer.getLocation();
         if (location == null) {
             sender.sendMessage(plugin.getConfiguration().getTeleportOfflineLocationNotFound());
