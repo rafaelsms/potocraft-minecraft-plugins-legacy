@@ -16,7 +16,7 @@ public class BlockedWordsChecker {
         for (String blockedWord : blockedWords) {
             StringBuilder stringBuilder = new StringBuilder();
             for (char c : blockedWord.toCharArray()) {
-                // Check leet and *
+                // Check leet, x and *
                 if (c == 'a') {
                     stringBuilder.append("(a|4|\\*|x)");
                 } else if (c == 'i' || c == 'e') {
