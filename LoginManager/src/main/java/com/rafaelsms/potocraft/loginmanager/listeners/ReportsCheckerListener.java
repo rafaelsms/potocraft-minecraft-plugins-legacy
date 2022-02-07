@@ -5,14 +5,12 @@ import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.player.ReportEntry;
 import com.rafaelsms.potocraft.util.Util;
-import com.velocitypowered.api.event.Continuation;
-import com.velocitypowered.api.event.ResultedEvent;
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.command.CommandExecuteEvent;
-import com.velocitypowered.api.event.connection.LoginEvent;
-import com.velocitypowered.api.event.player.PlayerChatEvent;
-import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.connection.PendingConnection;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.ChatEvent;
+import net.md_5.bungee.api.event.LoginEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,9 +22,9 @@ import java.util.regex.Pattern;
 /**
  * We will: - prevent chat if player trying to chat is muted; - prevent join if player is banned.
  */
-public class ReportsCheckerListener {
+public class ReportsCheckerListener implements Listener {
 
-    private final Pattern commandPattern = Pattern.compile("^\\s*(\\S+)(\\s+.*)?$", Pattern.CASE_INSENSITIVE);
+    private final Pattern commandPattern = Pattern.compile("^\\s*(\\S+)", Pattern.CASE_INSENSITIVE);
 
     private final @NotNull LoginManagerPlugin plugin;
 
@@ -34,73 +32,77 @@ public class ReportsCheckerListener {
         this.plugin = plugin;
     }
 
-    @Subscribe
-    private void checkJoinReports(LoginEvent event, Continuation continuation) {
+    @EventHandler
+    public void checkJoinReports(LoginEvent event) {
         // If player isn't allowed already, just return
-        if (!event.getResult().isAllowed()) {
-            continuation.resume();
+        if (event.isCancelled()) {
             return;
         }
 
-        Player player = event.getPlayer();
-        Optional<Profile> profileOptional;
-        try {
-            profileOptional = plugin.getDatabase().getProfile(player.getUniqueId());
-        } catch (Database.DatabaseException ignored) {
-            Component reason = plugin.getConfiguration().getKickMessageFailedToRetrieveProfile();
-            event.setResult(ResultedEvent.ComponentResult.denied(reason));
-            continuation.resume();
-            return;
-        }
-
-        // Continue if player doesn't have a profile yet
-        if (profileOptional.isEmpty()) {
-            continuation.resume();
-            return;
-        }
-
-        // Check if there is a report that prevents joining
-        Profile profile = profileOptional.get();
-        for (ReportEntry entry : profile.getReportEntries()) {
-            if (entry.isPreventingJoin()) {
-                String reporterName = Util.convert(entry.getReporterId(), this::getReporterName);
-                Component reason = plugin.getConfiguration()
-                                         .getPunishmentMessageBanned(reporterName,
-                                                                     entry.getExpirationDate(),
-                                                                     entry.getReason());
-                event.setResult(ResultedEvent.ComponentResult.denied(reason));
-                continuation.resume();
+        event.registerIntent(plugin);
+        plugin.runAsync(() -> {
+            PendingConnection connection = event.getConnection();
+            Optional<Profile> profileOptional;
+            try {
+                profileOptional = plugin.getDatabase().getProfile(connection.getUniqueId());
+            } catch (Database.DatabaseException ignored) {
+                event.setCancelReason(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
+                event.setCancelled(true);
+                event.completeIntent(plugin);
                 return;
             }
-        }
 
-        // Allow if player wasn't kicked
-        continuation.resume();
+            // Continue if player doesn't have a profile yet
+            if (profileOptional.isEmpty()) {
+                event.completeIntent(plugin);
+                return;
+            }
+
+            // Check if there is a report that prevents joining
+            Profile profile = profileOptional.get();
+            for (ReportEntry entry : profile.getReportEntries()) {
+                if (entry.isPreventingJoin()) {
+                    String reporterName = Util.convert(entry.getReporterId(), this::getReporterName);
+                    event.setCancelReason(plugin.getConfiguration()
+                                                .getPunishmentMessageBanned(reporterName,
+                                                                            entry.getExpirationDate(),
+                                                                            entry.getReason()));
+                    event.setCancelled(true);
+                    event.completeIntent(plugin);
+                    return;
+                }
+            }
+
+            event.completeIntent(plugin);
+        });
     }
 
-    @Subscribe
-    private void checkChatReports(PlayerChatEvent event, Continuation continuation) {
+    @EventHandler
+    public void preventMutedFromChatting(ChatEvent event) {
         // If player isn't allowed already, just return
-        if (!event.getResult().isAllowed()) {
-            continuation.resume();
+        if (event.isCancelled() || event.isCommand()) {
             return;
         }
 
-        Player player = event.getPlayer();
+        // Check if is a player
+        Optional<ProxiedPlayer> playerOptional =
+                com.rafaelsms.potocraft.loginmanager.util.Util.getPlayer(event.getSender());
+        if (playerOptional.isEmpty()) {
+            return;
+        }
+
+        ProxiedPlayer player = playerOptional.get();
         Optional<Profile> profileOptional;
         try {
             profileOptional = plugin.getDatabase().getProfile(player.getUniqueId());
         } catch (Database.DatabaseException ignored) {
-            Component reason = plugin.getConfiguration().getKickMessageFailedToRetrieveProfile();
-            player.sendMessage(reason);
-            event.setResult(PlayerChatEvent.ChatResult.denied());
-            continuation.resume();
+            player.disconnect(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
+            event.setCancelled(true);
             return;
         }
 
         // Continue if player doesn't have a profile yet
         if (profileOptional.isEmpty()) {
-            continuation.resume();
             return;
         }
 
@@ -109,38 +111,39 @@ public class ReportsCheckerListener {
         for (ReportEntry entry : profile.getReportEntries()) {
             if (entry.isPreventingChat()) {
                 String reporterName = Util.convert(entry.getReporterId(), this::getReporterName);
-                Component reason = plugin.getConfiguration()
+                player.sendMessage(plugin.getConfiguration()
                                          .getPunishmentMessageMuted(reporterName,
                                                                     entry.getExpirationDate(),
-                                                                    entry.getReason());
-                player.sendMessage(reason);
-                event.setResult(PlayerChatEvent.ChatResult.denied());
-                continuation.resume();
+                                                                    entry.getReason()));
+                event.setCancelled(true);
                 return;
             }
         }
-
-        // Allow if player wasn't kicked
-        continuation.resume();
     }
 
-    @Subscribe
-    private void preventMutedFromUsingCommands(CommandExecuteEvent event, Continuation continuation) {
-        if (!event.getResult().isAllowed()) {
-            continuation.resume();
+    @EventHandler
+    public void preventMutedFromUsingCommands(ChatEvent event) {
+        if (event.isCancelled() || !event.isCommand()) {
             return;
         }
-        if (!(event.getCommandSource() instanceof Player player) || !isPlayerMuted(player)) {
-            continuation.resume();
+
+        // Check if is a player
+        Optional<ProxiedPlayer> playerOptional =
+                com.rafaelsms.potocraft.loginmanager.util.Util.getPlayer(event.getSender());
+        if (playerOptional.isEmpty()) {
+            return;
+        }
+
+        // Check if player is muted
+        ProxiedPlayer player = playerOptional.get();
+        if (!isPlayerMuted(player)) {
             return;
         }
 
         // Attempt to fit into the regex
-        Matcher matcher = commandPattern.matcher(event.getCommand());
+        Matcher matcher = commandPattern.matcher(event.getMessage());
         if (!matcher.matches()) {
-            plugin.getLogger()
-                  .warn("Didn't expected to not find a command match: \"%s\"".formatted(event.getCommand()));
-            continuation.resume();
+            plugin.logger().warn("Didn't expected to not find a command match: \"%s\"".formatted(event.getMessage()));
             return;
         }
 
@@ -148,22 +151,21 @@ public class ReportsCheckerListener {
         String command = matcher.group(1).toLowerCase();
         if (plugin.getConfiguration().getBlockedCommandsMuted().contains(command)) {
             player.sendMessage(plugin.getConfiguration().getPunishmentMessageBlockedCommandMuted());
-            event.setResult(CommandExecuteEvent.CommandResult.denied());
+            event.setCancelled(true);
         }
-        continuation.resume();
     }
 
 
     private @Nullable String getReporterName(@NotNull UUID reporterId) {
-        Optional<Player> playerOptional = plugin.getServer().getPlayer(reporterId);
-        if (playerOptional.isPresent()) {
-            return playerOptional.get().getUsername();
+        ProxiedPlayer player = plugin.getProxy().getPlayer(reporterId);
+        if (player != null) {
+            return player.getName();
         }
         Optional<Profile> profileOptional = plugin.getDatabase().getProfileCatching(reporterId);
         return profileOptional.map(Profile::getLastPlayerName).orElse(null);
     }
 
-    private boolean isPlayerMuted(@NotNull Player player) {
+    private boolean isPlayerMuted(@NotNull ProxiedPlayer player) {
         try {
             Optional<Profile> profileOptional = plugin.getDatabase().getProfile(player.getUniqueId());
             if (profileOptional.isEmpty()) {

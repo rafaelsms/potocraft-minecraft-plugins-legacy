@@ -2,11 +2,13 @@ package com.rafaelsms.potocraft.util;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,6 +102,17 @@ public final class TextUtil {
         } catch (Exception ignored) {
             return Optional.empty();
         }
+    }
+
+    public static @NotNull Optional<String> joinStrings(String[] strings, int initialIndex) {
+        if (initialIndex >= strings.length) {
+            return Optional.empty();
+        }
+        StringBuilder builder = new StringBuilder();
+        for (int i = initialIndex; i < strings.length; i++) {
+            builder.append(strings[i]);
+        }
+        return Optional.of(builder.toString());
     }
 
     public static <T> @NotNull String joinStrings(@NotNull Iterable<T> ts,
@@ -225,6 +238,10 @@ public final class TextUtil {
                 }
             }
             return replacedComponent;
+        }
+
+        public @NotNull BaseComponent[] buildBungee() {
+            return BungeeComponentSerializer.get().serialize(build());
         }
 
         private static @NotNull TextReplacementConfig replaceText(@NotNull String match,

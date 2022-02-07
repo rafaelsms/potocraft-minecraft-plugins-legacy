@@ -1,0 +1,7 @@
+name: LoginManager
+main: com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin
+version: 0.1-SNAPSHOT
+author: rafaelsms
+depends:
+  - LuckPerms
+  - floodgate

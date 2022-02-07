@@ -3,7 +3,7 @@ package com.rafaelsms.potocraft.loginmanager.util;
 import com.rafaelsms.potocraft.database.Database;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
-import com.velocitypowered.api.command.CommandSource;
+import net.md_5.bungee.api.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -15,17 +15,17 @@ public final class CommandUtil {
     }
 
     public static Optional<Profile> handlePlayerSearch(@NotNull LoginManagerPlugin plugin,
-                                                       @NotNull CommandSource source,
+                                                       @NotNull CommandSender sender,
                                                        @NotNull String usernameSearch) {
         Optional<Profile> optionalProfile;
         try {
             optionalProfile = plugin.getDatabase().searchOfflineProfile(usernameSearch);
         } catch (Database.DatabaseException ignored) {
-            source.sendMessage(plugin.getConfiguration().getCommandFailedToSearchProfile());
+            sender.sendMessage(plugin.getConfiguration().getCommandFailedToSearchProfile());
             return Optional.empty();
         }
         if (optionalProfile.isEmpty()) {
-            source.sendMessage(plugin.getConfiguration().getCommandNoProfileFound());
+            sender.sendMessage(plugin.getConfiguration().getCommandNoProfileFound());
         }
         return optionalProfile;
     }

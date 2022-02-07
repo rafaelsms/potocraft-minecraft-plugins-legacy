@@ -2,29 +2,26 @@ package com.rafaelsms.potocraft.loginmanager.listeners;
 
 import com.rafaelsms.potocraft.database.Database;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
-import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.util.PlayerType;
 import com.rafaelsms.potocraft.loginmanager.util.Util;
-import com.velocitypowered.api.event.Continuation;
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.PostLoginEvent;
-import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
-import com.velocitypowered.api.event.player.ServerPreConnectEvent;
-import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.server.RegisteredServer;
+import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.ServerConnectEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
 /**
- * We will: - prevent offline players which are not logged in from joining a server different from the login server; -
- * redirect online/logged in players to their last server.
+ * We will: - prevent offline players which are not logged in from joining a server different from the login server.
  * <p>
  * In these events, setting the server to null doesn't disconnect the player, instead keep they in a limbo.
  */
-public class RedirectPlayerListener {
+public class RedirectPlayerListener implements Listener {
 
     private final @NotNull LoginManagerPlugin plugin;
 
@@ -32,12 +29,11 @@ public class RedirectPlayerListener {
         this.plugin = plugin;
     }
 
-    @Subscribe
-    private void redirectLoggedOffPlayersToLogin(ServerPreConnectEvent event, Continuation continuation) {
-        Player player = event.getPlayer();
+    @EventHandler
+    public void redirectLoggedOffPlayersToLogin(ServerConnectEvent event) {
         // Just allow if player type doesn't require login
+        ProxiedPlayer player = event.getPlayer();
         if (!PlayerType.get(player).requiresLogin()) {
-            continuation.resume();
             return;
         }
 
@@ -47,76 +43,39 @@ public class RedirectPlayerListener {
             profileOptional = plugin.getDatabase().getProfile(player.getUniqueId());
         } catch (Database.DatabaseException ignored) {
             // Failed to retrieve profile, disconnect
-            event.setResult(ServerPreConnectEvent.ServerResult.denied());
+            event.setCancelled(true);
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
-            continuation.resume();
             return;
         }
 
         // Check if player is logged off
         if ((profileOptional.isEmpty() || !Util.isPlayerLoggedIn(plugin, profileOptional.get(), player))) {
-            Optional<RegisteredServer> loginServer = getLoginServer();
+            Optional<ServerInfo> loginServer = getLoginServer();
             if (loginServer.isPresent()) {
                 // Send to login server
-                event.setResult(ServerPreConnectEvent.ServerResult.allowed(loginServer.get()));
+                event.setTarget(loginServer.get());
             } else {
                 // Disconnect player as login server is unavailable
-                event.setResult(ServerPreConnectEvent.ServerResult.denied());
+                event.setCancelled(true);
                 event.getPlayer().disconnect(plugin.getConfiguration().getKickMessageLoginServerUnavailable());
             }
         }
-        continuation.resume();
     }
 
-    @Subscribe
-    private void printPlayerType(PostLoginEvent event) {
-        plugin.getLogger()
+    @EventHandler
+    public void printPlayerType(PostLoginEvent event) {
+        plugin.logger()
               .info("Player {} (uuid = {}) connection type is {}",
-                    event.getPlayer().getUsername(),
+                    event.getPlayer().getName(),
                     event.getPlayer().getUniqueId(),
                     PlayerType.get(event.getPlayer()));
     }
 
-    @Subscribe
-    private void redirectToLastServer(PlayerChooseInitialServerEvent event, Continuation continuation) {
-        Player player = event.getPlayer();
-        // Check if player has permission to be redirected
-        if (!player.hasPermission(Permissions.REDIRECT_TO_LAST_SERVER)) {
-            continuation.resume();
-            return;
-        }
-
-        // Get player profile
-        Optional<Profile> profileOptional;
-        try {
-            profileOptional = plugin.getDatabase().getProfile(player.getUniqueId());
-        } catch (Database.DatabaseException ignored) {
-            event.setInitialServer(null);
-            event.getPlayer().disconnect(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
-            continuation.resume();
-            return;
-        }
-
-        // Redirect to last server if present
-        Optional<RegisteredServer> lastServerOptional = Optional.empty();
-        if (profileOptional.isPresent()) {
-            Profile profile = profileOptional.get();
-            Optional<String> lastServerNameOptional = profile.getLastServerName();
-            if (lastServerNameOptional.isPresent()) {
-                lastServerOptional = getServer(lastServerNameOptional.get());
-            }
-        }
-
-        // Redirect to last server
-        lastServerOptional.ifPresent(event::setInitialServer);
-        continuation.resume();
-    }
-
-    private @NotNull Optional<RegisteredServer> getLoginServer() {
+    private @NotNull Optional<ServerInfo> getLoginServer() {
         return getServer(plugin.getConfiguration().getLoginServer());
     }
 
-    private @NotNull Optional<RegisteredServer> getServer(@Nullable String serverName) {
-        return plugin.getServer().getServer(serverName);
+    private @NotNull Optional<ServerInfo> getServer(@Nullable String serverName) {
+        return Optional.ofNullable(plugin.getProxy().getServerInfo(serverName));
     }
 }

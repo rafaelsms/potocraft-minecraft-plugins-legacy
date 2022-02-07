@@ -7,35 +7,32 @@ import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.util.PlayerType;
 import com.rafaelsms.potocraft.loginmanager.util.Util;
 import com.rafaelsms.potocraft.util.TextUtil;
-import com.velocitypowered.api.command.RawCommand;
-import com.velocitypowered.api.proxy.Player;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ChangePinCommand implements RawCommand {
+public class ChangePinCommand extends Command {
 
     // /<command> <old pin> <new pin> <new pin>
 
-    private final Pattern pinExtractor =
-            Pattern.compile("^\\s*(\\d{6})\\s*(\\d{6})\\s*(\\d{6})(\\s+.*)?$", Pattern.CASE_INSENSITIVE);
-    private final Pattern tabCompletable =
-            Pattern.compile("^\\s*(\\S+)?\\s*(\\S+)?\\s*(\\S+)?\\s*$", Pattern.CASE_INSENSITIVE);
+    private final Pattern pinFormat = Pattern.compile("^(\\d{6})$", Pattern.CASE_INSENSITIVE);
 
     private final @NotNull LoginManagerPlugin plugin;
 
     public ChangePinCommand(@NotNull LoginManagerPlugin plugin) {
+        super("mudarsenha", Permissions.COMMAND_CHANGE_PIN, "changepin", "changepassword", "mudarpin");
         this.plugin = plugin;
     }
 
     @Override
-    public void execute(Invocation invocation) {
+    public void execute(CommandSender sender, String[] args) {
         // Check if source is a player
-        if (!(invocation.source() instanceof Player player)) {
-            invocation.source().sendMessage(plugin.getConfiguration().getCommandPlayersOnly());
+        if (!(sender instanceof ProxiedPlayer player)) {
+            sender.sendMessage(plugin.getConfiguration().getCommandPlayersOnly());
             return;
         }
 
@@ -46,14 +43,16 @@ public class ChangePinCommand implements RawCommand {
         }
 
         // Check arguments
-        Matcher matcher = pinExtractor.matcher(invocation.arguments());
-        if (!matcher.matches()) {
+        if (args.length != 3 ||
+            !pinFormat.matcher(args[0]).matches() ||
+            !pinFormat.matcher(args[1]).matches() ||
+            !pinFormat.matcher(args[2]).matches()) {
             player.sendMessage(plugin.getConfiguration().getCommandChangePinHelp());
             return;
         }
 
         // Parse old pin
-        String oldPinString = matcher.group(1);
+        String oldPinString = args[0];
         Optional<Integer> oldPinOptional = TextUtil.parsePin(oldPinString);
         if (oldPinOptional.isEmpty()) {
             player.sendMessage(plugin.getConfiguration().getCommandChangePinHelp());
@@ -62,8 +61,8 @@ public class ChangePinCommand implements RawCommand {
         int oldPin = oldPinOptional.get();
 
         // Get new pin and verify they are equal
-        String newPinString = matcher.group(2);
-        String newPinConfirmationString = matcher.group(3);
+        String newPinString = args[1];
+        String newPinConfirmationString = args[2];
         Optional<Integer> pinOptional = TextUtil.parseMatchingPins(newPinString, newPinConfirmationString);
         if (pinOptional.isEmpty()) {
             player.sendMessage(plugin.getConfiguration().getCommandChangePinInvalidPins());
@@ -110,19 +109,5 @@ public class ChangePinCommand implements RawCommand {
         } catch (Database.DatabaseException ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
         }
-    }
-
-    @Override
-    public List<String> suggest(Invocation invocation) {
-        Matcher matcher = tabCompletable.matcher(invocation.arguments());
-        if (matcher.matches()) {
-            return List.of("123456", "834712");
-        }
-        return List.of();
-    }
-
-    @Override
-    public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission(Permissions.COMMAND_CHANGE_PIN);
     }
 }

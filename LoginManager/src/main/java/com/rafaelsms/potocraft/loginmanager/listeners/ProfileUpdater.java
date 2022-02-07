@@ -4,15 +4,13 @@ import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.util.PlayerType;
 import com.rafaelsms.potocraft.loginmanager.util.Util;
-import com.velocitypowered.api.event.Continuation;
-import com.velocitypowered.api.event.PostOrder;
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.DisconnectEvent;
-import com.velocitypowered.api.event.connection.PostLoginEvent;
-import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ServerConnection;
-import com.velocitypowered.api.proxy.server.ServerInfo;
-import org.geysermc.floodgate.api.FloodgateApi;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.ServerDisconnectEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -22,7 +20,7 @@ import java.util.Optional;
  * offline profiles' logged in status if needed; - validate profiles' logged in status on startup; - update join/quit
  * date for online players.
  */
-public class ProfileUpdater {
+public class ProfileUpdater implements Listener {
 
     private final @NotNull LoginManagerPlugin plugin;
 
@@ -30,59 +28,60 @@ public class ProfileUpdater {
         this.plugin = plugin;
     }
 
-    @Subscribe(order = PostOrder.FIRST)
-    private void updateJoinDate(PostLoginEvent event, Continuation continuation) {
-        Player player = event.getPlayer();
-        boolean playerTypeRequiresLogin = PlayerType.get(player).requiresLogin();
-        Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
-        // Don't create profile for offline players, just return
-        if (optionalProfile.isEmpty() && playerTypeRequiresLogin) {
-            continuation.resume();
-            return;
-        }
-        // The new profile will only be created for online players
-        Profile profile = optionalProfile.orElse(new Profile(player.getUniqueId(), player.getUsername()));
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void updateJoinDate(PostLoginEvent event) {
+        plugin.runAsync(() -> {
+            ProxiedPlayer player = event.getPlayer();
+            boolean playerTypeRequiresLogin = PlayerType.get(player).requiresLogin();
+            Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
+            // Don't create profile for offline players, just return
+            if (optionalProfile.isEmpty() && playerTypeRequiresLogin) {
+                return;
+            }
+            // The new profile will only be created for online players
+            Profile profile = optionalProfile.orElse(new Profile(player.getUniqueId(), player.getName()));
 
-        // Check if profile is logged in and set its join date
-        if (!playerTypeRequiresLogin || Util.isPlayerLoggedIn(plugin, profile, player)) {
-            profile.setJoinDate(player.getUsername());
-            plugin.getDatabase().saveProfileCatching(profile);
-        }
-        continuation.resume();
+            // Check if profile is logged in and set its join date
+            if (!playerTypeRequiresLogin || Util.isPlayerLoggedIn(plugin, profile, player)) {
+                profile.setJoinDate(player.getName());
+                plugin.getDatabase().saveProfileCatching(profile);
+            }
+        });
     }
 
-    @Subscribe(order = PostOrder.LAST)
-    private void updateQuitDate(DisconnectEvent event, Continuation continuation) {
-        Player player = event.getPlayer();
-        Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
-        if (optionalProfile.isEmpty()) {
-            continuation.resume();
-            return;
-        }
-        Profile profile = optionalProfile.get();
+    @EventHandler
+    public void updateLastServer(ServerDisconnectEvent event) {
+        plugin.runAsync(() -> {
+            ProxiedPlayer player = event.getPlayer();
+            Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
+            if (optionalProfile.isEmpty()) {
+                return;
+            }
+            Profile profile = optionalProfile.get();
 
-        // Check if profile is logged in and set its join date
-        if (isLoggedIn(event, profile, player)) {
-            String serverName = event.getPlayer()
-                                     .getCurrentServer()
-                                     .map(ServerConnection::getServerInfo)
-                                     .map(ServerInfo::getName)
-                                     .orElse(null);
-            profile.setQuitDate(serverName);
-            plugin.getDatabase().saveProfileCatching(profile);
-        }
-        continuation.resume();
+            // Check if profile is logged in and set its join date
+            if (!PlayerType.get(player).requiresLogin() || Util.isPlayerLoggedIn(plugin, profile, player)) {
+                profile.setLastServerName(event.getTarget().getName());
+                plugin.getDatabase().saveProfileCatching(profile);
+            }
+        });
     }
 
-    private boolean isLoggedIn(@NotNull DisconnectEvent event, @NotNull Profile profile, @NotNull Player player) {
-        String playerPrefix = FloodgateApi.getInstance().getPlayerPrefix();
-        // If player logged in successfully and have Floodgate's prefix, it was surely a Floodgate player
-        if (event.getLoginStatus() == DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN &&
-            !playerPrefix.isBlank() &&
-            player.getUsername().startsWith(playerPrefix)) {
-            return true;
-        }
-        // Otherwise, check if player is online mode or logged in
-        return player.isOnlineMode() || Util.isPlayerLoggedIn(plugin, profile, player);
+    @EventHandler
+    public void updateQuitDate(PlayerDisconnectEvent event) {
+        plugin.runAsync(() -> {
+            ProxiedPlayer player = event.getPlayer();
+            Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
+            if (optionalProfile.isEmpty()) {
+                return;
+            }
+            Profile profile = optionalProfile.get();
+
+            // Check if profile is logged in and set its join date
+            if (!PlayerType.get(player).requiresLogin() || Util.isPlayerLoggedIn(plugin, profile, player)) {
+                profile.setQuitDate();
+                plugin.getDatabase().saveProfileCatching(profile);
+            }
+        });
     }
 }

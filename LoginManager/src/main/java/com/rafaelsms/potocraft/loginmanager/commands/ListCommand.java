@@ -2,47 +2,44 @@ package com.rafaelsms.potocraft.loginmanager.commands;
 
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.command.RawCommand;
-import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.server.RegisteredServer;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
-public class ListCommand implements RawCommand {
+public class ListCommand extends Command {
 
     private final @NotNull LoginManagerPlugin plugin;
 
     public ListCommand(@NotNull LoginManagerPlugin plugin) {
+        super("list", Permissions.COMMAND_LIST, "lista", "jogadores", "players", "online");
         this.plugin = plugin;
     }
 
     @Override
-    public void execute(Invocation invocation) {
-        for (RegisteredServer server : plugin.getServer().getAllServers()) {
-            printServerList(invocation.source(), server.getServerInfo().getName(), server.getPlayersConnected());
+    public void execute(CommandSender sender, String[] args) {
+        for (Map.Entry<String, ServerInfo> entry : plugin.getProxy().getServersCopy().entrySet()) {
+            printServerList(sender, entry.getKey(), entry.getValue().getPlayers());
         }
-        ArrayList<Player> limboPlayers = new ArrayList<>();
-        for (Player player : plugin.getServer().getAllPlayers()) {
-            if (player.getCurrentServer().isEmpty()) {
+        ArrayList<ProxiedPlayer> limboPlayers = new ArrayList<>();
+        for (ProxiedPlayer player : plugin.getProxy().getPlayers()) {
+            if (player.getServer() == null) {
                 limboPlayers.add(player);
             }
         }
         if (!limboPlayers.isEmpty()) {
-            printServerList(invocation.source(), "limbo?", limboPlayers);
+            printServerList(sender, "limbo?", limboPlayers);
         }
     }
 
-    private void printServerList(@NotNull CommandSource source,
+    private void printServerList(@NotNull CommandSender source,
                                  @NotNull String serverName,
-                                 @NotNull Collection<Player> playerList) {
+                                 @NotNull Collection<ProxiedPlayer> playerList) {
         source.sendMessage(plugin.getConfiguration().getListServerList(serverName, playerList));
-    }
-
-    @Override
-    public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission(Permissions.COMMAND_LIST);
     }
 }

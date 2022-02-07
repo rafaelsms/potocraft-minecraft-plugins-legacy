@@ -3,79 +3,77 @@ package com.rafaelsms.potocraft.universalchat.commands;
 import com.rafaelsms.potocraft.universalchat.Permissions;
 import com.rafaelsms.potocraft.universalchat.UniversalChatPlugin;
 import com.rafaelsms.potocraft.universalchat.player.User;
-import com.rafaelsms.potocraft.universalchat.util.ProxyUtil;
 import com.rafaelsms.potocraft.util.ChatHistory;
 import com.rafaelsms.potocraft.util.TextUtil;
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.command.RawCommand;
-import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.audience.MessageType;
-import net.kyori.adventure.identity.Identity;
-import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class MessageCommand implements RawCommand {
-
-    private final Pattern commandSyntax = Pattern.compile("^\\s*(\\S+)\\s+(\\S+.*)$", Pattern.CASE_INSENSITIVE);
-    private final Pattern tabCompletable = Pattern.compile("^\\s*\\S*$", Pattern.CASE_INSENSITIVE);
+public class MessageCommand extends Command {
 
     private final @NotNull UniversalChatPlugin plugin;
 
     public MessageCommand(@NotNull UniversalChatPlugin plugin) {
+        super("mensagem", Permissions.DIRECT_MESSAGES, "message", "msg", "tell", "dm", "pm", "w", "whisper");
         this.plugin = plugin;
     }
 
     @Override
-    public void execute(Invocation invocation) {
-        CommandSource source = invocation.source();
-        Matcher matcher = commandSyntax.matcher(invocation.arguments());
-        if (!matcher.matches()) {
-            source.sendMessage(plugin.getConfiguration().getDirectMessagesHelp());
+    public boolean hasPermission(CommandSender sender) {
+        return sender.hasPermission(Permissions.DIRECT_MESSAGES);
+    }
+
+    @Override
+    public void execute(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage(plugin.getConfiguration().getDirectMessagesHelp());
             return;
         }
 
-        String username = matcher.group(1);
-        String message = matcher.group(2);
+        String username = args[0];
+        Optional<String> messageOptional = TextUtil.joinStrings(args, 1);
+        if (messageOptional.isEmpty()) {
+            sender.sendMessage(plugin.getConfiguration().getDirectMessagesHelp());
+            return;
+        }
+        String message = messageOptional.get();
 
-        Optional<Player> optionalPlayer =
-                TextUtil.closestMatch(plugin.getServer().getAllPlayers(), Player::getUsername, username);
+        Optional<ProxiedPlayer> optionalPlayer =
+                TextUtil.closestMatch(plugin.getProxy().getPlayers(), ProxiedPlayer::getName, username);
         if (optionalPlayer.isEmpty()) {
-            source.sendMessage(plugin.getConfiguration().getDirectMessagesNoPlayerFound());
+            sender.sendMessage(plugin.getConfiguration().getDirectMessagesNoPlayerFound());
             return;
         }
-        Player receiver = optionalPlayer.get();
+        ProxiedPlayer receiver = optionalPlayer.get();
 
         String senderUsername = plugin.getConfiguration().getConsoleName();
-        Identity senderIdentity = Identity.nil();
         UUID senderId = null;
-        if (source instanceof Player sender) {
+        if (sender instanceof ProxiedPlayer player) {
             // Check if same player
-            if (sender.getUniqueId().equals(receiver.getUniqueId())) {
-                sender.sendMessage(plugin.getConfiguration().getDirectMessagesNoPlayerFound());
+            if (player.getUniqueId().equals(receiver.getUniqueId())) {
+                player.sendMessage(plugin.getConfiguration().getDirectMessagesNoPlayerFound());
                 return;
             }
 
-            senderUsername = sender.getUsername();
-            senderIdentity = sender.identity();
-            senderId = sender.getUniqueId();
+            senderUsername = player.getName();
+            senderId = player.getUniqueId();
 
             // Check if player is spamming
-            User senderUser = plugin.getUserManager().getUser(sender.getUniqueId());
+            User senderUser = plugin.getUserManager().getUser(player.getUniqueId());
             ChatHistory chatHistory = senderUser.getChatHistory();
             ChatHistory.ChatResult chatResult = chatHistory.getSendMessageResult(message);
             switch (chatResult) {
                 case SIMILAR_MESSAGES -> {
-                    sender.sendMessage(plugin.getConfiguration().getMessagesTooSimilar());
+                    player.sendMessage(plugin.getConfiguration().getMessagesTooSimilar());
                     return;
                 }
                 case TOO_FREQUENT -> {
-                    sender.sendMessage(plugin.getConfiguration().getMessagesTooFrequent());
+                    player.sendMessage(plugin.getConfiguration().getMessagesTooFrequent());
                     return;
                 }
             }
@@ -85,17 +83,19 @@ public class MessageCommand implements RawCommand {
             senderUser.setReplyCandidate(receiver.getUniqueId());
         }
 
-        Component outgoingFormat =
-                plugin.getConfiguration().getDirectMessagesOutgoingFormat(receiver.getUsername(), message);
-        Component incomingFormat = plugin.getConfiguration().getDirectMessagesIncomingFormat(senderUsername, message);
-        Component spyFormat =
-                plugin.getConfiguration().getDirectMessagesSpyFormat(senderUsername, receiver.getUsername(), message);
+
+        @NotNull BaseComponent[] outgoingFormat =
+                plugin.getConfiguration().getDirectMessagesOutgoingFormat(receiver.getName(), message);
+        @NotNull BaseComponent[] incomingFormat =
+                plugin.getConfiguration().getDirectMessagesIncomingFormat(senderUsername, message);
+        @NotNull BaseComponent[] spyFormat =
+                plugin.getConfiguration().getDirectMessagesSpyFormat(senderUsername, receiver.getName(), message);
 
         // Send to players
-        source.sendMessage(senderIdentity, outgoingFormat, MessageType.CHAT);
-        receiver.sendMessage(senderIdentity, incomingFormat, MessageType.CHAT);
+        sender.sendMessage(outgoingFormat);
+        receiver.sendMessage(incomingFormat);
         // Send to all spies
-        for (Player onlinePlayer : plugin.getServer().getAllPlayers()) {
+        for (ProxiedPlayer onlinePlayer : plugin.getProxy().getPlayers()) {
             if (onlinePlayer.hasPermission(Permissions.DIRECT_MESSAGES_SPY)) {
                 // Skip of spy is the participant
                 if (onlinePlayer.getUniqueId().equals(receiver.getUniqueId())) {
@@ -104,10 +104,10 @@ public class MessageCommand implements RawCommand {
                 if (onlinePlayer.getUniqueId().equals(senderId)) {
                     continue;
                 }
-                onlinePlayer.sendMessage(senderIdentity, spyFormat, MessageType.CHAT);
+                onlinePlayer.sendMessage(spyFormat);
             }
         }
-        plugin.getLogger().info(TextUtil.toPlainString(spyFormat));
+        plugin.getProxy().getConsole().sendMessage(spyFormat);
 
         // Update reply candidate for receiver
         User receiverUser = plugin.getUserManager().getUser(receiver.getUniqueId());
@@ -115,19 +115,5 @@ public class MessageCommand implements RawCommand {
             (receiverUser.getReplyCandidate().isEmpty() || receiverUser.getReplyCandidate().get().equals(senderId))) {
             receiverUser.setReplyCandidate(senderId);
         }
-    }
-
-    @Override
-    public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission(Permissions.DIRECT_MESSAGES);
-    }
-
-    @Override
-    public List<String> suggest(Invocation invocation) {
-        Matcher matcher = tabCompletable.matcher(invocation.arguments());
-        if (matcher.matches()) {
-            return ProxyUtil.getNameSuggester(plugin.getServer()).getSuggestions(invocation);
-        }
-        return List.of();
     }
 }

@@ -6,33 +6,29 @@ import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.player.ReportEntry;
 import com.rafaelsms.potocraft.loginmanager.util.CommandUtil;
-import com.velocitypowered.api.command.RawCommand;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.plugin.Command;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class UnmuteCommand implements RawCommand {
-
-    private final Pattern commandSyntax = Pattern.compile("^\\s*(\\S+).*$", Pattern.CASE_INSENSITIVE);
+public class UnmuteCommand extends Command {
 
     private final @NotNull LoginManagerPlugin plugin;
 
     public UnmuteCommand(@NotNull LoginManagerPlugin plugin) {
+        super("unmute", Permissions.COMMAND_UNMUTE, "desilenciar");
         this.plugin = plugin;
     }
 
     @Override
-    public void execute(Invocation invocation) {
-        Matcher matcher = commandSyntax.matcher(invocation.arguments());
-        if (!matcher.matches()) {
-            invocation.source().sendMessage(plugin.getConfiguration().getCommandUnmuteHelp());
+    public void execute(CommandSender sender, String[] args) {
+        if (args.length != 1) {
+            sender.sendMessage(plugin.getConfiguration().getCommandUnmuteHelp());
             return;
         }
 
-        Optional<Profile> profileOptional =
-                CommandUtil.handlePlayerSearch(plugin, invocation.source(), matcher.group(1));
+        Optional<Profile> profileOptional = CommandUtil.handlePlayerSearch(plugin, sender, args[0]);
         if (profileOptional.isEmpty()) {
             return;
         }
@@ -52,20 +48,12 @@ public class UnmuteCommand implements RawCommand {
             try {
                 plugin.getDatabase().saveProfile(profile);
             } catch (Database.DatabaseException ignored) {
-                invocation.source().sendMessage(plugin.getConfiguration().getCommandFailedToSaveProfile());
+                sender.sendMessage(plugin.getConfiguration().getCommandFailedToSaveProfile());
                 return;
             }
-            invocation.source()
-                      .sendMessage(plugin.getConfiguration().getCommandUnpunished(profile.getLastPlayerName()));
+            sender.sendMessage(plugin.getConfiguration().getCommandUnpunished(profile.getLastPlayerName()));
         } else {
-            invocation.source()
-                      .sendMessage(plugin.getConfiguration()
-                                         .getCommandPlayerIsNotPunished(profile.getLastPlayerName()));
+            sender.sendMessage(plugin.getConfiguration().getCommandPlayerIsNotPunished(profile.getLastPlayerName()));
         }
-    }
-
-    @Override
-    public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission(Permissions.COMMAND_UNMUTE);
     }
 }

@@ -3,10 +3,13 @@ package com.rafaelsms.potocraft.loginmanager.util;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
-import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.server.RegisteredServer;
+import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.Connection;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.ServerConnectEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.Optional;
 
@@ -16,24 +19,28 @@ public final class Util {
     private Util() {
     }
 
-    public static boolean isPlayerLoggedIn(@NotNull LoginManagerPlugin plugin,
-                                           @NotNull Profile profile,
-                                           @NotNull Player player) {
-        if (player.hasPermission(Permissions.OFFLINE_AUTO_LOGIN)) {
-            Duration autoLoginWindow = plugin.getConfiguration().getAutoLoginWindow();
-            return profile.isLoggedIn(player.getRemoteAddress(), autoLoginWindow);
+    public static Optional<ProxiedPlayer> getPlayer(@NotNull Connection connection) {
+        if (connection instanceof ProxiedPlayer player) {
+            return Optional.of(player);
         }
-        return profile.isLoggedIn(player.getRemoteAddress(), Duration.ZERO);
+        return Optional.empty();
     }
 
-    public static void sendPlayerToDefault(@NotNull LoginManagerPlugin plugin, @NotNull Player player) {
-        for (String serverName : plugin.getServer().getConfiguration().getAttemptConnectionOrder()) {
-            Optional<RegisteredServer> serverOptional = plugin.getServer().getServer(serverName);
-            if (serverOptional.isPresent()) {
-                player.createConnectionRequest(serverOptional.get()).fireAndForget();
-                return;
+    public static boolean isPlayerLoggedIn(@NotNull LoginManagerPlugin plugin,
+                                           @NotNull Profile profile,
+                                           @NotNull ProxiedPlayer player) {
+        if (player.getSocketAddress() instanceof InetSocketAddress inetSocketAddress) {
+            if (player.hasPermission(Permissions.OFFLINE_AUTO_LOGIN)) {
+                Duration autoLoginWindow = plugin.getConfiguration().getAutoLoginWindow();
+                return profile.isLoggedIn(inetSocketAddress, autoLoginWindow);
             }
+            return profile.isLoggedIn(inetSocketAddress, Duration.ZERO);
         }
-        player.sendMessage(plugin.getConfiguration().getCommandLoginNoServerAvailable());
+        return profile.isLoggedIn(null, Duration.ZERO);
+    }
+
+    public static void sendPlayerToDefaultServer(@NotNull LoginManagerPlugin plugin, @NotNull ProxiedPlayer player) {
+        ServerInfo serverInfo = plugin.getProxy().getServerInfo(plugin.getConfiguration().getDefaultServer());
+        player.connect(serverInfo, ServerConnectEvent.Reason.PLUGIN);
     }
 }

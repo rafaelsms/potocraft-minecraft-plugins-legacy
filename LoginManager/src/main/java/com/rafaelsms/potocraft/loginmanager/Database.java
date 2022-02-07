@@ -28,10 +28,7 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
 
     @Override
     protected void handleException(@NotNull DatabaseException databaseException) throws DatabaseException {
-        plugin.getLogger().warn("Database exception:", databaseException);
-        if (plugin.getConfiguration().isMongoDatabaseFailureFatal()) {
-            plugin.getServer().shutdown();
-        }
+        plugin.logger().warn("Database exception:", databaseException);
         throw databaseException;
     }
 
@@ -56,9 +53,8 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
     }
 
     public @NotNull Optional<Profile> getProfileCatching(@NotNull UUID playerId) {
-        return catchingWrapper(() -> {
-            return Util.convert(getPlayerCollection().find(Profile.filterId(playerId)).first(), Profile::new);
-        });
+        return catchingWrapper(() -> Util.convert(getPlayerCollection().find(Profile.filterId(playerId)).first(),
+                                                  Profile::new));
     }
 
     public void saveProfileCatching(@NotNull Profile profile) {

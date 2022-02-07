@@ -7,9 +7,9 @@ import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.player.ReportEntry;
 import com.rafaelsms.potocraft.loginmanager.util.CommandUtil;
 import com.rafaelsms.potocraft.util.TextUtil;
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.command.RawCommand;
-import com.velocitypowered.api.proxy.Player;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,12 +17,11 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MuteCommand implements RawCommand {
+public class MuteCommand extends Command {
 
-    // /mute <name> <reason>
+    // /mute <name> [time amount] <reason>
 
     private final Pattern commandSyntax =
             Pattern.compile("^\\s*(\\S+)(\\s+([0-9wdhms]+))?(\\s+(\\S+.*))?$", Pattern.CASE_INSENSITIVE);
@@ -30,66 +29,65 @@ public class MuteCommand implements RawCommand {
     private final @NotNull LoginManagerPlugin plugin;
 
     public MuteCommand(@NotNull LoginManagerPlugin plugin) {
+        super("mute", Permissions.COMMAND_MUTE, "silenciar", "silencio");
         this.plugin = plugin;
     }
 
     @Override
-    public void execute(Invocation invocation) {
-        Matcher matcher = commandSyntax.matcher(invocation.arguments());
-        if (!matcher.matches()) {
-            invocation.source().sendMessage(plugin.getConfiguration().getCommandMuteHelp());
+    public void execute(CommandSender sender, String[] args) {
+        if (args.length < 1) {
+            sender.sendMessage(plugin.getConfiguration().getCommandMuteHelp());
             return;
         }
 
-        Optional<Duration> duration = TextUtil.parseTime(matcher.group(3));
-        Optional<String> reason = Optional.ofNullable(matcher.group(5));
+        Optional<Duration> duration = Optional.empty();
+        Optional<String> reason = Optional.empty();
+        if (args.length > 1) {
+            duration = TextUtil.parseTime(args[1]);
+            if (duration.isEmpty()) {
+                reason = TextUtil.joinStrings(args, 1);
+            } else {
+                reason = TextUtil.joinStrings(args, 2);
+            }
+        }
 
         if (duration.isEmpty()) {
-            invocation.source().sendMessage(plugin.getConfiguration().getCommandMuteHelp());
+            sender.sendMessage(plugin.getConfiguration().getCommandMuteHelp());
             return;
         }
         ZonedDateTime expirationDate = ZonedDateTime.now().plus(duration.get());
 
-        Optional<Profile> profileOptional =
-                CommandUtil.handlePlayerSearch(plugin, invocation.source(), matcher.group(1));
+        Optional<Profile> profileOptional = CommandUtil.handlePlayerSearch(plugin, sender, args[0]);
         if (profileOptional.isEmpty()) {
             return;
         }
 
         Profile profile = profileOptional.get();
-        Optional<Player> optionalPlayer = getOnlinePlayer(profile.getPlayerId());
-        if (!invocation.source().hasPermission(Permissions.COMMAND_MUTE_OFFLINE) && optionalPlayer.isEmpty()) {
-            invocation.source().sendMessage(plugin.getConfiguration().getCommandMutePlayerOffline());
+        Optional<ProxiedPlayer> optionalPlayer = getOnlinePlayer(profile.getPlayerId());
+        if (!sender.hasPermission(Permissions.COMMAND_MUTE_OFFLINE) && optionalPlayer.isEmpty()) {
+            sender.sendMessage(plugin.getConfiguration().getCommandMutePlayerOffline());
             return;
         }
         if (optionalPlayer.isPresent() && optionalPlayer.get().hasPermission(Permissions.COMMAND_MUTE_EXEMPT)) {
-            invocation.source().sendMessage(plugin.getConfiguration().getNoPermission());
+            sender.sendMessage(plugin.getConfiguration().getNoPermission());
             return;
         }
 
         try {
-            profile.addReportEntry(ReportEntry.Type.MUTE,
-                                   getId(invocation.source()),
-                                   expirationDate,
-                                   reason.orElse(null));
+            profile.addReportEntry(ReportEntry.Type.MUTE, getId(sender), expirationDate, reason.orElse(null));
             plugin.getDatabase().saveProfile(profile);
-            invocation.source().sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
+            sender.sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
         } catch (Database.DatabaseException ignored) {
-            invocation.source().sendMessage(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
+            sender.sendMessage(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
         }
     }
 
-    @Override
-    public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission(Permissions.COMMAND_MUTE);
+    private Optional<ProxiedPlayer> getOnlinePlayer(@NotNull UUID playerId) {
+        return Optional.ofNullable(plugin.getProxy().getPlayer(playerId));
     }
 
-    private Optional<Player> getOnlinePlayer(@NotNull UUID playerId) {
-        return plugin.getServer().getPlayer(playerId);
-    }
-
-    private @Nullable UUID getId(CommandSource source) {
-        if (source instanceof Player player) {
+    private @Nullable UUID getId(CommandSender sender) {
+        if (sender instanceof ProxiedPlayer player) {
             return player.getUniqueId();
         }
         return null;

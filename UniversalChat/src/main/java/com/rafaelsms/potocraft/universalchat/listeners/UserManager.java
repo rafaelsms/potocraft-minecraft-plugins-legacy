@@ -2,10 +2,11 @@ package com.rafaelsms.potocraft.universalchat.listeners;
 
 import com.rafaelsms.potocraft.universalchat.UniversalChatPlugin;
 import com.rafaelsms.potocraft.universalchat.player.User;
-import com.velocitypowered.api.event.PostOrder;
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.DisconnectEvent;
-import com.velocitypowered.api.event.connection.PostLoginEvent;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -13,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class UserManager {
+public class UserManager implements Listener {
 
     private final @NotNull Map<UUID, User> users = Collections.synchronizedMap(new HashMap<>());
 
@@ -23,13 +24,13 @@ public class UserManager {
         this.plugin = plugin;
     }
 
-    @Subscribe(order = PostOrder.FIRST)
-    private void createUserProfile(PostLoginEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void createUserProfile(PostLoginEvent event) {
         users.put(event.getPlayer().getUniqueId(), new User(plugin, event.getPlayer()));
     }
 
-    @Subscribe(order = PostOrder.LAST)
-    private void removeUserProfile(DisconnectEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void removeUserProfile(PlayerDisconnectEvent event) {
         users.remove(event.getPlayer().getUniqueId());
     }
 

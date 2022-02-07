@@ -1,13 +1,10 @@
 package com.rafaelsms.potocraft.loginmanager.listeners;
 
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
-import com.velocitypowered.api.event.Continuation;
-import com.velocitypowered.api.event.PostOrder;
-import com.velocitypowered.api.event.ResultedEvent;
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.LoginEvent;
-import com.velocitypowered.api.event.connection.PreLoginEvent;
-import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.event.PreLoginEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.geysermc.floodgate.api.player.FloodgatePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +17,7 @@ import java.net.URL;
  * We will: - allow offline players to join if their name is not used by Mojang; - allow online and floodgate players to
  * join normally.
  */
-public class OfflineCheckerListener {
+public class OfflineCheckerListener implements Listener {
 
     private final @NotNull LoginManagerPlugin plugin;
 
@@ -28,82 +25,70 @@ public class OfflineCheckerListener {
         this.plugin = plugin;
     }
 
-    @Subscribe(order = PostOrder.FIRST)
-    private void denyJavaWithBedrockPrefix(LoginEvent event, Continuation continuation) {
+    @EventHandler(priority = EventPriority.LOW)
+    public void denyJavaWithBedrockPrefix(PreLoginEvent event) {
         // Ignore cancelled events already
-        if (!event.getResult().isAllowed()) {
-            continuation.resume();
+        if (event.isCancelled()) {
             return;
         }
 
         // If is a floodgate player, allow without checking
         FloodgateApi floodgateApi = FloodgateApi.getInstance();
-        FloodgatePlayer floodgatePlayer = floodgateApi.getPlayer(event.getPlayer().getUniqueId());
-        if (floodgatePlayer != null) {
-            continuation.resume();
-            return;
+        if (event.getConnection().getUniqueId() != null) {
+            FloodgatePlayer floodgatePlayer = floodgateApi.getPlayer(event.getConnection().getUniqueId());
+            if (floodgatePlayer != null) {
+                return;
+            }
         }
 
         // If is not a floodgate player and is using Floodgate's prefix, deny login
         if (floodgateApi.getPlayerPrefix().length() > 0 &&
-            event.getPlayer().getUsername().startsWith(floodgateApi.getPlayerPrefix())) {
-            Component reason = plugin.getConfiguration().getKickMessageInvalidPrefixForJavaPlayer();
-            event.setResult(ResultedEvent.ComponentResult.denied(reason));
-            continuation.resume();
+            event.getConnection().getName().startsWith(floodgateApi.getPlayerPrefix())) {
+            event.setCancelled(true);
+            event.setCancelReason(plugin.getConfiguration().getKickMessageInvalidPrefixForJavaPlayer());
             return;
         }
 
         // Validate username against configuration regex for Java players
         if (!plugin.getConfiguration()
                    .getAllowedJavaUsernamesRegex()
-                   .matcher(event.getPlayer().getUsername())
+                   .matcher(event.getConnection().getName())
                    .matches()) {
-            Component reason = plugin.getConfiguration().getKickMessageInvalidJavaUsername();
-            event.setResult(ResultedEvent.ComponentResult.denied(reason));
+            event.setCancelled(true);
+            event.setCancelReason(plugin.getConfiguration().getKickMessageInvalidJavaUsername());
         }
-        continuation.resume();
     }
 
-    @Subscribe(order = PostOrder.LATE) // Ensure we are after Floodgate's EARLY
-    private void acceptAndVerifyOfflinePlayers(PreLoginEvent event, Continuation continuation) {
+
+    @EventHandler(priority = EventPriority.LOW) // Ensure we are after Floodgate's LOWEST
+    public void acceptAndVerifyOfflinePlayers(PreLoginEvent event) {
         // Ignore cancelled events already
-        if (!event.getResult().isAllowed()) {
-            continuation.resume();
+        if (event.isCancelled()) {
             return;
         }
 
-        try {
-            // FloodgateAPI#getPlayers was throwing under unknown conditions
-            // If this is not caught, players will default to online mode and offline players can't join
-            for (FloodgatePlayer player : FloodgateApi.getInstance().getPlayers()) {
-                // If player has the same name as Floodgate's player, allow join without changing the event
-                if (player.getCorrectUsername().equalsIgnoreCase(event.getUsername())) {
-                    continuation.resume();
-                    return;
-                }
-            }
-        } catch (Exception exception) {
-            plugin.getLogger().warn("Failed to check if player is Floodgate player: {}", exception.getMessage());
-            exception.printStackTrace();
+        // Allow floodgate player
+        if (event.getConnection().getUniqueId() != null &&
+            FloodgateApi.getInstance().getPlayer(event.getConnection().getUniqueId()) != null) {
+            return;
         }
 
-        // Check if player has existing account
-        try {
-            if (isMojangUsernameExistent(event.getUsername())) {
+        event.registerIntent(plugin);
+        plugin.runAsync(() -> {
+            // Check if player has existing account
+            try {
                 // If Mojang player exists, force online mode so the account is secured against offline players
-                event.setResult(PreLoginEvent.PreLoginComponentResult.forceOnlineMode());
-            } else {
                 // If it doesn't exist, force offline mode, so we can require authentication
-                event.setResult(PreLoginEvent.PreLoginComponentResult.forceOfflineMode());
+                event.getConnection().setOnlineMode(isMojangUsernameExistent(event.getConnection().getName()));
+            } catch (IOException exception) {
+                // If we failed to request, disconnect player
+                plugin.logger().warn("Failed to access Mojang's username API: {}", exception.getMessage());
+                event.setCancelReason(plugin.getConfiguration().getKickMessageCouldNotCheckMojangUsername());
+                event.setCancelled(true);
+                exception.printStackTrace();
             }
-        } catch (IOException exception) {
-            // If we failed to request, disconnect player
-            plugin.getLogger().warn("Failed to access Mojang's username API: {}", exception.getMessage());
-            Component reason = plugin.getConfiguration().getKickMessageCouldNotCheckMojangUsername();
-            event.setResult(PreLoginEvent.PreLoginComponentResult.denied(reason));
-            exception.printStackTrace();
-        }
-        continuation.resume();
+            event.completeIntent(plugin);
+        });
     }
 
     private boolean isMojangUsernameExistent(@NotNull String name) throws IOException {

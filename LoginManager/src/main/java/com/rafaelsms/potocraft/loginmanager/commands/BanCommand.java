@@ -6,92 +6,83 @@ import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.player.ReportEntry;
 import com.rafaelsms.potocraft.loginmanager.util.CommandUtil;
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.command.RawCommand;
-import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.Component;
+import com.rafaelsms.potocraft.util.TextUtil;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class BanCommand implements RawCommand {
+public class BanCommand extends Command {
 
     // /ban <name> <reason>
-
-    private final Pattern commandSyntax = Pattern.compile("^\\s*(\\S+)(\\s+(\\S+.*))?$");
 
     private final @NotNull LoginManagerPlugin plugin;
 
     public BanCommand(@NotNull LoginManagerPlugin plugin) {
+        super("ban", Permissions.COMMAND_BAN, "banir");
         this.plugin = plugin;
     }
 
     @Override
-    public void execute(Invocation invocation) {
-        Matcher matcher = commandSyntax.matcher(invocation.arguments());
-        if (!matcher.matches()) {
-            invocation.source().sendMessage(plugin.getConfiguration().getCommandBanHelp());
+    public void execute(CommandSender sender, String[] args) {
+        if (args.length < 1) {
+            sender.sendMessage(plugin.getConfiguration().getCommandBanHelp());
             return;
         }
 
-        Optional<String> reason = Optional.ofNullable(matcher.group(3));
+        Optional<String> reason = TextUtil.joinStrings(args, 1);
 
-        Optional<Profile> profileOptional =
-                CommandUtil.handlePlayerSearch(plugin, invocation.source(), matcher.group(1));
+        Optional<Profile> profileOptional = CommandUtil.handlePlayerSearch(plugin, sender, args[0]);
         if (profileOptional.isEmpty()) {
             return;
         }
 
         Profile profile = profileOptional.get();
-        Optional<Player> optionalPlayer = getOnlinePlayer(profile.getPlayerId());
-        if (!invocation.source().hasPermission(Permissions.COMMAND_BAN_OFFLINE) && optionalPlayer.isEmpty()) {
-            invocation.source().sendMessage(plugin.getConfiguration().getCommandBanPlayerOffline());
+        Optional<ProxiedPlayer> optionalPlayer = getOnlinePlayer(profile.getPlayerId());
+        if (!sender.hasPermission(Permissions.COMMAND_BAN_OFFLINE) && optionalPlayer.isEmpty()) {
+            sender.sendMessage(plugin.getConfiguration().getCommandBanPlayerOffline());
             return;
         }
         if (optionalPlayer.isPresent() && optionalPlayer.get().hasPermission(Permissions.COMMAND_BAN_EXEMPT)) {
-            invocation.source().sendMessage(plugin.getConfiguration().getNoPermission());
+            sender.sendMessage(plugin.getConfiguration().getNoPermission());
             return;
         }
 
         try {
-            profile.addReportEntry(ReportEntry.Type.BAN, getId(invocation.source()), null, reason.orElse(null));
+            profile.addReportEntry(ReportEntry.Type.BAN, getId(sender), null, reason.orElse(null));
             plugin.getDatabase().saveProfile(profile);
             optionalPlayer.ifPresent(player -> {
-                Component messageBanned = plugin.getConfiguration()
-                                                .getPunishmentMessageBanned(getName(invocation.source()),
-                                                                            null,
-                                                                            reason.orElse(null));
+                @NotNull BaseComponent[] messageBanned = plugin.getConfiguration()
+                                                               .getPunishmentMessageBanned(getName(sender),
+                                                                                           null,
+                                                                                           reason.orElse(null));
                 player.disconnect(messageBanned);
             });
-            invocation.source().sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
+            sender.sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
         } catch (Database.DatabaseException ignored) {
-            invocation.source().sendMessage(plugin.getConfiguration().getCommandFailedToSaveProfile());
+            sender.sendMessage(plugin.getConfiguration().getCommandFailedToSaveProfile());
         }
     }
 
-    @Override
-    public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission(Permissions.COMMAND_BAN);
+    private Optional<ProxiedPlayer> getOnlinePlayer(@NotNull UUID playerId) {
+        return Optional.ofNullable(plugin.getProxy().getPlayer(playerId));
     }
 
-    private Optional<Player> getOnlinePlayer(@NotNull UUID playerId) {
-        return plugin.getServer().getPlayer(playerId);
-    }
-
-    private @Nullable UUID getId(CommandSource source) {
-        if (source instanceof Player player) {
+    private @Nullable UUID getId(CommandSender sender) {
+        if (sender instanceof ProxiedPlayer player) {
             return player.getUniqueId();
         }
         return null;
     }
 
-    private @Nullable String getName(CommandSource source) {
-        if (source instanceof Player player) {
-            return player.getUsername();
+    private @Nullable String getName(CommandSender sender) {
+        if (sender instanceof ProxiedPlayer player) {
+            return player.getName();
         }
         return null;
     }

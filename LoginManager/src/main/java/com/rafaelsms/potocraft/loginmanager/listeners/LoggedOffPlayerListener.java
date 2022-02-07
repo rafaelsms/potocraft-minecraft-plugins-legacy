@@ -4,11 +4,10 @@ import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.util.PlayerType;
 import com.rafaelsms.potocraft.loginmanager.util.Util;
-import com.velocitypowered.api.event.Continuation;
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.command.CommandExecuteEvent;
-import com.velocitypowered.api.event.player.PlayerChatEvent;
-import com.velocitypowered.api.proxy.Player;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.ChatEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -18,9 +17,9 @@ import java.util.regex.Pattern;
 /**
  * We will prevent logged off players from: - issuing certain commands; - speaking.
  */
-public class LoggedOffPlayerListener {
+public class LoggedOffPlayerListener implements Listener {
 
-    private final Pattern commandPattern = Pattern.compile("^\\s*(\\S+)(\\s+.*)?$", Pattern.CASE_INSENSITIVE);
+    private final Pattern commandPattern = Pattern.compile("^/\\s*(\\S+)", Pattern.CASE_INSENSITIVE);
 
     private final @NotNull LoginManagerPlugin plugin;
 
@@ -28,50 +27,55 @@ public class LoggedOffPlayerListener {
         this.plugin = plugin;
     }
 
-    @Subscribe
-    private void preventLoggedOffChat(PlayerChatEvent event, Continuation continuation) {
-        if (isPlayerLoggedOn(event.getPlayer())) {
-            continuation.resume();
+    @EventHandler
+    public void preventLoggedOffChat(ChatEvent event) {
+        // Ignore cancelled
+        if (event.isCancelled()) {
             return;
         }
-        // Just cancel chatting
-        event.setResult(PlayerChatEvent.ChatResult.denied());
-        continuation.resume();
+        // Ignore non-chat
+        if (event.isCommand()) {
+            return;
+        }
+
+        Util.getPlayer(event.getSender()).ifPresent(sender -> {
+            // Ignore if logged on
+            if (isPlayerLoggedOn(sender)) {
+                return;
+            }
+            event.setCancelled(true);
+        });
     }
 
-    @Subscribe
-    private void preventLoggedOffUsingCommands(CommandExecuteEvent event, Continuation continuation) {
-        if (!event.getResult().isAllowed()) {
-            continuation.resume();
+    @EventHandler
+    public void preventLoggedOffUsingCommands(ChatEvent event) {
+        // Ignore cancelled
+        if (event.isCancelled()) {
             return;
         }
-        if (!(event.getCommandSource() instanceof Player player) || isPlayerLoggedOn(player)) {
-            continuation.resume();
-            return;
-        }
-
-        // Attempt to fit into the regex
-        Matcher matcher = commandPattern.matcher(event.getCommand());
-        if (!matcher.matches()) {
-            plugin.getLogger()
-                  .warn("Didn't expected to not find a command match: \"%s\"".formatted(event.getCommand()));
-            player.sendMessage(plugin.getConfiguration().getPunishmentMessageLoggedOff());
-            event.setResult(CommandExecuteEvent.CommandResult.denied());
-            continuation.resume();
+        // Ignore non-commands
+        Matcher matcher = commandPattern.matcher(event.getMessage());
+        if (!matcher.matches() || !event.isCommand()) {
             return;
         }
 
-        // Filter out any commands that aren't on the allowed list
-        String command = matcher.group(1).toLowerCase();
-        if (!plugin.getConfiguration().getAllowedCommandsLoggedOff().contains(command)) {
-            player.sendMessage(plugin.getConfiguration().getPunishmentMessageLoggedOff());
-            event.setResult(CommandExecuteEvent.CommandResult.denied());
-        }
-        continuation.resume();
+        Util.getPlayer(event.getSender()).ifPresent(sender -> {
+            // Ignore if logged on
+            if (isPlayerLoggedOn(sender)) {
+                return;
+            }
+
+            // Filter out any commands that aren't on the allowed list
+            String command = matcher.group(1).toLowerCase();
+            if (!plugin.getConfiguration().getAllowedCommandsLoggedOff().contains(command)) {
+                sender.sendMessage(plugin.getConfiguration().getPunishmentMessageLoggedOff());
+                event.setCancelled(true);
+            }
+        });
     }
 
-    private boolean isPlayerLoggedOn(@NotNull Player player) {
-        if (player.isOnlineMode() || !PlayerType.get(player).requiresLogin()) {
+    private boolean isPlayerLoggedOn(ProxiedPlayer player) {
+        if (!PlayerType.get(player).requiresLogin()) {
             return true;
         }
         Optional<Profile> profile = plugin.getDatabase().getProfileCatching(player.getUniqueId());

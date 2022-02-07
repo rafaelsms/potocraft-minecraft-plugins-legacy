@@ -3,7 +3,7 @@ package com.rafaelsms.potocraft.universalchat.player;
 import com.rafaelsms.potocraft.universalchat.Permissions;
 import com.rafaelsms.potocraft.universalchat.UniversalChatPlugin;
 import com.rafaelsms.potocraft.util.ChatHistory;
-import com.velocitypowered.api.proxy.Player;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +16,7 @@ import java.util.UUID;
 public class User {
 
     private final @NotNull UniversalChatPlugin plugin;
-    private final @NotNull Player player;
+    private final @NotNull ProxiedPlayer player;
     private final @NotNull UUID playerId;
 
     private final @NotNull ChatHistory chatHistory;
@@ -24,7 +24,7 @@ public class User {
     private @Nullable UUID replyCandidate = null;
     private @Nullable ZonedDateTime replyCandidateDate = null;
 
-    public User(@NotNull UniversalChatPlugin plugin, @NotNull Player player) {
+    public User(@NotNull UniversalChatPlugin plugin, @NotNull ProxiedPlayer player) {
         this.plugin = plugin;
         this.player = player;
         this.playerId = player.getUniqueId();

@@ -5,7 +5,7 @@ import com.rafaelsms.potocraft.database.DatabaseObject;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
-import com.velocitypowered.api.proxy.Player;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jetbrains.annotations.NotNull;
@@ -98,11 +98,14 @@ public class Profile extends DatabaseObject {
      * @param autoLoginWindow time window to auto login to work
      * @return true if player logged in using the same address or if player joined within auto login time using the same
      * address
-     * @see com.rafaelsms.potocraft.loginmanager.util.Util#isPlayerLoggedIn(LoginManagerPlugin, Profile, Player) helper
+     * @see com.rafaelsms.potocraft.loginmanager.util.Util#isPlayerLoggedIn(LoginManagerPlugin, Profile, ProxiedPlayer)
+     * helper
      */
-    public boolean isLoggedIn(@NotNull InetSocketAddress address, @NotNull Duration autoLoginWindow) {
-        String ipAddress = TextUtil.getIpAddress(address);
-        if (pin == null || loggedIn == null || !ipAddress.equalsIgnoreCase(lastLoginAddress)) {
+    public boolean isLoggedIn(@Nullable InetSocketAddress address, @NotNull Duration autoLoginWindow) {
+        if (pin == null ||
+            loggedIn == null ||
+            address == null ||
+            !TextUtil.getIpAddress(address).equalsIgnoreCase(lastLoginAddress)) {
             return false;
         }
         // We asserted that player has a pin and its IP is the same, so we continue the session if logged in
@@ -120,14 +123,16 @@ public class Profile extends DatabaseObject {
         return false;
     }
 
-    public void setLoggedIn(@NotNull InetSocketAddress address) {
+    public void setLoggedIn(@Nullable InetSocketAddress address) {
         // Update logged in date and join date only if player is logged off
         if (this.loggedIn == null || !this.loggedIn) {
             this.loggedIn = true;
             this.lastLoginDate = ZonedDateTime.now();
             setJoinDate(lastPlayerName); // offline mode can't change names
         }
-        this.lastLoginAddress = TextUtil.getIpAddress(address);
+        if (address != null) {
+            this.lastLoginAddress = TextUtil.getIpAddress(address);
+        }
     }
 
     public boolean isPinValid(int pin) {
@@ -155,12 +160,15 @@ public class Profile extends DatabaseObject {
         this.lastJoinDate = now;
     }
 
-    public void setQuitDate(@Nullable String lastServerName) {
+    public void setLastServerName(@Nullable String lastServerName) {
+        this.lastServerName = lastServerName;
+    }
+
+    public void setQuitDate() {
         if (this.loggedIn != null) {
             this.loggedIn = false;
         }
         this.lastQuitDate = ZonedDateTime.now();
-        this.lastServerName = lastServerName;
         this.playTime = Util.getOrElse(playTime, 0L) +
                         Duration.between(Util.getOrElse(lastJoinDate, lastQuitDate), lastQuitDate).toMillis();
     }

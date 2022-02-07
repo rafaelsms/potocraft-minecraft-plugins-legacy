@@ -1,0 +1,6 @@
+name: UniversalChat
+main: com.rafaelsms.potocraft.universalchat.UniversalChatPlugin
+version: 0.1-SNAPSHOT
+author: rafaelsms
+depends:
+  - LuckPerms

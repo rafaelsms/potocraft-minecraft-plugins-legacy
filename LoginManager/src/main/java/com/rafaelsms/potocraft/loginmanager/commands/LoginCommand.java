@@ -7,33 +7,32 @@ import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.util.PlayerType;
 import com.rafaelsms.potocraft.loginmanager.util.Util;
 import com.rafaelsms.potocraft.util.TextUtil;
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.command.RawCommand;
-import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.server.RegisteredServer;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.ServerConnectEvent;
+import net.md_5.bungee.api.plugin.Command;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.net.InetSocketAddress;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LoginCommand implements RawCommand {
+public class LoginCommand extends Command {
 
-    private final Pattern pinExtractor = Pattern.compile("^\\s*(\\d{6})(\\s+.*)?$", Pattern.CASE_INSENSITIVE);
-    private final Pattern tabCompletable = Pattern.compile("^\\s*\\S*$", Pattern.CASE_INSENSITIVE);
+    private final Pattern pinExtractor = Pattern.compile("^\\d{6}$", Pattern.CASE_INSENSITIVE);
 
     private final @NotNull LoginManagerPlugin plugin;
 
     public LoginCommand(@NotNull LoginManagerPlugin plugin) {
+        super("login", Permissions.COMMAND_LOGIN, "l", "log");
         this.plugin = plugin;
     }
 
     @Override
-    public void execute(Invocation invocation) {
-        CommandSource source = invocation.source();
-        if (!(source instanceof Player player)) {
-            source.sendMessage(plugin.getConfiguration().getCommandPlayersOnly());
+    public void execute(CommandSender sender, String[] args) {
+        if (!(sender instanceof ProxiedPlayer player)) {
+            sender.sendMessage(plugin.getConfiguration().getCommandPlayersOnly());
             return;
         }
 
@@ -43,8 +42,7 @@ public class LoginCommand implements RawCommand {
             return;
         }
 
-        Matcher matcher = pinExtractor.matcher(invocation.arguments());
-        if (!matcher.matches()) {
+        if (args.length != 1 || !pinExtractor.matcher(args[0]).matches()) {
             player.sendMessage(plugin.getConfiguration().getCommandLoginHelp());
             return;
         }
@@ -77,21 +75,26 @@ public class LoginCommand implements RawCommand {
         }
 
         // Attempt PIN format match
-        Optional<Integer> pinOptional = TextUtil.parsePin(matcher.group(1));
+        Optional<Integer> pinOptional = TextUtil.parsePin(args[0]);
         if (pinOptional.isEmpty()) {
             player.sendMessage(plugin.getConfiguration().getCommandLoginHelp());
             return;
         }
 
-        // Check if couldn't set pin
+        // Check if we couldn't set pin
         if (!profile.setPin(pinOptional.get())) {
             player.sendMessage(plugin.getConfiguration().getCommandIncorrectPinFormat());
             return;
         }
 
+
         try {
             // Set as logged in and save
-            profile.setLoggedIn(player.getRemoteAddress());
+            if (player.getSocketAddress() instanceof InetSocketAddress address) {
+                profile.setLoggedIn(address);
+            } else {
+                profile.setLoggedIn(null);
+            }
             player.sendMessage(plugin.getConfiguration().getCommandLoggedIn());
             plugin.getDatabase().saveProfile(profile);
         } catch (Database.DatabaseException ignored) {
@@ -100,32 +103,15 @@ public class LoginCommand implements RawCommand {
 
         // Attempt to send player to lobby
         if (player.hasPermission(Permissions.REDIRECT_TO_LAST_SERVER) && profile.getLastServerName().isPresent()) {
-            Optional<RegisteredServer> serverOptional = plugin.getServer().getServer(profile.getLastServerName().get());
-            serverOptional.ifPresent(registeredServer -> player.createConnectionRequest(registeredServer)
-                                                               .connectWithIndication()
-                                                               .whenComplete((success, throwable) -> {
-                                                                   if (throwable != null ||
-                                                                       success == null ||
-                                                                       !success) {
-                                                                       Util.sendPlayerToDefault(plugin, player);
-                                                                   }
-                                                               }));
-            return;
+            ServerInfo serverInfo = plugin.getProxy().getServerInfo(profile.getLastServerName().get());
+            if (serverInfo != null) {
+                player.connect(serverInfo, (result, error) -> {
+                    if (error != null || result == null || !result) {
+                        Util.sendPlayerToDefaultServer(plugin, player);
+                    }
+                }, ServerConnectEvent.Reason.PLUGIN);
+            }
         }
-        Util.sendPlayerToDefault(plugin, player);
-    }
-
-    @Override
-    public List<String> suggest(Invocation invocation) {
-        Matcher matcher = tabCompletable.matcher(invocation.arguments());
-        if (matcher.matches()) {
-            return List.of("123456", "981354");
-        }
-        return List.of();
-    }
-
-    @Override
-    public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission(Permissions.COMMAND_LOGIN);
+        Util.sendPlayerToDefaultServer(plugin, player);
     }
 }

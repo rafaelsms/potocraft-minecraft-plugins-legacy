@@ -7,32 +7,31 @@ import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.util.PlayerType;
 import com.rafaelsms.potocraft.loginmanager.util.Util;
 import com.rafaelsms.potocraft.util.TextUtil;
-import com.velocitypowered.api.command.RawCommand;
-import com.velocitypowered.api.proxy.Player;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.net.InetSocketAddress;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RegisterCommand implements RawCommand {
+public class RegisterCommand extends Command {
 
-    private final Pattern pinExtractor =
-            Pattern.compile("^\\s*(\\d{6})\\s*(\\d{6})(\\s+.*)?$", Pattern.CASE_INSENSITIVE);
-    private final Pattern tabCompletable = Pattern.compile("^\\s*(\\S+)?\\s*(\\S+)?\\s*?$", Pattern.CASE_INSENSITIVE);
+    private final Pattern pinFormat = Pattern.compile("^(\\d{6})$", Pattern.CASE_INSENSITIVE);
 
     private final @NotNull LoginManagerPlugin plugin;
 
     public RegisterCommand(@NotNull LoginManagerPlugin plugin) {
+        super("registrar", Permissions.COMMAND_REGISTER, "reg", "register", "cadastrar");
         this.plugin = plugin;
     }
 
     @Override
-    public void execute(Invocation invocation) {
+    public void execute(CommandSender sender, String[] args) {
         // Prevent console from executing
-        if (!(invocation.source() instanceof Player player)) {
-            invocation.source().sendMessage(plugin.getConfiguration().getCommandPlayersOnly());
+        if (!(sender instanceof ProxiedPlayer player)) {
+            sender.sendMessage(plugin.getConfiguration().getCommandPlayersOnly());
             return;
         }
 
@@ -47,7 +46,7 @@ public class RegisterCommand implements RawCommand {
         try {
             profile = plugin.getDatabase()
                             .getProfile(player.getUniqueId())
-                            .orElse(new Profile(player.getUniqueId(), player.getUsername()));
+                            .orElse(new Profile(player.getUniqueId(), player.getName()));
         } catch (Exception ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
             return;
@@ -56,7 +55,7 @@ public class RegisterCommand implements RawCommand {
         // Check if profile already has a PIN
         if (profile.hasPin()) {
             if (Util.isPlayerLoggedIn(plugin, profile, player) &&
-                invocation.source().hasPermission(Permissions.COMMAND_CHANGE_PIN)) {
+                sender.hasPermission(Permissions.COMMAND_CHANGE_PIN)) {
                 player.sendMessage(plugin.getConfiguration().getCommandRegisterShouldChangePinInstead());
             } else {
                 player.sendMessage(plugin.getConfiguration().getCommandRegisterShouldLoginInstead());
@@ -66,10 +65,12 @@ public class RegisterCommand implements RawCommand {
 
         // Check if too many uses for this IP
         try {
-            long count = plugin.getDatabase().getAddressUsageCount(player.getRemoteAddress());
-            if (count >= plugin.getConfiguration().getMaxAccountsPerAddress()) {
-                player.disconnect(plugin.getConfiguration().getCommandRegisterAccountLimitForAddress());
-                return;
+            if (player.getSocketAddress() instanceof InetSocketAddress address) {
+                long count = plugin.getDatabase().getAddressUsageCount(address);
+                if (count >= plugin.getConfiguration().getMaxAccountsPerAddress()) {
+                    player.disconnect(plugin.getConfiguration().getCommandRegisterAccountLimitForAddress());
+                    return;
+                }
             }
         } catch (Exception ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
@@ -77,22 +78,21 @@ public class RegisterCommand implements RawCommand {
         }
 
         // Retrieve arguments
-        Matcher matcher = pinExtractor.matcher(invocation.arguments());
-        if (!matcher.matches()) {
+        if (args.length != 2 || !pinFormat.matcher(args[0]).matches() || !pinFormat.matcher(args[1]).matches()) {
             player.sendMessage(plugin.getConfiguration().getCommandRegisterHelp());
             return;
         }
 
         // Parse to PIN
-        String pinString = matcher.group(1);
-        String pinConfirmationString = matcher.group(2);
+        String pinString = args[0];
+        String pinConfirmationString = args[1];
         Optional<Integer> pinOptional = TextUtil.parseMatchingPins(pinString, pinConfirmationString);
         if (pinOptional.isEmpty()) {
             player.sendMessage(plugin.getConfiguration().getCommandRegisterInvalidPin());
             return;
         }
 
-        // Check if couldn't set pin
+        // Check if we couldn't set pin
         if (!profile.setPin(pinOptional.get())) {
             player.sendMessage(plugin.getConfiguration().getCommandIncorrectPinFormat());
             return;
@@ -100,29 +100,19 @@ public class RegisterCommand implements RawCommand {
 
         // Save status
         try {
-            profile.setLoggedIn(player.getRemoteAddress());
+            if (player.getSocketAddress() instanceof InetSocketAddress address) {
+                profile.setLoggedIn(address);
+            } else {
+                profile.setLoggedIn(null);
+            }
             player.sendMessage(plugin.getConfiguration().getCommandLoggedIn());
             plugin.getDatabase().saveProfile(profile);
-            invocation.source().sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
+            sender.sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
         } catch (Database.DatabaseException ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
         }
 
         // Send player to default server
-        Util.sendPlayerToDefault(plugin, player);
-    }
-
-    @Override
-    public List<String> suggest(Invocation invocation) {
-        Matcher matcher = tabCompletable.matcher(invocation.arguments());
-        if (matcher.matches()) {
-            return List.of("123456", "834712");
-        }
-        return List.of();
-    }
-
-    @Override
-    public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission(Permissions.COMMAND_REGISTER);
+        Util.sendPlayerToDefaultServer(plugin, player);
     }
 }

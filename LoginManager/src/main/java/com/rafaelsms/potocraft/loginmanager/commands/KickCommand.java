@@ -6,50 +6,47 @@ import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.player.ReportEntry;
 import com.rafaelsms.potocraft.util.TextUtil;
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.command.RawCommand;
-import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class KickCommand implements RawCommand {
+public class KickCommand extends Command {
 
     // /kick <name> <reason>
-
-    private final Pattern commandSyntax = Pattern.compile("^\\s*(\\S+)(\\s+(\\S+.*))?$");
 
     private final @NotNull LoginManagerPlugin plugin;
 
     public KickCommand(@NotNull LoginManagerPlugin plugin) {
+        super("kick", Permissions.COMMAND_KICK, "expulsar");
         this.plugin = plugin;
     }
 
     @Override
-    public void execute(Invocation invocation) {
-        Matcher matcher = commandSyntax.matcher(invocation.arguments());
-        if (!matcher.matches()) {
-            invocation.source().sendMessage(plugin.getConfiguration().getCommandKickHelp());
+    public void execute(CommandSender sender, String[] args) {
+        if (args.length < 1) {
+            sender.sendMessage(plugin.getConfiguration().getCommandKickHelp());
             return;
         }
 
-        String username = matcher.group(1);
-        Optional<String> reason = Optional.ofNullable(matcher.group(3));
+        String username = args[0];
+        Optional<String> reason = TextUtil.joinStrings(args, 1);
 
-        Optional<Player> playerOptional =
-                TextUtil.closestMatch(plugin.getServer().getAllPlayers(), Player::getUsername, username);
+        Optional<ProxiedPlayer> playerOptional =
+                TextUtil.closestMatch(plugin.getProxy().getPlayers(), ProxiedPlayer::getName, username);
         if (playerOptional.isEmpty()) {
-            invocation.source().sendMessage(plugin.getConfiguration().getNoPlayerFound());
+            sender.sendMessage(plugin.getConfiguration().getNoPlayerFound());
             return;
         }
-        Player player = playerOptional.get();
+        ProxiedPlayer player = playerOptional.get();
         if (player.hasPermission(Permissions.COMMAND_KICK_EXEMPT)) {
-            invocation.source().sendMessage(plugin.getConfiguration().getNoPermission());
+            sender.sendMessage(plugin.getConfiguration().getNoPermission());
             return;
         }
 
@@ -57,43 +54,37 @@ public class KickCommand implements RawCommand {
         try {
             profile = plugin.getDatabase().getProfile(player.getUniqueId()).orElse(null);
         } catch (Database.DatabaseException ignored) {
-            invocation.source().sendMessage(plugin.getConfiguration().getCommandFailedToSearchProfile());
+            sender.sendMessage(plugin.getConfiguration().getCommandFailedToSearchProfile());
             return;
         }
         if (profile == null) {
-            player.disconnect(Component.empty());
-            invocation.source().sendMessage(plugin.getConfiguration().getPlayerPunished(player.getUsername()));
+            player.disconnect(new ComponentBuilder().create());
+            sender.sendMessage(plugin.getConfiguration().getPlayerPunished(player.getName()));
             return;
         }
 
         try {
-            profile.addReportEntry(ReportEntry.Type.KICK, getId(invocation.source()), null, reason.orElse(null));
+            profile.addReportEntry(ReportEntry.Type.KICK, getId(sender), null, reason.orElse(null));
             plugin.getDatabase().saveProfile(profile);
-            Component kickedMessage = plugin.getConfiguration()
-                                            .getPunishmentMessageKicked(getName(invocation.source()),
-                                                                        reason.orElse(null));
+            @NotNull BaseComponent[] kickedMessage =
+                    plugin.getConfiguration().getPunishmentMessageKicked(getName(sender), reason.orElse(null));
             player.disconnect(kickedMessage);
-            invocation.source().sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
+            sender.sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
         } catch (Database.DatabaseException ignored) {
-            invocation.source().sendMessage(plugin.getConfiguration().getCommandFailedToSaveProfile());
+            sender.sendMessage(plugin.getConfiguration().getCommandFailedToSaveProfile());
         }
     }
 
-    @Override
-    public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission(Permissions.COMMAND_KICK);
-    }
-
-    private @Nullable UUID getId(CommandSource source) {
-        if (source instanceof Player player) {
+    private @Nullable UUID getId(CommandSender sender) {
+        if (sender instanceof ProxiedPlayer player) {
             return player.getUniqueId();
         }
         return null;
     }
 
-    private @Nullable String getName(CommandSource source) {
-        if (source instanceof Player player) {
-            return player.getUsername();
+    private @Nullable String getName(CommandSender source) {
+        if (source instanceof ProxiedPlayer player) {
+            return player.getName();
         }
         return null;
     }

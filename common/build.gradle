@@ -24,6 +24,7 @@ dependencies {
     implementation('net.kyori:adventure-api:4.9.3')
     implementation('net.kyori:adventure-text-serializer-legacy:4.9.3')
     implementation('net.kyori:adventure-text-serializer-plain:4.9.3')
+    implementation('net.kyori:adventure-text-serializer-bungeecord:4.0.1')
     compileOnly('io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT')
     compileOnly("net.luckperms:api:5.3")
 }
