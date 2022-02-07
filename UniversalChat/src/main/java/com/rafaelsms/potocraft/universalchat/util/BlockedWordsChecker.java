@@ -23,9 +23,10 @@ public class BlockedWordsChecker {
     }
 
     public boolean containsBlockedWord(@NotNull String string) {
-        String normalized = Normalizer.normalize(string, Normalizer.Form.NFKC);
+        string = Normalizer.normalize(string, Normalizer.Form.NFD);
+        string = string.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
         for (Pattern pattern : blockedWordsRegex) {
-            if (pattern.matcher(normalized).find()) {
+            if (pattern.matcher(string).find()) {
                 return true;
             }
         }

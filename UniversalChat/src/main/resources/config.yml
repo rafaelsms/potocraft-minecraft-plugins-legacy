@@ -111,6 +111,10 @@ configuration:
     - cachorra
     - vagabunda
     - vagabundo
+    - corninho
+    - corninha
+    - cornao
+    - cornona
 
 language:
   console_name: 'administração'
