@@ -16,7 +16,19 @@ public class BlockedWordsChecker {
         for (String blockedWord : blockedWords) {
             StringBuilder stringBuilder = new StringBuilder();
             for (char c : blockedWord.toCharArray()) {
-                stringBuilder.append(c).append("\\s*");
+                // Check leet and *
+                if (c == 'a') {
+                    stringBuilder.append("(a|4|\\*|x)");
+                } else if (c == 'i' || c == 'e') {
+                    stringBuilder.append("(i|1|e|3|\\*|x)");
+                } else if (c == 'o' || c == 'u') {
+                    stringBuilder.append("(o|0|u|\\*|x)");
+                } else if (c == 's' || c == 'z') {
+                    stringBuilder.append("(s|z|\\*|x)");
+                } else {
+                    stringBuilder.append("(").append(c).append("|\\*|x)");
+                }
+                stringBuilder.append("\\s*");
             }
             blockedWordsRegex.add(Pattern.compile(stringBuilder.toString(), Pattern.CASE_INSENSITIVE));
         }
