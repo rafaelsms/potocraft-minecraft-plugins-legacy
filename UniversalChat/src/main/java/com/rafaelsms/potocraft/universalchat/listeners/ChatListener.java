@@ -214,6 +214,7 @@ public class ChatListener implements Listener {
                   .getConsole()
                   .sendMessage(new ComponentBuilder("Blocked chat: ").append(localChatMessage).create());
             sendingPlayer.sendMessage(localChatMessage);
+            event.setCancelled(true);
             return;
         }
 
