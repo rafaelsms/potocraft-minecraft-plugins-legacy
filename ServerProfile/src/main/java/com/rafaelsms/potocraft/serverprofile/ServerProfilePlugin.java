@@ -11,6 +11,7 @@ import com.rafaelsms.potocraft.serverprofile.commands.TeleportCancelCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.TeleportCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.TeleportDenyCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.TeleportHereCommand;
+import com.rafaelsms.potocraft.serverprofile.commands.TeleportOfflineCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.WarpCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.WorldCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.completers.PlayerNameCompleter;
@@ -74,6 +75,7 @@ public class ServerProfilePlugin extends JavaPlugin {
         registerCommand("teleporterecusar", new TeleportDenyCommand(this), teleportRequesterCompleter);
         registerCommand("teleportecancelar", new TeleportCancelCommand(this));
         registerCommand("teleporte", new TeleportCommand(this), new PlayerNameCompleter(this, Permissions.TELEPORT));
+        registerCommand("teleporteoffline", new TeleportOfflineCommand(this));
         registerCommand("teleporteaqui",
                         new TeleportHereCommand(this),
                         new PlayerNameCompleter(this, Permissions.TELEPORT_HERE));

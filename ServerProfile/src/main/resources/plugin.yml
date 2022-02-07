@@ -43,6 +43,9 @@ commands:
   teleporte:
     description: Teleports you to another player.
     aliases: [ tp, tpa, teleport, tpask ]
+  teleporteoffline:
+    description: Teleports you to an possibly offline player.
+    aliases: [ tpo, tpoff ]
   teleporteaqui:
     description: Teleports another player to you.
     aliases: [ tphere, tpahere, tpaqui ]

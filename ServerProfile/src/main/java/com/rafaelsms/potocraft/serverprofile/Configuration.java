@@ -232,6 +232,10 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponent(get("language.teleport.player_not_found")).build();
     }
 
+    public Component getTeleportOfflineLocationNotFound() {
+        return TextUtil.toComponent(get("language.teleport.offline_player_location_not_found")).build();
+    }
+
     public Component getTeleportHelp() {
         return TextUtil.toComponent(get("language.teleport.help")).build();
     }

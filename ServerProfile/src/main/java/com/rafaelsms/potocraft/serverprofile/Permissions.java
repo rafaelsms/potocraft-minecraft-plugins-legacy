@@ -14,6 +14,7 @@ public final class Permissions {
     public static final String TELEPORT_HOME_OTHERS = "potocraft.server.teleport.home.others";
     public static final String TELEPORT_WORLD = "potocraft.server.teleport.world";
     public static final String TELEPORT_POSITION = "potocraft.server.teleport.position";
+    public static final String TELEPORT_OFFLINE = "potocraft.server.teleport.offline";
 
     public static final String TELEPORT_NO_DELAY = "potocraft.server.teleport.no_delay";
     public static final String TELEPORT_NO_REQUEST = "potocraft.server.teleport.no_request";

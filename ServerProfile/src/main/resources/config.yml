@@ -61,6 +61,7 @@ language:
     in_cooldown: "&cTeleporte estará indisponível por mais &e%cooldown% segundos&c."
     failed: "&cTeleporte falhou!"
     player_not_found: "&cNão encontramos alguém com este nome."
+    offline_player_location_not_found: "&cLocalização de jogador offline não existe."
     help: "&6Para teleportar até alguém, digite &e&l/teleporte (nome)&6."
     requests:
       teleport_received: |
