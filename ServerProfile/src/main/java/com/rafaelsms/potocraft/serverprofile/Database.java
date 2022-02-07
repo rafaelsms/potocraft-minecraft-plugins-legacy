@@ -3,6 +3,7 @@ package com.rafaelsms.potocraft.serverprofile;
 import com.mongodb.client.MongoCollection;
 import com.rafaelsms.potocraft.serverprofile.players.Profile;
 import com.rafaelsms.potocraft.serverprofile.warps.Warp;
+import com.rafaelsms.potocraft.util.TextUtil;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,5 +74,13 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
         throwingWrapper(() -> {
             getWarpsCollection().replaceOne(warp.filterName(), warp.toDocument(), UPSERT);
         });
+    }
+
+    public @NotNull Optional<Profile> searchOfflineProfile(@NotNull String search) throws DatabaseException {
+        // It'll search all players and match the closest name
+        // Since there are no more than a few thousand, this should not be too heavy
+        return throwingWrapper(() -> TextUtil.closestMatch(getPlayerProfiles().find(),
+                                                           document -> document.getString(Profile.getPlayerNameField()),
+                                                           search).map(Profile::new));
     }
 }

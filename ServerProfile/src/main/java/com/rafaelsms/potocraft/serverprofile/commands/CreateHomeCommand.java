@@ -17,9 +17,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class CreateHomeCommand implements CommandExecutor, TabCompleter {
 
+    private final Pattern homeNamePattern = Pattern.compile("^[a-z0-9_-]{1,16}$", Pattern.CASE_INSENSITIVE);
     private final Map<UUID, HomeReplacement> replaceHomeAttempt = Collections.synchronizedMap(new HashMap<>());
 
     private final @NotNull ServerProfilePlugin plugin;
@@ -49,6 +51,10 @@ public class CreateHomeCommand implements CommandExecutor, TabCompleter {
         User user = plugin.getUserManager().getUser(player);
 
         String homeName = args[0];
+        if (!homeNamePattern.matcher(homeName).matches()) {
+            sender.sendMessage(plugin.getConfiguration().getTeleportHomeInvalidName());
+            return true;
+        }
 
         // Check if player is home-blocked (exceeds limit)
         int maxHomesSize = user.getMaxHomesSize();
@@ -74,12 +80,11 @@ public class CreateHomeCommand implements CommandExecutor, TabCompleter {
             }
 
             // Otherwise, insert him on the recent attempt map
-            BukkitTask removeTask = plugin
-                    .getServer()
-                    .getScheduler()
-                    .runTaskLater(plugin,
-                                  () -> replaceHomeAttempt.remove(player.getUniqueId()),
-                                  plugin.getConfiguration().getHomeReplacementTimeout());
+            BukkitTask removeTask = plugin.getServer()
+                                          .getScheduler()
+                                          .runTaskLater(plugin,
+                                                        () -> replaceHomeAttempt.remove(player.getUniqueId()),
+                                                        plugin.getConfiguration().getHomeReplacementTimeout());
             HomeReplacement oldReplacement =
                     replaceHomeAttempt.put(player.getUniqueId(), new HomeReplacement(homeName, removeTask));
             // Cancel previous task if it exist

@@ -26,6 +26,7 @@ import java.util.UUID;
 public class Profile extends DatabaseObject {
 
     private final @NotNull UUID playerId;
+    private @NotNull String playerName;
 
     private final Map<String, Home> homes = Collections.synchronizedMap(new HashMap<>());
 
@@ -48,13 +49,15 @@ public class Profile extends DatabaseObject {
 
     private boolean importedEssentials = false;
 
-    public Profile(@NotNull UUID playerId) {
+    public Profile(@NotNull UUID playerId, @NotNull String playerName) {
         this.playerId = playerId;
+        this.playerName = playerName;
     }
 
     public Profile(@NotNull Document document) {
         super(document);
         this.playerId = Util.convertNonNull(document.getString(Keys.PLAYER_ID), UUID::fromString);
+        this.playerName = Util.getCatchingOrElse(() -> document.getString(Keys.PLAYER_NAME), "");
 
         List<Home> homes = Util.convertList(document.getList(Keys.HOMES, Document.class), Home::new);
         for (Home home : homes) {
@@ -78,6 +81,10 @@ public class Profile extends DatabaseObject {
         this.totemUsages = Util.getCatchingOrElse(() -> document.getInteger(Keys.TOTEM_USAGES), 0);
 
         this.importedEssentials = Util.getCatchingOrElse(() -> document.getBoolean(Keys.IMPORTED_ESSENTIALS), false);
+    }
+
+    public void setPlayerName(@NotNull String playerName) {
+        this.playerName = playerName;
     }
 
     public List<Home> getHomesSortedByDate() {
@@ -184,6 +191,10 @@ public class Profile extends DatabaseObject {
         return Filters.eq(Keys.PLAYER_ID, Util.convertNonNull(playerId, UUID::toString));
     }
 
+    public static String getPlayerNameField() {
+        return Keys.PLAYER_NAME;
+    }
+
     public Bson filterId() {
         return filterId(playerId);
     }
@@ -209,6 +220,7 @@ public class Profile extends DatabaseObject {
     public @NotNull Document toDocument() {
         Document document = new Document();
         document.put(Keys.PLAYER_ID, Util.convertNonNull(this.playerId, UUID::toString));
+        document.put(Keys.PLAYER_NAME, this.playerName);
 
         document.put(Keys.HOMES, Util.convertList(this.homes.values(), Home::toDocument));
 
@@ -236,6 +248,7 @@ public class Profile extends DatabaseObject {
     private static final class Keys {
 
         public static final String PLAYER_ID = "_id";
+        public static final String PLAYER_NAME = "playerName";
 
         public static final String HOMES = "homeList";
 

@@ -147,6 +147,10 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponent(get("language.players_only")).build();
     }
 
+    public Component getCouldNotLoadProfile() {
+        return TextUtil.toComponent(get("language.could_not_load_profile")).build();
+    }
+
     public Component getCombatBarTitle() {
         return TextUtil.toComponent(get("language.combat.bar_title")).build();
     }
@@ -288,6 +292,10 @@ public class Configuration extends YamlFile {
 
     public Component getTeleportHomeMaxCapacity() {
         return TextUtil.toComponent(get("language.teleport.homes.at_max_capacity")).build();
+    }
+
+    public Component getTeleportHomeInvalidName() {
+        return TextUtil.toComponent(get("language.teleport.homes.invalid_home_name")).build();
     }
 
     public Component getTeleportHomeCreateHelp() {

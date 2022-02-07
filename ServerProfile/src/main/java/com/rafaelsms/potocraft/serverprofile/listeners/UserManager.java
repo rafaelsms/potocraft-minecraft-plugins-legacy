@@ -56,8 +56,11 @@ public class UserManager implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     private void loadProfile(AsyncPlayerPreLoginEvent event) {
         try {
-            Profile profile =
-                    plugin.getDatabase().loadProfile(event.getUniqueId()).orElse(new Profile(event.getUniqueId()));
+            Profile profile = plugin.getDatabase()
+                                    .loadProfile(event.getUniqueId())
+                                    .orElse(new Profile(event.getUniqueId(), event.getName()));
+            // Update player name
+            profile.setPlayerName(event.getName());
             synchronized (lock) {
                 loadedProfiles.put(event.getUniqueId(), profile);
             }

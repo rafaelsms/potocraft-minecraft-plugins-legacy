@@ -40,6 +40,7 @@ configuration:
 language:
   date_time_format: "dd' de 'MMM' às 'H'h'mm"
   players_only: "&cComando disponível apenas para jogadores."
+  could_not_load_profile: "&cFalha ao acessar banco de dados."
   combat:
     bar_title: "&cSe sair ou se a conexão cair, irá morrer!"
     command_is_blocked_while_in_combat: "&cEste comando está bloqueado em combate."
@@ -83,6 +84,7 @@ language:
         &6Para criar mais casas, digite &e&l/criarcasa&6. Para apagar, &e&l/deletarcasa&6.
         &6Casas: &e%list%
       at_max_capacity: "&cVocê atingiu o número máximo de casas, digite &e&l/deletarcasa &cpara removê-las."
+      invalid_home_name: "&cNome de casa inválido: não utilize caracteres especiais!"
       create_help: "&6Digite &e&l/criarcasa (nome) &6para criar uma casa."
       created: "&6Casa criada! Você pode teleportar até ela digitando &e&l/casa&6!"
       already_exists: "&cCasa já existe. &6Para substituí-la, digite o comando novamente nos próximos segundos."

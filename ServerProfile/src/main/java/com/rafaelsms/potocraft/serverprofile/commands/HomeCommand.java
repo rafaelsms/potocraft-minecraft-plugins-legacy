@@ -3,7 +3,9 @@ package com.rafaelsms.potocraft.serverprofile.commands;
 import com.rafaelsms.potocraft.serverprofile.Permissions;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.Home;
+import com.rafaelsms.potocraft.serverprofile.players.Profile;
 import com.rafaelsms.potocraft.serverprofile.players.User;
+import com.rafaelsms.potocraft.serverprofile.util.CommandUtil;
 import com.rafaelsms.potocraft.util.Util;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,9 +17,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HomeCommand implements CommandExecutor, TabCompleter {
 
+    private final Pattern playerHomeExtractor = Pattern.compile("(\\S+):(\\S+)?", Pattern.CASE_INSENSITIVE);
     private final @NotNull ServerProfilePlugin plugin;
 
     public HomeCommand(@NotNull ServerProfilePlugin plugin) {
@@ -25,7 +31,8 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
+    public boolean onCommand(@NotNull CommandSender sender,
+                             @NotNull Command command,
                              @NotNull String label,
                              @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
@@ -38,6 +45,35 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         }
 
         User user = plugin.getUserManager().getUser(player);
+        if (args.length == 1 && player.hasPermission(Permissions.TELEPORT_HOME_OTHERS)) {
+            Matcher matcher = playerHomeExtractor.matcher(args[0]);
+            if (matcher.matches()) {
+                String playerName = matcher.group(1);
+                String homeName = matcher.group(2);
+
+                // Search by player name
+                Optional<Profile> profileOptional = CommandUtil.handlePlayerSearch(plugin, sender, playerName);
+                if (profileOptional.isEmpty()) {
+                    return true;
+                }
+                Profile profile = profileOptional.get();
+                if (homeName.isEmpty()) {
+                    // Send list of homes
+                    player.sendMessage(plugin.getConfiguration().getTeleportHomeList(profile.getHomesSortedByDate()));
+                } else {
+                    Optional<Home> home = profile.getHome(homeName);
+                    if (home.isEmpty()) {
+                        // Warn that no home was found
+                        player.sendMessage(plugin.getConfiguration().getTeleportHomeNotFound());
+                        return true;
+                    }
+                    // Teleport player to home
+                    user.teleport(home.get().toLocation(plugin), PlayerTeleportEvent.TeleportCause.COMMAND);
+                }
+                return true;
+            }
+        }
+
         int maxHomesSize = user.getMaxHomesSize();
         int homesSize = user.getProfile().getHomesSize();
         List<Home> homesSorted = user.getProfile().getHomesSortedByDate();
