@@ -6,6 +6,7 @@ import com.rafaelsms.potocraft.serverutility.commands.EnderchestCommand;
 import com.rafaelsms.potocraft.serverutility.commands.GameModeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerTimeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerWeatherCommand;
+import com.rafaelsms.potocraft.serverutility.commands.SuicideCommand;
 import com.rafaelsms.potocraft.serverutility.commands.VanishCommand;
 import com.rafaelsms.potocraft.serverutility.commands.WorkbenchCommand;
 import com.rafaelsms.potocraft.serverutility.listeners.DamageModifier;
@@ -71,6 +72,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         registerCommand("vanish", new VanishCommand(this));
         registerCommand("gamemode", new GameModeCommand(this));
         registerCommand("enchant", new EnchantCommand(this));
+        registerCommand("suicide", new SuicideCommand(this));
 
         logger().info("ServerUtility enabled!");
     }

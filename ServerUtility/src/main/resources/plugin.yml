@@ -31,3 +31,6 @@ commands:
   enchant:
     description: Enchant your item in hand.
     aliases: [ enchantment, encantar, encantamento ]
+  suicide:
+    description: Kills your player entity.
+    aliases: [ suicidar, suicidio ]
