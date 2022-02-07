@@ -77,8 +77,10 @@ public class MessageCommand extends Command {
                     return;
                 }
             }
+
             // Set message as sent if it wasn't cancelled
             chatHistory.sentMessage(message);
+
             // Set reply candidate for sender
             senderUser.setReplyCandidate(receiver.getUniqueId());
         }
@@ -93,6 +95,10 @@ public class MessageCommand extends Command {
 
         // Send to players
         sender.sendMessage(outgoingFormat);
+        // Check if there is any blocked words
+        if (plugin.getWordsChecker().containsBlockedWord(message)) {
+            return;
+        }
         receiver.sendMessage(incomingFormat);
         // Send to all spies
         for (ProxiedPlayer onlinePlayer : plugin.getProxy().getPlayers()) {

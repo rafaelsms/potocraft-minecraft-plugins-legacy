@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -66,9 +67,17 @@ public class Configuration extends YamlFile {
         return getChatFormat(get("configuration.other_server_chat.spy_format"), player, message);
     }
 
+    public @NotNull BaseComponent[] getLocalChatFormat(@NotNull ProxiedPlayer player, @NotNull String message) {
+        return getChatFormat(get("configuration.local_chat_format"), player, message);
+    }
+
     public Duration getDirectMessagesReplyDuration() {
         return Duration.ofSeconds(Objects.requireNonNull(getInt(
                 "configuration.direct_messages.reply_time_amount_seconds")));
+    }
+
+    public List<String> getBlockedWordsList() {
+        return get("configuration.blocked_words");
     }
 
     public String getConsoleName() {

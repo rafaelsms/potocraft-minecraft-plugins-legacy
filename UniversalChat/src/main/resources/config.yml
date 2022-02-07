@@ -14,9 +14,103 @@ configuration:
     spy_format: "&7! (%server%) <%prefix%%username%%suffix%&7> &7%message%"
     prefix: '!'
   other_server_chat:
-    spy_format: "&7(%server%) %prefix%&7%username%%suffix% &7%message%"
+    spy_format: "&7(%server%) %prefix%&7%username%%suffix%&7: &7%message%"
+  local_chat_format: "&e%prefix%%username%%suffix%&7: &f%message%"
   direct_messages:
     reply_time_amount_seconds: 240
+  blocked_words:
+    - puta
+    - puto
+    - whore
+    - prostituta
+    - cacete
+    - caceta
+    - fudida
+    - fudido
+    - fodida
+    - fodido
+    - fudeu
+    - foda
+    - hooker
+    - bicha
+    - bixa
+    - buceta
+    - caralho
+    - caralha
+    - porra
+    - viado
+    - viada
+    - veado
+    - veada
+    - viadao
+    - veadao
+    - xoxota
+    - xana
+    - chochota
+    - xochota
+    - choxota
+    - chana
+    - xereca
+    - xerereca
+    - xavasca
+    - chereca
+    - cherereca
+    - chavasca
+    - baitola
+    - bisca
+    - biscate
+    - busseta
+    - bosseta
+    - cadela
+    - xota
+    - chota
+    - corna
+    - corno
+    - gay
+    - leprosa
+    - leproso
+    - merda
+    - bosta
+    - otaria
+    - otario
+    - retardado
+    - retardada
+    - veado
+    - quenga
+    - kenga
+    - fedido
+    - fedida
+    - mulata
+    - mulato
+    - nega
+    - nego
+    - burra
+    - burro
+    - anus
+    - preta
+    - encardido
+    - encardida
+    - fuleiro
+    - fuleira
+    - fulero
+    - fulera
+    - foleiro
+    - foleira
+    - folero
+    - folera
+    - vadia
+    - vadio
+    - raba
+    - rabo
+    - suruba
+    - surubao
+    - soruba
+    - sorubao
+    - suroba
+    - surobao
+    - cachorra
+    - vagabunda
+    - vagabundo
 
 language:
   console_name: 'administração'

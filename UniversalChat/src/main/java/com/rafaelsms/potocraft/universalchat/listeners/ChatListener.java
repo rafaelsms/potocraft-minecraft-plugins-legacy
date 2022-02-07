@@ -5,6 +5,7 @@ import com.rafaelsms.potocraft.universalchat.UniversalChatPlugin;
 import com.rafaelsms.potocraft.universalchat.player.User;
 import com.rafaelsms.potocraft.util.ChatHistory;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
@@ -107,6 +108,17 @@ public class ChatListener implements Listener {
         @NotNull BaseComponent[] chatMessage = plugin.getConfiguration().getGlobalChatFormat(player, message);
         @NotNull BaseComponent[] spyMessage = plugin.getConfiguration().getGlobalChatSpyFormat(player, message);
         event.setCancelled(true);
+
+        // Check if there is any blocked word
+        if (plugin.getWordsChecker().containsBlockedWord(event.getMessage())) {
+            // Send just to sender player as he won't notice it has been blocked
+            plugin.getProxy()
+                  .getConsole()
+                  .sendMessage(new ComponentBuilder("Blocked chat: ").append(chatMessage).create());
+            player.sendMessage(chatMessage);
+            return;
+        }
+
         // Send the message for everybody of their server
         Optional<ServerInfo> serverOptional = Optional.ofNullable(player.getServer()).map(Server::getInfo);
         if (serverOptional.isEmpty()) {
@@ -160,6 +172,17 @@ public class ChatListener implements Listener {
         String message = event.getMessage().replaceFirst(chatPrefix, "");
         @NotNull BaseComponent[] chatMessage = plugin.getConfiguration().getUniversalChatFormat(player, message);
         event.setCancelled(true);
+
+        // Check if there is any blocked word
+        if (plugin.getWordsChecker().containsBlockedWord(event.getMessage())) {
+            // Send just to sender player as he won't notice it has been blocked
+            plugin.getProxy()
+                  .getConsole()
+                  .sendMessage(new ComponentBuilder("Blocked chat: ").append(chatMessage).create());
+            player.sendMessage(chatMessage);
+            return;
+        }
+
         // Send the message for everybody
         for (ProxiedPlayer onlinePlayer : plugin.getProxy().getPlayers()) {
             onlinePlayer.sendMessage(chatMessage);
@@ -181,6 +204,18 @@ public class ChatListener implements Listener {
         // Format the message
         @NotNull BaseComponent[] spyMessage =
                 plugin.getConfiguration().getOtherServerChatSpyFormat(sendingPlayer, event.getMessage());
+        @NotNull BaseComponent[] localChatMessage =
+                plugin.getConfiguration().getLocalChatFormat(sendingPlayer, event.getMessage());
+
+        // Check if there is any blocked word
+        if (plugin.getWordsChecker().containsBlockedWord(event.getMessage())) {
+            // Send just to sender player as he won't notice it has been blocked
+            plugin.getProxy()
+                  .getConsole()
+                  .sendMessage(new ComponentBuilder("Blocked chat: ").append(localChatMessage).create());
+            sendingPlayer.sendMessage(localChatMessage);
+            return;
+        }
 
         Optional<ServerInfo> currentServer = Optional.ofNullable(sendingPlayer.getServer()).map(Server::getInfo);
         // Ignore if sender is on a unknown server
