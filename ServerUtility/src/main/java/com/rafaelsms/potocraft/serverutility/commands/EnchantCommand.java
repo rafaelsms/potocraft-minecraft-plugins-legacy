@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -97,6 +98,16 @@ public class EnchantCommand implements CommandExecutor, TabCompleter {
                                                 @NotNull Command command,
                                                 @NotNull String alias,
                                                 @NotNull String[] args) {
+        if (sender instanceof Player player) {
+            ItemStack hand = player.getInventory().getItemInMainHand();
+            ArrayList<Enchantment> enchantments = new ArrayList<>();
+            for (Enchantment enchantment : Enchantment.values()) {
+                if (enchantment.canEnchantItem(hand)) {
+                    enchantments.add(enchantment);
+                }
+            }
+            Util.convertList(enchantments, enchantment -> enchantment.getKey().getKey().toLowerCase());
+        }
         return Util.convertList(Arrays.asList(Enchantment.values()),
                                 enchantment -> enchantment.getKey().getKey().toLowerCase());
     }
