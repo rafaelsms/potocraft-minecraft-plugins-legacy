@@ -2,6 +2,8 @@ package com.rafaelsms.potocraft.serverprofile.commands;
 
 import com.rafaelsms.potocraft.serverprofile.Permissions;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
+import com.rafaelsms.potocraft.serverprofile.players.Profile;
+import com.rafaelsms.potocraft.serverprofile.util.CommandUtil;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -10,6 +12,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public class TeleportOfflineCommand implements CommandExecutor {
 
@@ -37,9 +41,20 @@ public class TeleportOfflineCommand implements CommandExecutor {
             return true;
         }
 
-        // Find the closest player by the name
+        // Find the offline player by the name
         String playerName = args[0];
-        @SuppressWarnings("deprecation") OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(playerName);
+        OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayerIfCached(playerName);
+        if (offlinePlayer == null) {
+            // Search in the database if player is not found in the cache
+            Optional<Profile> profileOptional = CommandUtil.handlePlayerSearch(plugin, sender, playerName);
+            if (profileOptional.isEmpty()) {
+                return true;
+            }
+            Profile profile = profileOptional.get();
+            offlinePlayer = plugin.getServer().getOfflinePlayer(profile.getPlayerId());
+        }
+
+        // Get offline player's location
         Location location = offlinePlayer.getLocation();
         if (location == null) {
             sender.sendMessage(plugin.getConfiguration().getTeleportOfflineLocationNotFound());

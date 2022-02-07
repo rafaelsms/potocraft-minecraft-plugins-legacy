@@ -83,6 +83,10 @@ public class Profile extends DatabaseObject {
         this.importedEssentials = Util.getCatchingOrElse(() -> document.getBoolean(Keys.IMPORTED_ESSENTIALS), false);
     }
 
+    public @NotNull UUID getPlayerId() {
+        return playerId;
+    }
+
     public void setPlayerName(@NotNull String playerName) {
         this.playerName = playerName;
     }

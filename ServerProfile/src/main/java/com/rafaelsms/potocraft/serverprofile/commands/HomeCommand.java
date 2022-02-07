@@ -57,7 +57,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 Profile profile = profileOptional.get();
-                if (homeName.isEmpty()) {
+                if (homeName == null || homeName.isEmpty()) {
                     // Send list of homes
                     player.sendMessage(plugin.getConfiguration().getTeleportHomeList(profile.getHomesSortedByDate()));
                 } else {
