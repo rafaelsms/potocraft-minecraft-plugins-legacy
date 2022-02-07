@@ -32,7 +32,7 @@ public class SuicideCommand implements CommandExecutor {
 
         // Kill player
         player.setKiller(player);
-        player.damage(Double.MAX_VALUE, player);
+        player.setHealth(0.0);
         return true;
     }
 }
