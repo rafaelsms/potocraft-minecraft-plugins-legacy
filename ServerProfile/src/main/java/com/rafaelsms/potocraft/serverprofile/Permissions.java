@@ -7,6 +7,7 @@ public final class Permissions {
     public static final String TELEPORT = "potocraft.server.teleport.teleport";
     public static final String TELEPORT_HERE = "potocraft.server.teleport.teleporthere";
     public static final String TELEPORT_BACK = "potocraft.server.teleport.back";
+    public static final String TELEPORT_BACK_ON_DEATH = "potocraft.server.teleport.back.on_death";
     public static final String TELEPORT_WARP = "potocraft.server.teleport.warp";
     public static final String TELEPORT_HOME = "potocraft.server.teleport.home";
     public static final String TELEPORT_HOME_UNLIMITED = "potocraft.server.teleport.home.unlimited";

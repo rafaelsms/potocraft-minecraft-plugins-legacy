@@ -220,6 +220,10 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponent(get("language.teleport.back.no_back_location")).build();
     }
 
+    public Component getTeleportBackIsDeathLocation() {
+        return TextUtil.toComponent(get("language.teleport.back.back_is_death_location")).build();
+    }
+
     public Component getTeleportPlayerNotFound() {
         return TextUtil.toComponent(get("language.teleport.player_not_found")).build();
     }

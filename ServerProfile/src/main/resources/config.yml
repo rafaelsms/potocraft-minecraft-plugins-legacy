@@ -76,6 +76,7 @@ language:
       sent_requests_cancelled: "&6Os pedidos enviados foram cancelados."
     back:
       no_back_location: "&cNão há localização para voltar."
+      back_is_death_location: "&cVocê não tem permissão para voltar ao local de morte."
     homes:
       help: "&6Para criar uma casa, digite &e&l/criarcasa &6e assim poderá voltar para ela digitando &e&l/casa&6!"
       list: |

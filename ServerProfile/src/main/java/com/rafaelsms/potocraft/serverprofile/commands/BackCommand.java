@@ -41,6 +41,12 @@ public class BackCommand implements CommandExecutor {
             player.sendMessage(plugin.getConfiguration().getTeleportNoBackLocation());
             return true;
         }
+        Optional<Location> deathLocation = user.getProfile().getDeathLocation(plugin);
+        if (backLocation.get().equals(deathLocation.orElse(null)) &&
+            !player.hasPermission(Permissions.TELEPORT_BACK_ON_DEATH)) {
+            player.sendMessage(plugin.getConfiguration().getTeleportBackIsDeathLocation());
+            return true;
+        }
         if (user.isPlayerTeleportBlocked(true)) {
             return true;
         }
