@@ -7,7 +7,7 @@ configuration:
     prevent_treasure_enchanted_books: true
     nerf_enchanted_books: true
   damage_effects:
-    damage_particle_amount: 64
+    damage_particle_amount: 156
     spawn_lightning_on_dead: true
     spawn_firework_on_killer: true
   nerf_mending_max_repair_amount: 6

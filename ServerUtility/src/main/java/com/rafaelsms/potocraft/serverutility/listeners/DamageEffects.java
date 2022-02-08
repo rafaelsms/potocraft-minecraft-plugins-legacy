@@ -30,7 +30,7 @@ public class DamageEffects implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void damageEffect(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Mob mob && mob.getNoDamageTicks() > (mob.getMaximumNoDamageTicks() / 2)) {
+        if (event.getEntity() instanceof Mob mob && mob.getNoDamageTicks() <= (mob.getMaximumNoDamageTicks() / 2)) {
             showDamageEffect(mob);
         }
     }
@@ -59,10 +59,6 @@ public class DamageEffects implements Listener {
                                          .withFade(Color.YELLOW, Color.ORANGE)
                                          .with(FireworkEffect.Type.BALL_LARGE)
                                          .build());
-            meta.addEffect(FireworkEffect.builder()
-                                         .withFade(Color.YELLOW, Color.ORANGE)
-                                         .with(FireworkEffect.Type.BURST)
-                                         .build());
             firework.setFireworkMeta(meta);
         }
     }
@@ -83,9 +79,9 @@ public class DamageEffects implements Listener {
                   .spawnParticle(Particle.BLOCK_DUST,
                                  effectLocation,
                                  particleAmount,
-                                 entity.getWidth() * 4.0 / 3.0,
-                                 entity.getHeight() * 4.0 / 3.0,
-                                 entity.getWidth() * 4.0 / 3.0,
+                                 entity.getWidth() * 0.38,
+                                 entity.getHeight() * 0.64,
+                                 entity.getWidth() * 0.38,
                                  blockData);
         }
     }
