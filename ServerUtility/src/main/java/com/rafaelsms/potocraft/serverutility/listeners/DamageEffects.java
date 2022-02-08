@@ -9,7 +9,7 @@ import org.bukkit.Particle;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
-import org.bukkit.entity.Mob;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -30,8 +30,9 @@ public class DamageEffects implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void damageEffect(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Mob mob && mob.getNoDamageTicks() <= (mob.getMaximumNoDamageTicks() / 2)) {
-            showDamageEffect(mob);
+        if (event.getEntity() instanceof LivingEntity livingEntity &&
+            livingEntity.getNoDamageTicks() <= (livingEntity.getMaximumNoDamageTicks() / 2)) {
+            showDamageEffect(livingEntity);
         }
     }
 
