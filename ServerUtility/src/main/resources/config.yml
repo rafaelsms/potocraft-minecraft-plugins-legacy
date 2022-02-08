@@ -39,8 +39,22 @@ configuration:
       maxEntityCramming: 4
   worlds_with_synced_real_time:
     - world
+  per_world_pvp_settings:
+    default:
+      prevent_night_skip: true
+      use_constant_pvp_setting: true
+      constant_pvp_setting: false
+      start_pvp_time: 14500
+      end_pvp_time: 23200
+    world_nether:
+      use_constant_pvp_setting: true
+      constant_pvp_setting: true
+    world_the_end:
+      use_constant_pvp_setting: true
+      constant_pvp_setting: false
 
 language:
+
   commands:
     player_only: "&cComando disponível apenas para jogadores"
     player_not_found: "&cJogador não encontrado!"

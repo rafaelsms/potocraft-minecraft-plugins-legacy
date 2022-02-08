@@ -23,8 +23,10 @@ import com.rafaelsms.potocraft.serverutility.listeners.QuickReplantListener;
 import com.rafaelsms.potocraft.serverutility.listeners.RainyNightListener;
 import com.rafaelsms.potocraft.serverutility.listeners.VanishManager;
 import com.rafaelsms.potocraft.serverutility.listeners.VillagerListener;
+import com.rafaelsms.potocraft.serverutility.listeners.WorldConfigurationApplier;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldGameRuleApplier;
 import com.rafaelsms.potocraft.serverutility.tasks.SyncWorldTimeTask;
+import com.rafaelsms.potocraft.serverutility.tasks.TimedPVPTask;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
@@ -62,9 +64,11 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new QuickBreakOreListener(this), this);
         getServer().getPluginManager().registerEvents(new QuickReplantListener(this), this);
         getServer().getPluginManager().registerEvents(new DamageEffects(this), this);
+        getServer().getPluginManager().registerEvents(new WorldConfigurationApplier(this), this);
 
         // Run world sync task
-        getServer().getScheduler().runTaskTimer(this, new SyncWorldTimeTask(this), 10L, 10L);
+        getServer().getScheduler().runTaskTimer(this, new SyncWorldTimeTask(this), 5L, 5L);
+        getServer().getScheduler().runTaskTimer(this, new TimedPVPTask(this), 10L, 10L);
 
         // Register commands
         registerCommand("anvil", new AnvilCommand(this));

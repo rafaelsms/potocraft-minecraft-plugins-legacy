@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.serverutility;
 
 import com.rafaelsms.potocraft.YamlFile;
+import com.rafaelsms.potocraft.serverutility.util.WorldCombatConfig;
 import com.rafaelsms.potocraft.util.TextUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameRule;
@@ -9,6 +10,7 @@ import org.bukkit.World;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,9 +23,40 @@ public class Configuration extends YamlFile {
 
     private final @NotNull ServerUtilityPlugin plugin;
 
+    private final Map<String, WorldCombatConfig> worldCombatConfigurations = new HashMap<>();
+    private final @NotNull WorldCombatConfig defaultCombatConfig;
+
     public Configuration(@NotNull ServerUtilityPlugin plugin) throws IOException {
         super(plugin.getDataFolder(), "config.yml");
         this.plugin = plugin;
+
+        // Parse world combat configurations
+        Map<String, Map<String, Object>> worldSettings = get("configuration.per_world_pvp_settings");
+        assert worldSettings != null;
+        // Parse default configuration
+        Map<String, Object> defaultConfiguration = worldSettings.getOrDefault("default", Map.of());
+        defaultCombatConfig = parseWorldConfiguration(defaultConfiguration, null);
+        plugin.logger()
+              .info("Default pvp: constant pvp = {},  pvp = {}, start = {}, end = {}",
+                    defaultCombatConfig.isConstantCombat(),
+                    defaultCombatConfig.getConstantCombatSetting(),
+                    defaultCombatConfig.getStartCombatTime(),
+                    defaultCombatConfig.getEndCombatTime());
+        // Parse other world configurations
+        for (Map.Entry<String, Map<String, Object>> entry : worldSettings.entrySet()) {
+            if (entry.getKey().equalsIgnoreCase("default")) {
+                continue;
+            }
+            WorldCombatConfig worldCombatConfig = parseWorldConfiguration(entry.getValue(), defaultCombatConfig);
+            worldCombatConfigurations.put(entry.getKey(), worldCombatConfig);
+            plugin.logger()
+                  .info("pvp for {}: constant pvp = {},  pvp = {}, start = {}, end = {}",
+                        entry.getKey(),
+                        worldCombatConfig.isConstantCombat(),
+                        worldCombatConfig.getConstantCombatSetting(),
+                        worldCombatConfig.getStartCombatTime(),
+                        worldCombatConfig.getEndCombatTime());
+        }
     }
 
     public Double getOverallDamageMultiplier() {
@@ -160,6 +193,37 @@ public class Configuration extends YamlFile {
             }
         }
         return worlds;
+    }
+
+    public @NotNull WorldCombatConfig getCombatConfiguration(@NotNull String worldName) {
+        return worldCombatConfigurations.getOrDefault(worldName, defaultCombatConfig);
+    }
+
+    private WorldCombatConfig parseWorldConfiguration(@NotNull Map<String, Object> configuration,
+                                                      @Nullable WorldCombatConfig defaultConfig) {
+        WorldCombatConfig.Builder builder = WorldCombatConfig.builder(defaultConfig);
+
+        Boolean preventNightSkip = (Boolean) configuration.get("prevent_night_skip");
+        if (preventNightSkip != null) {
+            builder.setPreventSkipNight(preventNightSkip);
+        }
+
+        Integer startTime = (Integer) configuration.get("start_pvp_time");
+        Integer endTime = (Integer) configuration.get("end_pvp_time");
+        if (startTime != null && endTime != null) {
+            builder.setCombatTime(startTime, endTime);
+        }
+
+        Boolean constantCombatSetting = (Boolean) configuration.get("constant_pvp_setting");
+        if (constantCombatSetting != null) {
+            builder.setConstantCombatSetting(constantCombatSetting);
+        }
+
+        Boolean constantCombat = (Boolean) configuration.get("use_constant_pvp_setting");
+        if (constantCombat != null) {
+            builder.setConstantCombat(constantCombat);
+        }
+        return builder.build();
     }
 
     public Component getPlayerOnly() {
