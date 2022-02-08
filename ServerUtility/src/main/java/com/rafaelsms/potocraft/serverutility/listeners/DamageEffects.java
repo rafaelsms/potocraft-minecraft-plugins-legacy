@@ -51,13 +51,17 @@ public class DamageEffects implements Listener {
                                              CreatureSpawnEvent.SpawnReason.COMMAND);
             firework.setShotAtAngle(false);
             FireworkMeta meta = firework.getFireworkMeta();
-            meta.setPower(2 * 2 + 1); // 2.5 seconds on air
+            meta.setPower(1); // 0.5 seconds on air (2.5 is too much)
             meta.addEffect(FireworkEffect.builder()
                                          .flicker(true)
                                          .trail(true)
                                          .withColor(Color.RED)
                                          .withFade(Color.YELLOW, Color.ORANGE)
                                          .with(FireworkEffect.Type.BALL_LARGE)
+                                         .build());
+            meta.addEffect(FireworkEffect.builder()
+                                         .withFade(Color.YELLOW, Color.ORANGE)
+                                         .with(FireworkEffect.Type.BURST)
                                          .build());
             firework.setFireworkMeta(meta);
         }
