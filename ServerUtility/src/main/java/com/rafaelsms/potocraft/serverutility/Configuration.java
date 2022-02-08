@@ -38,6 +38,18 @@ public class Configuration extends YamlFile {
         return get("configuration.enable_player_logging");
     }
 
+    public Integer getDamageParticleAmount() {
+        return getInt("configuration.damage_effects.damage_particle_amount");
+    }
+
+    public Boolean isSpawnLightningOnDead() {
+        return get("configuration.damage_effects.spawn_lightning_on_dead");
+    }
+
+    public Boolean isSpawnFireworkOnKiller() {
+        return get("configuration.damage_effects.spawn_firework_on_killer");
+    }
+
     public Integer getMendingMaxRepairAmount() {
         return getInt("configuration.nerf_mending_max_repair_amount");
     }
@@ -154,6 +166,10 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponent(get("language.commands.player_only")).build();
     }
 
+    public Component getPlayerNotFound() {
+        return TextUtil.toComponent(get("language.commands.player_not_found")).build();
+    }
+
     public Component getPlayerTimeHelp() {
         return TextUtil.toComponent(get("language.commands.player_time.help")).build();
     }
@@ -180,5 +196,9 @@ public class Configuration extends YamlFile {
 
     public Component getEnchantCantEnchantItem() {
         return TextUtil.toComponent(get("language.commands.enchant.cant_enchant_item")).build();
+    }
+
+    public Component getKillHelp() {
+        return TextUtil.toComponent(get("language.commands.kill.help")).build();
     }
 }

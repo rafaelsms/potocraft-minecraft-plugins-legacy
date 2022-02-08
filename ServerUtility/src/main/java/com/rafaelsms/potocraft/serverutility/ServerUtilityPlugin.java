@@ -4,11 +4,13 @@ import com.rafaelsms.potocraft.serverutility.commands.AnvilCommand;
 import com.rafaelsms.potocraft.serverutility.commands.EnchantCommand;
 import com.rafaelsms.potocraft.serverutility.commands.EnderchestCommand;
 import com.rafaelsms.potocraft.serverutility.commands.GameModeCommand;
+import com.rafaelsms.potocraft.serverutility.commands.KillCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerTimeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerWeatherCommand;
 import com.rafaelsms.potocraft.serverutility.commands.SuicideCommand;
 import com.rafaelsms.potocraft.serverutility.commands.VanishCommand;
 import com.rafaelsms.potocraft.serverutility.commands.WorkbenchCommand;
+import com.rafaelsms.potocraft.serverutility.listeners.DamageEffects;
 import com.rafaelsms.potocraft.serverutility.listeners.DamageModifier;
 import com.rafaelsms.potocraft.serverutility.listeners.ExperienceModifier;
 import com.rafaelsms.potocraft.serverutility.listeners.HideMessagesListener;
@@ -59,6 +61,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new QuickBreakTreeListener(this), this);
         getServer().getPluginManager().registerEvents(new QuickBreakOreListener(this), this);
         getServer().getPluginManager().registerEvents(new QuickReplantListener(this), this);
+        getServer().getPluginManager().registerEvents(new DamageEffects(this), this);
 
         // Run world sync task
         getServer().getScheduler().runTaskTimer(this, new SyncWorldTimeTask(this), 10L, 10L);
@@ -73,6 +76,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         registerCommand("gamemode", new GameModeCommand(this));
         registerCommand("enchant", new EnchantCommand(this));
         registerCommand("suicide", new SuicideCommand(this));
+        registerCommand("kill", new KillCommand(this));
 
         logger().info("ServerUtility enabled!");
     }

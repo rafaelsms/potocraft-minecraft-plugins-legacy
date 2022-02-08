@@ -34,3 +34,6 @@ commands:
   suicide:
     description: Kills your player entity.
     aliases: [ suicidar, suicidio ]
+  kill:
+    description: Forcefully kills another player.
+    aliases: [ matar ]
