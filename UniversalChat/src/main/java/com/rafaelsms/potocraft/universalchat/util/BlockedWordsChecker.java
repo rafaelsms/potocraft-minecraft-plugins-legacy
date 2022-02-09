@@ -24,7 +24,7 @@ public class BlockedWordsChecker {
                 } else if (c == 'o' || c == 'u') {
                     stringBuilder.append("(o|0|u|\\*|x)");
                 } else if (c == 's' || c == 'z') {
-                    stringBuilder.append("(s|z|c|\\*|x)");
+                    stringBuilder.append("(s|z|c|\\$|5|\\*|x)");
                 } else if (c == 'c' || c == 'ç' || c == 'k' || c == 'g') {
                     stringBuilder.append("(c|ç|k|g|\\*|x)");
                 } else if (c == 'm' || c == 'n') {

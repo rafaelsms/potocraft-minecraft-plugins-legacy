@@ -277,6 +277,13 @@ configuration:
     - monoball
     - boludo
     - boluda
+    - burro
+    - burra
+    - buro
+    - bura
+    - babaca
+    - cretino
+    - cretina
 
 language:
   console_name: 'administração'
