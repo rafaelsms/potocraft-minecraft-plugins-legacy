@@ -1,6 +1,9 @@
 configuration:
   damage_modifiers:
-    overall_damage_multiplier: 0.75
+    overall_damage_dealt_multiplier: 0.885
+    pvp_damage_multiplier: 1.125
+    armor_damage_reduction_multiplier: 0.845
+    enchantment_damage_reduction_multiplier: 0.793
     damage_cooldown_factor: 0.72
   villager:
     prevent_all_enchanted_books: false
@@ -10,7 +13,6 @@ configuration:
     damage_particle_amount: 156
     spawn_lightning_on_dead: true
     spawn_firework_on_killer: true
-  nerf_mending_max_repair_amount: 6
   enable_player_logging: true
   hide_join_quit_messages: false
   experience_modifier:

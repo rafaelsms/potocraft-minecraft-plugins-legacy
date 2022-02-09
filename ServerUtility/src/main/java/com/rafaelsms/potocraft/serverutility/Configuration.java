@@ -59,8 +59,20 @@ public class Configuration extends YamlFile {
         }
     }
 
-    public Double getOverallDamageMultiplier() {
-        return getDouble("configuration.damage_modifiers.overall_damage_multiplier");
+    public Double getOverallDamageDealtMultiplier() {
+        return getDouble("configuration.damage_modifiers.overall_damage_dealt_multiplier");
+    }
+
+    public Double getPlayerVersusPlayerDamageMultiplier() {
+        return getDouble("configuration.damage_modifiers.pvp_damage_multiplier");
+    }
+
+    public Double getArmorDamageReductionMultiplier() {
+        return getDouble("configuration.damage_modifiers.armor_damage_reduction_multiplier");
+    }
+
+    public Double getEnchantmentDamageReductionMultiplier() {
+        return getDouble("configuration.damage_modifiers.enchantment_damage_reduction_multiplier");
     }
 
     public Double getCooldownDamageFactor() {
@@ -81,10 +93,6 @@ public class Configuration extends YamlFile {
 
     public Boolean isSpawnFireworkOnKiller() {
         return get("configuration.damage_effects.spawn_firework_on_killer");
-    }
-
-    public Integer getMendingMaxRepairAmount() {
-        return getInt("configuration.nerf_mending_max_repair_amount");
     }
 
     public Boolean isPreventingAllEnchantedBooks() {

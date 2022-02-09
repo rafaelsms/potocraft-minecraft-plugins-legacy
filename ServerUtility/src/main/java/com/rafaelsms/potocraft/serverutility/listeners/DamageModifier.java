@@ -2,9 +2,12 @@ package com.rafaelsms.potocraft.serverutility.listeners;
 
 import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class DamageModifier implements Listener {
@@ -15,12 +18,48 @@ public class DamageModifier implements Listener {
         this.plugin = plugin;
     }
 
+    @SuppressWarnings("deprecation")
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    private void checkDamagedPlayer(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+
+        // Apply our multiplier
+        event.setDamage(EntityDamageEvent.DamageModifier.ARMOR,
+                        event.getDamage(EntityDamageEvent.DamageModifier.ARMOR) *
+                        plugin.getConfiguration().getArmorDamageReductionMultiplier());
+        event.setDamage(EntityDamageEvent.DamageModifier.MAGIC,
+                        event.getDamage(EntityDamageEvent.DamageModifier.MAGIC) *
+                        plugin.getConfiguration().getEnchantmentDamageReductionMultiplier());
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    private void changePlayerVersusPlayerDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+
+        Player damager = null;
+        if (event.getDamager() instanceof Player player) {
+            damager = player;
+        } else if (event.getDamager() instanceof Projectile projectile &&
+                   projectile.getShooter() instanceof Player player) {
+            damager = player;
+        }
+        if (damager == null) {
+            return;
+        }
+
+        event.setDamage(event.getDamage() * plugin.getConfiguration().getPlayerVersusPlayerDamageMultiplier());
+    }
+
     @EventHandler
     private void changeCooldownModifier(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player player)) {
             return;
         }
-        double multiplier = plugin.getConfiguration().getOverallDamageMultiplier();
+        double multiplier = plugin.getConfiguration().getOverallDamageDealtMultiplier();
         double factor = plugin.getConfiguration().getCooldownDamageFactor();
         float attackCooldown = player.getAttackCooldown();
         double damageMultiplier = multiplier * Math.max((attackCooldown - factor) / (1.0 - factor), 0.0);
