@@ -34,7 +34,7 @@ public class BlockedWordsChecker {
                 } else if (c == 's' || c == 'z') {
                     stringBuilder.append("|s|z|c|\\$|5");
                 } else if (c == 'c' || c == 'ç' || c == 'k' || c == 'g') {
-                    stringBuilder.append("|c|ç|k|g|(qu?)");
+                    stringBuilder.append("|c|ç|k|g");
                 }
                 stringBuilder.append(")+");
                 stringBuilder.append("([^A-Za-z0-9]*)");
