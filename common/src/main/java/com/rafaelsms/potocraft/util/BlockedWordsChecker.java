@@ -29,14 +29,14 @@ public class BlockedWordsChecker {
                     stringBuilder.append("|a|4");
                 } else if (c == 'i' || c == 'e') {
                     stringBuilder.append("|i|1|e|3");
-                } else if (c == 'o' || c == 'u') {
-                    stringBuilder.append("|o|0|u");
+                } else if (c == 'o' || c == 'u' || c == 'l') {
+                    stringBuilder.append("|o|0|u|l");
                 } else if (c == 's' || c == 'z') {
                     stringBuilder.append("|s|z|c|\\$|5");
                 } else if (c == 'c' || c == 'ç' || c == 'k' || c == 'g') {
                     stringBuilder.append("|c|ç|k|g");
                 } else if (c == 'x') {
-                    stringBuilder.append("|(ch)");
+                    stringBuilder.append("|(c+h+)");
                 }
                 stringBuilder.append(")+");
                 stringBuilder.append("([^A-Za-z0-9]*)");
