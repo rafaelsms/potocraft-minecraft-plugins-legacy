@@ -27,8 +27,10 @@ public class BlockedWordsChecker {
                 stringBuilder.append("(").append(c);
                 if (c == 'a') {
                     stringBuilder.append("|4");
-                } else if (c == 'i' || c == 'e' || c == 'y') {
+                } else if (c == 'i' || c == 'y') {
                     stringBuilder.append("|i|1|e|3|y"); // gay gai gei
+                } else if (c == 'e') {
+                    stringBuilder.append("|i|1|3"); // ez iz 3z
                 } else if (c == 'o' || c == 'u') {
                     stringBuilder.append("|o|0|u");
                 } else if (c == 'l') {
