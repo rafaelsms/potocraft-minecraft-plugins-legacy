@@ -1,18 +1,17 @@
 package com.rafaelsms.discordbot.listeners;
 
 import com.rafaelsms.discordbot.DiscordBot;
+import com.rafaelsms.discordbot.util.DiscordUtil;
 import com.rafaelsms.potocraft.util.BlockedWordsChecker;
-import net.dv8tion.jda.api.entities.EmbedType;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.util.List;
 
 public class BlockedWordsListener extends ListenerAdapter {
 
@@ -40,25 +39,17 @@ public class BlockedWordsListener extends ListenerAdapter {
             return;
         }
         wordsChecker.removeBlockedWords(message.getContentRaw()).ifPresent(string -> {
-            message.getTextChannel()
-                   .sendMessageEmbeds(new MessageEmbed(null,
-                                                       null,
-                                                       string,
-                                                       EmbedType.UNKNOWN,
-                                                       null,
-                                                       Color.RED.getRGB(),
-                                                       null,
-                                                       null,
-                                                       new MessageEmbed.AuthorInfo(member.getEffectiveName(),
-                                                                                   member.getEffectiveAvatarUrl(),
-                                                                                   member.getEffectiveAvatarUrl(),
-                                                                                   null),
-                                                       null,
-                                                       null,
-                                                       null,
-                                                       List.of()))
-                   .queue();
-            message.delete().queue();
+            MessageAction replacement = message.getTextChannel()
+                                               .sendMessageEmbeds(DiscordUtil.getQuoteMessage(member,
+                                                                                              Color.ORANGE.getRGB(),
+                                                                                              string));
+            // Reply to the same message
+            if (message.getMessageReference() != null) {
+                replacement.referenceById(message.getMessageReference().getMessageIdLong())
+                           .queue(msg -> message.delete().queue());
+            } else {
+                replacement.queue(msg -> message.delete().queue());
+            }
             Member botMember = message.getGuild().getMember(bot.getJda().getSelfUser());
             if (botMember != null && botMember.canInteract(member)) {
                 member.timeoutFor(bot.getConfiguration().getCursedTimeout()).reason("cursing").queue();

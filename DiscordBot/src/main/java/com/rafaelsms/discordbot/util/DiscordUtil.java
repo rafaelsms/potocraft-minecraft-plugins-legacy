@@ -2,9 +2,11 @@ package com.rafaelsms.discordbot.util;
 
 import com.rafaelsms.discordbot.DiscordBot;
 import net.dv8tion.jda.api.entities.Category;
+import net.dv8tion.jda.api.entities.EmbedType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.IPermissionContainer;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
@@ -69,5 +71,24 @@ public final class DiscordUtil {
                                                         permissionLevel.getAllowedPermissions(),
                                                         permissionLevel.getDeniedPermissions())
                            .complete();
+    }
+
+    public static MessageEmbed getQuoteMessage(Member member, int color, String string) {
+        return new MessageEmbed(null,
+                                null,
+                                string,
+                                EmbedType.UNKNOWN,
+                                null,
+                                color,
+                                null,
+                                null,
+                                new MessageEmbed.AuthorInfo(member.getEffectiveName(),
+                                                            member.getEffectiveAvatarUrl(),
+                                                            member.getEffectiveAvatarUrl(),
+                                                            null),
+                                null,
+                                null,
+                                null,
+                                List.of());
     }
 }
