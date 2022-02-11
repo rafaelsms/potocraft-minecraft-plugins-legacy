@@ -36,11 +36,11 @@ public class BlockedWordsChecker {
                 } else if (c == 'z') {
                     stringBuilder.append("|s|z"); // gozar gosar
                 } else if (c == 's') {
-                    stringBuilder.append("|s|z|c|ç|\\$|5"); // gostosa gostoza gosto$a
+                    stringBuilder.append("|s|z|\\$|5"); // gostosa gostoza gosto$a
                 } else if (c == 'ç') {
                     stringBuilder.append("|c|(s+)"); // desgraçada desgracada desgrassada
                 } else if (c == 'c') {
-                    stringBuilder.append("|c|ç|k|g"); // babaca babaka carai garai karai
+                    stringBuilder.append("|ç|k|g"); // babaca babaka carai garai karai
                 } else if (c == 'k') {
                     stringBuilder.append("|c|k|g");
                 } else if (c == 'g') {
