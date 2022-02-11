@@ -8,7 +8,6 @@ configuration:
   blocked_word_user_timeout_seconds: 300
   blocked_words:
     - puta
-    - puto
     - whore
     - prostituta
     - cacete
@@ -289,6 +288,17 @@ configuration:
     - desgraça
     - desgraçado
     - desgraçada
+    - ass
+    - pussy
+    - pica
+    - dick
+    - fuck
+    - fucking
+    - fucked
+    - poura
+    - porra
+    - ez
+    - easy
 
 language:
   message_contains_blocked_words: "[ mensagem apagada: _contém palavras bloqueadas_ ]"

@@ -49,6 +49,7 @@ public class ReplyCommand extends Command {
             return;
         }
         String message = stringOptional.get();
+        message = plugin.getWordsChecker().removeBlockedWords(message).orElse(message);
 
         Optional<UUID> replyCandidateOptional = senderUser.getReplyCandidate();
         if (replyCandidateOptional.isEmpty()) {
@@ -91,10 +92,6 @@ public class ReplyCommand extends Command {
 
         // Send to players
         player.sendMessage(outgoingFormat);
-        // Check if there is any blocked words
-        if (plugin.getWordsChecker().containsBlockedWord(message)) {
-            return;
-        }
         receiver.sendMessage(incomingFormat);
         // Send to all spies
         for (ProxiedPlayer onlinePlayer : plugin.getProxy().getPlayers()) {

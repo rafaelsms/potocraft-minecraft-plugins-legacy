@@ -30,17 +30,13 @@ public class BlockedWordsListener extends ListenerAdapter {
     }
 
     private void handleMessageContent(Message message) {
-        if (!wordsChecker.containsBlockedWord(message.getContentRaw())) {
-            return;
-        }
-        Member botMember = message.getGuild().getMember(bot.getJda().getSelfUser());
-        if (message.getMember() != null && botMember != null && botMember.canInteract(message.getMember())) {
-            message.getMember().timeoutFor(bot.getConfiguration().getCursedTimeout()).reason("cursing").queue();
-            bot.getLogger().info("Timed out {} for cursing", message.getMember().getUser().getName());
-        }
-        message.getChannel()
-               .sendMessage(bot.getConfiguration().getMessageContainsBlockedWords())
-               .reference(message)
-               .queue(msg -> message.delete().reason("cursing").queue());
+        wordsChecker.removeBlockedWords(message.getContentRaw()).ifPresent(string -> {
+            message.editMessage(string).queue();
+            Member botMember = message.getGuild().getMember(bot.getJda().getSelfUser());
+            if (message.getMember() != null && botMember != null && botMember.canInteract(message.getMember())) {
+                message.getMember().timeoutFor(bot.getConfiguration().getCursedTimeout()).reason("cursing").queue();
+                bot.getLogger().info("Timed out {} for cursing", message.getMember().getUser().getName());
+            }
+        });
     }
 }

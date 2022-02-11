@@ -42,6 +42,7 @@ public class MessageCommand extends Command {
             return;
         }
         String message = messageOptional.get();
+        message = plugin.getWordsChecker().removeBlockedWords(message).orElse(message);
 
         Optional<ProxiedPlayer> optionalPlayer =
                 TextUtil.closestMatch(plugin.getProxy().getPlayers(), ProxiedPlayer::getName, username);
@@ -95,10 +96,6 @@ public class MessageCommand extends Command {
 
         // Send to players
         sender.sendMessage(outgoingFormat);
-        // Check if there is any blocked words
-        if (plugin.getWordsChecker().containsBlockedWord(message)) {
-            return;
-        }
         receiver.sendMessage(incomingFormat);
         // Send to all spies
         for (ProxiedPlayer onlinePlayer : plugin.getProxy().getPlayers()) {
