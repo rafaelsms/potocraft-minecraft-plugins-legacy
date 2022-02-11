@@ -46,10 +46,6 @@ public class TicketListener extends ListenerAdapter {
         // Prepare ticket lobby category
         Category ticketCategory =
                 DiscordUtil.getOrCreateCategory(guild, bot.getConfiguration().getTicketCategoryName());
-        // Fix permissions for this category
-        DiscordUtil.setRolePermissions(ticketCategory.getPermissionContainer(),
-                                       guild.getPublicRole(),
-                                       PermissionLevel.NONE);
         // Prepare lobby channel if it doesn't exist
         String lobbyChannelName = bot.getConfiguration().getTicketLobbyChannelName();
         if (!DiscordUtil.doesChannelExists(ticketCategory, lobbyChannelName)) {
@@ -68,16 +64,20 @@ public class TicketListener extends ListenerAdapter {
                                                               Emoji.fromUnicode("🔪"))),
                                        ActionRow.of(Button.of(ButtonStyle.PRIMARY,
                                                               QUESTION_ID,
-                                                              "Tirar dúvida",
-                                                              Emoji.fromUnicode("🙋"))),
+                                                              "Tirar dúvida", Emoji.fromUnicode("🙋"))),
                                        ActionRow.of(Button.of(ButtonStyle.PRIMARY,
                                                               CHECKOUT_ID,
                                                               "Reivindicar compras do site",
-                                                              Emoji.fromUnicode("🛍"))))
-                        .complete();
+                                                              Emoji.fromUnicode("🛍")))).complete();
+            // Fix permission for channel
             DiscordUtil.setRolePermissions(lobbyChannel.getPermissionContainer(),
                                            guild.getPublicRole(),
                                            PermissionLevel.VIEW_ONLY);
+
+            // Fix permissions for this category
+            DiscordUtil.setRolePermissions(ticketCategory.getPermissionContainer(),
+                                           guild.getPublicRole(),
+                                           PermissionLevel.NONE);
             bot.getLogger().info("Set up ticket lobby for {}", guild.getName());
         }
 
@@ -151,20 +151,18 @@ public class TicketListener extends ListenerAdapter {
                 DiscordUtil.getOrCreateCategory(interaction.getGuild(), bot.getConfiguration().getTicketCategoryName());
         TextChannel ticketChannel = category.createTextChannel(channelName).complete();
 
-        // Allow member to interact with the channel
-        DiscordUtil.setMemberPermissions(ticketChannel.getPermissionContainer(), member, PermissionLevel.INTERACT);
         // Allow no one to see this channel
         DiscordUtil.setRolePermissions(ticketChannel.getPermissionContainer(),
                                        ticketChannel.getGuild().getPublicRole(),
                                        PermissionLevel.NONE);
+        // Allow member to interact with the channel
+        DiscordUtil.setMemberPermissions(ticketChannel.getPermissionContainer(), member, PermissionLevel.INTERACT);
         // Send a ticket opened message on the channel
         String openedTicketMessage = bot.getConfiguration()
                                         .getOpenedTicketMessage()
                                         .replaceAll("%user_link%", "<@%d>".formatted(member.getIdLong()));
         ticketChannel.sendMessage(openedTicketMessage)
-                     .setActionRow(Button.of(ButtonStyle.DANGER,
-                                             CLOSE_TICKET_ID,
-                                             "Encerrar ticket",
+                     .setActionRow(Button.of(ButtonStyle.DANGER, CLOSE_TICKET_ID, "Encerrar ticket",
                                              Emoji.fromUnicode("❌")))
                      .queue();
 

@@ -1,6 +1,7 @@
 package com.rafaelsms.discordbot;
 
 import com.rafaelsms.discordbot.listeners.BlockedWordsListener;
+import com.rafaelsms.discordbot.listeners.SetActivityListener;
 import com.rafaelsms.discordbot.listeners.TicketListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -38,6 +39,7 @@ public class DiscordBot {
             throw exception;
         }
         this.logger.info("Bot connected, adding listeners...");
+        this.jda.addEventListener(new SetActivityListener(this));
         this.jda.addEventListener(new BlockedWordsListener(this));
         this.jda.addEventListener(new TicketListener(this));
     }

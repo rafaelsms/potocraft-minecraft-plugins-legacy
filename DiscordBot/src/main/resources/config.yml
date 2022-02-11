@@ -1,5 +1,6 @@
 configuration:
   token: ''
+  bot_playing_activity: 'jogar.potocraft.com'
   operator_role_name: 'Operador'
   tickets:
     category_name: 'TICKETS'

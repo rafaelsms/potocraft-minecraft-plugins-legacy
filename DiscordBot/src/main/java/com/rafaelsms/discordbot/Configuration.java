@@ -19,6 +19,10 @@ public class Configuration extends YamlFile {
         return get("configuration.token");
     }
 
+    public String getBotPlayingActivity() {
+        return get("configuration.bot_playing_activity");
+    }
+
     public String getOperatorRoleName() {
         return get("configuration.operator_role_name");
     }
