@@ -153,8 +153,14 @@ public class TicketListener extends ListenerAdapter {
 
         // Allow member to interact with the channel
         DiscordUtil.setMemberPermissions(ticketChannel.getPermissionContainer(), member, PermissionLevel.INTERACT);
+        // Allow no one to see this channel
+        DiscordUtil.setRolePermissions(ticketChannel.getPermissionContainer(),
+                                       ticketChannel.getGuild().getPublicRole(),
+                                       PermissionLevel.NONE);
         // Send a ticket opened message on the channel
-        String openedTicketMessage = bot.getConfiguration().getOpenedTicketMessage().replaceAll("%user_link%", "<@%d>".formatted(member.getIdLong()));
+        String openedTicketMessage = bot.getConfiguration()
+                                        .getOpenedTicketMessage()
+                                        .replaceAll("%user_link%", "<@%d>".formatted(member.getIdLong()));
         ticketChannel.sendMessage(openedTicketMessage)
                      .setActionRow(Button.of(ButtonStyle.DANGER,
                                              CLOSE_TICKET_ID,
@@ -165,7 +171,8 @@ public class TicketListener extends ListenerAdapter {
         // Send "ticket opened" message
         String ticketChannelCreatedMessage = bot.getConfiguration()
                                                 .getTicketChannelCreatedMessage()
-                                                .replaceAll("%channel_link%", "<#%d>".formatted(ticketChannel.getIdLong()));
+                                                .replaceAll("%channel_link%",
+                                                            "<#%d>".formatted(ticketChannel.getIdLong()));
         interaction.reply(ticketChannelCreatedMessage).setEphemeral(true).queue();
         bot.getLogger().info("Member {}#{} created a ticket for {}", user.getName(), user.getDiscriminator(), buttonId);
     }
