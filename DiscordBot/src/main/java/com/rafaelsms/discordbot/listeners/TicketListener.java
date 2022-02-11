@@ -43,10 +43,13 @@ public class TicketListener extends ListenerAdapter {
             DiscordUtil.setRolePermissions(ticketCategory.getPermissionContainer(),
                                            guild.getPublicRole(),
                                            PermissionLevel.NONE);
-            // Prepare lobby channel and its open ticket message
+            // Prepare lobby channel if it doesn't exist
             String lobbyChannelName = bot.getConfiguration().getTicketLobbyChannelName();
             if (!DiscordUtil.doesChannelExists(ticketCategory, lobbyChannelName)) {
                 TextChannel lobbyChannel = ticketCategory.createTextChannel(lobbyChannelName).complete();
+                // Move to first position
+                ticketCategory.modifyTextChannelPositions().selectPosition(0).swapPosition(lobbyChannel).queue();
+                // Send open ticket message
                 lobbyChannel.sendMessage(bot.getConfiguration().getOpenTicketMessage())
                             .setActionRows(ActionRow.of(Button.of(ButtonStyle.PRIMARY,
                                                                   SUGGESTION_ID,
