@@ -28,15 +28,23 @@ public class BlockedWordsChecker {
                 if (c == 'a') {
                     stringBuilder.append("|4");
                 } else if (c == 'i' || c == 'e' || c == 'y') {
-                    stringBuilder.append("|i|1|e|3|y");
+                    stringBuilder.append("|i|1|e|3|y"); // gay gai gei
                 } else if (c == 'o' || c == 'u') {
                     stringBuilder.append("|o|0|u");
                 } else if (c == 'l') {
                     stringBuilder.append("|u|1");
-                } else if (c == 's' || c == 'z') {
-                    stringBuilder.append("|s|z|c|\\$|5");
-                } else if (c == 'c' || c == 'ç' || c == 'k' || c == 'g') {
-                    stringBuilder.append("|c|ç|k|g");
+                } else if (c == 'z') {
+                    stringBuilder.append("|s|z"); // gozar gosar
+                } else if (c == 's') {
+                    stringBuilder.append("|s|z|c|ç|\\$|5"); // gostosa gostoza gosto$a
+                } else if (c == 'ç') {
+                    stringBuilder.append("|c|(s+)"); // desgraçada desgracada desgrassada
+                } else if (c == 'c') {
+                    stringBuilder.append("|c|ç|k|g"); // babaca babaka carai garai karai
+                } else if (c == 'k') {
+                    stringBuilder.append("|c|k|g");
+                } else if (c == 'g') {
+                    stringBuilder.append("|c|k|g");
                 } else if (c == 'x') {
                     stringBuilder.append("|(c+h+)");
                 }
