@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BlockedWordsChecker {
@@ -29,8 +30,10 @@ public class BlockedWordsChecker {
                     stringBuilder.append("|4");
                 } else if (c == 'i' || c == 'e' || c == 'y') {
                     stringBuilder.append("|i|1|e|3|y");
-                } else if (c == 'o' || c == 'u' || c == 'l') {
-                    stringBuilder.append("|o|0|u|l|1");
+                } else if (c == 'o' || c == 'u') {
+                    stringBuilder.append("|o|0|u");
+                } else if (c == 'l') {
+                    stringBuilder.append("|u|1");
                 } else if (c == 's' || c == 'z') {
                     stringBuilder.append("|s|z|c|\\$|5");
                 } else if (c == 'c' || c == 'ç' || c == 'k' || c == 'g') {
@@ -57,7 +60,11 @@ public class BlockedWordsChecker {
         // Search blocked words
         for (Map.Entry<String, Pattern> entry : blockedWordsRegex.entrySet()) {
             // Find every match
-            MatchResult matchResult = entry.getValue().matcher(normalizedString).toMatchResult();
+            Matcher matcher = entry.getValue().matcher(normalizedString);
+            if (!matcher.matches()) {
+                continue;
+            }
+            MatchResult matchResult = matcher.toMatchResult();
             // Replace match with symbols
             for (int i = 0; i < matchResult.groupCount(); i++) {
                 int start = matchResult.start(i);
