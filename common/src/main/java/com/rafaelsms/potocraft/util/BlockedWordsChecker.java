@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,7 +22,7 @@ public class BlockedWordsChecker {
 
         // [^A-Za-z0-9] differs from \W because of underline ('_')
         for (String blockedWord : blockedWords) {
-            StringBuilder stringBuilder = new StringBuilder("(");
+            StringBuilder stringBuilder = new StringBuilder("(^|[^A-Za-z0-9]+)(");
             for (char c : blockedWord.toCharArray()) {
                 stringBuilder.append("(").append(c);
                 if (c == 'a') {
@@ -43,7 +42,7 @@ public class BlockedWordsChecker {
                 }
                 stringBuilder.append(")+");
             }
-            stringBuilder.append(")");
+            stringBuilder.append(")([^A-Za-z0-9]+|$)");
             blockedWordsRegex.put(blockedWord, Pattern.compile(stringBuilder.toString(), Pattern.CASE_INSENSITIVE));
         }
     }
@@ -59,29 +58,26 @@ public class BlockedWordsChecker {
 
         // Search blocked words
         for (Map.Entry<String, Pattern> entry : blockedWordsRegex.entrySet()) {
-            // Find every match
+            // Find match
             Matcher matcher = entry.getValue().matcher(normalizedString);
-            if (!matcher.matches()) {
-                continue;
-            }
-            MatchResult matchResult = matcher.toMatchResult();
-            // Replace match with symbols
-            for (int i = 0; i < matchResult.groupCount(); i++) {
-                int start = matchResult.start(i);
-                int end = matchResult.end(i);
-                String beforeWord = string.substring(0, Math.max(start - 1, 0));
-                String afterWord = string.substring(Math.min(end + 1, stringLength), stringLength);
-                String censuredWord = matchResult.group(i).replaceAll(".", "*");
+            while (matcher.find()) {
+                // Replace match with symbols
+                int start = matcher.start(2);
+                int end = matcher.end(2);
+                String beforeWord = string.substring(0, Math.max(start, 0));
+                String afterWord = string.substring(Math.min(end, stringLength), stringLength); // end is exclusive
+                String censuredWord = matcher.group(2).replaceAll(".", "-");
 
                 // Compose the string back
                 string = beforeWord + censuredWord + afterWord;
                 logger.info(
-                        "Found \"{}\" in \"{}\" (start = {}, end = {}) (pattern = \"{}\"), replacing with \"{}\" resulting in {}",
+                        "Found \"{}\" (pattern = \"{}\") in \"{}\" (start = {}, end = {}, group = \"{}\"), replacing with \"{}\" resulting in \"{}\"",
                         entry.getKey(),
+                        entry.getValue().toString(),
                         normalizedString,
                         start,
                         end,
-                        entry.getValue().toString(),
+                        matcher.group(2),
                         censuredWord,
                         string);
                 anyReplacement = true;
