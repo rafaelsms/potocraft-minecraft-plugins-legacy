@@ -10,6 +10,8 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.guild.GuildAvailableEvent;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -36,48 +38,61 @@ public class TicketListener extends ListenerAdapter {
         this.bot = bot;
         // Prepare guild
         for (Guild guild : bot.getJda().getGuilds()) {
-            // Prepare ticket lobby category
-            Category ticketCategory =
-                    DiscordUtil.getOrCreateCategory(guild, bot.getConfiguration().getTicketCategoryName());
-            // Fix permissions for this category
-            DiscordUtil.setRolePermissions(ticketCategory.getPermissionContainer(),
-                                           guild.getPublicRole(),
-                                           PermissionLevel.NONE);
-            // Prepare lobby channel if it doesn't exist
-            String lobbyChannelName = bot.getConfiguration().getTicketLobbyChannelName();
-            if (!DiscordUtil.doesChannelExists(ticketCategory, lobbyChannelName)) {
-                TextChannel lobbyChannel = ticketCategory.createTextChannel(lobbyChannelName).complete();
-                // Move to first position
-                ticketCategory.modifyTextChannelPositions().selectPosition(0).swapPosition(lobbyChannel).queue();
-                // Send open ticket message
-                lobbyChannel.sendMessage(bot.getConfiguration().getOpenTicketMessage())
-                            .setActionRows(ActionRow.of(Button.of(ButtonStyle.PRIMARY,
-                                                                  SUGGESTION_ID,
-                                                                  "Sugerir",
-                                                                  Emoji.fromUnicode("🤝"))),
-                                           ActionRow.of(Button.of(ButtonStyle.PRIMARY,
-                                                                  REPORT_ID,
-                                                                  "Denunciar",
-                                                                  Emoji.fromUnicode("🔪"))),
-                                           ActionRow.of(Button.of(ButtonStyle.PRIMARY,
-                                                                  QUESTION_ID,
-                                                                  "Tirar dúvida",
-                                                                  Emoji.fromUnicode("🙋"))),
-                                           ActionRow.of(Button.of(ButtonStyle.PRIMARY,
-                                                                  CHECKOUT_ID,
-                                                                  "Reivindicar compras do site",
-                                                                  Emoji.fromUnicode("🛍"))))
-                            .complete();
-                DiscordUtil.setRolePermissions(lobbyChannel.getPermissionContainer(),
-                                               guild.getPublicRole(),
-                                               PermissionLevel.VIEW_ONLY);
-            }
-
-            Role operatorRole = DiscordUtil.getOrCreateRole(guild, bot.getConfiguration().getOperatorRoleName());
-            DiscordUtil.setRolePermissions(ticketCategory.getPermissionContainer(),
-                                           operatorRole,
-                                           PermissionLevel.OPERATOR);
+            prepareGuild(guild);
         }
+    }
+
+    private void prepareGuild(@NotNull Guild guild) {
+        // Prepare ticket lobby category
+        Category ticketCategory =
+                DiscordUtil.getOrCreateCategory(guild, bot.getConfiguration().getTicketCategoryName());
+        // Fix permissions for this category
+        DiscordUtil.setRolePermissions(ticketCategory.getPermissionContainer(),
+                                       guild.getPublicRole(),
+                                       PermissionLevel.NONE);
+        // Prepare lobby channel if it doesn't exist
+        String lobbyChannelName = bot.getConfiguration().getTicketLobbyChannelName();
+        if (!DiscordUtil.doesChannelExists(ticketCategory, lobbyChannelName)) {
+            TextChannel lobbyChannel = ticketCategory.createTextChannel(lobbyChannelName).complete();
+            // Move to first position
+            ticketCategory.modifyTextChannelPositions().selectPosition(0).swapPosition(lobbyChannel).queue();
+            // Send open ticket message
+            lobbyChannel.sendMessage(bot.getConfiguration().getOpenTicketMessage())
+                        .setActionRows(ActionRow.of(Button.of(ButtonStyle.PRIMARY,
+                                                              SUGGESTION_ID,
+                                                              "Sugerir",
+                                                              Emoji.fromUnicode("🤝"))),
+                                       ActionRow.of(Button.of(ButtonStyle.PRIMARY,
+                                                              REPORT_ID,
+                                                              "Denunciar",
+                                                              Emoji.fromUnicode("🔪"))),
+                                       ActionRow.of(Button.of(ButtonStyle.PRIMARY,
+                                                              QUESTION_ID,
+                                                              "Tirar dúvida",
+                                                              Emoji.fromUnicode("🙋"))),
+                                       ActionRow.of(Button.of(ButtonStyle.PRIMARY,
+                                                              CHECKOUT_ID,
+                                                              "Reivindicar compras do site",
+                                                              Emoji.fromUnicode("🛍"))))
+                        .complete();
+            DiscordUtil.setRolePermissions(lobbyChannel.getPermissionContainer(),
+                                           guild.getPublicRole(),
+                                           PermissionLevel.VIEW_ONLY);
+            bot.getLogger().info("Set up ticket lobby for {}", guild.getName());
+        }
+
+        Role operatorRole = DiscordUtil.getOrCreateRole(guild, bot.getConfiguration().getOperatorRoleName());
+        DiscordUtil.setRolePermissions(ticketCategory.getPermissionContainer(), operatorRole, PermissionLevel.OPERATOR);
+    }
+
+    @Override
+    public void onGuildJoin(@NotNull GuildJoinEvent event) {
+        prepareGuild(event.getGuild());
+    }
+
+    @Override
+    public void onGuildAvailable(@NotNull GuildAvailableEvent event) {
+        prepareGuild(event.getGuild());
     }
 
     @Override
@@ -92,9 +107,15 @@ public class TicketListener extends ListenerAdapter {
 
         // Close ticket interaction
         if (buttonId.equalsIgnoreCase(CLOSE_TICKET_ID)) {
+            TextChannel textChannel = event.getInteraction().getTextChannel();
             if (DiscordUtil.isOperator(bot, member)) {
                 interaction.reply(bot.getConfiguration().getTicketClosingMessage()).setEphemeral(true).queue();
                 interaction.getTextChannel().delete().queue();
+                bot.getLogger()
+                   .info("Operator {}#{} closed ticket {}",
+                         user.getName(),
+                         user.getDiscriminator(),
+                         textChannel.getName());
                 return;
             }
 
@@ -102,9 +123,10 @@ public class TicketListener extends ListenerAdapter {
             DiscordUtil.setMemberPermissions(interaction.getTextChannel().getPermissionContainer(),
                                              member,
                                              PermissionLevel.NONE);
-            TextChannel textChannel = event.getInteraction().getTextChannel();
             textChannel.getManager().setName("%s-closed".formatted(textChannel.getName())).queue();
             interaction.reply(bot.getConfiguration().getTicketClosingMessage()).setEphemeral(true).queue();
+            bot.getLogger()
+               .info("Member {}#{} closed ticket {}", user.getName(), user.getDiscriminator(), textChannel.getName());
             return;
         }
 
@@ -132,9 +154,7 @@ public class TicketListener extends ListenerAdapter {
         // Allow member to interact with the channel
         DiscordUtil.setMemberPermissions(ticketChannel.getPermissionContainer(), member, PermissionLevel.INTERACT);
         // Send a ticket opened message on the channel
-        String openedTicketMessage = bot.getConfiguration()
-                                        .getOpenedTicketMessage()
-                                        .replaceAll("%user_link%", "<@%d>".formatted(member.getIdLong()));
+        String openedTicketMessage = bot.getConfiguration().getOpenedTicketMessage().replaceAll("%user_link%", "<@%d>".formatted(member.getIdLong()));
         ticketChannel.sendMessage(openedTicketMessage)
                      .setActionRow(Button.of(ButtonStyle.DANGER,
                                              CLOSE_TICKET_ID,
@@ -145,8 +165,8 @@ public class TicketListener extends ListenerAdapter {
         // Send "ticket opened" message
         String ticketChannelCreatedMessage = bot.getConfiguration()
                                                 .getTicketChannelCreatedMessage()
-                                                .replaceAll("%channel_link%",
-                                                            "<#%d>".formatted(ticketChannel.getIdLong()));
+                                                .replaceAll("%channel_link%", "<#%d>".formatted(ticketChannel.getIdLong()));
         interaction.reply(ticketChannelCreatedMessage).setEphemeral(true).queue();
+        bot.getLogger().info("Member {}#{} created a ticket for {}", user.getName(), user.getDiscriminator(), buttonId);
     }
 }
