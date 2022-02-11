@@ -1,23 +1,10 @@
 configuration:
-  chat_limiter:
-    message_amount: 4
-    time_amount_millis: 12000
-    min_message_length: 3
-  comparator:
-    min_length_to_compare: 4
-    min_char_differences: 3
-  universal_chat:
-    format: "&6!! &7(&6%server%&7)&6 <&e%prefix%%username%%suffix%&6> &f%message%"
-    prefix: '!!'
-  global_chat:
-    format: "&3! <&e%prefix%%username%%suffix%&3> &f%message%"
-    spy_format: "&7! (%server%) <%prefix%%username%%suffix%&7> &7%message%"
-    prefix: '!'
-  other_server_chat:
-    spy_format: "&7(%server%) %prefix%&7%username%%suffix%&7: &7%message%"
-  local_chat_format: "&e%prefix%%username%%suffix%&7: &f%message%"
-  direct_messages:
-    reply_time_amount_seconds: 240
+  token: ''
+  operator_role_name: 'Operador'
+  tickets:
+    category_name: 'TICKETS'
+    lobby_channel_name: 'Iniciar-ticket'
+  blocked_word_user_timeout_seconds: 300
   blocked_words:
     - puta
     - puto
@@ -301,21 +288,41 @@ configuration:
     - desgraça
     - desgraçado
     - desgraçada
-    - chato
-    - chata
 
 language:
-  console_name: 'administração'
-  unknown_server_name: 'limbo?'
-  no_permission: "&cVocê não possui permissão."
-  messages_too_small: "&cMensagens muito pequenas são ignoradas!"
-  messages_too_frequent: "&cMensagens enviadas muito rapidamente!"
-  messages_too_similar: "&cMensagens muito parecidas!"
-  players_only: "&cComando disponível apenas para jogadores!"
-  direct_messages:
-    help: "&6Digite &e&l/mensagem <nome> <mensagem>"
-    reply_help: "&6Digite &e&l/responder <mensagem>&6, a mensagem irá para a última pessoa com quem falou."
-    no_player_found: "&cJogador não encontrado!"
-    outgoing_format: "&3você &7-> &3%receiver% &7%message%"
-    incoming_format: "&3%sender% &7-> &3você &7%message%"
-    spy_format: "&3%sender% &7-> &3%receiver% &7%message%"
+  message_contains_blocked_words: "[ mensagem apagada: _contém palavras bloqueadas_ ]"
+  tickets:
+    open_ticket_message: |
+      **Seja bem vindo a PotoCraft!**
+      
+      Aqui você pode:
+      ```
+      - Fazer denúncias,
+      - Tirar dúvidas,
+      - Fazer sugestões,
+      - Ativar compras realizadas pelo site.
+      ```
+      Antes de prosseguir, leia atentamente **as regras de comunicação**:
+      ```
+      - Não marque as pessoas,
+      - Mantenha o respeito,
+      - Não aguarde a resposta, já conte o que você precisa ou quer
+      - Não abra um ticket e suma
+      ```
+      Agora, se quiser continuar com o suporte dos moderadores e administração, clique abaixo:
+    ticket_channel_created_message: |
+      **Um ticket foi aberto para você!**
+      
+      Veja o canal %channel_link% clicando aqui e siga as instruções.
+    ticket_channel_already_exists: |
+      **Já existe um ticket em aberto!**
+      
+      Aguarde o encerramento antes de abrir uma nova requisição.
+      Caso o caso já foi encerrado, você pode fechar o canal através da mensagem do bot em %channel_link%.
+    ticket_opened_instructions_message: |
+      Olá, %user_link%!
+
+      Este é um ambiente seguro entre você e a moderação! **Apenas você poderá ver o que é conversado aqui.**
+      
+      Ao clicar no botão abaixo, o _ticket_ será encerrado e você deixará de ver as mensagens.
+    ticket_closing_message: 'Fechando este ticket...'
