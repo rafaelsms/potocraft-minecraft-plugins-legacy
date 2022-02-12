@@ -6,4 +6,5 @@ include 'ServerProfile'
 include 'ServerUtility'
 include 'BlockProtection'
 include 'DiscordBot'
+include 'GameServer'
 
