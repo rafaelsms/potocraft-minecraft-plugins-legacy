@@ -31,10 +31,8 @@ public class BlockedWordsChecker {
                     stringBuilder.append("|i|1|e|3|y"); // gay gai gei
                 } else if (c == 'e') {
                     stringBuilder.append("|i|1|3"); // ez iz 3z
-                } else if (c == 'o' || c == 'u') {
-                    stringBuilder.append("|o|0|u");
-                } else if (c == 'l') {
-                    stringBuilder.append("|u|1");
+                } else if (c == 'o') {
+                    stringBuilder.append("|o|0");
                 } else if (c == 'z') {
                     stringBuilder.append("|s|z"); // gozar gosar
                 } else if (c == 's') {
