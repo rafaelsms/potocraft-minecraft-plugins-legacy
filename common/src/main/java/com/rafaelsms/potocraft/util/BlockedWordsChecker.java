@@ -56,19 +56,18 @@ public class BlockedWordsChecker {
     }
 
     @SuppressWarnings("SuspiciousRegexArgument")
-    public Optional<String> removeBlockedWords(@NotNull String string) {
+    private Pair<String, Boolean> removeBlockedWord(@NotNull String string, boolean replaced) {
         int stringLength = string.length();
 
         // Normalize string
         String normalizedString = Normalizer.normalize(string, Normalizer.Form.NFD);
         normalizedString = normalizedString.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
-        boolean anyReplacement = false;
 
         // Search blocked words
         for (Map.Entry<String, Pattern> entry : blockedWordsRegex.entrySet()) {
             // Find match
             Matcher matcher = entry.getValue().matcher(normalizedString);
-            while (matcher.find()) {
+            if (matcher.find()) {
                 // Replace match with symbols
                 int start = matcher.start(2);
                 int end = matcher.end(2);
@@ -88,10 +87,20 @@ public class BlockedWordsChecker {
                         matcher.group(2),
                         censuredWord,
                         string);
-                anyReplacement = true;
+                return removeBlockedWord(string, true);
             }
         }
+        return new Pair<>(string, replaced);
+    }
 
-        return anyReplacement ? Optional.of(string) : Optional.empty();
+    public Optional<String> removeBlockedWords(@NotNull String string) {
+        Pair<String, Boolean> pair = removeBlockedWord(string, false);
+        if (pair.second) {
+            return Optional.of(pair.first);
+        }
+        return Optional.empty();
+    }
+
+    private record Pair<R, S>(R first, S second) {
     }
 }
