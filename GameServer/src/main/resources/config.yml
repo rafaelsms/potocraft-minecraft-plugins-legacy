@@ -2,3 +2,4 @@ configuration:
   uhc:
     worlds:
       - uhc
+    min_player_count: 4

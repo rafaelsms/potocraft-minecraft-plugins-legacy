@@ -58,6 +58,17 @@ public class UHCListener implements Listener {
         if (event.getPlayer().getGameMode() != GameMode.SURVIVAL) {
             return;
         }
-        // TODO
+        event.getPlayer().setHealth(0.0);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    private void killOnLeaveWorld(PlayerChangedWorldEvent event) {
+        if (shouldIgnoreWorld(event.getFrom())) {
+            return;
+        }
+        if (event.getPlayer().getGameMode() != GameMode.SURVIVAL) {
+            return;
+        }
+        event.getPlayer().setHealth(0.0);
     }
 }

@@ -16,4 +16,8 @@ public class Configuration extends YamlFile {
     public Set<String> getUhcWorldNames() {
         return Set.copyOf(Objects.requireNonNull(get("configuration.uhc.worlds")));
     }
+
+    public Integer getUhcMinPlayers() {
+        return getInt("configuration.uhc.min_player_count");
+    }
 }
