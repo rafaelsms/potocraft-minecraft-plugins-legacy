@@ -30,58 +30,52 @@ public class ProfileUpdater implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void updateJoinDate(PostLoginEvent event) {
-        plugin.runAsync(() -> {
-            ProxiedPlayer player = event.getPlayer();
-            boolean playerTypeRequiresLogin = PlayerType.get(player).requiresLogin();
-            Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
-            // Don't create profile for offline players, just return
-            if (optionalProfile.isEmpty() && playerTypeRequiresLogin) {
-                return;
-            }
-            // The new profile will only be created for online players
-            Profile profile = optionalProfile.orElse(new Profile(player.getUniqueId(), player.getName()));
+        ProxiedPlayer player = event.getPlayer();
+        boolean playerTypeRequiresLogin = PlayerType.get(player).requiresLogin();
+        Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
+        // Don't create profile for offline players, just return
+        if (optionalProfile.isEmpty() && playerTypeRequiresLogin) {
+            return;
+        }
+        // The new profile will only be created for online players
+        Profile profile = optionalProfile.orElse(new Profile(player.getUniqueId(), player.getName()));
 
-            // Check if profile is logged in and set its join date
-            if (!playerTypeRequiresLogin || Util.isPlayerLoggedIn(plugin, profile, player)) {
-                profile.setJoinDate(player.getName());
-                plugin.getDatabase().saveProfileCatching(profile);
-            }
-        });
+        // Check if profile is logged in and set its join date
+        if (!playerTypeRequiresLogin || Util.isPlayerLoggedIn(plugin, profile, player)) {
+            profile.setJoinDate(player.getName());
+            plugin.getDatabase().saveProfileCatching(profile);
+        }
     }
 
     @EventHandler
     public void updateLastServer(ServerDisconnectEvent event) {
-        plugin.runAsync(() -> {
-            ProxiedPlayer player = event.getPlayer();
-            Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
-            if (optionalProfile.isEmpty()) {
-                return;
-            }
-            Profile profile = optionalProfile.get();
+        ProxiedPlayer player = event.getPlayer();
+        Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
+        if (optionalProfile.isEmpty()) {
+            return;
+        }
+        Profile profile = optionalProfile.get();
 
-            // Check if profile is logged in and set its join date
-            if (!PlayerType.get(player).requiresLogin() || Util.isPlayerLoggedIn(plugin, profile, player)) {
-                profile.setLastServerName(event.getTarget().getName());
-                plugin.getDatabase().saveProfileCatching(profile);
-            }
-        });
+        // Check if profile is logged in and set its join date
+        if (!PlayerType.get(player).requiresLogin() || Util.isPlayerLoggedIn(plugin, profile, player)) {
+            profile.setLastServerName(event.getTarget().getName());
+            plugin.getDatabase().saveProfileCatching(profile);
+        }
     }
 
     @EventHandler
     public void updateQuitDate(PlayerDisconnectEvent event) {
-        plugin.runAsync(() -> {
-            ProxiedPlayer player = event.getPlayer();
-            Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
-            if (optionalProfile.isEmpty()) {
-                return;
-            }
-            Profile profile = optionalProfile.get();
+        ProxiedPlayer player = event.getPlayer();
+        Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
+        if (optionalProfile.isEmpty()) {
+            return;
+        }
+        Profile profile = optionalProfile.get();
 
-            // Check if profile is logged in and set its join date
-            if (!PlayerType.get(player).requiresLogin() || Util.isPlayerLoggedIn(plugin, profile, player)) {
-                profile.setQuitDate();
-                plugin.getDatabase().saveProfileCatching(profile);
-            }
-        });
+        // Check if profile is logged in and set its join date
+        if (!PlayerType.get(player).requiresLogin() || Util.isPlayerLoggedIn(plugin, profile, player)) {
+            profile.setQuitDate();
+            plugin.getDatabase().saveProfileCatching(profile);
+        }
     }
 }

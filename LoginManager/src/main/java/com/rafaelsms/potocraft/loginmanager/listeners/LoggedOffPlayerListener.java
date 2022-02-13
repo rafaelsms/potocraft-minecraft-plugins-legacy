@@ -11,15 +11,11 @@ import net.md_5.bungee.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * We will prevent logged off players from: - issuing certain commands; - speaking.
  */
 public class LoggedOffPlayerListener implements Listener {
-
-    private final Pattern commandPattern = Pattern.compile("^/\\s*(\\S+)", Pattern.CASE_INSENSITIVE);
 
     private final @NotNull LoginManagerPlugin plugin;
 
@@ -54,8 +50,7 @@ public class LoggedOffPlayerListener implements Listener {
             return;
         }
         // Ignore non-commands
-        Matcher matcher = commandPattern.matcher(event.getMessage());
-        if (!matcher.matches() || !event.isCommand()) {
+        if (!event.isCommand()) {
             return;
         }
 
@@ -65,11 +60,25 @@ public class LoggedOffPlayerListener implements Listener {
                 return;
             }
 
+            // Split commands
+            String[] words = event.getMessage().split(" ");
+            if (words.length == 0) {
+                event.setCancelled(true);
+                return;
+            }
+
+            // Supposed to be a command
+            String command = words[0];
+            if (command.length() < 1) {
+                event.setCancelled(true);
+                return;
+            }
+            command = command.substring(1);
+
             // Filter out any commands that aren't on the allowed list
-            String command = matcher.group(1).toLowerCase();
             if (!plugin.getConfiguration().getAllowedCommandsLoggedOff().contains(command)) {
                 sender.sendMessage(plugin.getConfiguration().getPunishmentMessageLoggedOff());
-                event.setCancelled(true);
+                //event.setCancelled(true);
             }
         });
     }

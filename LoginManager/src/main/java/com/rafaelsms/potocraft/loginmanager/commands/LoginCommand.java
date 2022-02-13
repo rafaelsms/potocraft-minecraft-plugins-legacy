@@ -82,11 +82,10 @@ public class LoginCommand extends Command {
         }
 
         // Check if we couldn't set pin
-        if (!profile.setPin(pinOptional.get())) {
-            player.sendMessage(plugin.getConfiguration().getCommandIncorrectPinFormat());
+        if (!profile.isPinValid(pinOptional.get())) {
+            player.disconnect(plugin.getConfiguration().getCommandIncorrectPin());
             return;
         }
-
 
         try {
             // Set as logged in and save
