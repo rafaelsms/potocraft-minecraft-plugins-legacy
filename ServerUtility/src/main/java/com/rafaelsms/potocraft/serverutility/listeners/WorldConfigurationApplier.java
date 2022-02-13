@@ -28,6 +28,9 @@ public class WorldConfigurationApplier implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     private void preventSkipNight(TimeSkipEvent event) {
+        if (event.getSkipReason() != TimeSkipEvent.SkipReason.NIGHT_SKIP) {
+            return;
+        }
         if (plugin.getConfiguration().getCombatConfiguration(event.getWorld().getName()).isPreventSkipNight()) {
             event.setCancelled(true);
         }
