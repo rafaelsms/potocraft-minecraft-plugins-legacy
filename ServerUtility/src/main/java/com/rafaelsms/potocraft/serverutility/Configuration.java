@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -189,6 +190,10 @@ public class Configuration extends YamlFile {
 
     public Boolean isHideJoinQuitMessages() {
         return get("configuration.hide_join_quit_messages");
+    }
+
+    public Duration getDelayBetweenDeathMessages() {
+        return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.delay_between_death_messages_seconds")));
     }
 
     public List<World> getSyncedTimeWorlds() {

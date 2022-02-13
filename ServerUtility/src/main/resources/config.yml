@@ -15,6 +15,7 @@ configuration:
     spawn_firework_on_killer: true
   enable_player_logging: true
   hide_join_quit_messages: false
+  delay_between_death_messages_seconds: 90
   experience_modifier:
     enabled: true
     default_modifier: 0.8
