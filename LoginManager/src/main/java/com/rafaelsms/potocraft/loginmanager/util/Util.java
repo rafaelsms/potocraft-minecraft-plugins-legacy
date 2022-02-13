@@ -41,6 +41,10 @@ public final class Util {
 
     public static void sendPlayerToDefaultServer(@NotNull LoginManagerPlugin plugin, @NotNull ProxiedPlayer player) {
         ServerInfo serverInfo = plugin.getProxy().getServerInfo(plugin.getConfiguration().getDefaultServer());
+        if (serverInfo == null) {
+            player.sendMessage(plugin.getConfiguration().getCommandNoServerAvailable());
+            return;
+        }
         player.connect(serverInfo, ServerConnectEvent.Reason.PLUGIN);
     }
 }

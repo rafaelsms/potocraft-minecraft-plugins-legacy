@@ -92,6 +92,9 @@ language:
       help: "&6Lembre-se da senha cadastrada e digite: &e&l/login 123456 &6trocando pela &esua &6senha de 6 números."
       register_instead: "&6Conta ainda não cadastrada! Digite &e&l/registrar &6para registrar"
       already_logged_in: "&6Já está online, bom jogo :)"
+      no_server_available: |
+        &cFalha ao transferir: servidor não encontrado.
+        &cDigite &e&l/server &cpara mudar de servidor manualmente.
     unban:
       help: "&6Uso: &e&l/unban <nome>"
     ban:

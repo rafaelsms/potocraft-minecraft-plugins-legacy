@@ -102,7 +102,7 @@ public class LoginCommand extends Command {
         }
 
         // Attempt to send player to lobby
-        if (player.hasPermission(Permissions.REDIRECT_TO_LAST_SERVER) && profile.getLastServerName().isPresent()) {
+        if (profile.getLastServerName().isPresent()) {
             ServerInfo serverInfo = plugin.getProxy().getServerInfo(profile.getLastServerName().get());
             if (serverInfo != null) {
                 player.connect(serverInfo, (result, error) -> {
@@ -110,6 +110,7 @@ public class LoginCommand extends Command {
                         Util.sendPlayerToDefaultServer(plugin, player);
                     }
                 }, ServerConnectEvent.Reason.PLUGIN);
+                return;
             }
         }
         Util.sendPlayerToDefaultServer(plugin, player);

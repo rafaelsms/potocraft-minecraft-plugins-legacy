@@ -169,6 +169,10 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponent(get("language.commands.login.already_logged_in")).buildBungee();
     }
 
+    public @NotNull BaseComponent[] getCommandNoServerAvailable() {
+        return TextUtil.toComponent(get("language.commands.login.no_server_available")).buildBungee();
+    }
+
     public @NotNull BaseComponent[] getCommandUnbanHelp() {
         return TextUtil.toComponent(get("language.commands.unban.help")).buildBungee();
     }
