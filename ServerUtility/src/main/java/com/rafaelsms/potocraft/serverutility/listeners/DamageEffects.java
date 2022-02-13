@@ -20,6 +20,8 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class DamageEffects implements Listener {
 
     private final @NotNull ServerUtilityPlugin plugin;
@@ -45,7 +47,8 @@ public class DamageEffects implements Listener {
         if (plugin.getConfiguration().isSpawnFireworkOnKiller() &&
             killer != null &&
             killer.isOnline() &&
-            !killer.isDead()) {
+            !killer.isDead() &&
+            !Objects.equals(killer.getUniqueId(), event.getPlayer().getUniqueId())) {
             Firework firework = killer.getWorld()
                                       .spawn(killer.getEyeLocation(),
                                              Firework.class,
@@ -53,9 +56,7 @@ public class DamageEffects implements Listener {
             firework.setShotAtAngle(false);
             FireworkMeta meta = firework.getFireworkMeta();
             meta.setPower(1); // 0.5 seconds on air (2.5 is too much)
-            meta.addEffect(FireworkEffect.builder()
-                                         .flicker(true)
-                                         .trail(true)
+            meta.addEffect(FireworkEffect.builder().flicker(true).trail(true)
                                          .withColor(Color.RED)
                                          .withFade(Color.YELLOW, Color.ORANGE)
                                          .with(FireworkEffect.Type.BALL_LARGE)
