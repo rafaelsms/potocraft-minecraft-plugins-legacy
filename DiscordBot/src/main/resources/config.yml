@@ -266,8 +266,6 @@ configuration:
     - boluda
     - burro
     - burra
-    - buro
-    - bura
     - babaca
     - cretino
     - cretina
@@ -288,6 +286,12 @@ configuration:
     - desgraça
     - desgraçado
     - desgraçada
+    - peste
+    - praga
+    - broxa
+    - piriguete
+    - pirigete
+    - altista
     - ass
     - pussy
     - pica
@@ -299,6 +303,9 @@ configuration:
     - porra
     - ez
     - easy
+    - probe
+    - perereca
+    - fodase
 
 language:
   message_contains_blocked_words: "[ mensagem apagada: _contém palavras bloqueadas_ ]"
