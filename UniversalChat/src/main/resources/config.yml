@@ -20,7 +20,6 @@ configuration:
     reply_time_amount_seconds: 240
   blocked_words:
     - puta
-    - puto
     - whore
     - prostituta
     - cacete
@@ -279,8 +278,6 @@ configuration:
     - boluda
     - burro
     - burra
-    - buro
-    - bura
     - babaca
     - cretino
     - cretina
@@ -301,8 +298,26 @@ configuration:
     - desgraça
     - desgraçado
     - desgraçada
-    - chato
-    - chata
+    - peste
+    - praga
+    - broxa
+    - piriguete
+    - pirigete
+    - altista
+    - ass
+    - pussy
+    - pica
+    - dick
+    - fuck
+    - fucking
+    - fucked
+    - poura
+    - porra
+    - ez
+    - easy
+    - probe
+    - perereca
+    - fodase
 
 language:
   console_name: 'administração'

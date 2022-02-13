@@ -64,6 +64,16 @@ public class ChatListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void checkBlockedWords(ChatEvent event) {
+        // Ignore cancelled events and commands
+        if (event.isCancelled() || event.isCommand()) {
+            return;
+        }
+        // Remove any blocked words very early and for every chat
+        event.setMessage(plugin.getWordsChecker().removeBlockedWords(event.getMessage()).orElse(event.getMessage()));
+    }
+
     @EventHandler(priority = EventPriority.LOW)
     public void handleMessageSent(ChatEvent event) {
         // Ignore cancelled events and commands
@@ -104,7 +114,6 @@ public class ChatListener implements Listener {
 
         // Format the message
         String message = event.getMessage().replaceFirst(chatPrefix, "");
-        message = plugin.getWordsChecker().removeBlockedWords(message).orElse(message);
         @NotNull BaseComponent[] chatMessage = plugin.getConfiguration().getGlobalChatFormat(player, message);
         @NotNull BaseComponent[] spyMessage = plugin.getConfiguration().getGlobalChatSpyFormat(player, message);
         event.setCancelled(true);
@@ -160,7 +169,6 @@ public class ChatListener implements Listener {
 
         // Format the message
         String message = event.getMessage().replaceFirst(chatPrefix, "");
-        message = plugin.getWordsChecker().removeBlockedWords(message).orElse(message);
         @NotNull BaseComponent[] chatMessage = plugin.getConfiguration().getUniversalChatFormat(player, message);
         event.setCancelled(true);
 
@@ -183,11 +191,8 @@ public class ChatListener implements Listener {
         }
 
         // Format the message
-        String message = plugin.getWordsChecker().removeBlockedWords(event.getMessage()).orElse(event.getMessage());
         @NotNull BaseComponent[] spyMessage =
-                plugin.getConfiguration().getOtherServerChatSpyFormat(sendingPlayer, message);
-        @NotNull BaseComponent[] localChatMessage =
-                plugin.getConfiguration().getLocalChatFormat(sendingPlayer, message);
+                plugin.getConfiguration().getOtherServerChatSpyFormat(sendingPlayer, event.getMessage());
 
         Optional<ServerInfo> currentServer = Optional.ofNullable(sendingPlayer.getServer()).map(Server::getInfo);
         // Ignore if sender is on a unknown server
