@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.serverutility.listeners;
 
 import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
+import com.rafaelsms.potocraft.util.Util;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -20,9 +21,24 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 
 public class DamageEffects implements Listener {
+
+    private final List<Color> fireworkColors = List.of(Color.RED,
+                                                       Color.ORANGE,
+                                                       Color.LIME,
+                                                       Color.AQUA,
+                                                       Color.GREEN,
+                                                       Color.WHITE,
+                                                       Color.YELLOW,
+                                                       Color.SILVER);
+    private final List<FireworkEffect.Type> fireworkTypes = List.of(FireworkEffect.Type.BALL,
+                                                                    FireworkEffect.Type.BALL_LARGE,
+                                                                    FireworkEffect.Type.CREEPER,
+                                                                    FireworkEffect.Type.STAR,
+                                                                    FireworkEffect.Type.BURST);
 
     private final @NotNull ServerUtilityPlugin plugin;
 
@@ -56,10 +72,12 @@ public class DamageEffects implements Listener {
             firework.setShotAtAngle(false);
             FireworkMeta meta = firework.getFireworkMeta();
             meta.setPower(1); // 0.5 seconds on air (2.5 is too much)
-            meta.addEffect(FireworkEffect.builder().flicker(true).trail(true)
-                                         .withColor(Color.RED)
-                                         .withFade(Color.YELLOW, Color.ORANGE)
-                                         .with(FireworkEffect.Type.BALL_LARGE)
+            meta.addEffect(FireworkEffect.builder()
+                                         .flicker(true)
+                                         .trail(true)
+                                         .withColor(Util.getRandom(fireworkColors))
+                                         .withFade(Util.getRandom(fireworkColors), Util.getRandom(fireworkColors))
+                                         .with(Util.getRandom(fireworkTypes))
                                          .build());
             firework.setFireworkMeta(meta);
         }

@@ -10,10 +10,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class Util {
+
+    private static final Random random = new Random();
 
     // Private constructor
     private Util() {
@@ -131,5 +134,9 @@ public final class Util {
     public static int getManhattanDistance(Location location, Location otherLocation) {
         return Math.abs(location.getBlockX() - otherLocation.getBlockX()) +
                Math.abs(location.getBlockZ() - otherLocation.getBlockZ());
+    }
+
+    public static <T> T getRandom(@NotNull List<T> collection) {
+        return collection.get(random.nextInt(collection.size()));
     }
 }
