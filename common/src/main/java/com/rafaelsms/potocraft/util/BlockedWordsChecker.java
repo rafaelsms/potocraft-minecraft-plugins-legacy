@@ -28,7 +28,7 @@ public class BlockedWordsChecker {
                 if (c == 'a') {
                     stringBuilder.append("|4");
                 } else if (c == 'i' || c == 'y') {
-                    stringBuilder.append("|i|1|e|3|y"); // gay gai gei
+                    stringBuilder.append("|i|1|y"); // gay gai // gei is ignored (pega -> pica with it)
                 } else if (c == 'e') {
                     stringBuilder.append("|i|1|3"); // ez iz 3z
                 } else if (c == 'o') {
