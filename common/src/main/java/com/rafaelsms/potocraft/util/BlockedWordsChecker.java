@@ -43,8 +43,6 @@ public class BlockedWordsChecker {
                     stringBuilder.append("|ç|k|g"); // babaca babaka carai garai karai
                 } else if (c == 'k') {
                     stringBuilder.append("|c|k|g");
-                } else if (c == 'g') {
-                    stringBuilder.append("|c|k|g");
                 } else if (c == 'x') {
                     stringBuilder.append("|(c+h+)");
                 }
