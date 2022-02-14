@@ -74,8 +74,8 @@ public class User {
                     iterator.remove();
                     continue;
                 }
-                // Check if we should update it
-                if (teleportRequest.getRequester().getPlayerId().equals(getPlayerId())) {
+                // Check if we should update it (same requesting player)
+                if (teleportRequest.getRequester().getPlayerId().equals(requester.getPlayerId())) {
                     // If same teleporting player, update it and cancel
                     if ((requesterTeleporting &&
                          teleportRequest.getTeleporting().getPlayerId().equals(requester.getPlayerId())) ||

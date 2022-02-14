@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 public class TeleportRequest {
 
@@ -52,5 +53,22 @@ public class TeleportRequest {
 
     public void cancel() {
         this.cancelled = true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TeleportRequest that = (TeleportRequest) o;
+        return requester.equals(that.requester) && teleporting.equals(that.teleporting);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(requester, teleporting);
     }
 }
