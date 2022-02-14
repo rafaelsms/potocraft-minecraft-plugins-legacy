@@ -43,7 +43,7 @@ public class HideMessagesListener implements Listener {
         Duration delayMessages = plugin.getConfiguration().getDelayBetweenDeathMessages();
         ZonedDateTime lastDeathDate = playerLastDeathDate.get(event.getPlayer().getUniqueId());
         ZonedDateTime now = ZonedDateTime.now();
-        if (lastDeathDate != null && lastDeathDate.minus(delayMessages).isAfter(now)) {
+        if (lastDeathDate != null && lastDeathDate.plus(delayMessages).isAfter(now)) {
             event.deathMessage(null);
         }
         playerLastDeathDate.put(event.getPlayer().getUniqueId(), now);
