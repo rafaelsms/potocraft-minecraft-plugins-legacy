@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -140,15 +139,22 @@ public class ReportsCheckerListener implements Listener {
             return;
         }
 
-        // Attempt to fit into the regex
-        Matcher matcher = commandPattern.matcher(event.getMessage());
-        if (!matcher.matches()) {
-            plugin.logger().warn("Didn't expected to not find a command match: \"%s\"".formatted(event.getMessage()));
+        // Split commands
+        String[] words = event.getMessage().split(" ");
+        if (words.length == 0) {
+            event.setCancelled(true);
             return;
         }
 
+        // Supposed to be a command
+        String command = words[0];
+        if (command.length() < 1) {
+            event.setCancelled(true);
+            return;
+        }
+        command = command.substring(1);
+
         // Filter out any commands that aren't on the allowed list
-        String command = matcher.group(1).toLowerCase();
         if (plugin.getConfiguration().getBlockedCommandsMuted().contains(command)) {
             player.sendMessage(plugin.getConfiguration().getPunishmentMessageBlockedCommandMuted());
             event.setCancelled(true);
