@@ -86,7 +86,6 @@ public class MessageCommand extends Command {
             senderUser.setReplyCandidate(receiver.getUniqueId());
         }
 
-
         @NotNull BaseComponent[] outgoingFormat =
                 plugin.getConfiguration().getDirectMessagesOutgoingFormat(receiver.getName(), message);
         @NotNull BaseComponent[] incomingFormat =

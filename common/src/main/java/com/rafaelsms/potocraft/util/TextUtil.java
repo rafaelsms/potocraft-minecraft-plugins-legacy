@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -108,11 +109,7 @@ public final class TextUtil {
         if (initialIndex >= strings.length) {
             return Optional.empty();
         }
-        StringBuilder builder = new StringBuilder();
-        for (int i = initialIndex; i < strings.length; i++) {
-            builder.append(strings[i]);
-        }
-        return Optional.of(builder.toString());
+        return Optional.of(joinStrings(Arrays.asList(strings), " ", str -> str));
     }
 
     public static <T> @NotNull String joinStrings(@NotNull Iterable<T> ts,
