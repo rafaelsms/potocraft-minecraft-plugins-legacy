@@ -96,7 +96,10 @@ public class TeleportTask implements Runnable {
             float progress = (initialTaskTicks - remainingTicks) * 1.0f / initialTaskTicks;
             Player player = teleportingUser.getPlayer();
             player.showBossBar(progressBar.progress(progress));
-            player.getWorld().spawnParticle(Particle.PORTAL, player.getLocation(), Math.round(progress * 16));
+            player.getWorld()
+                  .spawnParticle(Particle.PORTAL,
+                                 player.getLocation().add(0, player.getHeight() * 0.7, 0),
+                                 Math.round(progress * 32));
             return;
         }
 
