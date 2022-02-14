@@ -5,6 +5,8 @@ import com.rafaelsms.potocraft.serverprofile.players.TeleportDestination;
 import com.rafaelsms.potocraft.serverprofile.players.User;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Particle;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,7 +94,10 @@ public class TeleportTask implements Runnable {
         this.remainingTicks -= 1;
         if (this.remainingTicks > 0) {
             float progress = (initialTaskTicks - remainingTicks) * 1.0f / initialTaskTicks;
-            teleportingUser.getPlayer().showBossBar(progressBar.progress(progress));
+            Player player = teleportingUser.getPlayer();
+            player.showBossBar(progressBar.progress(progress));
+            player.getWorld()
+                  .spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, player.getLocation(), Math.round(progress * 16));
             return;
         }
 
