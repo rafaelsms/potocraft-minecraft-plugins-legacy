@@ -234,11 +234,11 @@ public class User {
         if (combatTask != null && this.combatTask != null) {
             CombatTask.Type newType = combatTask.getType();
             CombatTask.Type oldType = this.combatTask.getType();
-            if (!newType.canOverride(oldType)) {
-                return;
-            }
             if (newType.canResetTime(oldType)) {
                 this.combatTask.resetTime();
+                return;
+            }
+            if (!newType.canOverride(oldType)) {
                 return;
             }
         }
