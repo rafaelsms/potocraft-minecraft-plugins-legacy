@@ -109,7 +109,7 @@ public final class TextUtil {
         if (initialIndex >= strings.length) {
             return Optional.empty();
         }
-        return Optional.of(joinStrings(Arrays.asList(strings), " ", str -> str));
+        return Optional.of(joinStrings(Arrays.asList(strings).subList(initialIndex, strings.length), " ", str -> str));
     }
 
     public static <T> @NotNull String joinStrings(@NotNull Iterable<T> ts,
