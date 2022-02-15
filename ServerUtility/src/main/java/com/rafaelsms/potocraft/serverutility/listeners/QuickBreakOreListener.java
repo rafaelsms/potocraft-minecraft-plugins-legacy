@@ -21,7 +21,7 @@ import java.util.Set;
 
 public class QuickBreakOreListener implements Listener {
 
-    private final Set<Material> oreMaterials = Set.of(Material.COAL,
+    private final Set<Material> oreMaterials = Set.of(Material.COAL_ORE,
                                                       Material.DEEPSLATE_COAL_ORE,
                                                       Material.COPPER_ORE,
                                                       Material.DEEPSLATE_COPPER_ORE,
