@@ -37,12 +37,6 @@ public class Configuration extends YamlFile {
         // Parse default configuration
         Map<String, Object> defaultConfiguration = worldSettings.getOrDefault("default", Map.of());
         defaultCombatConfig = parseWorldConfiguration(defaultConfiguration, null);
-        plugin.logger()
-              .info("Default pvp: constant pvp = {},  pvp = {}, start = {}, end = {}",
-                    defaultCombatConfig.isConstantCombat(),
-                    defaultCombatConfig.getConstantCombatSetting(),
-                    defaultCombatConfig.getStartCombatTime(),
-                    defaultCombatConfig.getEndCombatTime());
         // Parse other world configurations
         for (Map.Entry<String, Map<String, Object>> entry : worldSettings.entrySet()) {
             if (entry.getKey().equalsIgnoreCase("default")) {
@@ -50,13 +44,6 @@ public class Configuration extends YamlFile {
             }
             WorldCombatConfig worldCombatConfig = parseWorldConfiguration(entry.getValue(), defaultCombatConfig);
             worldCombatConfigurations.put(entry.getKey(), worldCombatConfig);
-            plugin.logger()
-                  .info("pvp for {}: constant pvp = {},  pvp = {}, start = {}, end = {}",
-                        entry.getKey(),
-                        worldCombatConfig.isConstantCombat(),
-                        worldCombatConfig.getConstantCombatSetting(),
-                        worldCombatConfig.getStartCombatTime(),
-                        worldCombatConfig.getEndCombatTime());
         }
     }
 
