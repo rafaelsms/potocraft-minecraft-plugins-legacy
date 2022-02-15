@@ -25,12 +25,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CombatListener implements Listener {
 
-    private final Pattern commandPattern = Pattern.compile("^\\s*(\\S+)(\\s.*)?$", Pattern.CASE_INSENSITIVE);
     private final Set<EntityDamageEvent.DamageCause> combatDamageCauses = Set.of(EntityDamageEvent.DamageCause.LAVA,
                                                                                  EntityDamageEvent.DamageCause.MELTING,
                                                                                  EntityDamageEvent.DamageCause.PROJECTILE,
@@ -56,14 +53,13 @@ public class CombatListener implements Listener {
             return;
         }
 
-        Matcher matcher = commandPattern.matcher(event.getMessage());
-        if (!matcher.matches()) {
-            plugin.logger().warn("Unexpected not match on command: \"%s\"".formatted(event.getMessage()));
+        String[] args = event.getMessage().toLowerCase().split(" ");
+        if (args.length <= 0) {
             event.setCancelled(true);
             return;
         }
 
-        String command = matcher.group(1).toLowerCase();
+        String command = args[0].replaceFirst("/", "");
         for (String blockedCommand : plugin.getConfiguration().getCombatBlockedCommands()) {
             if (command.equalsIgnoreCase(blockedCommand)) {
                 event.setCancelled(true);
@@ -72,6 +68,7 @@ public class CombatListener implements Listener {
             }
             PluginCommand pluginCommand = plugin.getServer().getPluginCommand(blockedCommand);
             if (pluginCommand == null) {
+                plugin.logger().warn("Command not found to be blocked: \"{}\"", blockedCommand);
                 continue;
             }
             for (String alias : pluginCommand.getAliases()) {
