@@ -31,7 +31,7 @@ public class RedirectPlayerListener implements Listener {
     public void redirectLoggedOffPlayersToLogin(ServerConnectEvent event) {
         // Just allow if player type doesn't require login
         ProxiedPlayer player = event.getPlayer();
-        if (!plugin.getPlayerTypeManager().getPlayerType(event.getPlayer()).requiresLogin()) {
+        if (!plugin.getPlayerTypeManager().getPlayerType(player).requiresLogin()) {
             return;
         }
 

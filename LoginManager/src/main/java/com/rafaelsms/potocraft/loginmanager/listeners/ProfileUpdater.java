@@ -27,11 +27,11 @@ public class ProfileUpdater implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    // Wait for our PlayerTypeManager to register
+    @EventHandler(priority = EventPriority.LOW)
     public void updateJoinDate(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
-        boolean playerTypeRequiresLogin =
-                plugin.getPlayerTypeManager().getPlayerType(event.getPlayer()).requiresLogin();
+        boolean playerTypeRequiresLogin = plugin.getPlayerTypeManager().getPlayerType(player).requiresLogin();
         Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
         // Don't create profile for offline players, just return
         if (optionalProfile.isEmpty() && playerTypeRequiresLogin) {
@@ -57,7 +57,7 @@ public class ProfileUpdater implements Listener {
         Profile profile = optionalProfile.get();
 
         // Check if profile is logged in and set its join date
-        if (!plugin.getPlayerTypeManager().getPlayerType(event.getPlayer()).requiresLogin() ||
+        if (!plugin.getPlayerTypeManager().getPlayerType(player).requiresLogin() ||
             Util.isPlayerLoggedIn(plugin, profile, player)) {
             profile.setLastServerName(event.getTarget().getName());
             plugin.getDatabase().saveProfileCatching(profile);
@@ -74,7 +74,7 @@ public class ProfileUpdater implements Listener {
         Profile profile = optionalProfile.get();
 
         // Check if profile is logged in and set its join date
-        if (!plugin.getPlayerTypeManager().getPlayerType(event.getPlayer()).requiresLogin() ||
+        if (!plugin.getPlayerTypeManager().getPlayerType(player).requiresLogin() ||
             Util.isPlayerLoggedIn(plugin, profile, player)) {
             profile.setQuitDate();
             plugin.getDatabase().saveProfileCatching(profile);

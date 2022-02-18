@@ -32,11 +32,13 @@ public class OfflineCheckerListener implements Listener {
             return;
         }
 
+        event.registerIntent(plugin);
         // If is a floodgate player, allow without checking
         FloodgateApi floodgateApi = FloodgateApi.getInstance();
         if (event.getConnection().getUniqueId() != null) {
             FloodgatePlayer floodgatePlayer = floodgateApi.getPlayer(event.getConnection().getUniqueId());
             if (floodgatePlayer != null) {
+                event.completeIntent(plugin);
                 return;
             }
         }
@@ -46,6 +48,7 @@ public class OfflineCheckerListener implements Listener {
             event.getConnection().getName().startsWith(floodgateApi.getPlayerPrefix())) {
             event.setCancelled(true);
             event.setCancelReason(plugin.getConfiguration().getKickMessageInvalidPrefixForJavaPlayer());
+            event.completeIntent(plugin);
             return;
         }
 
@@ -57,6 +60,7 @@ public class OfflineCheckerListener implements Listener {
             event.setCancelled(true);
             event.setCancelReason(plugin.getConfiguration().getKickMessageInvalidJavaUsername());
         }
+        event.completeIntent(plugin);
     }
 
 
@@ -66,14 +70,15 @@ public class OfflineCheckerListener implements Listener {
         if (event.isCancelled()) {
             return;
         }
+        event.registerIntent(plugin);
 
         // Allow floodgate player
         if (event.getConnection().getUniqueId() != null &&
             FloodgateApi.getInstance().getPlayer(event.getConnection().getUniqueId()) != null) {
+            event.completeIntent(plugin);
             return;
         }
 
-        event.registerIntent(plugin);
         plugin.runAsync(() -> {
             // Check if player has existing account
             try {

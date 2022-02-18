@@ -3,6 +3,7 @@ package com.rafaelsms.potocraft.loginmanager.listeners;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.util.PlayerType;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.event.ServerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -38,7 +39,8 @@ public class PlayerTypeManager implements Listener {
 
     /**
      * Retrieves player connection type given player unique id. This method is available after {@link PreLoginEvent}'s
-     * {@link EventPriority#HIGH} event priority and before {@link ServerDisconnectEvent}'s {@link
+     * {@link EventPriority#HIGH} event priority for Floodgate players or {@link PostLoginEvent}'s {@link
+     * EventPriority#LOWEST} event priority for every player and before {@link ServerDisconnectEvent}'s {@link
      * EventPriority#HIGHEST} event priority.
      * <p>
      * Note that we are not using {@link net.md_5.bungee.api.event.PlayerDisconnectEvent} because this is called before
@@ -49,29 +51,51 @@ public class PlayerTypeManager implements Listener {
      */
     public @NotNull PlayerType getPlayerType(@NotNull UUID playerId) {
         // the safest fallback is offline player (we would require login)
-        return playerTypeMap.getOrDefault(playerId, PlayerType.OFFLINE_PLAYER);
+        return playerTypeMap.get(playerId);
     }
 
     // We must wait Floodgate's changes on LOWEST
     // We must wait OfflineCheckerListener's changes on LOW
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void registerPlayerType(PreLoginEvent event) {
+        // Ignore null player ids
+        if (event.getConnection().getUniqueId() == null) {
+            return;
+        }
+
         PlayerType playerType;
         if (event.getConnection().isOnlineMode()) {
             playerType = PlayerType.ONLINE_PLAYER;
-        } else if (event.getConnection().getUniqueId() != null &&
-                   FloodgateApi.getInstance().getPlayer(event.getConnection().getUniqueId()) != null) {
+        } else if (FloodgateApi.getInstance().getPlayer(event.getConnection().getUniqueId()) != null) {
             playerType = PlayerType.FLOODGATE_PLAYER;
         } else {
             playerType = PlayerType.OFFLINE_PLAYER;
         }
-
         playerTypeMap.put(event.getConnection().getUniqueId(), playerType);
+    }
+
+    // We must wait player id
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void registerPlayerType(PostLoginEvent event) {
+        ProxiedPlayer player = event.getPlayer();
+        PlayerType playerType;
+        if (player.getPendingConnection().isOnlineMode()) {
+            playerType = PlayerType.ONLINE_PLAYER;
+        } else if (FloodgateApi.getInstance().getPlayer(player.getUniqueId()) != null) {
+            playerType = PlayerType.FLOODGATE_PLAYER;
+        } else {
+            playerType = PlayerType.OFFLINE_PLAYER;
+        }
+        playerTypeMap.put(player.getUniqueId(), playerType);
+    }
+
+    @EventHandler
+    public void printPlayerType(PostLoginEvent event) {
         plugin.logger()
               .info("Player {} (uuid = {}) connected with type {}",
-                    event.getConnection().getName(),
-                    event.getConnection().getUniqueId(),
-                    playerType);
+                    event.getPlayer().getName(),
+                    event.getPlayer().getUniqueId(),
+                    getPlayerType(event.getPlayer()));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
