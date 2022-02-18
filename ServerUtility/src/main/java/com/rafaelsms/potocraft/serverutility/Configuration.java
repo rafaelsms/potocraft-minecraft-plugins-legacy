@@ -183,6 +183,10 @@ public class Configuration extends YamlFile {
         return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.delay_between_death_messages_seconds")));
     }
 
+    public Duration getDelayBetweenLoginMessages() {
+        return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.delay_between_login_messages_seconds")));
+    }
+
     public List<World> getSyncedTimeWorlds() {
         List<World> worlds = new ArrayList<>();
         List<String> worldNames = Objects.requireNonNull(get("configuration.worlds_with_synced_real_time"));

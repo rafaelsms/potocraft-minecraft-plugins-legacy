@@ -1,22 +1,27 @@
 package com.rafaelsms.potocraft.serverutility.listeners;
 
 import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
-import net.kyori.adventure.text.Component;
+import com.rafaelsms.potocraft.serverutility.util.SpamMessageController;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class HideMessagesListener implements Listener {
 
-    private final HashMap<UUID, ZonedDateTime> playerLastDeathDate = new HashMap<>();
+    private final Map<UUID, SpamMessageController> lastSpamMessages = Collections.synchronizedMap(new HashMap<>());
 
     private final @NotNull ServerUtilityPlugin plugin;
 
@@ -27,30 +32,66 @@ public class HideMessagesListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     private void hideJoinMessage(PlayerJoinEvent event) {
         if (plugin.getConfiguration().isHideJoinQuitMessages()) {
-            event.joinMessage(Component.empty());
+            event.joinMessage(null);
+            return;
         }
+        Duration delayMessage = plugin.getConfiguration().getDelayBetweenLoginMessages();
+        if (shouldRemoveMessage(event.getPlayer(), SpamMessageController.Type.JOIN_QUIT_MESSAGES, delayMessage)) {
+            event.joinMessage(null);
+        }
+        registerMessage(event.getPlayer(), SpamMessageController.Type.JOIN_QUIT_MESSAGES, delayMessage);
     }
 
     @EventHandler(ignoreCancelled = true)
     private void hideQuitMessage(PlayerQuitEvent event) {
         if (plugin.getConfiguration().isHideJoinQuitMessages()) {
-            event.quitMessage(Component.empty());
+            event.quitMessage(null);
+            return;
         }
+        Duration delayMessage = plugin.getConfiguration().getDelayBetweenLoginMessages();
+        if (shouldRemoveMessage(event.getPlayer(), SpamMessageController.Type.JOIN_QUIT_MESSAGES, delayMessage)) {
+            event.quitMessage(null);
+        }
+        registerMessage(event.getPlayer(), SpamMessageController.Type.JOIN_QUIT_MESSAGES, delayMessage);
     }
 
     @EventHandler(ignoreCancelled = true)
     private void hideDeathMessage(PlayerDeathEvent event) {
-        Duration delayMessages = plugin.getConfiguration().getDelayBetweenDeathMessages();
-        ZonedDateTime lastDeathDate = playerLastDeathDate.get(event.getPlayer().getUniqueId());
-        ZonedDateTime now = ZonedDateTime.now();
-        if (lastDeathDate != null && lastDeathDate.plus(delayMessages).isAfter(now)) {
+        Duration delayMessage = plugin.getConfiguration().getDelayBetweenDeathMessages();
+        if (shouldRemoveMessage(event.getPlayer(), SpamMessageController.Type.DEATH_MESSAGE, delayMessage)) {
             event.deathMessage(null);
         }
-        playerLastDeathDate.put(event.getPlayer().getUniqueId(), now);
-        plugin.getServer()
-              .getScheduler()
-              .runTaskLater(plugin,
-                            () -> playerLastDeathDate.remove(event.getPlayer().getUniqueId()),
-                            delayMessages.toSeconds() * 20L);
+        registerMessage(event.getPlayer(), SpamMessageController.Type.DEATH_MESSAGE, delayMessage);
+    }
+
+    private SpamMessageController getOrCreateController(@NotNull Player player) {
+        SpamMessageController controller =
+                lastSpamMessages.getOrDefault(player.getUniqueId(), new SpamMessageController());
+        lastSpamMessages.put(player.getUniqueId(), controller);
+        return controller;
+    }
+
+    private boolean shouldRemoveMessage(@NotNull Player player,
+                                        @NotNull SpamMessageController.Type messageType,
+                                        @NotNull Duration cooldownDuration) {
+        SpamMessageController messageController = getOrCreateController(player);
+        Optional<ZonedDateTime> dateTimeOptional = messageController.checkLastRecord(messageType);
+        if (dateTimeOptional.isEmpty()) {
+            return false;
+        }
+        return dateTimeOptional.get().plus(cooldownDuration).isAfter(ZonedDateTime.now());
+    }
+
+    private void registerMessage(@NotNull Player player,
+                                 @NotNull SpamMessageController.Type messageType,
+                                 @NotNull Duration duration) {
+        SpamMessageController controller = getOrCreateController(player);
+        controller.registerMessage(messageType);
+        BukkitTask bukkitTask = plugin.getServer()
+                                      .getScheduler()
+                                      .runTaskLater(plugin,
+                                                    () -> lastSpamMessages.remove(player.getUniqueId()),
+                                                    duration.toSeconds() * 20L);
+        controller.setRemovalTask(bukkitTask);
     }
 }
