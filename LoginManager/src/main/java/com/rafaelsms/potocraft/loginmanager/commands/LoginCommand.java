@@ -4,7 +4,6 @@ import com.rafaelsms.potocraft.database.Database;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
-import com.rafaelsms.potocraft.loginmanager.util.PlayerType;
 import com.rafaelsms.potocraft.loginmanager.util.Util;
 import com.rafaelsms.potocraft.util.TextUtil;
 import net.md_5.bungee.api.CommandSender;
@@ -37,7 +36,7 @@ public class LoginCommand extends Command {
         }
 
         // Check player connection type, as online players should not be able to use this command
-        if (!PlayerType.get(player).requiresLogin()) {
+        if (!plugin.getPlayerTypeManager().getPlayerType(player).requiresLogin()) {
             player.sendMessage(plugin.getConfiguration().getCommandOfflinePlayersOnly());
             return;
         }

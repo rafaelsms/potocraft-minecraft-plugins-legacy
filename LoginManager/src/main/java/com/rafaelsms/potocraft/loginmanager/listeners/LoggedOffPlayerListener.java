@@ -2,7 +2,6 @@ package com.rafaelsms.potocraft.loginmanager.listeners;
 
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
-import com.rafaelsms.potocraft.loginmanager.util.PlayerType;
 import com.rafaelsms.potocraft.loginmanager.util.Util;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
@@ -84,7 +83,7 @@ public class LoggedOffPlayerListener implements Listener {
     }
 
     private boolean isPlayerLoggedOn(ProxiedPlayer player) {
-        if (!PlayerType.get(player).requiresLogin()) {
+        if (!plugin.getPlayerTypeManager().getPlayerType(player).requiresLogin()) {
             return true;
         }
         Optional<Profile> profile = plugin.getDatabase().getProfileCatching(player.getUniqueId());

@@ -2,7 +2,6 @@ package com.rafaelsms.potocraft.loginmanager.listeners;
 
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
-import com.rafaelsms.potocraft.loginmanager.util.PlayerType;
 import com.rafaelsms.potocraft.loginmanager.util.Util;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -31,7 +30,8 @@ public class ProfileUpdater implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void updateJoinDate(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
-        boolean playerTypeRequiresLogin = PlayerType.get(player).requiresLogin();
+        boolean playerTypeRequiresLogin =
+                plugin.getPlayerTypeManager().getPlayerType(event.getPlayer()).requiresLogin();
         Optional<Profile> optionalProfile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
         // Don't create profile for offline players, just return
         if (optionalProfile.isEmpty() && playerTypeRequiresLogin) {
@@ -57,7 +57,8 @@ public class ProfileUpdater implements Listener {
         Profile profile = optionalProfile.get();
 
         // Check if profile is logged in and set its join date
-        if (!PlayerType.get(player).requiresLogin() || Util.isPlayerLoggedIn(plugin, profile, player)) {
+        if (!plugin.getPlayerTypeManager().getPlayerType(event.getPlayer()).requiresLogin() ||
+            Util.isPlayerLoggedIn(plugin, profile, player)) {
             profile.setLastServerName(event.getTarget().getName());
             plugin.getDatabase().saveProfileCatching(profile);
         }
@@ -73,7 +74,8 @@ public class ProfileUpdater implements Listener {
         Profile profile = optionalProfile.get();
 
         // Check if profile is logged in and set its join date
-        if (!PlayerType.get(player).requiresLogin() || Util.isPlayerLoggedIn(plugin, profile, player)) {
+        if (!plugin.getPlayerTypeManager().getPlayerType(event.getPlayer()).requiresLogin() ||
+            Util.isPlayerLoggedIn(plugin, profile, player)) {
             profile.setQuitDate();
             plugin.getDatabase().saveProfileCatching(profile);
         }

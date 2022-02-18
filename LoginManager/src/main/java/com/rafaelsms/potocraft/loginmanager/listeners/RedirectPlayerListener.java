@@ -3,11 +3,9 @@ package com.rafaelsms.potocraft.loginmanager.listeners;
 import com.rafaelsms.potocraft.database.Database;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
-import com.rafaelsms.potocraft.loginmanager.util.PlayerType;
 import com.rafaelsms.potocraft.loginmanager.util.Util;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -33,7 +31,7 @@ public class RedirectPlayerListener implements Listener {
     public void redirectLoggedOffPlayersToLogin(ServerConnectEvent event) {
         // Just allow if player type doesn't require login
         ProxiedPlayer player = event.getPlayer();
-        if (!PlayerType.get(player).requiresLogin()) {
+        if (!plugin.getPlayerTypeManager().getPlayerType(event.getPlayer()).requiresLogin()) {
             return;
         }
 
@@ -60,15 +58,6 @@ public class RedirectPlayerListener implements Listener {
                 event.getPlayer().disconnect(plugin.getConfiguration().getKickMessageLoginServerUnavailable());
             }
         }
-    }
-
-    @EventHandler
-    public void printPlayerType(PostLoginEvent event) {
-        plugin.logger()
-              .info("Player {} (uuid = {}) connection type is {}",
-                    event.getPlayer().getName(),
-                    event.getPlayer().getUniqueId(),
-                    PlayerType.get(event.getPlayer()));
     }
 
     private @NotNull Optional<ServerInfo> getLoginServer() {

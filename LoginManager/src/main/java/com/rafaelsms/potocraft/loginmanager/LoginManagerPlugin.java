@@ -13,6 +13,7 @@ import com.rafaelsms.potocraft.loginmanager.commands.UnbanCommand;
 import com.rafaelsms.potocraft.loginmanager.commands.UnmuteCommand;
 import com.rafaelsms.potocraft.loginmanager.listeners.LoggedOffPlayerListener;
 import com.rafaelsms.potocraft.loginmanager.listeners.OfflineCheckerListener;
+import com.rafaelsms.potocraft.loginmanager.listeners.PlayerTypeManager;
 import com.rafaelsms.potocraft.loginmanager.listeners.ProfileUpdater;
 import com.rafaelsms.potocraft.loginmanager.listeners.RedirectPlayerListener;
 import com.rafaelsms.potocraft.loginmanager.listeners.ReportsCheckerListener;
@@ -28,10 +29,12 @@ public class LoginManagerPlugin extends Plugin {
 
     private final @NotNull Configuration configuration;
     private final @NotNull Database database;
+    private final @NotNull PlayerTypeManager playerTypeManager;
 
     public LoginManagerPlugin() throws IOException, com.rafaelsms.potocraft.database.Database.DatabaseException {
         this.configuration = new Configuration(getDataFolder().toPath());
         this.database = new Database(this);
+        this.playerTypeManager = new PlayerTypeManager(this);
     }
 
     @Override
@@ -43,6 +46,7 @@ public class LoginManagerPlugin extends Plugin {
         }
 
         // Register listeners
+        getProxy().getPluginManager().registerListener(this, playerTypeManager);
         getProxy().getPluginManager().registerListener(this, new OfflineCheckerListener(this));
         getProxy().getPluginManager().registerListener(this, new LoggedOffPlayerListener(this));
         getProxy().getPluginManager().registerListener(this, new ProfileUpdater(this));
@@ -81,6 +85,10 @@ public class LoginManagerPlugin extends Plugin {
 
     public @NotNull Database getDatabase() {
         return database;
+    }
+
+    public @NotNull PlayerTypeManager getPlayerTypeManager() {
+        return playerTypeManager;
     }
 
     public Logger logger() {
