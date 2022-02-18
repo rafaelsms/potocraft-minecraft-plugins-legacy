@@ -110,6 +110,12 @@ public class CombatListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void showDeathLocation(PlayerRespawnEvent event) {
+        // Ignore if player used end portal
+        for (PlayerRespawnEvent.RespawnFlag respawnFlag : event.getRespawnFlags()) {
+            if (respawnFlag == PlayerRespawnEvent.RespawnFlag.END_PORTAL) {
+                return;
+            }
+        }
         Player player = event.getPlayer();
         if (!player.hasPermission(Permissions.COMBAT_SHOW_DEATH_LOCATION)) {
             return;
