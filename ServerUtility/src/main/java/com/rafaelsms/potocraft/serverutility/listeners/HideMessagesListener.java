@@ -2,6 +2,7 @@ package com.rafaelsms.potocraft.serverutility.listeners;
 
 import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
 import com.rafaelsms.potocraft.serverutility.util.SpamMessageController;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,12 +33,12 @@ public class HideMessagesListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     private void hideJoinMessage(PlayerJoinEvent event) {
         if (plugin.getConfiguration().isHideJoinQuitMessages()) {
-            event.joinMessage(null);
+            event.joinMessage(Component.empty());
             return;
         }
         Duration delayMessage = plugin.getConfiguration().getDelayBetweenLoginMessages();
         if (shouldRemoveMessage(event.getPlayer(), SpamMessageController.Type.JOIN_QUIT_MESSAGES, delayMessage)) {
-            event.joinMessage(null);
+            event.joinMessage(Component.empty());
         }
         registerMessage(event.getPlayer(), SpamMessageController.Type.JOIN_QUIT_MESSAGES, delayMessage);
     }
@@ -45,12 +46,12 @@ public class HideMessagesListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     private void hideQuitMessage(PlayerQuitEvent event) {
         if (plugin.getConfiguration().isHideJoinQuitMessages()) {
-            event.quitMessage(null);
+            event.quitMessage(Component.empty());
             return;
         }
         Duration delayMessage = plugin.getConfiguration().getDelayBetweenLoginMessages();
         if (shouldRemoveMessage(event.getPlayer(), SpamMessageController.Type.JOIN_QUIT_MESSAGES, delayMessage)) {
-            event.quitMessage(null);
+            event.quitMessage(Component.empty());
         }
         registerMessage(event.getPlayer(), SpamMessageController.Type.JOIN_QUIT_MESSAGES, delayMessage);
     }
@@ -59,7 +60,7 @@ public class HideMessagesListener implements Listener {
     private void hideDeathMessage(PlayerDeathEvent event) {
         Duration delayMessage = plugin.getConfiguration().getDelayBetweenDeathMessages();
         if (shouldRemoveMessage(event.getPlayer(), SpamMessageController.Type.DEATH_MESSAGE, delayMessage)) {
-            event.deathMessage(null);
+            event.deathMessage(Component.empty());
         }
         registerMessage(event.getPlayer(), SpamMessageController.Type.DEATH_MESSAGE, delayMessage);
     }
