@@ -71,7 +71,8 @@ public class Configuration extends YamlFile {
         return getChatFormat(get("configuration.local_chat.no_range_format"), senderId, senderName, message);
     }
 
-    private Component getChatFormat(@Nullable String format, @NotNull UUID senderId,
+    private Component getChatFormat(@Nullable String format,
+                                    @NotNull UUID senderId,
                                     @NotNull String senderName,
                                     @NotNull Component message) {
         return TextUtil.toComponent(format)
@@ -80,6 +81,10 @@ public class Configuration extends YamlFile {
                        .replace("%suffix%", TextUtil.getSuffix(senderId))
                        .replace("%message%", message)
                        .build();
+    }
+
+    public Component getNobodyHeardYou() {
+        return TextUtil.toComponent(get("language.chat.nobody_heard_you")).build();
     }
 
     public Integer getTeleportDelayTicks() {

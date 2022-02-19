@@ -41,6 +41,8 @@ language:
   date_time_format: "dd' de 'MMM' às 'H'h'mm"
   players_only: "&cComando disponível apenas para jogadores."
   could_not_load_profile: "&cFalha ao acessar banco de dados."
+  chat:
+    nobody_heard_you: "&cNinguém te ouviu! &6Tente gritar: digite &e&l!&6 antes da sua mensagem."
   combat:
     bar_title: "&cSe sair ou se a conexão cair, irá morrer!"
     command_is_blocked_while_in_combat: "&cEste comando está bloqueado em combate."

@@ -6,6 +6,7 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -45,9 +46,10 @@ public class ChatFormatter implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void handleLocalChat(AsyncChatEvent event) {
-        UUID senderId = event.getPlayer().getUniqueId();
-        String senderName = event.getPlayer().getName();
-        Identity senderIdentity = event.getPlayer().identity();
+        Player player = event.getPlayer();
+        UUID senderId = player.getUniqueId();
+        String senderName = player.getName();
+        Identity senderIdentity = player.identity();
 
         event.setCancelled(true);
         Component spyMessage = plugin.getConfiguration().getLocalChatSpyFormat(senderId, senderName, event.message());
@@ -56,7 +58,7 @@ public class ChatFormatter implements Listener {
         // If local chat is disable, we will send messages only to the world
         if (chatRange <= 0) {
             Component chatMessage = plugin.getConfiguration().getChatFormat(senderId, senderName, event.message());
-            Location senderLocation = lastLocations.get(event.getPlayer().getUniqueId());
+            Location senderLocation = lastLocations.get(player.getUniqueId());
             if (senderLocation == null) {
                 return;
             }
@@ -89,11 +91,12 @@ public class ChatFormatter implements Listener {
             return;
         }
         // Check each player location and permission if it is far away
+        boolean messageReceived = false;
         for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
             UUID receiverId = onlinePlayer.getUniqueId();
             Location receiverLocation = lastLocations.get(receiverId);
-            // Skip message for this player
-            if (receiverLocation == null) {
+            // Skips message for this player if location is null or same player
+            if (receiverLocation == null || Objects.equals(receiverId, senderId)) {
                 continue;
             }
             // Ignore if player doesn't have spy permission and is far away
@@ -104,6 +107,14 @@ public class ChatFormatter implements Listener {
                 continue;
             }
             onlinePlayer.sendMessage(senderIdentity, localChatMessage, MessageType.CHAT);
+            if (!messageReceived) {
+                messageReceived = onlinePlayer.getGameMode() != GameMode.SPECTATOR && !onlinePlayer.isInvisible();
+            }
+        }
+        if (!messageReceived) {
+            player.sendMessage(senderIdentity, plugin.getConfiguration().getNobodyHeardYou(), MessageType.CHAT);
+        } else {
+            player.sendMessage(senderIdentity, localChatMessage, MessageType.CHAT);
         }
         plugin.getServer().getConsoleSender().sendMessage(senderIdentity, localChatMessage, MessageType.CHAT);
     }
