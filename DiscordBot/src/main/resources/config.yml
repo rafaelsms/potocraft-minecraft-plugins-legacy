@@ -2,8 +2,12 @@ configuration:
   token: ''
   bot_playing_activity: 'jogar.potocraft.com'
   operator_role_name: 'Operador'
+  removed_messages:
+    category_name: "Moderação privado"
+    channel_name: "Mensagens-removidas"
+    cached_time_in_seconds: 120
   tickets:
-    category_name: 'TICKETS'
+    category_name: 'Tickets'
     lobby_channel_name: 'Iniciar-ticket'
   blocked_word_user_timeout_seconds: 300
   blocked_words:

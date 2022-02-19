@@ -27,6 +27,18 @@ public class Configuration extends YamlFile {
         return get("configuration.operator_role_name");
     }
 
+    public String getRemovedMessagesCategoryName() {
+        return get("configuration.removed_messages.category_name");
+    }
+
+    public String getRemovedMessagesChannelName() {
+        return get("configuration.removed_messages.channel_name");
+    }
+
+    public Duration getRemovedMessagesCacheTime() {
+        return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.removed_messages.cached_time_in_seconds")));
+    }
+
     public String getTicketCategoryName() {
         return get("configuration.tickets.category_name");
     }
