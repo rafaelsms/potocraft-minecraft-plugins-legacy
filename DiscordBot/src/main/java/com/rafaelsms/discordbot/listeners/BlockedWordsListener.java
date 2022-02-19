@@ -43,6 +43,18 @@ public class BlockedWordsListener extends ListenerAdapter {
                                                .sendMessageEmbeds(DiscordUtil.getQuoteMessage(member,
                                                                                               Color.ORANGE.getRGB(),
                                                                                               string));
+            for (Message.Attachment attachment : message.getAttachments()) {
+                attachment.downloadToFile().whenComplete((file, throwable) -> {
+                    if (throwable != null || file == null) {
+                        bot.getLogger()
+                           .warn("Failed to download attachment {} ({})",
+                                 attachment.getId(),
+                                 attachment.getContentType());
+                        return;
+                    }
+                    message.getTextChannel().sendFile(file).queue(sentMessage -> file.delete());
+                });
+            }
             // Reply to the same message
             if (message.getMessageReference() != null) {
                 replacement.referenceById(message.getMessageReference().getMessageIdLong())
