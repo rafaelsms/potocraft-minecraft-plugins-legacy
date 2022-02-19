@@ -3,7 +3,6 @@ package com.rafaelsms.potocraft.combatserver;
 import com.rafaelsms.potocraft.combatserver.listeners.CombatDrops;
 import com.rafaelsms.potocraft.combatserver.listeners.CombatGameRules;
 import com.rafaelsms.potocraft.combatserver.listeners.EquipmentManager;
-import com.rafaelsms.potocraft.combatserver.listeners.TestEquipmentListener;
 import com.rafaelsms.potocraft.combatserver.listeners.UserManager;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,7 +30,7 @@ public class CombatServerPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CombatDrops(this), this);
         getServer().getPluginManager().registerEvents(new CombatGameRules(this), this);
         getServer().getPluginManager().registerEvents(new EquipmentManager(this), this);
-        getServer().getPluginManager().registerEvents(new TestEquipmentListener(this), this);
+        //getServer().getPluginManager().registerEvents(new TestEquipmentListener(this), this);
 
         logger().info("CombatServer enabled");
     }
