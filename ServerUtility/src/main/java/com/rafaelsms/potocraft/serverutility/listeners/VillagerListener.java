@@ -143,10 +143,6 @@ public class VillagerListener implements Listener {
         for (Map.Entry<Enchantment, Integer> entry : map.entrySet()) {
             Enchantment enchantment = entry.getKey();
             int maxLevel = enchantment.getMaxLevel();
-            if (maxLevel <= 2) {
-                itemMeta.removeStoredEnchant(enchantment);
-                continue;
-            }
             int level = entry.getValue();
             while (maxLevel - level <= 2 && level > 1) {
                 // The difference is too low, decrease its level
