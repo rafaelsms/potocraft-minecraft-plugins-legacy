@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ProtectionManager implements Listener {
@@ -33,12 +34,16 @@ public class ProtectionManager implements Listener {
         this.plugin = plugin;
     }
 
-    public synchronized boolean addPlayerSelection(@NotNull Player player) {
+    public synchronized boolean startPlayerSelection(@NotNull Player player) {
         User user = plugin.getUserManager().getUser(player);
         return this.selectionBoxes.put(user.getPlayerId(), new Selection(plugin, user)) == null;
     }
 
-    public synchronized boolean removePlayerSelection(@NotNull UUID playerId) {
+    public synchronized Optional<Selection> getPlayerSelection(@NotNull Player player) {
+        return Optional.ofNullable(this.selectionBoxes.get(player.getUniqueId()));
+    }
+
+    public synchronized boolean endPlayerSelection(@NotNull UUID playerId) {
         Selection selection = this.selectionBoxes.remove(playerId);
         if (selection != null) {
             selection.hideBar();
@@ -98,7 +103,7 @@ public class ProtectionManager implements Listener {
 
     @EventHandler
     private synchronized void clearSelection(PlayerQuitEvent event) {
-        removePlayerSelection(event.getPlayer().getUniqueId());
+        endPlayerSelection(event.getPlayer().getUniqueId());
     }
 
     @EventHandler
@@ -106,7 +111,7 @@ public class ProtectionManager implements Listener {
         if (!(event.getEntity() instanceof Player player)) {
             return;
         }
-        if (removePlayerSelection(player.getUniqueId())) {
+        if (endPlayerSelection(player.getUniqueId())) {
             player.sendMessage("Selection cancelled!");
         }
     }

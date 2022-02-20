@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 public class Configuration extends YamlFile {
 
@@ -28,6 +29,10 @@ public class Configuration extends YamlFile {
 
     public String getMongoRegionCollection() {
         return get("configuration.database.region_collection");
+    }
+
+    public long getMongoSavePlayersTaskTimer() {
+        return Objects.requireNonNull(getLong("configuration.database.save_player_task_timer_ticks"));
     }
 
     public Boolean isMongoDatabaseExceptionFatal() {

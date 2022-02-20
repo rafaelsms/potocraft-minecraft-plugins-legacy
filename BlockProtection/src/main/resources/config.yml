@@ -4,6 +4,7 @@ configuration:
     database_name: "serverNameDb"
     player_profile_collection: "protectionProfiles"
     region_collection: "regions"
+    save_player_task_timer_ticks: 3600
     is_exception_fatal: false
   protection:
     selection:

@@ -24,8 +24,8 @@ public class ProtectedRegion extends DatabaseObject {
     public ProtectedRegion(@NotNull Document document) {
         this.regionId = Util.convertNonNull(document.getString(Keys.REGION_ID), UUID::fromString);
         this.members.putAll(convertDocumentToMembers((Map<String, Boolean>) Objects.requireNonNull(document)
-                                                                                   .get(Keys.MEMBERS_KEY)));
-        this.regionBox = new Box(document.get(Keys.BOX_KEY, Document.class));
+                                                                                   .get(Keys.MEMBERS)));
+        this.regionBox = new Box(document.get(Keys.BOX, Document.class));
     }
 
     public ProtectedRegion(@NotNull UUID owner, @NotNull Box startingBox) {
@@ -67,15 +67,15 @@ public class ProtectedRegion extends DatabaseObject {
     }
 
     public static Bson filterColliding(@NotNull Bson boxFilter) {
-        return Filters.eq(Keys.BOX_KEY, boxFilter);
+        return Filters.eq(Keys.BOX, boxFilter);
     }
 
     @Override
     public @NotNull Document toDocument() {
         Document document = new Document();
         document.put(Keys.REGION_ID, Util.convertNonNull(regionId, UUID::toString));
-        document.put(Keys.MEMBERS_KEY, convertMembersToDocument(members));
-        document.put(Keys.BOX_KEY, regionBox.toDocument());
+        document.put(Keys.MEMBERS, convertMembersToDocument(members));
+        document.put(Keys.BOX, regionBox.toDocument());
         return document;
     }
 
@@ -98,8 +98,8 @@ public class ProtectedRegion extends DatabaseObject {
     private final static class Keys {
 
         public static final String REGION_ID = "_id";
-        public static final String MEMBERS_KEY = "members";
-        public static final String BOX_KEY = "box";
+        public static final String MEMBERS = "members";
+        public static final String BOX = "box";
 
         // Private constructor
         private Keys() {

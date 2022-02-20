@@ -98,14 +98,12 @@ public class Box extends DatabaseObject {
 
     public @NotNull Bson filterColliding() {
         // Same as this#intersects(Box)
-        return Filters.and(
-                Filters.lte(Keys.LOWER_X, higherX),
-                Filters.gte(Keys.HIGHER_X, lowerX),
-                Filters.lte(Keys.LOWER_Y, higherY),
-                Filters.gte(Keys.HIGHER_Y, lowerY),
-                Filters.lte(Keys.LOWER_Z, higherZ),
-                Filters.gte(Keys.HIGHER_Z, lowerZ)
-        );
+        return Filters.and(Filters.lte(Keys.LOWER_X, higherX),
+                           Filters.gte(Keys.HIGHER_X, lowerX),
+                           Filters.lte(Keys.LOWER_Y, higherY),
+                           Filters.gte(Keys.HIGHER_Y, lowerY),
+                           Filters.lte(Keys.LOWER_Z, higherZ),
+                           Filters.gte(Keys.HIGHER_Z, lowerZ));
     }
 
     @Override

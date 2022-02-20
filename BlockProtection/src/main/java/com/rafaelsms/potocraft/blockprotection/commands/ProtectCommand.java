@@ -1,11 +1,14 @@
 package com.rafaelsms.potocraft.blockprotection.commands;
 
 import com.rafaelsms.potocraft.blockprotection.BlockProtectionPlugin;
+import com.rafaelsms.potocraft.blockprotection.util.Selection;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public class ProtectCommand implements CommandExecutor {
 
@@ -25,7 +28,13 @@ public class ProtectCommand implements CommandExecutor {
             return true;
         }
 
-        if (plugin.getProtectionManager().addPlayerSelection(player)) {
+        Optional<Selection> selectionOptional = plugin.getProtectionManager().getPlayerSelection(player);
+        if (selectionOptional.isPresent()) {
+            player.sendMessage("selection present, ready to make a protected region");
+            return true;
+        }
+
+        if (plugin.getProtectionManager().startPlayerSelection(player)) {
             player.sendMessage("Started selection: click away");
             return true;
         }

@@ -30,7 +30,7 @@ public class BlockProtectionPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         // Register events
-        getServer().getPluginManager().registerEvents(userManager, this);
+        getServer().getPluginManager().registerEvents(userManager.getListener(), this);
         getServer().getPluginManager().registerEvents(protectionManager, this);
         getServer().getPluginManager().registerEvents(new ProtectionListener(this), this);
 
