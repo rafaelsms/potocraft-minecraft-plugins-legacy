@@ -22,6 +22,11 @@ configuration:
     default_modifier: 0.8
     groups:
       potocraft.exp_modifier.vip: 1.4
+  drop_player_heads:
+    enabled: true
+    item_lore:
+      - "&3Cabeça conquistada por &e&l%killer%"
+      - "&3em %datetime%"
   rainy_night_event:
     enabled: false
     potion_effects:

@@ -8,6 +8,7 @@ import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -185,6 +188,24 @@ public class Configuration extends YamlFile {
 
     public Map<String, Double> getExperienceModifierGroups() {
         return get("configuration.experience_modifier.groups");
+    }
+
+    public Boolean isPlayerHeadDropping() {
+        return get("configuration.drop_player_heads.enabled");
+    }
+
+    public List<Component> getPlayerHeadLore(@NotNull Player killed, @NotNull Player killer) {
+        List<String> itemLoreStrings = Objects.requireNonNull(get("configuration.drop_player_heads.item_lore"));
+        ArrayList<Component> itemLore = new ArrayList<>();
+        for (String itemLoreString : itemLoreStrings) {
+            itemLore.add(TextUtil.toComponent(itemLoreString)
+                                 .replace("%killed%", killed.displayName())
+                                 .replace("%killer%", killer.displayName())
+                                 .replace("%datetime%",
+                                          DateTimeFormatter.ofPattern("d-MMM-yy H:mm").format(ZonedDateTime.now()))
+                                 .build());
+        }
+        return itemLore;
     }
 
     public Boolean isHideJoinQuitMessages() {
