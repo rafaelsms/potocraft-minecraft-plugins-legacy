@@ -19,12 +19,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class UserManager implements Listener {
 
     private final Object lock = new Object();
+    private final Set<UUID> leavingPlayers = Collections.synchronizedSet(new HashSet<>());
     private final Map<UUID, Profile> loadedProfiles = Collections.synchronizedMap(new HashMap<>());
     private final Map<UUID, User> users = Collections.synchronizedMap(new HashMap<>());
 
@@ -62,6 +65,11 @@ public class UserManager implements Listener {
             // Update player name
             profile.setPlayerName(event.getName());
             synchronized (lock) {
+                if (leavingPlayers.contains(event.getUniqueId())) {
+                    event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
+                                   plugin.getConfiguration().getKickMessageCouldNotLoadProfile());
+                    return;
+                }
                 loadedProfiles.put(event.getUniqueId(), profile);
             }
         } catch (Database.DatabaseException ignored) {
@@ -74,7 +82,7 @@ public class UserManager implements Listener {
     private void insertProfile(PlayerLoginEvent event) {
         synchronized (lock) {
             Profile profile = loadedProfiles.remove(event.getPlayer().getUniqueId());
-            if (profile == null) {
+            if (profile == null || leavingPlayers.contains(event.getPlayer().getUniqueId())) {
                 plugin.logger().warn("Didn't have a loaded Profile for user {}", event.getPlayer().getName());
                 event.disallow(PlayerLoginEvent.Result.KICK_OTHER,
                                plugin.getConfiguration().getKickMessageCouldNotLoadProfile());
@@ -86,6 +94,9 @@ public class UserManager implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     private void removeProfile(PlayerQuitEvent event) {
+        synchronized (lock) {
+            leavingPlayers.add(event.getPlayer().getUniqueId());
+        }
         plugin.getServer().getScheduler().runTask(plugin, () -> {
             synchronized (lock) {
                 loadedProfiles.remove(event.getPlayer().getUniqueId());
