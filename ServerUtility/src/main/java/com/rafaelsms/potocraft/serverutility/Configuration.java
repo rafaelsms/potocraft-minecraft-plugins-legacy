@@ -110,6 +110,17 @@ public class Configuration extends YamlFile {
         return Optional.empty();
     }
 
+    public Double getWorldSizeDiameter(@NotNull String worldName) {
+        Map<String, Double> map = Objects.requireNonNull(get("configuration.world_borders_radius"));
+        for (Map.Entry<String, Double> entry : map.entrySet()) {
+            if (entry.getKey().equalsIgnoreCase(worldName)) {
+                return entry.getValue() * 2.0;
+            }
+        }
+        // This value is in radius on the config, but we must return the diameter
+        return plugin.getServer().getMaxWorldSize() * 2.0;
+    }
+
     @SuppressWarnings("rawtypes")
     public Map<GameRule, Object> getDefaultGameRules() {
         Map<String, Map<String, Object>> map = Objects.requireNonNull(get("configuration.game_rules_applied"));

@@ -49,6 +49,8 @@ configuration:
       maxEntityCramming: 4
   worlds_with_synced_real_time:
     - world
+  world_borders_radius:
+    world_nether: 30000000
   per_world_pvp_settings:
     default:
       prevent_night_skip: true

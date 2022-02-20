@@ -23,6 +23,7 @@ import com.rafaelsms.potocraft.serverutility.listeners.QuickReplantListener;
 import com.rafaelsms.potocraft.serverutility.listeners.RainyNightListener;
 import com.rafaelsms.potocraft.serverutility.listeners.VanishManager;
 import com.rafaelsms.potocraft.serverutility.listeners.VillagerListener;
+import com.rafaelsms.potocraft.serverutility.listeners.WorldBorderApplier;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldConfigurationApplier;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldGameRuleApplier;
 import com.rafaelsms.potocraft.serverutility.tasks.SyncWorldTimeTask;
@@ -65,6 +66,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new DamageEffects(this), this);
         getServer().getPluginManager().registerEvents(new WorldConfigurationApplier(this), this);
         getServer().getPluginManager().registerEvents(new HeadDropper(this), this);
+        getServer().getPluginManager().registerEvents(new WorldBorderApplier(this), this);
 
         // Run world sync task
         getServer().getScheduler().runTaskTimer(this, new SyncWorldTimeTask(this), 5L, 5L);
