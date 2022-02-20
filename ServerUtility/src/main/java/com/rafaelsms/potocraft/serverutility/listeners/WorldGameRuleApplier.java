@@ -23,6 +23,7 @@ public class WorldGameRuleApplier implements Listener {
     private void applyGameRules(WorldLoadEvent event) {
         World world = event.getWorld();
         String worldName = world.getName();
+        plugin.getConfiguration().getGameDifficulty().ifPresent(world::setDifficulty);
         // Apply default game rules
         for (Map.Entry<GameRule, Object> entry : plugin.getConfiguration().getDefaultGameRules().entrySet()) {
             applyGameRule(world, entry.getKey(), entry.getValue());

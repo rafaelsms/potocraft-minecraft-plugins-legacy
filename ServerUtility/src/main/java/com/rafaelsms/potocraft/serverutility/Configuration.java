@@ -4,6 +4,7 @@ import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.serverutility.util.WorldCombatConfig;
 import com.rafaelsms.potocraft.util.TextUtil;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Configuration extends YamlFile {
 
@@ -93,6 +95,16 @@ public class Configuration extends YamlFile {
 
     public Boolean isNerfVillagerEnchantedBooks() {
         return get("configuration.villager.nerf_enchanted_books");
+    }
+
+    public Optional<Difficulty> getGameDifficulty() {
+        String difficultyString = get("configuration.game_difficulty");
+        for (Difficulty difficulty : Difficulty.values()) {
+            if (difficulty.name().equalsIgnoreCase(difficultyString)) {
+                return Optional.of(difficulty);
+            }
+        }
+        return Optional.empty();
     }
 
     @SuppressWarnings("rawtypes")
