@@ -1,0 +1,27 @@
+plugins {
+    id 'com.github.johnrengelman.shadow'
+    id 'java'
+}
+
+group 'com.rafaelsms'
+version '0.1'
+
+repositories {
+    mavenCentral()
+    maven {
+        url("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    }
+}
+
+dependencies {
+    compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
+    implementation(project(':common'))
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+shadowJar {
+    minimize()
+}
