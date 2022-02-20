@@ -50,7 +50,7 @@ public class ServerProfilePlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         // Register listeners
-        getServer().getPluginManager().registerEvents(userManager, this);
+        getServer().getPluginManager().registerEvents(userManager.getListener(), this);
         getServer().getPluginManager().registerEvents(new ChatFormatter(this), this);
         getServer().getPluginManager().registerEvents(new CombatListener(this), this);
         getServer().getPluginManager().registerEvents(new StatisticsListener(this), this);

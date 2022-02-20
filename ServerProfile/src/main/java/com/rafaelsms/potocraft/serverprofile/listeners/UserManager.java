@@ -4,148 +4,57 @@ import com.rafaelsms.potocraft.database.Database;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.Profile;
 import com.rafaelsms.potocraft.serverprofile.players.User;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
+import net.kyori.adventure.text.Component;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.server.ServerLoadEvent;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-public class UserManager implements Listener {
-
-    private final Object lock = new Object();
-    private final Set<UUID> leavingPlayers = Collections.synchronizedSet(new HashSet<>());
-    private final Map<UUID, Profile> loadedProfiles = Collections.synchronizedMap(new HashMap<>());
-    private final Map<UUID, User> users = Collections.synchronizedMap(new HashMap<>());
+public class UserManager extends com.rafaelsms.potocraft.util.UserManager<User, Profile> {
 
     private final @NotNull ServerProfilePlugin plugin;
 
-    private @Nullable BukkitTask savePlayerTask = null;
-    private @Nullable BukkitTask tickPlayerTask = null;
-
     public UserManager(@NotNull ServerProfilePlugin plugin) {
+        super(plugin, plugin.getConfiguration().getSavePlayersTaskTimerTicks());
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    private void startSavingTask(ServerLoadEvent event) {
-        if (savePlayerTask != null) {
-            savePlayerTask.cancel();
-            savePlayerTask = null;
-        }
-        if (tickPlayerTask != null) {
-            tickPlayerTask.cancel();
-            tickPlayerTask = null;
-        }
-        int time = plugin.getConfiguration().getSavePlayersTaskTimerTicks();
-        savePlayerTask =
-                plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new SavePlayersTask(), time, time);
-        tickPlayerTask = plugin.getServer().getScheduler().runTaskTimer(plugin, new TickPlayersTask(), 1, 1);
+    @Override
+    protected Component getKickMessageCouldNotLoadProfile() {
+        return plugin.getConfiguration().getKickMessageCouldNotLoadProfile();
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    private void loadProfile(AsyncPlayerPreLoginEvent event) {
-        try {
-            Profile profile = plugin.getDatabase()
-                                    .loadProfile(event.getUniqueId())
-                                    .orElse(new Profile(event.getUniqueId(), event.getName()));
-            // Update player name
-            profile.setPlayerName(event.getName());
-            synchronized (lock) {
-                if (leavingPlayers.contains(event.getUniqueId())) {
-                    event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
-                                   plugin.getConfiguration().getKickMessageCouldNotLoadProfile());
-                    return;
-                }
-                loadedProfiles.put(event.getUniqueId(), profile);
-            }
-        } catch (Database.DatabaseException ignored) {
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
-                           plugin.getConfiguration().getKickMessageCouldNotLoadProfile());
-        }
+    @Override
+    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws Database.DatabaseException {
+        return plugin.getDatabase()
+                     .loadProfile(event.getUniqueId())
+                     .orElse(new Profile(event.getUniqueId(), event.getName()));
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    private void insertProfile(PlayerLoginEvent event) {
-        synchronized (lock) {
-            Profile profile = loadedProfiles.remove(event.getPlayer().getUniqueId());
-            if (profile == null || leavingPlayers.contains(event.getPlayer().getUniqueId())) {
-                plugin.logger().warn("Didn't have a loaded Profile for user {}", event.getPlayer().getName());
-                event.disallow(PlayerLoginEvent.Result.KICK_OTHER,
-                               plugin.getConfiguration().getKickMessageCouldNotLoadProfile());
-                return;
-            }
-            users.put(event.getPlayer().getUniqueId(), new User(plugin, event.getPlayer(), profile));
-        }
+    @Override
+    protected User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile) {
+        return new User(plugin, event.getPlayer(), profile);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    private void removeProfile(PlayerQuitEvent event) {
-        synchronized (lock) {
-            leavingPlayers.add(event.getPlayer().getUniqueId());
-        }
-        plugin.getServer().getScheduler().runTask(plugin, () -> {
-            synchronized (lock) {
-                loadedProfiles.remove(event.getPlayer().getUniqueId());
-                User removedUser = users.remove(event.getPlayer().getUniqueId());
-                if (removedUser != null) {
-                    Profile profile = removedUser.getProfile();
-                    // Update play time
-                    profile.setQuitTime();
-                    plugin.getDatabase().saveProfileCatching(profile);
-                }
-            }
-        });
+    @Override
+    protected void onLogin(User user) {
+        // Update player name
+        user.getProfile().setPlayerName(user.getPlayer().getName());
     }
 
-    public @NotNull User getUser(@NotNull Player player) {
-        return getUser(player.getUniqueId());
+    @Override
+    protected void onQuit(User user) {
+        // Update play time
+        user.getProfile().setQuitTime();
+        // The profile is already saved on common.UserManager
     }
 
-    public @NotNull User getUser(@NotNull UUID playerId) {
-        return users.get(playerId);
+    @Override
+    protected void tickUser(User user) {
+        user.runTick();
     }
 
-    public @NotNull Collection<User> getUsers() {
-        return Collections.unmodifiableCollection(users.values());
-    }
-
-    private class TickPlayersTask implements Runnable {
-
-        @Override
-        public void run() {
-            synchronized (lock) {
-                // Tick all users synchronously
-                for (User user : users.values()) {
-                    user.runTick();
-                }
-            }
-        }
-    }
-
-    private class SavePlayersTask implements Runnable {
-
-        @Override
-        public void run() {
-            synchronized (lock) {
-                // Simply save all profiles at once and hope it doesn't lag ;)
-                for (User user : users.values()) {
-                    plugin.getDatabase().saveProfileCatching(user.getProfile());
-                }
-            }
-        }
+    @Override
+    protected void saveUser(User user) {
+        plugin.getDatabase().saveProfileCatching(user.getProfile());
     }
 }

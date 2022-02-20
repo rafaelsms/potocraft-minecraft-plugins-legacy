@@ -1,6 +1,12 @@
 package com.rafaelsms.potocraft.combatserver;
 
+import com.mongodb.client.MongoCollection;
+import com.rafaelsms.potocraft.combatserver.player.Profile;
+import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
+import java.util.UUID;
 
 public class Database extends com.rafaelsms.potocraft.database.Database {
 
@@ -18,5 +24,23 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
             plugin.getServer().shutdown();
         }
         throw databaseException;
+    }
+
+    private MongoCollection<Document> getProfileCollection() throws DatabaseException {
+        return getDatabase().getCollection(plugin.getConfiguration().getMongoPlayerCollectionName());
+    }
+
+    public Optional<Profile> getProfile(UUID playerId) throws DatabaseException {
+        return throwingWrapper(() -> {
+            Document document = getProfileCollection().find(Profile.filterById(playerId)).first();
+            if (document == null) {
+                return Optional.empty();
+            }
+            return Optional.of(new Profile(document));
+        });
+    }
+
+    public void saveProfile(@NotNull Profile profile) {
+        catchingWrapper(() -> getProfileCollection().replaceOne(profile.filterById(), profile.toDocument(), UPSERT));
     }
 }

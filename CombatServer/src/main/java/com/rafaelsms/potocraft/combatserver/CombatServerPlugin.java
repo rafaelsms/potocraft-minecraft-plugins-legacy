@@ -26,7 +26,7 @@ public class CombatServerPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getServer().getPluginManager().registerEvents(userManager, this);
+        getServer().getPluginManager().registerEvents(userManager.getListener(), this);
         getServer().getPluginManager().registerEvents(new CombatDrops(this), this);
         getServer().getPluginManager().registerEvents(new CombatGameRules(this), this);
         getServer().getPluginManager().registerEvents(new EquipmentManager(this), this);
