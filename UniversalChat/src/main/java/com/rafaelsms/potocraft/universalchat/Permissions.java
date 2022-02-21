@@ -2,6 +2,7 @@ package com.rafaelsms.potocraft.universalchat;
 
 public final class Permissions {
 
+    public static final String CHAT_COLORIZED = "potocraft.proxy.chat.colorized";
     public static final String CHAT_BYPASS = "potocraft.proxy.chat.bypass";
     public static final String GLOBAL_CHAT = "potocraft.proxy.chat.global";
     public static final String GLOBAL_CHAT_SPY = "potocraft.proxy.chat.global.spy";

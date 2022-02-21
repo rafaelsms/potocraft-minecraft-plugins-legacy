@@ -35,6 +35,6 @@ public class Configuration extends YamlFile {
     }
 
     public Component getFailedToRetrieveProfile() {
-        return TextUtil.toComponent(get("language.failed_to_retrieve_profile")).build();
+        return TextUtil.toComponent(get("language.failed_to_retrieve_profile"));
     }
 }

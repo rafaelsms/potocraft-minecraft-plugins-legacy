@@ -3,7 +3,9 @@ package com.rafaelsms.potocraft.universalchat.listeners;
 import com.rafaelsms.potocraft.universalchat.Permissions;
 import com.rafaelsms.potocraft.universalchat.UniversalChatPlugin;
 import com.rafaelsms.potocraft.universalchat.player.User;
+import com.rafaelsms.potocraft.universalchat.util.ChatUtil;
 import com.rafaelsms.potocraft.util.ChatHistory;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -114,8 +116,10 @@ public class ChatListener implements Listener {
 
         // Format the message
         String message = event.getMessage().replaceFirst(chatPrefix, "");
-        @NotNull BaseComponent[] chatMessage = plugin.getConfiguration().getGlobalChatFormat(player, message);
-        @NotNull BaseComponent[] spyMessage = plugin.getConfiguration().getGlobalChatSpyFormat(player, message);
+        Component messageComponent = ChatUtil.parseMessage(player, message);
+        @NotNull BaseComponent[] chatMessage = plugin.getConfiguration().getGlobalChatFormat(player, messageComponent);
+        @NotNull BaseComponent[] spyMessage =
+                plugin.getConfiguration().getGlobalChatSpyFormat(player, messageComponent);
         event.setCancelled(true);
 
         // Send the message for everybody of their server
@@ -169,7 +173,9 @@ public class ChatListener implements Listener {
 
         // Format the message
         String message = event.getMessage().replaceFirst(chatPrefix, "");
-        @NotNull BaseComponent[] chatMessage = plugin.getConfiguration().getUniversalChatFormat(player, message);
+        Component messageComponent = ChatUtil.parseMessage(player, message);
+        @NotNull BaseComponent[] chatMessage =
+                plugin.getConfiguration().getUniversalChatFormat(player, messageComponent);
         event.setCancelled(true);
 
         // Send the message for everybody
@@ -191,8 +197,9 @@ public class ChatListener implements Listener {
         }
 
         // Format the message
+        Component messageComponent = ChatUtil.parseMessage(sendingPlayer, event.getMessage());
         @NotNull BaseComponent[] spyMessage =
-                plugin.getConfiguration().getOtherServerChatSpyFormat(sendingPlayer, event.getMessage());
+                plugin.getConfiguration().getOtherServerChatSpyFormat(sendingPlayer, messageComponent);
 
         Optional<ServerInfo> currentServer = Optional.ofNullable(sendingPlayer.getServer()).map(Server::getInfo);
         // Ignore if sender is on a unknown server

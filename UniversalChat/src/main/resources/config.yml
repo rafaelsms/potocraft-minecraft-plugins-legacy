@@ -7,15 +7,15 @@ configuration:
     min_length_to_compare: 4
     min_char_differences: 3
   universal_chat:
-    format: "&6!! &7(&6%server%&7)&6 <&e%prefix%%username%%suffix%&6> &f%message%"
+    format: "<hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem privada para <yellow><bold><username></bold></yellow>!'><click:suggest_command:'/msg <username> '><gold>!! <gray>(</gray><gold><server></gold><gray>)</gray> <gold><<yellow><prefix><username><suffix><gold>></gold></click></hover><reset> <message>"
     prefix: '!!'
   global_chat:
-    format: "&3! <&e%prefix%%username%%suffix%&3> &f%message%"
-    spy_format: "&7! (%server%) <%prefix%%username%%suffix%&7> &7%message%"
+    format: "<hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem privada para <yellow><bold><username></bold></yellow>!'><click:suggest_command:'/msg <username> '><dark_aqua>! <</dark_aqua><yellow><prefix><username><suffix></yellow><dark_aqua>></dark_aqua></click></hover><reset> <message>"
+    spy_format: "<hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem privada para <yellow><bold><username></bold></yellow>!'><click:suggest_command:'/msg <username> '><gray>! (<server>) <<prefix><username><suffix><gray>></gray><reset> <gray><message></gray>"
     prefix: '!'
   other_server_chat:
-    spy_format: "&7(%server%) %prefix%&7%username%%suffix%&7: &7%message%"
-  local_chat_format: "&e%prefix%%username%%suffix%&7: &f%message%"
+    spy_format: "<gray><hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem privada para <yellow><bold><username></bold></yellow>!'><click:suggest_command:'/msg <username> '>(<server>) <username>:</click></hover> <message></gray>"
+  local_chat_format: "<hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem privada para <yellow><bold><username></bold></yellow>!'><click:suggest_command:'/msg <username> '><yellow><prefix><username><suffix></yellow><gray>:</gray></click></hover><reset> <gray><message></gray>"
   direct_messages:
     reply_time_amount_seconds: 240
   blocked_words:
@@ -323,15 +323,15 @@ configuration:
 language:
   console_name: 'administração'
   unknown_server_name: 'limbo?'
-  no_permission: "&cVocê não possui permissão."
-  messages_too_small: "&cMensagens muito pequenas são ignoradas!"
-  messages_too_frequent: "&cMensagens enviadas muito rapidamente!"
-  messages_too_similar: "&cMensagens muito parecidas!"
-  players_only: "&cComando disponível apenas para jogadores!"
+  no_permission: "<red>Você não possui permissão."
+  messages_too_small: "<red>Mensagens muito pequenas são ignoradas!"
+  messages_too_frequent: "<red>Mensagens enviadas muito rapidamente!"
+  messages_too_similar: "<red>Mensagens muito parecidas!"
+  players_only: "<red>Comando disponível apenas para jogadores!"
   direct_messages:
-    help: "&6Digite &e&l/mensagem <nome> <mensagem>"
-    reply_help: "&6Digite &e&l/responder <mensagem>&6, a mensagem irá para a última pessoa com quem falou."
-    no_player_found: "&cJogador não encontrado!"
-    outgoing_format: "&3você &7-> &3%receiver% &7%message%"
-    incoming_format: "&3%sender% &7-> &3você &7%message%"
-    spy_format: "&3%sender% &7-> &3%receiver% &7%message%"
+    help: "<gold>Digite <yellow><bold><click:suggest_command:'/mensagem <nome> <mensagem>'><hover:show_text:'<gold>Exemplo: <yellow><bold>/msg rflsms tudo bem?'>/mensagem <nome> <mensagem></hover></click></gold>"
+    reply_help: "<gold>Digite <yellow><bold><click:suggest_command:'/responder <mensagem>'><hover:show_text:'<gold>Exemplo: <yellow><bold>/r estou bem sim, e você?'>/responder <mensagem></hover></click></bold></yellow>, a mensagem irá para a última pessoa com quem falou.</gold>"
+    no_player_found: "<red>Jogador não encontrado!"
+    outgoing_format: "<dark_aqua><hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem para <yellow><bold><receiver></bold></yellow></gold>'><click:suggest_command:'/msg <receiver> '><bold>você</bold> <gray>-></gray> <receiver></click></hover></dark_aqua><gray>: <message>"
+    incoming_format: "<dark_aqua><hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem para <yellow><bold><sender></bold></yellow></gold>'><click:suggest_command:'/msg <sender> '><sender> <gray>-></gray> <bold>você</bold></click></hover></dark_aqua><gray>: <message>"
+    spy_format: "<dark_aqua><hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem para <yellow><bold><sender></bold></yellow></gold>'><click:suggest_command:'/msg <sender> '><sender></click></hover> <gray>-></gray> <hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem para <yellow><bold><receiver></bold></yellow></gold>'><click:suggest_command:'/msg <receiver> '><receiver></click></hover></dark_aqua><gray>: <gray><message></gray>"

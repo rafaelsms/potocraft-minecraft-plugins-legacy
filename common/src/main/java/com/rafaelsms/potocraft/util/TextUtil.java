@@ -1,7 +1,8 @@
 package com.rafaelsms.potocraft.util;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -16,10 +17,8 @@ import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
@@ -33,14 +32,6 @@ public final class TextUtil {
 
     // Private constructor
     private TextUtil() {
-    }
-
-    public static @NotNull String toColorizedString(@NotNull Component component) {
-        return LegacyComponentSerializer.legacyAmpersand().serializeOrNull(component);
-    }
-
-    public static @NotNull String toPlainString(@NotNull Component component) {
-        return PlainTextComponentSerializer.plainText().serializeOrNull(component);
     }
 
     public static @NotNull String getIpAddress(@NotNull InetSocketAddress address) {
@@ -187,63 +178,23 @@ public final class TextUtil {
         return suffix;
     }
 
-    public static ComponentBuilder toComponent(@Nullable String base) {
-        return ComponentBuilder.builder(Util.getOrElse(base, "&cFailed to load message"));
+    public static @NotNull String toColorizedString(@NotNull Component component) {
+        return LegacyComponentSerializer.legacyAmpersand().serializeOrNull(component);
     }
 
-    public static class ComponentBuilder {
+    public static @NotNull String toPlainString(@NotNull Component component) {
+        return PlainTextComponentSerializer.plainText().serializeOrNull(component);
+    }
 
-        private final @NotNull String base;
-        private HashMap<String, String> stringReplacements = null;
-        private HashMap<String, Component> componentReplacements = null;
+    public static @NotNull Component toLegacyComponent(@NotNull String component) {
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(component);
+    }
 
-        private ComponentBuilder(@NotNull String base) {
-            this.base = base;
-        }
+    public static @NotNull Component toComponent(@Nullable String base, TagResolver... resolvers) {
+        return MiniMessage.miniMessage().deserialize(Util.getOrElse(base, "<red>Failed to load message!"), resolvers);
+    }
 
-        private static ComponentBuilder builder(@NotNull String base) {
-            return new ComponentBuilder(base);
-        }
-
-        public ComponentBuilder replace(@NotNull String search, @NotNull String replacement) {
-            if (this.stringReplacements == null) {
-                this.stringReplacements = new HashMap<>();
-            }
-            this.stringReplacements.put(search, replacement);
-            return this;
-        }
-
-        public ComponentBuilder replace(@NotNull String search, @NotNull Component replacement) {
-            if (this.componentReplacements == null) {
-                this.componentReplacements = new HashMap<>();
-            }
-            this.componentReplacements.put(search, replacement);
-            return this;
-        }
-
-        public Component build() {
-            String replacedString = base;
-            if (stringReplacements != null) {
-                for (Map.Entry<String, String> entry : stringReplacements.entrySet()) {
-                    replacedString = replacedString.replace(entry.getKey(), entry.getValue());
-                }
-            }
-            Component replacedComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(replacedString);
-            if (componentReplacements != null) {
-                for (Map.Entry<String, Component> entry : componentReplacements.entrySet()) {
-                    replacedComponent = replacedComponent.replaceText(replaceText(entry.getKey(), entry.getValue()));
-                }
-            }
-            return replacedComponent;
-        }
-
-        public @NotNull BaseComponent[] buildBungee() {
-            return BungeeComponentSerializer.get().serialize(build());
-        }
-
-        private static @NotNull TextReplacementConfig replaceText(@NotNull String match,
-                                                                  @NotNull Component replacement) {
-            return TextReplacementConfig.builder().matchLiteral(match).replacement(replacement).build();
-        }
+    public static @NotNull BaseComponent[] toComponentBungee(@Nullable String base, TagResolver... resolvers) {
+        return BungeeComponentSerializer.get().serialize(toComponent(base, resolvers));
     }
 }

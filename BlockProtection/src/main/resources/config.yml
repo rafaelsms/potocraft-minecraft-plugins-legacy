@@ -20,4 +20,4 @@ configuration:
         potocraft.protection.volume.vip: 50000
 language:
   errors:
-    failed_to_fetch_profile: "&cFalha ao carregar perfil."
+    failed_to_fetch_profile: "<red>Falha ao carregar perfil."

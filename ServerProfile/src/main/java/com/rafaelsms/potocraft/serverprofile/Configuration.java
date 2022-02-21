@@ -6,6 +6,7 @@ import com.rafaelsms.potocraft.serverprofile.players.TeleportRequest;
 import com.rafaelsms.potocraft.serverprofile.warps.Warp;
 import com.rafaelsms.potocraft.util.TextUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
@@ -75,16 +76,15 @@ public class Configuration extends YamlFile {
                                     @NotNull UUID senderId,
                                     @NotNull String senderName,
                                     @NotNull Component message) {
-        return TextUtil.toComponent(format)
-                       .replace("%username%", senderName)
-                       .replace("%prefix%", TextUtil.getPrefix(senderId))
-                       .replace("%suffix%", TextUtil.getSuffix(senderId))
-                       .replace("%message%", message)
-                       .build();
+        return TextUtil.toComponent(format,
+                                    Placeholder.parsed("prefix", TextUtil.getPrefix(senderId)),
+                                    Placeholder.parsed("username", senderName),
+                                    Placeholder.parsed("suffix", TextUtil.getSuffix(senderId)),
+                                    Placeholder.component("message", message));
     }
 
     public Component getNobodyHeardYou() {
-        return TextUtil.toComponent(get("language.chat.nobody_heard_you")).build();
+        return TextUtil.toComponent(get("language.chat.nobody_heard_you"));
     }
 
     public Integer getTeleportDelayTicks() {
@@ -149,19 +149,19 @@ public class Configuration extends YamlFile {
     }
 
     public Component getPlayersOnly() {
-        return TextUtil.toComponent(get("language.players_only")).build();
+        return TextUtil.toComponent(get("language.players_only"));
     }
 
     public Component getCouldNotLoadProfile() {
-        return TextUtil.toComponent(get("language.could_not_load_profile")).build();
+        return TextUtil.toComponent(get("language.could_not_load_profile"));
     }
 
     public Component getCombatBarTitle() {
-        return TextUtil.toComponent(get("language.combat.bar_title")).build();
+        return TextUtil.toComponent(get("language.combat.bar_title"));
     }
 
     public Component getCombatBlockedCommand() {
-        return TextUtil.toComponent(get("language.combat.command_is_blocked_while_in_combat")).build();
+        return TextUtil.toComponent(get("language.combat.command_is_blocked_while_in_combat"));
     }
 
     public String getUnknownWorldName() {
@@ -174,210 +174,203 @@ public class Configuration extends YamlFile {
         if (world != null) {
             worldName = world.getName().replaceAll("_", " ");
         }
-        return TextUtil.toComponent(get("language.combat.your_death_location_is"))
-                       .replace("%world%", worldName)
-                       .replace("%x%", String.valueOf(location.getBlockX()))
-                       .replace("%y%", String.valueOf(location.getBlockY()))
-                       .replace("%z%", String.valueOf(location.getBlockZ()))
-                       .build();
+        return TextUtil.toComponent(get("language.combat.your_death_location_is"),
+                                    Placeholder.parsed("world", worldName),
+                                    Placeholder.parsed("x", String.valueOf(location.getBlockX())),
+                                    Placeholder.parsed("y", String.valueOf(location.getBlockY())),
+                                    Placeholder.parsed("z", String.valueOf(location.getBlockZ())));
     }
 
     public Component getHardcoreBanMessage(@NotNull ZonedDateTime expirationDate) {
-        return TextUtil.toComponent(get("language.combat.hardcore.banned"))
-                       .replace("%expiration_date%", getDateTimeFormatter().format(expirationDate))
-                       .build();
+        return TextUtil.toComponent(get("language.combat.hardcore.banned"),
+                                    Placeholder.parsed("expiration_date",
+                                                       getDateTimeFormatter().format(expirationDate)));
     }
 
     public Component getTeleportBarTitle() {
-        return TextUtil.toComponent(get("language.teleport.bar_title")).build();
+        return TextUtil.toComponent(get("language.teleport.bar_title"));
     }
 
     public Component getTeleportPlayerQuit() {
-        return TextUtil.toComponent(get("language.teleport.player_quit")).build();
+        return TextUtil.toComponent(get("language.teleport.player_quit"));
     }
 
     public Component getTeleportPlayerInCombat() {
-        return TextUtil.toComponent(get("language.teleport.entered_combat")).build();
+        return TextUtil.toComponent(get("language.teleport.entered_combat"));
     }
 
     public Component getTeleportParticipantTeleporting() {
-        return TextUtil.toComponent(get("language.teleport.other_player_is_teleporting")).build();
+        return TextUtil.toComponent(get("language.teleport.other_player_is_teleporting"));
     }
 
     public Component getTeleportParticipantInCombat() {
-        return TextUtil.toComponent(get("language.teleport.other_player_is_in_combat")).build();
+        return TextUtil.toComponent(get("language.teleport.other_player_is_in_combat"));
     }
 
     public Component getTeleportAlreadyTeleporting() {
-        return TextUtil.toComponent(get("language.teleport.already_teleporting")).build();
+        return TextUtil.toComponent(get("language.teleport.already_teleporting"));
     }
 
     public Component getTeleportDestinationUnavailable() {
-        return TextUtil.toComponent(get("language.teleport.destination_unavailable")).build();
+        return TextUtil.toComponent(get("language.teleport.destination_unavailable"));
     }
 
     public Component getTeleportInCooldown(long cooldownSeconds) {
         String messageFormat = get("language.teleport.in_cooldown");
-        return TextUtil.toComponent(messageFormat).replace("%cooldown%", String.valueOf(cooldownSeconds)).build();
+        return TextUtil.toComponent(messageFormat, Placeholder.parsed("cooldown", String.valueOf(cooldownSeconds)));
     }
 
     public Component getTeleportFailed() {
-        return TextUtil.toComponent(get("language.teleport.failed")).build();
+        return TextUtil.toComponent(get("language.teleport.failed"));
     }
 
     public Component getTeleportNoBackLocation() {
-        return TextUtil.toComponent(get("language.teleport.back.no_back_location")).build();
+        return TextUtil.toComponent(get("language.teleport.back.no_back_location"));
     }
 
     public Component getTeleportBackIsDeathLocation() {
-        return TextUtil.toComponent(get("language.teleport.back.back_is_death_location")).build();
+        return TextUtil.toComponent(get("language.teleport.back.back_is_death_location"));
     }
 
     public Component getTeleportPlayerNotFound() {
-        return TextUtil.toComponent(get("language.teleport.player_not_found")).build();
+        return TextUtil.toComponent(get("language.teleport.player_not_found"));
     }
 
     public Component getTeleportOfflineLocationNotFound() {
-        return TextUtil.toComponent(get("language.teleport.offline_player_location_not_found")).build();
+        return TextUtil.toComponent(get("language.teleport.offline_player_location_not_found"));
     }
 
     public Component getTeleportHelp() {
-        return TextUtil.toComponent(get("language.teleport.help")).build();
+        return TextUtil.toComponent(get("language.teleport.help"));
     }
 
     public Component getTeleportRequestReceived(@NotNull String username) {
-        return TextUtil.toComponent(get("language.teleport.requests.teleport_received"))
-                       .replace("%username%", username)
-                       .build();
+        return TextUtil.toComponent(get("language.teleport.requests.teleport_received"),
+                                    Placeholder.parsed("username", username));
     }
 
     public Component getTeleportHereRequestReceived(@NotNull String username) {
-        return TextUtil.toComponent(get("language.teleport.requests.teleport_here_received"))
-                       .replace("%username%", username)
-                       .build();
+        return TextUtil.toComponent(get("language.teleport.requests.teleport_here_received"),
+                                    Placeholder.parsed("username", username));
     }
 
     public Component getTeleportRequestSent(@NotNull String username) {
-        return TextUtil.toComponent(get("language.teleport.requests.sent")).replace("%username%", username).build();
+        return TextUtil.toComponent(get("language.teleport.requests.sent"), Placeholder.parsed("username", username));
     }
 
     public Component getTeleportRequestNotUpdated(@NotNull String username) {
-        return TextUtil.toComponent(get("language.teleport.requests.not_updated"))
-                       .replace("%username%", username)
-                       .build();
+        return TextUtil.toComponent(get("language.teleport.requests.not_updated"),
+                                    Placeholder.parsed("username", username));
     }
 
     public Component getTeleportRequestNotFound() {
-        return TextUtil.toComponent(get("language.teleport.requests.no_found")).build();
+        return TextUtil.toComponent(get("language.teleport.requests.no_found"));
     }
 
     public Component getTeleportRequestCancelled() {
-        return TextUtil.toComponent(get("language.teleport.requests.request_cancelled")).build();
+        return TextUtil.toComponent(get("language.teleport.requests.request_cancelled"));
     }
 
     public Component getTeleportRequestManyFound(@NotNull Collection<TeleportRequest> requests) {
-        return TextUtil.toComponent(get("language.teleport.requests.many_found"))
-                       .replace("%list%",
-                                TextUtil.joinStrings(requests,
-                                                     ", ",
-                                                     request -> request.getRequester().getPlayer().getName()))
-                       .build();
+        return TextUtil.toComponent(get("language.teleport.requests.many_found"),
+                                    Placeholder.parsed("list",
+                                                       TextUtil.joinStrings(requests,
+                                                                            ", ",
+                                                                            request -> request.getRequester()
+                                                                                              .getPlayer()
+                                                                                              .getName())));
     }
 
     public Component getTeleportRequestsSentCancelled() {
-        return TextUtil.toComponent(get("language.teleport.requests.sent_requests_cancelled")).build();
+        return TextUtil.toComponent(get("language.teleport.requests.sent_requests_cancelled"));
     }
 
     public Component getTeleportHomeHelp() {
-        return TextUtil.toComponent(get("language.teleport.homes.help")).build();
+        return TextUtil.toComponent(get("language.teleport.homes.help"));
 
     }
 
     public Component getTeleportHomeList(@NotNull List<Home> homes) {
-        return TextUtil.toComponent(get("language.teleport.homes.list"))
-                       .replace("%list%", TextUtil.joinStrings(homes, ", ", Home::getName))
-                       .build();
+        return TextUtil.toComponent(get("language.teleport.homes.list"),
+                                    Placeholder.parsed("list", TextUtil.joinStrings(homes, ", ", Home::getName)));
     }
 
     public Component getTeleportHomeMaxCapacity() {
-        return TextUtil.toComponent(get("language.teleport.homes.at_max_capacity")).build();
+        return TextUtil.toComponent(get("language.teleport.homes.at_max_capacity"));
     }
 
     public Component getTeleportHomeInvalidName() {
-        return TextUtil.toComponent(get("language.teleport.homes.invalid_home_name")).build();
+        return TextUtil.toComponent(get("language.teleport.homes.invalid_home_name"));
     }
 
     public Component getTeleportHomeCreateHelp() {
-        return TextUtil.toComponent(get("language.teleport.homes.create_help")).build();
+        return TextUtil.toComponent(get("language.teleport.homes.create_help"));
     }
 
     public Component getTeleportHomeCreated() {
-        return TextUtil.toComponent(get("language.teleport.homes.created")).build();
+        return TextUtil.toComponent(get("language.teleport.homes.created"));
     }
 
     public Component getTeleportHomeAlreadyExists() {
-        return TextUtil.toComponent(get("language.teleport.homes.already_exists")).build();
+        return TextUtil.toComponent(get("language.teleport.homes.already_exists"));
     }
 
     public Component getTeleportHomeNotFound() {
-        return TextUtil.toComponent(get("language.teleport.homes.not_found")).build();
+        return TextUtil.toComponent(get("language.teleport.homes.not_found"));
     }
 
     public Component getTeleportHomeDeleted() {
-        return TextUtil.toComponent(get("language.teleport.homes.deleted")).build();
+        return TextUtil.toComponent(get("language.teleport.homes.deleted"));
     }
 
     public Component getTeleportHomeDeleteHelp(@NotNull Collection<Home> homes) {
-        return TextUtil.toComponent(get("language.teleport.homes.delete_help"))
-                       .replace("%list%", TextUtil.joinStrings(homes, ", ", Home::getName))
-                       .build();
+        return TextUtil.toComponent(get("language.teleport.homes.delete_help"),
+                                    Placeholder.parsed("list", TextUtil.joinStrings(homes, ", ", Home::getName)));
     }
 
     public Component getTeleportWarpManageHelp() {
-        return TextUtil.toComponent(get("language.teleport.warps.manage.help")).build();
+        return TextUtil.toComponent(get("language.teleport.warps.manage.help"));
     }
 
     public Component getTeleportWarpManageSuccess() {
-        return TextUtil.toComponent(get("language.teleport.warps.manage.success")).build();
+        return TextUtil.toComponent(get("language.teleport.warps.manage.success"));
     }
 
     public Component getTeleportWarpManageDatabaseFailure() {
-        return TextUtil.toComponent(get("language.teleport.warps.manage.failure")).build();
+        return TextUtil.toComponent(get("language.teleport.warps.manage.failure"));
     }
 
     public Component getTeleportWarpFailedToRetrieve() {
-        return TextUtil.toComponent(get("language.teleport.warps.failed_to_retrieve")).build();
+        return TextUtil.toComponent(get("language.teleport.warps.failed_to_retrieve"));
     }
 
     public Component getTeleportWarpList(@NotNull Collection<Warp> warps) {
-        return TextUtil.toComponent(get("language.teleport.warps.list"))
-                       .replace("%list%", TextUtil.joinStrings(warps, ", ", Warp::getName))
-                       .build();
+        return TextUtil.toComponent(get("language.teleport.warps.list"),
+                                    Placeholder.parsed("list", TextUtil.joinStrings(warps, ", ", Warp::getName)));
     }
 
     public Component getTeleportWarpNotFound() {
-        return TextUtil.toComponent(get("language.teleport.warps.not_found")).build();
+        return TextUtil.toComponent(get("language.teleport.warps.not_found"));
     }
 
     public Component getTeleportWorldList(@NotNull Collection<World> worlds) {
-        return TextUtil.toComponent(get("language.teleport.worlds.list"))
-                       .replace("%list%", TextUtil.joinStrings(worlds, ", ", World::getName))
-                       .build();
+        return TextUtil.toComponent(get("language.teleport.worlds.list"),
+                                    Placeholder.parsed("list", TextUtil.joinStrings(worlds, ", ", World::getName)));
     }
 
     public Component getTeleportWorldNotFound() {
-        return TextUtil.toComponent(get("language.teleport.worlds.not_found")).build();
+        return TextUtil.toComponent(get("language.teleport.worlds.not_found"));
     }
 
     public Component getTotemInCooldown() {
-        return TextUtil.toComponent(get("language.totem.totem_in_cooldown")).build();
+        return TextUtil.toComponent(get("language.totem.totem_in_cooldown"));
     }
 
     public Component getTotemEnteredCooldown() {
-        return TextUtil.toComponent(get("language.totem.totem_entered_in_cooldown")).build();
+        return TextUtil.toComponent(get("language.totem.totem_entered_in_cooldown"));
     }
 
     public Component getKickMessageCouldNotLoadProfile() {
-        return TextUtil.toComponent(get("language.kick_messages.could_not_load_profile")).build();
+        return TextUtil.toComponent(get("language.kick_messages.could_not_load_profile"));
     }
 }

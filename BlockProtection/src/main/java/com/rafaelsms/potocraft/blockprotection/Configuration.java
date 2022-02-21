@@ -72,6 +72,6 @@ public class Configuration extends YamlFile {
     }
 
     public Component getFailedToFetchProfile() {
-        return TextUtil.toComponent(get("language.errors.failed_to_fetch_profile")).build();
+        return TextUtil.toComponent(get("language.errors.failed_to_fetch_profile"));
     }
 }

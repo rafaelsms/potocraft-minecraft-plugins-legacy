@@ -2,6 +2,8 @@ package com.rafaelsms.potocraft.universalchat;
 
 import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.util.TextUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -42,7 +44,7 @@ public class Configuration extends YamlFile {
         return getInt("configuration.comparator.min_char_differences");
     }
 
-    public @NotNull BaseComponent[] getUniversalChatFormat(@NotNull ProxiedPlayer player, @NotNull String message) {
+    public @NotNull BaseComponent[] getUniversalChatFormat(@NotNull ProxiedPlayer player, @NotNull Component message) {
         return getChatFormat(get("configuration.universal_chat.format"), player, message);
     }
 
@@ -50,11 +52,11 @@ public class Configuration extends YamlFile {
         return get("configuration.universal_chat.prefix");
     }
 
-    public @NotNull BaseComponent[] getGlobalChatFormat(@NotNull ProxiedPlayer player, @NotNull String message) {
+    public @NotNull BaseComponent[] getGlobalChatFormat(@NotNull ProxiedPlayer player, @NotNull Component message) {
         return getChatFormat(get("configuration.global_chat.format"), player, message);
     }
 
-    public @NotNull BaseComponent[] getGlobalChatSpyFormat(@NotNull ProxiedPlayer player, @NotNull String message) {
+    public @NotNull BaseComponent[] getGlobalChatSpyFormat(@NotNull ProxiedPlayer player, @NotNull Component message) {
         return getChatFormat(get("configuration.global_chat.spy_format"), player, message);
     }
 
@@ -63,11 +65,11 @@ public class Configuration extends YamlFile {
     }
 
     public @NotNull BaseComponent[] getOtherServerChatSpyFormat(@NotNull ProxiedPlayer player,
-                                                                @NotNull String message) {
+                                                                @NotNull Component message) {
         return getChatFormat(get("configuration.other_server_chat.spy_format"), player, message);
     }
 
-    public @NotNull BaseComponent[] getLocalChatFormat(@NotNull ProxiedPlayer player, @NotNull String message) {
+    public @NotNull BaseComponent[] getLocalChatFormat(@NotNull ProxiedPlayer player, @NotNull Component message) {
         return getChatFormat(get("configuration.local_chat_format"), player, message);
     }
 
@@ -89,76 +91,72 @@ public class Configuration extends YamlFile {
     }
 
     public @NotNull BaseComponent[] getNoPermission() {
-        return TextUtil.toComponent(get("language.no_permission")).buildBungee();
+        return TextUtil.toComponentBungee(get("language.no_permission"));
     }
 
     public @NotNull BaseComponent[] getMessagesTooSmall() {
-        return TextUtil.toComponent(get("language.messages_too_small")).buildBungee();
+        return TextUtil.toComponentBungee(get("language.messages_too_small"));
     }
 
     public @NotNull BaseComponent[] getMessagesTooFrequent() {
-        return TextUtil.toComponent(get("language.messages_too_frequent")).buildBungee();
+        return TextUtil.toComponentBungee(get("language.messages_too_frequent"));
     }
 
     public @NotNull BaseComponent[] getMessagesTooSimilar() {
-        return TextUtil.toComponent(get("language.messages_too_similar")).buildBungee();
+        return TextUtil.toComponentBungee(get("language.messages_too_similar"));
     }
 
     public @NotNull BaseComponent[] getPlayersOnly() {
-        return TextUtil.toComponent(get("language.players_only")).buildBungee();
+        return TextUtil.toComponentBungee(get("language.players_only"));
     }
 
     public @NotNull BaseComponent[] getDirectMessagesHelp() {
-        return TextUtil.toComponent(get("language.direct_messages.help")).buildBungee();
+        return TextUtil.toComponentBungee(get("language.direct_messages.help"));
     }
 
     public @NotNull BaseComponent[] getDirectMessagesReplyHelp() {
-        return TextUtil.toComponent(get("language.direct_messages.reply_help")).buildBungee();
+        return TextUtil.toComponentBungee(get("language.direct_messages.reply_help"));
     }
 
     public @NotNull BaseComponent[] getDirectMessagesNoPlayerFound() {
-        return TextUtil.toComponent(get("language.direct_messages.no_player_found")).buildBungee();
+        return TextUtil.toComponentBungee(get("language.direct_messages.no_player_found"));
     }
 
     public @NotNull BaseComponent[] getDirectMessagesOutgoingFormat(@NotNull String receiverName,
-                                                                    @NotNull String message) {
-        return TextUtil.toComponent(get("language.direct_messages.outgoing_format"))
-                       .replace("%receiver%", receiverName)
-                       .replace("%message%", message)
-                       .buildBungee();
+                                                                    @NotNull Component message) {
+        return TextUtil.toComponentBungee(get("language.direct_messages.outgoing_format"),
+                                          Placeholder.parsed("receiver", receiverName),
+                                          Placeholder.component("message", message));
     }
 
     public @NotNull BaseComponent[] getDirectMessagesIncomingFormat(@NotNull String senderName,
-                                                                    @NotNull String message) {
-        return TextUtil.toComponent(get("language.direct_messages.incoming_format"))
-                       .replace("%sender%", senderName)
-                       .replace("%message%", message)
-                       .buildBungee();
+                                                                    @NotNull Component message) {
+        return TextUtil.toComponentBungee(get("language.direct_messages.incoming_format"),
+                                          Placeholder.parsed("sender", senderName),
+                                          Placeholder.component("message", message));
     }
 
     public @NotNull BaseComponent[] getDirectMessagesSpyFormat(@NotNull String senderName,
                                                                @NotNull String receiverName,
-                                                               @NotNull String message) {
-        return TextUtil.toComponent(get("language.direct_messages.spy_format"))
-                       .replace("%sender%", senderName)
-                       .replace("%receiver%", receiverName)
-                       .replace("%message%", message)
-                       .buildBungee();
+                                                               @NotNull Component message) {
+        return TextUtil.toComponentBungee(get("language.direct_messages.spy_format"),
+                                          Placeholder.parsed("sender", senderName),
+                                          Placeholder.parsed("receiver", receiverName),
+                                          Placeholder.component("message", message));
     }
 
     private @NotNull BaseComponent[] getChatFormat(@Nullable String chatFormat,
                                                    @NotNull ProxiedPlayer player,
-                                                   @NotNull String message) {
+                                                   @NotNull Component message) {
         String serverName = Optional.ofNullable(player.getServer())
                                     .map(Server::getInfo)
                                     .map(ServerInfo::getName)
                                     .orElse(getUnknownServer());
-        return TextUtil.toComponent(chatFormat)
-                       .replace("%server%", serverName)
-                       .replace("%prefix%", TextUtil.getPrefix(player.getUniqueId()))
-                       .replace("%suffix%", TextUtil.getSuffix(player.getUniqueId()))
-                       .replace("%username%", player.getName())
-                       .replace("%message%", message)
-                       .buildBungee();
+        return TextUtil.toComponentBungee(chatFormat,
+                                          Placeholder.parsed("server", serverName),
+                                          Placeholder.parsed("prefix", TextUtil.getPrefix(player.getUniqueId())),
+                                          Placeholder.parsed("username", player.getName()),
+                                          Placeholder.parsed("suffix", TextUtil.getSuffix(player.getUniqueId())),
+                                          Placeholder.component("message", message));
     }
 }

@@ -8,9 +8,9 @@ configuration:
   save_players_task_timer_in_ticks: 3600
   local_chat:
     range: 300.0
-    local_format: "&e%prefix%%username%%suffix%&7: &f%message%"
-    no_range_format: "&e%prefix%%username%%suffix%&7: &f%message%"
-    spy_format: "&7%username%&7: &7%message%"
+    local_format: "<click:suggest_command:'/msg <username> '><hover:show_text:'<gold><yellow>Clique</yellow> aqui para mandar uma mensagem privada para <yellow><bold><username></bold></yellow></gold>'><yellow><prefix><username><suffix></yellow></hover></click><gray>:</gray><reset> <message>"
+    no_range_format: "<click:suggest_command:'/msg <username> '><hover:show_text:'<gold><yellow>Clique</yellow> aqui para mandar uma mensagem privada para <yellow><bold><username></bold></yellow></gold>'><yellow><prefix><username><suffix></yellow></hover></click><gray>:</gray><reset> <message>"
+    spy_format: "<gray><click:suggest_command:'/msg <username> '><hover:show_text:'<gold><yellow>Clique</yellow> aqui para mandar uma mensagem privada para <yellow><bold><username></bold></yellow></gold>'><username></hover></click>:</gray><reset> <gray><message></gray>"
   teleport:
     teleport_delay_in_ticks: 140
     teleport_cooldown_in_seconds: 120
@@ -39,76 +39,76 @@ configuration:
 
 language:
   date_time_format: "dd' de 'MMM' às 'H'h'mm"
-  players_only: "&cComando disponível apenas para jogadores."
-  could_not_load_profile: "&cFalha ao acessar banco de dados."
+  players_only: "<red>Comando disponível apenas para jogadores."
+  could_not_load_profile: "<red>Falha ao acessar banco de dados."
   chat:
-    nobody_heard_you: "&cNinguém te ouviu! &6Tente gritar: digite &e&l!&6 antes da sua mensagem."
+    nobody_heard_you: "<click:suggest_command:'!escreva a mensagem aqui'><hover:show_text:'<gold>Por exemplo, envie: <yellow>!olá! alguém quer jogar comigo?</yellow></gold>'><red>Ninguém te ouviu! <gold>Tente gritar: digite <yellow><bold>!</bold></yellow> antes da sua mensagem.</gold></hover></click>"
   combat:
-    bar_title: "&cSe sair ou se a conexão cair, irá morrer!"
-    command_is_blocked_while_in_combat: "&cEste comando está bloqueado em combate."
+    bar_title: "<red>Se sair ou se a conexão cair, irá morrer!"
+    command_is_blocked_while_in_combat: "<red>Este comando está bloqueado em combate."
     unknown_world_name: "mundo desconhecido"
-    your_death_location_is: "&cVocê morreu no &e%world% &cnas coordenadas &ex = %x%&c, &ey = %y%&c, &ez = %z%&c."
+    your_death_location_is: "<red>Você morreu em <yellow><world></yellow> nas coordenadas <yellow>x = <x></yellow>, <yellow>y = <y></yellow>, <yellow>z = <z></yellow>."
     hardcore:
       banned: |
-        &cVocê morreu no modo hardcore.
-        &cPoderá entrar às &e%expiration_date%&c.
+        <red>Você morreu no modo hardcore.
+        <red>Poderá entrar às <yellow><expiration_date></yellow>.
   teleport:
-    bar_title: "&eTeleportando... Não entre em combate!"
-    player_quit: "&cTeleporte cancelado: pessoa saiu!"
-    entered_combat: "&cTeleporte cancelado: combate iniciado!"
-    other_player_is_teleporting: "&cTeleporte cancelado: outra pessoa teleportando!"
-    other_player_is_in_combat: "&cTeleporte cancelado: outra pessoa em combate!"
-    already_teleporting: "&cTeleporte cancelado: já teleportando!"
-    destination_unavailable: "&cTeleporte cancelado: destino do teleporte não está disponível!"
-    in_cooldown: "&cTeleporte estará indisponível por mais &e%cooldown% segundos&c."
-    failed: "&cTeleporte falhou!"
-    player_not_found: "&cNão encontramos alguém com este nome."
-    offline_player_location_not_found: "&cLocalização de jogador offline não existe."
-    help: "&6Para teleportar até alguém, digite &e&l/teleporte (nome)&6."
+    bar_title: "<yellow>Teleportando... Não entre em combate!"
+    player_quit: "<red>Teleporte cancelado: pessoa saiu!"
+    entered_combat: "<red>Teleporte cancelado: combate iniciado!"
+    other_player_is_teleporting: "<red>Teleporte cancelado: outra pessoa teleportando!"
+    other_player_is_in_combat: "<red>Teleporte cancelado: outra pessoa em combate!"
+    already_teleporting: "<red>Teleporte cancelado: já teleportando!"
+    destination_unavailable: "<red>Teleporte cancelado: destino do teleporte não está disponível!"
+    in_cooldown: "<red>Teleporte estará indisponível por mais <yellow><cooldown> segundos</yellow>."
+    failed: "<red>Teleporte falhou!"
+    player_not_found: "<red>Não encontramos alguém com este nome."
+    offline_player_location_not_found: "<red>Localização de jogador offline não existe."
+    help: "<gold>Para teleportar até alguém, digite <yellow><bold>/teleporte (nome)</bold></yellow>."
     requests:
       teleport_received: |
-        &6Você recebeu um pedido para &e%username% &6se teleportar até &evocê&6..
-        &6Digite &e&l/teleporteaceitar &6para aceitar ou &e&l/teleporterecusar &6para recusar.
-      not_updated: "&cPedido de teleporte anterior precisa ser cancelado por &e%username% &cprimeiro ou digitando &e&l/teleportecancelar&c."
-      sent: "&6Pedido de teleporte enviado a &e%username%&6."
-      no_found: "&cNenhum pedido de teleporte ativo."
-      many_found: "&6Vários pedidos encontrados: &e%list%"
+        <gold>Você recebeu um pedido para <yellow><username></yellow> se teleportar até <yellow><bold>você</bold></yellow>.
+        <gold>Digite <click:run_command:'/teleporteaceitar <username>'><hover:show_text:'<gold><yellow>Clique</yellow> para <green>aceitar</green> o teleporte.'><green>/teleporteaceitar</green> para aceitar</hover></click> ou <click:run_command:'/teleporterecusar <username>'><hover:show_text:'<gold><yellow>Clique</yellow> para <red>recusar</red> o teleporte.'><red>/teleporterecusar</red> para recusar</hover></click>.
+      not_updated: "<red>Pedido de teleporte anterior precisa ser cancelado por <yellow><username></yellow> primeiro ou digitando <yellow><bold>/teleportecancelar</bold></yellow>."
+      sent: "<gold>Pedido de teleporte enviado a <yellow><username></yellow>."
+      no_found: "<red>Nenhum pedido de teleporte ativo."
+      many_found: "<gold>Vários pedidos encontrados: <yellow><list></yellow>."
       teleport_here_received: |
-        &6Você recebeu um pedido para &evocê &6se teleportar até &3%username%&6.
-        &6Digite &e&l/teleporteaceitar &6para aceitar ou &e&l/teleporterecusar &6para recusar.
-      request_cancelled: "&6Pedido de teleporte cancelado!"
-      sent_requests_cancelled: "&6Os pedidos enviados foram cancelados."
+        <dark_aqua>Você recebeu um pedido para <yellow><bold>você</bold></yellow> se teleportar até <yellow><username></yellow>.
+        <dark_aqua>Digite <click:run_command:'/teleporteaceitar <username>'><hover:show_text:'<gold><yellow>Clique</yellow> para <green>aceitar</green> o teleporte.'><green>/teleporteaceitar</green> para aceitar</hover></click> ou <click:run_command:'/teleporterecusar <username>'><hover:show_text:'<gold><yellow>Clique</yellow> para <red>recusar</red> o teleporte.'><red>/teleporterecusar</red> para recusar</hover></click>.
+      request_cancelled: "<gold>Pedido de teleporte cancelado!"
+      sent_requests_cancelled: "<gold>Os pedidos enviados foram cancelados."
     back:
-      no_back_location: "&cNão há localização para voltar."
-      back_is_death_location: "&cVocê não tem permissão para voltar ao local de morte."
+      no_back_location: "<red>Não há localização para voltar."
+      back_is_death_location: "<red>Você não tem permissão para voltar ao local de morte."
     homes:
-      help: "&6Para criar uma casa, digite &e&l/criarcasa &6e assim poderá voltar para ela digitando &e&l/casa&6!"
+      help: "<gold>Para criar uma casa, <click:suggest_command:'/criarcasa nome'><hover:show_text:'<gold><yellow>Clique</yellow> para criar uma casa.'>digite <yellow><bold>/criarcasa</bold></yellow></hover></click> e assim poderá voltar para ela <click:suggest_command:'/casa casa'><hover:show_text:'<gold><yellow>Clique</yellow> aqui para se teleportar até a casa.'>digitando <yellow><bold>/casa</bold></yellow></hover></click>!"
       list: |
-        &6Para criar mais casas, digite &e&l/criarcasa&6. Para apagar, &e&l/deletarcasa&6.
-        &6Casas: &e%list%
-      at_max_capacity: "&cVocê atingiu o número máximo de casas, digite &e&l/deletarcasa &cpara removê-las."
-      invalid_home_name: "&cNome de casa inválido: não utilize caracteres especiais!"
-      create_help: "&6Digite &e&l/criarcasa (nome) &6para criar uma casa."
-      created: "&6Casa criada! Você pode teleportar até ela digitando &e&l/casa&6!"
-      already_exists: "&cCasa já existe. &6Para substituí-la, digite o comando novamente nos próximos segundos."
-      deleted: "&6Casa removida."
-      not_found: "&cCasa não encontrada ou você perdeu permissão para acessar esta casa."
+        <gold>Para <click:suggest_command:'/criarcasa nome'><hover:show_text:'<gold><yellow>Clique</yellow> para criar uma casa.'><green>criar</green> mais casas, digite <red><bold>/criarcasa</bold></red></hover></click>. Para <click:suggest_command:'/deletarcasa nome'><hover:show_text:'<gold><yellow>Clique</yellow> para apagar uma casa.'><red>apagar</red> casas, digite <red><bold>/deletarcasa</bold></red></hover></click>.
+        <gold>Casas disponíveis: <yellow><list></yellow>
+      at_max_capacity: "<red>Você atingiu o número máximo de casas, <click:suggest_command:'/deletarcasa nome'><hover:show_text:'<gold><yellow>Clique</yellow> para apagar uma casa.'>para apagar casas, digite <red><bold>/deletarcasa</bold></red></hover></click>."
+      invalid_home_name: "<red>Nome de casa inválido: não utilize caracteres especiais!"
+      create_help: "<gold>Digite /criarcasa (nome) &6para criar uma casa."
+      created: "<gold>Casa criada! Você pode teleportar até ela no futuro digitando <yellow><bold>/casa</bold></yellow>!"
+      already_exists: "<red>Casa já existe. <gold>Para substituí-la, digite o comando novamente nos próximos segundos."
+      deleted: "<gold>Casa removida."
+      not_found: "<red>Casa não encontrada ou você perdeu permissão para acessar esta casa."
       delete_help: |
-        &6Para remover uma casa, digite &e&l/deletarcasa (nome)&c.
-        &6Casas: &e%list%
+        <gold>Para remover uma casa, <click:suggest_command:'/deletarcasa nome'><hover:show_text:'<gold><yellow>Clique</yellow> aqui para remover uma casa'>digite <red><bold>/deletarcasa (nome)</bold></red>.</hover></click>
+        <gold>Casas disponíveis: <yellow><list></yellow>
     warps:
       manage:
-        help: "&6Uso: &e/criarportal (nome) &6ou &e/deletarportal (nome)&6."
-        success: "&6Portal alterado com sucesso!"
-        failure: "&cFalha ao acessar banco de dados."
-      list: "&6Portais disponíveis: &e%list%"
-      failed_to_retrieve: "&cFalha ao obter lista."
-      not_found: "&cPortal não encontrado."
+        help: "<gold>Uso: <yellow>/criarportal (nome)</yellow> ou <yellow>/deletarportal (nome)</yellow>."
+        success: "<gold>Portal alterado com sucesso!"
+        failure: "<red>Falha ao acessar banco de dados."
+      list: "<gold>Portais disponíveis: <yellow><list></yellow>"
+      failed_to_retrieve: "<red>Falha ao obter lista."
+      not_found: "<red>Portal não encontrado."
     worlds:
-      list: "&6Mundos disponíveis: &e%list%"
-      not_found: "&cMundo não encontrado."
+      list: "<gold>Mundos disponíveis: <yellow><list></yellow>."
+      not_found: "<red>Mundo não encontrado."
   totem:
-    totem_in_cooldown: "&cSeu totem está em cooldown e não fez efeito."
-    totem_entered_in_cooldown: "&cSeu totem entrou em cooldown e não fará efeito por alguns minutos."
+    totem_in_cooldown: "<red>Seu totem está em <i>cooldown</i> e não fez efeito."
+    totem_entered_in_cooldown: "<red>Seu totem entrou em <i>cooldown</i> e não fará efeito por alguns minutos."
   kick_messages:
-    could_not_load_profile: "&cNão foi possível carregar seu perfil!"
+    could_not_load_profile: "<red>Não foi possível carregar seu perfil!"

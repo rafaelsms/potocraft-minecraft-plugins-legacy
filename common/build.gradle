@@ -7,8 +7,14 @@ version '0.1'
 
 repositories {
     mavenCentral()
+    // Paper API
     maven {
         url 'https://papermc.io/repo/repository/maven-public/'
+    }
+    // MiniMessage
+    maven {
+        name = "sonatype-oss-snapshots"
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
 }
 
@@ -17,10 +23,11 @@ dependencies {
     testImplementation('org.junit.jupiter:junit-jupiter')
     implementation('org.mongodb:mongodb-driver:3.12.10')
     implementation('org.apache.commons:commons-text:1.9')
-    implementation('com.google.code.gson:gson:2.8.9')
+    implementation('com.google.code.gson:gson:2.9.0')
     implementation('org.yaml:snakeyaml:1.29')
     implementation('org.jetbrains:annotations:22.0.0')
     implementation('net.kyori:adventure-api:4.9.3')
+    implementation("net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT")
     implementation('net.kyori:adventure-text-serializer-legacy:4.9.3')
     implementation('net.kyori:adventure-text-serializer-plain:4.9.3')
     implementation('net.kyori:adventure-text-serializer-bungeecord:4.0.1')

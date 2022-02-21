@@ -8,11 +8,16 @@ version '0.1'
 
 repositories {
     mavenCentral()
+    // MiniMessage (required for common)
+    maven {
+        name = "sonatype-oss-snapshots"
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
 }
 
 dependencies {
-    implementation('org.slf4j:slf4j-api:1.7.35')
-    implementation('org.slf4j:slf4j-simple:1.7.35')
+    implementation('org.slf4j:slf4j-api:1.7.36')
+    implementation('org.slf4j:slf4j-simple:1.7.36')
     implementation("net.dv8tion:JDA:5.0.0-alpha.5") {
         exclude module: 'opus-java'
     }

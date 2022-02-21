@@ -8,8 +8,14 @@ version '0.1'
 
 repositories {
     mavenCentral()
+    // Spigot API
     maven {
         url("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    }
+    // MiniMessage (required for common)
+    maven {
+        name = "sonatype-oss-snapshots"
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
 }
 

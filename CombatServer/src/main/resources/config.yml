@@ -7,4 +7,4 @@ configuration:
     save_player_timer_task_ticks: 3600
 
 language:
-  failed_to_retrieve_profile: "&cFalha ao carregar seu perfil!"
+  failed_to_retrieve_profile: "<red>Falha ao carregar seu perfil!"

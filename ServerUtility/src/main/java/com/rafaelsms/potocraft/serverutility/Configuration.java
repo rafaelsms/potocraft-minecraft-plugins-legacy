@@ -4,6 +4,7 @@ import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.serverutility.util.WorldCombatConfig;
 import com.rafaelsms.potocraft.util.TextUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
 import org.bukkit.NamespacedKey;
@@ -209,12 +210,12 @@ public class Configuration extends YamlFile {
         List<String> itemLoreStrings = Objects.requireNonNull(get("configuration.drop_player_heads.item_lore"));
         ArrayList<Component> itemLore = new ArrayList<>();
         for (String itemLoreString : itemLoreStrings) {
-            itemLore.add(TextUtil.toComponent(itemLoreString)
-                                 .replace("%killed%", killed.displayName())
-                                 .replace("%killer%", killer.displayName())
-                                 .replace("%datetime%",
-                                          DateTimeFormatter.ofPattern("d-MMM-yy H:mm").format(ZonedDateTime.now()))
-                                 .build());
+            itemLore.add(TextUtil.toComponent(itemLoreString,
+                                              Placeholder.component("killed", killed.displayName()),
+                                              Placeholder.component("killer", killer.displayName()),
+                                              Placeholder.parsed("datetime",
+                                                                 DateTimeFormatter.ofPattern("d-MMM-yy H:mm")
+                                                                                  .format(ZonedDateTime.now()))));
         }
         return itemLore;
     }
@@ -275,42 +276,42 @@ public class Configuration extends YamlFile {
     }
 
     public Component getPlayerOnly() {
-        return TextUtil.toComponent(get("language.commands.player_only")).build();
+        return TextUtil.toComponent(get("language.commands.player_only"));
     }
 
     public Component getPlayerNotFound() {
-        return TextUtil.toComponent(get("language.commands.player_not_found")).build();
+        return TextUtil.toComponent(get("language.commands.player_not_found"));
     }
 
     public Component getPlayerTimeHelp() {
-        return TextUtil.toComponent(get("language.commands.player_time.help")).build();
+        return TextUtil.toComponent(get("language.commands.player_time.help"));
     }
 
     public Component getPlayerWeatherHelp() {
-        return TextUtil.toComponent(get("language.commands.player_weather.help")).build();
+        return TextUtil.toComponent(get("language.commands.player_weather.help"));
     }
 
     public Component getPlayerVanished() {
-        return TextUtil.toComponent(get("language.commands.vanish.player_vanished")).build();
+        return TextUtil.toComponent(get("language.commands.vanish.player_vanished"));
     }
 
     public Component getPlayerAppeared() {
-        return TextUtil.toComponent(get("language.commands.vanish.player_appeared")).build();
+        return TextUtil.toComponent(get("language.commands.vanish.player_appeared"));
     }
 
     public Component getGameModeHelp() {
-        return TextUtil.toComponent(get("language.commands.gamemode.help")).build();
+        return TextUtil.toComponent(get("language.commands.gamemode.help"));
     }
 
     public Component getEnchantHelp() {
-        return TextUtil.toComponent(get("language.commands.enchant.help")).build();
+        return TextUtil.toComponent(get("language.commands.enchant.help"));
     }
 
     public Component getEnchantCantEnchantItem() {
-        return TextUtil.toComponent(get("language.commands.enchant.cant_enchant_item")).build();
+        return TextUtil.toComponent(get("language.commands.enchant.cant_enchant_item"));
     }
 
     public Component getKillHelp() {
-        return TextUtil.toComponent(get("language.commands.kill.help")).build();
+        return TextUtil.toComponent(get("language.commands.kill.help"));
     }
 }

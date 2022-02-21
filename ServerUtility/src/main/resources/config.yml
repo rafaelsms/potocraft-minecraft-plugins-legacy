@@ -25,8 +25,9 @@ configuration:
   drop_player_heads:
     enabled: true
     item_lore:
-      - "&3Cabeça conquistada por &e&l%killer%"
-      - "&3em %datetime%"
+      - "<dark_aqua>Cabeça de <yellow><bold><killed></bold></yellow>"
+      - "<dark_aqua>Conquistada por <yellow><bold><killer></bold></yellow></dark_aqua>"
+      - "<dark_aqua>em <yellow><datetime></yellow></dark_aqua>"
   rainy_night_event:
     enabled: false
     potion_effects:
@@ -66,21 +67,20 @@ configuration:
       constant_pvp_setting: false
 
 language:
-
   commands:
-    player_only: "&cComando disponível apenas para jogadores"
-    player_not_found: "&cJogador não encontrado!"
+    player_only: "<red>Comando disponível apenas para jogadores"
+    player_not_found: "<red>Jogador não encontrado!"
     player_time:
-      help: "&6Uso: &e/tempo (dia/meiodia/noite/meianoite) [fixo]"
+      help: "<gold>Uso: <yellow>/tempo (dia/meiodia/noite/meianoite) [fixo]"
     player_weather:
-      help: "&6Uso: &e/clima (limpo/chuvoso)"
+      help: "<gold>Uso: <yellow>/clima (limpo/chuvoso)"
     vanish:
-      player_vanished: "&6Ficou invisível."
-      player_appeared: "&6Ficou visível."
+      player_vanished: "<gold>Ficou invisível."
+      player_appeared: "<gold>Ficou visível."
     gamemode:
-      help: "&6Uso: &e&l/gamemode (creative/spectator/survival/adventure)"
+      help: "<gold>Uso: <yellow>/gamemode (creative/spectator/survival/adventure)"
     enchant:
-      help: "&6Uso: &e&l/enchant (encantamento)"
-      cant_enchant_item: "&cNão é possível encantar este item"
+      help: "<gold>Uso: <yellow>/enchant (encantamento)"
+      cant_enchant_item: "<red>Não é possível encantar este item"
     kill:
-      help: "&6Uso: &e&l/kill (nome)"
+      help: "<gold>Uso: <yellow>/kill (nome)"
