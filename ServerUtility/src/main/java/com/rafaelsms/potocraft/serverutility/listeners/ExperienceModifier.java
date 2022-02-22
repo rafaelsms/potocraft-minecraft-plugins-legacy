@@ -42,14 +42,13 @@ public class ExperienceModifier implements Listener {
         if (!event.getPlayer().hasPermission(Permissions.KEEP_EXPERIENCE)) {
             return;
         }
-        // Calculate how much experience is going where
+
         int totalExperience = event.getPlayer().getTotalExperience();
         int keptExperience = floor(totalExperience * plugin.getConfiguration().getExperienceKeptRatio());
-        // Removing 10% to be sure there is no experience duplication
-        int droppedExperience =
-                Math.min(floor(totalExperience * (1.0 - plugin.getConfiguration().getExperienceKeptRatio()) * 0.9),
-                         event.getDroppedExp());
-        event.setNewTotalExp(keptExperience);
+        int droppedExperience = floor(totalExperience * plugin.getConfiguration().getExperienceDroppedRatio());
+
+        // Update values
+        event.setNewExp(keptExperience);
         event.setShouldDropExperience(true);
         event.setDroppedExp(droppedExperience);
     }

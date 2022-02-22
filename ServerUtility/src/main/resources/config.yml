@@ -24,7 +24,9 @@ configuration:
       potocraft.exp_modifier.vip: 1.4
   dropped_experience:
     enabled: true
-    kept_ratio: 0.7
+    # The sum must be lower than the inverse of the highest experience modifier
+    kept_ratio: 0.6
+    dropped_ratio: 0.1
   drop_player_heads:
     enabled: true
     item_lore:

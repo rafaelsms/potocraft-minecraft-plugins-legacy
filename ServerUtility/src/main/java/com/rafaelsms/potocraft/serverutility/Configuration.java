@@ -210,6 +210,10 @@ public class Configuration extends YamlFile {
         return getDouble("configuration.dropped_experience.kept_ratio");
     }
 
+    public Double getExperienceDroppedRatio() {
+        return getDouble("configuration.dropped_experience.dropped_ratio");
+    }
+
     public Boolean isPlayerHeadDropping() {
         return get("configuration.drop_player_heads.enabled");
     }
