@@ -3,9 +3,9 @@ package com.rafaelsms.potocraft.loginmanager.listeners;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.util.PlayerType;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
-import net.md_5.bungee.api.event.ServerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
@@ -39,12 +39,8 @@ public class PlayerTypeManager implements Listener {
 
     /**
      * Retrieves player connection type given player unique id. This method is available after {@link PreLoginEvent}'s
-     * {@link EventPriority#HIGH} event priority for Floodgate players or {@link PostLoginEvent}'s {@link
-     * EventPriority#LOWEST} event priority for every player and before {@link ServerDisconnectEvent}'s {@link
-     * EventPriority#HIGHEST} event priority.
-     * <p>
-     * Note that we are not using {@link net.md_5.bungee.api.event.PlayerDisconnectEvent} because this is called before
-     * disconnecting from the server.
+     * {@link EventPriority#HIGH} event priority for Floodgate players or {@link PostLoginEvent}'s
+     * {@link EventPriority#LOWEST} event priority for every player.
      *
      * @param playerId player's unique id
      * @return player type of {@link PlayerType#OFFLINE_PLAYER} if it is called outside the bounds.
@@ -98,15 +94,12 @@ public class PlayerTypeManager implements Listener {
                     getPlayerType(event.getPlayer()));
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void unregisterPlayerType(ServerDisconnectEvent event) {
-        if (!event.getPlayer().isConnected()) {
-            PlayerType playerType = playerTypeMap.remove(event.getPlayer().getUniqueId());
-            plugin.logger()
-                  .info("Player {} (uuid = {}) disconnected with type {}",
-                        event.getPlayer().getName(),
-                        event.getPlayer().getUniqueId(),
-                        playerType);
-        }
+    @EventHandler
+    public void printPlayerType(PlayerDisconnectEvent event) {
+        plugin.logger()
+              .info("Player {} (uuid = {}) disconnected with type {}",
+                    event.getPlayer().getName(),
+                    event.getPlayer().getUniqueId(),
+                    getPlayerType(event.getPlayer()));
     }
 }
