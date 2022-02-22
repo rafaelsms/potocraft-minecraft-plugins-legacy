@@ -7,14 +7,14 @@ configuration:
     min_length_to_compare: 4
     min_char_differences: 3
   universal_chat:
-    format: "<hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem privada para <yellow><bold><username></bold></yellow>!'><click:suggest_command:'/msg <username> '><gold>!! <gray>(</gray><gold><server></gold><gray>)</gray> <gold>\<<yellow><prefix><username><suffix></yellow><gold>></gold></click></hover><reset> <message>"
+    format: "<hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem privada para <yellow><bold><username></bold></yellow>!'><click:suggest_command:'/msg <username> '><gold>!! <gray>(<gold><server></gold>)</gray> \\<<yellow><prefix><username><suffix></yellow>></gold></click></hover><reset> <message>"
     prefix: '!!'
   global_chat:
-    format: "<hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem privada para <yellow><bold><username></bold></yellow>!'><click:suggest_command:'/msg <username> '><dark_aqua>! \<</dark_aqua><yellow><prefix><username><suffix></yellow><dark_aqua>></dark_aqua></click></hover><reset> <message>"
-    spy_format: "<hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem privada para <yellow><bold><username></bold></yellow>!'><click:suggest_command:'/msg <username> '><gray>! (<server>) \<<prefix><username><suffix><gray>></gray><reset> <gray><message></gray>"
+    format: "<hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem privada para <yellow><bold><username></bold></yellow>!'><click:suggest_command:'/msg <username> '><dark_aqua>! \\<<yellow><prefix><username><suffix></yellow>></dark_aqua></click></hover><reset> <message>"
+    spy_format: "<hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem privada para <yellow><bold><username></bold></yellow>!'><click:suggest_command:'/msg <username> '><gray>! (<server>) \\<<username>></gray><reset> <gray><message></gray>"
     prefix: '!'
   other_server_chat:
-    spy_format: "<gray><hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem privada para <yellow><bold><username></bold></yellow>!'><click:suggest_command:'/msg <username> '>(<server>) <username>:</click></hover> <message></gray>"
+    spy_format: "<hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem privada para <yellow><bold><username></bold></yellow>!'><click:suggest_command:'/msg <username> '><gray>(<server>) <username>:</click></hover></gray><reset> <gray><message></gray>"
   local_chat_format: "<hover:show_text:'<gold><yellow>Clique</yellow> para enviar uma mensagem privada para <yellow><bold><username></bold></yellow>!'><click:suggest_command:'/msg <username> '><yellow><prefix><username><suffix></yellow><gray>:</gray></click></hover><reset> <gray><message></gray>"
   direct_messages:
     reply_time_amount_seconds: 240
