@@ -6,16 +6,16 @@ group 'com.rafaelsms'
 version '0.1'
 
 repositories {
-    mavenCentral()
-    // Paper API
-    maven {
-        url 'https://papermc.io/repo/repository/maven-public/'
-    }
     // MiniMessage
     maven {
         name = "sonatype-oss-snapshots"
         url = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
+    // Paper API
+    maven {
+        url 'https://papermc.io/repo/repository/maven-public/'
+    }
+    mavenCentral()
 }
 
 dependencies {

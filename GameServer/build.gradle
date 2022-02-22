@@ -7,13 +7,11 @@ group 'com.rafaelsms'
 version '0.1'
 
 repositories {
-    mavenCentral()
+    // Purpur
     maven {
         url "https://repo.purpurmc.org/snapshots"
     }
-    maven {
-        url 'https://repo.opencollab.dev/maven-snapshots/'
-    }
+    mavenCentral()
 }
 
 dependencies {

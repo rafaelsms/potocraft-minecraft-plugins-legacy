@@ -7,16 +7,16 @@ group 'com.rafaelsms'
 version '0.1'
 
 repositories {
-    mavenCentral()
-    // Purpur
-    maven {
-        url "https://repo.purpurmc.org/snapshots"
-    }
     // MiniMessage (required for PlaceHolders)
     maven {
         name = "sonatype-oss-snapshots"
         url = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
+    // Purpur
+    maven {
+        url "https://repo.purpurmc.org/snapshots"
+    }
+    mavenCentral()
 }
 
 dependencies {

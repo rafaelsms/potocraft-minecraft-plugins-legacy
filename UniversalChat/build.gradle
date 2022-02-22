@@ -7,16 +7,16 @@ group 'com.rafaelsms'
 version '0.1'
 
 repositories {
-    mavenCentral()
-    // Waterfall
-    maven {
-        url 'https://papermc.io/repo/repository/maven-public/'
-    }
     // MiniMessage (required for PlaceHolders)
     maven {
         name = "sonatype-oss-snapshots"
         url = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
+    // Waterfall
+    maven {
+        url 'https://papermc.io/repo/repository/maven-public/'
+    }
+    mavenCentral()
 }
 
 dependencies {
