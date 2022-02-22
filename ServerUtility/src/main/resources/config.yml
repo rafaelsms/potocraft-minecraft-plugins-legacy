@@ -22,6 +22,9 @@ configuration:
     default_modifier: 0.8
     groups:
       potocraft.exp_modifier.vip: 1.4
+  dropped_experience:
+    enabled: true
+    kept_ratio: 0.7
   drop_player_heads:
     enabled: true
     item_lore:

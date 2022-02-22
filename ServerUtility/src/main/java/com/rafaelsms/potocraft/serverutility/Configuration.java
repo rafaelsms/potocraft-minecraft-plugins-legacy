@@ -202,6 +202,14 @@ public class Configuration extends YamlFile {
         return get("configuration.experience_modifier.groups");
     }
 
+    public Boolean isDroppedExperienceChangeEnabled() {
+        return get("configuration.dropped_experience.enabled");
+    }
+
+    public Double getExperienceKeptRatio() {
+        return getDouble("configuration.dropped_experience.kept_ratio");
+    }
+
     public Boolean isPlayerHeadDropping() {
         return get("configuration.drop_player_heads.enabled");
     }
