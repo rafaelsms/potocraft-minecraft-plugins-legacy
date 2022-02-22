@@ -7,7 +7,7 @@ import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.Template;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.jetbrains.annotations.NotNull;
@@ -180,12 +180,12 @@ public class Configuration extends YamlFile {
 
     public @NotNull BaseComponent[] getCommandUnpunished(@NotNull String playerName) {
         return TextUtil.toComponentBungee(get("language.commands.player_unpunished"),
-                                          Placeholder.parsed("player", playerName));
+                                          Template.of("player", playerName));
     }
 
     public @NotNull BaseComponent[] getCommandPlayerIsNotPunished(@NotNull String playerName) {
         return TextUtil.toComponentBungee(get("language.commands.player_is_not_punished"),
-                                          Placeholder.parsed("player", playerName));
+                                          Template.of("player", playerName));
     }
 
     public @NotNull BaseComponent[] getCommandBanHelp() {
@@ -197,19 +197,16 @@ public class Configuration extends YamlFile {
     }
 
     public @NotNull BaseComponent[] getPlayerPunished(@NotNull String playerName) {
-        return TextUtil.toComponentBungee(get("language.commands.player_punished"),
-                                          Placeholder.parsed("player", playerName));
+        return TextUtil.toComponentBungee(get("language.commands.player_punished"), Template.of("player", playerName));
     }
 
     public @NotNull BaseComponent[] getListServerList(@NotNull String serverName,
                                                       @NotNull Collection<ProxiedPlayer> playerList) {
         return TextUtil.toComponentBungee(get("language.commands.list_server_players"),
-                                          Placeholder.parsed("server_name", serverName),
-                                          Placeholder.parsed("size", String.valueOf(playerList.size())),
-                                          Placeholder.parsed("player_list",
-                                                             TextUtil.joinStrings(playerList,
-                                                                                  ", ",
-                                                                                  ProxiedPlayer::getName)));
+                                          Template.of("server_name", serverName),
+                                          Template.of("size", String.valueOf(playerList.size())),
+                                          Template.of("player_list",
+                                                      TextUtil.joinStrings(playerList, ", ", ProxiedPlayer::getName)));
     }
 
     public @NotNull BaseComponent[] getCommandSeenHelp() {
@@ -229,18 +226,18 @@ public class Configuration extends YamlFile {
             }
 
             lines.add(TextUtil.toComponent(get("language.commands.seen.report_entry"),
-                                           Placeholder.parsed("reporter_id",
-                                                              Util.convertFallback(entry.getReporterId(),
-                                                                                   UUID::toString,
-                                                                                   "console")),
-                                           Placeholder.parsed("reporter_name", reporterName),
-                                           Placeholder.parsed("type", entry.getType()),
-                                           Placeholder.parsed("active", entry.isActive() ? "enabled" : "disabled"),
-                                           Placeholder.parsed("expiration_date",
-                                                              Util.convertFallback(entry.getExpirationDate(),
-                                                                                   getDateTimeFormatter()::format,
-                                                                                   "?")),
-                                           Placeholder.parsed("reason", Util.getOrElse(entry.getReason(), "?"))));
+                                           Template.of("reporter_id",
+                                                       Util.convertFallback(entry.getReporterId(),
+                                                                            UUID::toString,
+                                                                            "console")),
+                                           Template.of("reporter_name", reporterName),
+                                           Template.of("type", entry.getType()),
+                                           Template.of("active", entry.isActive() ? "enabled" : "disabled"),
+                                           Template.of("expiration_date",
+                                                       Util.convertFallback(entry.getExpirationDate(),
+                                                                            getDateTimeFormatter()::format,
+                                                                            "?")),
+                                           Template.of("reason", Util.getOrElse(entry.getReason(), "?"))));
         }
         return Component.join(JoinConfiguration.builder().separator(Component.newline()).build(), lines);
     }
@@ -260,15 +257,14 @@ public class Configuration extends YamlFile {
         String lastQuitDate =
                 Util.convertFallback(profile.getLastQuitDate().orElse(null), getDateTimeFormatter()::format, "?");
         return TextUtil.toComponentBungee(get("language.commands.seen.profile"),
-                                          Placeholder.parsed("user_name", profile.getLastPlayerName()),
-                                          Placeholder.parsed("user_id", profile.getPlayerId().toString()),
-                                          Placeholder.parsed("server_name", profile.getLastServerName().orElse("?")),
-                                          Placeholder.parsed("play_time", playTime),
-                                          Placeholder.parsed("join_date", lastJoinDate),
-                                          Placeholder.parsed("quit_date", lastQuitDate),
-                                          Placeholder.component("report_entries",
-                                                                getCommandSeenReportEntries(plugin,
-                                                                                            profile.getReportEntries())));
+                                          Template.of("user_name", profile.getLastPlayerName()),
+                                          Template.of("user_id", profile.getPlayerId().toString()),
+                                          Template.of("server_name", profile.getLastServerName().orElse("?")),
+                                          Template.of("play_time", playTime),
+                                          Template.of("join_date", lastJoinDate),
+                                          Template.of("quit_date", lastQuitDate),
+                                          Template.of("report_entries",
+                                                      getCommandSeenReportEntries(plugin, profile.getReportEntries())));
     }
 
     public @NotNull BaseComponent[] getCommandTemporaryBanHelp() {
@@ -327,11 +323,10 @@ public class Configuration extends YamlFile {
         String reasonFallback = Objects.requireNonNull(get("language.generic.report_reason_unknown"));
         String expirationDateFallback = Objects.requireNonNull(get("language.generic.no_expiration_date"));
         return TextUtil.toComponentBungee(baseMessage,
-                                          Placeholder.parsed("reporter",
-                                                             Util.getOrElse(reporterName, reporterFallback)),
-                                          Placeholder.parsed("reason", Util.getOrElse(reason, reasonFallback)),
-                                          Placeholder.parsed("expiration_date",
-                                                             Util.getOrElse(expirationDate, expirationDateFallback)));
+                                          Template.of("reporter", Util.getOrElse(reporterName, reporterFallback)),
+                                          Template.of("reason", Util.getOrElse(reason, reasonFallback)),
+                                          Template.of("expiration_date",
+                                                      Util.getOrElse(expirationDate, expirationDateFallback)));
     }
 
     public @NotNull BaseComponent[] getPunishmentMessageBanned(@Nullable String reporterName,

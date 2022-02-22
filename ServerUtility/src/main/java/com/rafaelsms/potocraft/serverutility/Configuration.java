@@ -4,7 +4,7 @@ import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.serverutility.util.WorldCombatConfig;
 import com.rafaelsms.potocraft.util.TextUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
 import org.bukkit.NamespacedKey;
@@ -219,11 +219,11 @@ public class Configuration extends YamlFile {
         ArrayList<Component> itemLore = new ArrayList<>();
         for (String itemLoreString : itemLoreStrings) {
             itemLore.add(TextUtil.toComponent(itemLoreString,
-                                              Placeholder.component("killed", killed.displayName()),
-                                              Placeholder.component("killer", killer.displayName()),
-                                              Placeholder.parsed("datetime",
-                                                                 DateTimeFormatter.ofPattern("d-MMM-yy H:mm")
-                                                                                  .format(ZonedDateTime.now()))));
+                                              Template.of("killed", killed.displayName()),
+                                              Template.of("killer", killer.displayName()),
+                                              Template.of("datetime",
+                                                          DateTimeFormatter.ofPattern("d-MMM-yy H:mm")
+                                                                           .format(ZonedDateTime.now()))));
         }
         return itemLore;
     }

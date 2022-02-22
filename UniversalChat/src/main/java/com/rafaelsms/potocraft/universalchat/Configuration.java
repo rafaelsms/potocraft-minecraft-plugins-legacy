@@ -3,7 +3,7 @@ package com.rafaelsms.potocraft.universalchat;
 import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.util.TextUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.Template;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -125,24 +125,24 @@ public class Configuration extends YamlFile {
     public @NotNull BaseComponent[] getDirectMessagesOutgoingFormat(@NotNull String receiverName,
                                                                     @NotNull Component message) {
         return TextUtil.toComponentBungee(get("language.direct_messages.outgoing_format"),
-                                          Placeholder.parsed("receiver", receiverName),
-                                          Placeholder.component("message", message));
+                                          Template.of("receiver", receiverName),
+                                          Template.of("message", message));
     }
 
     public @NotNull BaseComponent[] getDirectMessagesIncomingFormat(@NotNull String senderName,
                                                                     @NotNull Component message) {
         return TextUtil.toComponentBungee(get("language.direct_messages.incoming_format"),
-                                          Placeholder.parsed("sender", senderName),
-                                          Placeholder.component("message", message));
+                                          Template.of("sender", senderName),
+                                          Template.of("message", message));
     }
 
     public @NotNull BaseComponent[] getDirectMessagesSpyFormat(@NotNull String senderName,
                                                                @NotNull String receiverName,
                                                                @NotNull Component message) {
         return TextUtil.toComponentBungee(get("language.direct_messages.spy_format"),
-                                          Placeholder.parsed("sender", senderName),
-                                          Placeholder.parsed("receiver", receiverName),
-                                          Placeholder.component("message", message));
+                                          Template.of("sender", senderName),
+                                          Template.of("receiver", receiverName),
+                                          Template.of("message", message));
     }
 
     private @NotNull BaseComponent[] getChatFormat(@Nullable String chatFormat,
@@ -153,10 +153,10 @@ public class Configuration extends YamlFile {
                                     .map(ServerInfo::getName)
                                     .orElse(getUnknownServer());
         return TextUtil.toComponentBungee(chatFormat,
-                                          Placeholder.parsed("server", serverName),
-                                          Placeholder.parsed("prefix", TextUtil.getPrefix(player.getUniqueId())),
-                                          Placeholder.parsed("username", player.getName()),
-                                          Placeholder.parsed("suffix", TextUtil.getSuffix(player.getUniqueId())),
-                                          Placeholder.component("message", message));
+                                          Template.of("server", serverName),
+                                          Template.of("prefix", TextUtil.getPrefix(player.getUniqueId())),
+                                          Template.of("username", player.getName()),
+                                          Template.of("suffix", TextUtil.getSuffix(player.getUniqueId())),
+                                          Template.of("message", message));
     }
 }

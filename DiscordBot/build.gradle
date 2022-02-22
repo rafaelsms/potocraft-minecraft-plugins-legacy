@@ -7,21 +7,21 @@ group 'com.rafaelsms'
 version '0.1'
 
 repositories {
-    // MiniMessage (required for common)
+    // MiniMessage
     maven {
-        name = "sonatype-oss-snapshots"
-        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        name('sonatype-oss-snapshots')
+        url('https://oss.sonatype.org/content/repositories/snapshots/')
     }
     mavenCentral()
 }
 
 dependencies {
+    implementation(project(':common'))
     implementation('org.slf4j:slf4j-api:1.7.36')
     implementation('org.slf4j:slf4j-simple:1.7.36')
     implementation("net.dv8tion:JDA:5.0.0-alpha.5") {
         exclude module: 'opus-java'
     }
-    implementation(project(':common'))
 }
 jar {
     manifest {

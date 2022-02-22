@@ -2,7 +2,7 @@ package com.rafaelsms.potocraft.util;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -190,11 +190,11 @@ public final class TextUtil {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(component);
     }
 
-    public static @NotNull Component toComponent(@Nullable String base, TagResolver... resolvers) {
-        return MiniMessage.miniMessage().deserialize(Util.getOrElse(base, "<red>Failed to load message!"), resolvers);
+    public static @NotNull Component toComponent(@Nullable String base, Template... placeholders) {
+        return MiniMessage.get().parse(Util.getOrElse(base, "<red>Failed to load message!"), placeholders);
     }
 
-    public static @NotNull BaseComponent[] toComponentBungee(@Nullable String base, TagResolver... resolvers) {
-        return BungeeComponentSerializer.get().serialize(toComponent(base, resolvers));
+    public static @NotNull BaseComponent[] toComponentBungee(@Nullable String base, Template... placeholders) {
+        return BungeeComponentSerializer.get().serialize(toComponent(base, placeholders));
     }
 }

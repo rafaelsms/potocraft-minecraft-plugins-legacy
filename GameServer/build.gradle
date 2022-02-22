@@ -7,19 +7,20 @@ group 'com.rafaelsms'
 version '0.1'
 
 repositories {
+    mavenCentral()
     // Purpur
     maven {
-        url "https://repo.purpurmc.org/snapshots"
+        url('https://repo.purpurmc.org/snapshots')
     }
-    mavenCentral()
 }
 
 dependencies {
-    compileOnly("org.purpurmc.purpur:purpur-api:1.18.1-R0.1-SNAPSHOT")
-    implementation('org.jetbrains:annotations:22.0.0')
-    implementation('org.mongodb:mongodb-driver:3.12.10')
-    implementation('com.google.code.gson:gson:2.8.9')
     implementation(project(':common'))
+    implementation('net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT')
+    implementation('org.mongodb:mongodb-driver:3.12.10')
+    implementation('com.google.code.gson:gson:2.9.0')
+    implementation('org.jetbrains:annotations:22.0.0')
+    compileOnly('org.purpurmc.purpur:purpur-api:1.18.1-R0.1-SNAPSHOT')
 }
 
 java {
