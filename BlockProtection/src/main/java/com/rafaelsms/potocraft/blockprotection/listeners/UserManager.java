@@ -27,7 +27,7 @@ public class UserManager extends com.rafaelsms.potocraft.util.UserManager<User, 
     protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws Database.DatabaseException {
         return plugin.getDatabase()
                      .getProfile(event.getUniqueId())
-                     .orElse(new Profile(plugin, event.getUniqueId(), event.getName()));
+                     .orElse(new Profile(event.getUniqueId(), event.getName()));
     }
 
     @Override
@@ -37,6 +37,7 @@ public class UserManager extends com.rafaelsms.potocraft.util.UserManager<User, 
 
     @Override
     protected void onLogin(User user) {
+        user.getProfile().setPlayerName(user.getPlayer().getName());
     }
 
     @Override
@@ -45,6 +46,7 @@ public class UserManager extends com.rafaelsms.potocraft.util.UserManager<User, 
 
     @Override
     protected void tickUser(User user) {
+        user.run();
     }
 
     @Override

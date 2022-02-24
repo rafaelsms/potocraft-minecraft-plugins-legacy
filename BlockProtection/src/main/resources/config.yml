@@ -12,12 +12,14 @@ configuration:
       min_y_offset: 2
       max_y_offset: 5
     volume:
-      default_reward_per_block: 0.2
+      selection_time_to_live_ticks: 1800
+      default_reward_per_block: 0.15
       groups_reward_per_block:
-        potocraft.protection.reward.vip: 0.75
+        potocraft.protection.reward.vip: 0.6
       default_maximum_volume: 15000
       groups_maximum_volume:
         potocraft.protection.volume.vip: 50000
+
 language:
   errors:
     failed_to_fetch_profile: "<red>Falha ao carregar perfil."

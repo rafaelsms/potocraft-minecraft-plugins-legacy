@@ -1,7 +1,5 @@
 package com.rafaelsms.potocraft.blockprotection;
 
-import com.rafaelsms.potocraft.blockprotection.commands.ProtectCommand;
-import com.rafaelsms.potocraft.blockprotection.listeners.ProtectionListener;
 import com.rafaelsms.potocraft.blockprotection.listeners.ProtectionManager;
 import com.rafaelsms.potocraft.blockprotection.listeners.UserManager;
 import org.bukkit.command.CommandExecutor;
@@ -31,10 +29,6 @@ public class BlockProtectionPlugin extends JavaPlugin {
     public void onEnable() {
         // Register events
         getServer().getPluginManager().registerEvents(userManager.getListener(), this);
-        getServer().getPluginManager().registerEvents(protectionManager, this);
-        getServer().getPluginManager().registerEvents(new ProtectionListener(this), this);
-
-        registerCommand("protect", new ProtectCommand(this));
 
         logger().info("BlockProtection enabled!");
     }
@@ -45,6 +39,10 @@ public class BlockProtectionPlugin extends JavaPlugin {
         getServer().getScheduler().cancelTasks(this);
 
         logger().info("BlockProtection disabled!");
+    }
+
+    public Logger logger() {
+        return getSLF4JLogger();
     }
 
     public @NotNull Configuration getConfiguration() {
@@ -61,10 +59,6 @@ public class BlockProtectionPlugin extends JavaPlugin {
 
     public @NotNull ProtectionManager getProtectionManager() {
         return protectionManager;
-    }
-
-    public Logger logger() {
-        return getSLF4JLogger();
     }
 
     private void registerCommand(@NotNull String commandName, @NotNull CommandExecutor executor) {

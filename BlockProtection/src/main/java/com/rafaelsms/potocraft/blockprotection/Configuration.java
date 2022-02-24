@@ -51,8 +51,12 @@ public class Configuration extends YamlFile {
         return getInt("configuration.protection.selection.max_y_offset");
     }
 
-    public int getDefaultVolume() {
+    public int getDefaultBoxVolume() {
         return getSelectionXZOffset() * getSelectionXZOffset() * (getSelectionMinYOffset() + getSelectionMaxYOffset());
+    }
+
+    public int getSelectionTimeToLive() {
+        return Objects.requireNonNull(getInt("configuration.protection.volume.selection_time_to_live_ticks"));
     }
 
     public Double getSelectionVolumeDefaultReward() {
