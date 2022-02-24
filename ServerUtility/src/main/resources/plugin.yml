@@ -37,3 +37,6 @@ commands:
   kill:
     description: Forcefully kills another player.
     aliases: [ matar ]
+  fly:
+    description: Enables a player to toggle flight mode.
+    aliases: [ flight, voar ]

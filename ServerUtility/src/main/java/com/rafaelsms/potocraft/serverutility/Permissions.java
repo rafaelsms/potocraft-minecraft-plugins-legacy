@@ -27,6 +27,7 @@ public final class Permissions {
     public static final String COMMAND_ENCHANTMENT_UNSAFE = "potocraft.server.enchantment.unsafe";
     public static final String COMMAND_SUICIDE = "potocraft.server.suicide";
     public static final String COMMAND_KILL = "potocraft.server.kill";
+    public static final String COMMAND_FLY = "potocraft.server.fly";
 
     // Private constructor
     private Permissions() {

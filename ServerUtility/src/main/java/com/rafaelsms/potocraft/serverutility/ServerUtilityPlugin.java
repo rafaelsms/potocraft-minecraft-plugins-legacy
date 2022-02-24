@@ -13,6 +13,7 @@ import com.rafaelsms.potocraft.serverutility.commands.WorkbenchCommand;
 import com.rafaelsms.potocraft.serverutility.listeners.DamageEffects;
 import com.rafaelsms.potocraft.serverutility.listeners.DamageModifier;
 import com.rafaelsms.potocraft.serverutility.listeners.ExperienceModifier;
+import com.rafaelsms.potocraft.serverutility.listeners.FlightListener;
 import com.rafaelsms.potocraft.serverutility.listeners.HeadDropper;
 import com.rafaelsms.potocraft.serverutility.listeners.HideMessagesListener;
 import com.rafaelsms.potocraft.serverutility.listeners.LavaListener;
@@ -67,6 +68,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new WorldConfigurationApplier(this), this);
         getServer().getPluginManager().registerEvents(new HeadDropper(this), this);
         getServer().getPluginManager().registerEvents(new WorldBorderApplier(this), this);
+        getServer().getPluginManager().registerEvents(new FlightListener(this), this);
 
         // Run world sync task
         getServer().getScheduler().runTaskTimer(this, new SyncWorldTimeTask(this), 5L, 5L);
