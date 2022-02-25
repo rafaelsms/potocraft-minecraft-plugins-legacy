@@ -1,0 +1,43 @@
+plugins {
+    id 'com.github.johnrengelman.shadow'
+    id 'java'
+}
+
+group 'com.rafaelsms'
+version '0.1'
+
+repositories {
+    // MiniMessage
+    maven {
+        name('sonatype-oss-snapshots')
+        url('https://oss.sonatype.org/content/repositories/snapshots/')
+    }
+    mavenCentral()
+    // Purpur
+    maven {
+        url('https://repo.purpurmc.org/snapshots/')
+    }
+    // Citizens
+    maven {
+        url('https://repo.citizensnpcs.co/')
+    }
+}
+
+dependencies {
+    implementation(project(':common'))
+    implementation('net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT')
+    implementation('org.mongodb:mongodb-driver:3.12.10')
+    implementation('com.google.code.gson:gson:2.9.0')
+    implementation('org.jetbrains:annotations:22.0.0')
+    compileOnly('org.purpurmc.purpur:purpur-api:1.18.1-R0.1-SNAPSHOT')
+    compileOnly('net.citizensnpcs:citizensapi:2.0.29-SNAPSHOT')
+    compileOnly('net.citizensnpcs:citizens-main:2.0.29-SNAPSHOT')
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+shadowJar {
+    minimize()
+}

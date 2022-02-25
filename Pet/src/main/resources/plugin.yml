@@ -1,0 +1,10 @@
+name: Pet
+main: com.rafaelsms.potocraft.pet.PetPlugin
+version: 0.1
+api-version: 1.18
+author: rafaelsms
+website: rafaelsms.com
+description: Player versus player plugin for PotoCraft.
+load: POSTWORLD
+depend:
+  - Citizens

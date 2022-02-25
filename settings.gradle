@@ -8,6 +8,7 @@ include 'BlockProtection'
 include 'DiscordBot'
 include 'GameServer'
 include 'CombatServer'
-include 'TestPlugin:TestPlugin'
+include 'TestPlugin'
+include 'Pet'
 findProject(':TestPlugin:TestPlugin')?.name = 'TestPlugin'
 

@@ -1,0 +1,14 @@
+configuration:
+  database:
+    mongo_uri: 'mongodb://localhost:27017'
+    database_name: 'petDb'
+    is_exception_fatal: false
+    player_collection_name: 'playerProfiles'
+    save_player_timer_task_ticks: 3600
+  set_target_timer_ticks: 170
+  max_distance_from_player: 13.0
+  check_distance_timer_ticks: 12
+  pet_speed_multiplier: 1.0
+
+language:
+  failed_to_retrieve_profile: "<red>Falha ao carregar seu perfil!"
