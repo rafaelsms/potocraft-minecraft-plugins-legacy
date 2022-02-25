@@ -12,8 +12,11 @@ import java.util.UUID;
 public class Profile extends DatabaseObject {
 
     private final @NotNull UUID playerId;
-
     private @NotNull String playerName;
+
+    private int armorUpgrades = 0;
+    private int weaponUpgrades = 0;
+    private int consumablesUpgrades = 0;
 
     public Profile(@NotNull UUID playerId, @NotNull String playerName) {
         this.playerId = playerId;
