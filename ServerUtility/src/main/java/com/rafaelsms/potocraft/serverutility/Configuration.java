@@ -77,6 +77,10 @@ public class Configuration extends YamlFile {
         return getDouble("configuration.damage_modifiers.arrow_velocity_multiplier");
     }
 
+    public Boolean isArrowAffectedByGravity() {
+        return get("configuration.damage_modifiers.arrow_affected_by_gravity");
+    }
+
     public Boolean isPlayerLoggingEnabled() {
         return get("configuration.enable_player_logging");
     }

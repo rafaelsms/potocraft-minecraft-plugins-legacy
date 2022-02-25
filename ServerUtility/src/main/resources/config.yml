@@ -6,6 +6,7 @@ configuration:
     enchantment_damage_reduction_multiplier: 0.793
     damage_cooldown_factor: 0.72
     arrow_velocity_multiplier: 1.45
+    arrow_affected_by_gravity: false
   villager:
     prevent_all_enchanted_books: false
     prevent_treasure_enchanted_books: true
