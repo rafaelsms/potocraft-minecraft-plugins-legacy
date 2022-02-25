@@ -3,6 +3,7 @@ package com.rafaelsms.potocraft.serverutility;
 import com.rafaelsms.potocraft.serverutility.commands.AnvilCommand;
 import com.rafaelsms.potocraft.serverutility.commands.EnchantCommand;
 import com.rafaelsms.potocraft.serverutility.commands.EnderchestCommand;
+import com.rafaelsms.potocraft.serverutility.commands.FlightCommand;
 import com.rafaelsms.potocraft.serverutility.commands.GameModeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.KillCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerTimeCommand;
@@ -87,6 +88,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         registerCommand("enchant", new EnchantCommand(this));
         registerCommand("suicide", new SuicideCommand(this));
         registerCommand("kill", new KillCommand(this));
+        registerCommand("fly", new FlightCommand(this));
 
         logger().info("ServerUtility enabled!");
     }
