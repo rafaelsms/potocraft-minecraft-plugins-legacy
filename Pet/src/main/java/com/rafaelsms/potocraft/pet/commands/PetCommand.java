@@ -77,7 +77,6 @@ public class PetCommand implements CommandExecutor {
                 return true;
             }
             renamePet(user, fullName.get());
-            return true;
         } else if (subCommand.equalsIgnoreCase("adulto")) {
             makePetGrownUp(user);
         } else if (subCommand.equalsIgnoreCase("filhote") || subCommand.equalsIgnoreCase("baby")) {
