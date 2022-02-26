@@ -10,6 +10,7 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import net.md_5.bungee.api.chat.BaseComponent;
+import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -180,6 +181,10 @@ public final class TextUtil {
 
     public static @NotNull String toColorizedString(@NotNull Component component) {
         return LegacyComponentSerializer.legacyAmpersand().serializeOrNull(component);
+    }
+
+    public static @NotNull String toColorizedString(@NotNull String string) {
+        return ChatColor.translateAlternateColorCodes('&', string);
     }
 
     public static @NotNull String toPlainString(@NotNull Component component) {

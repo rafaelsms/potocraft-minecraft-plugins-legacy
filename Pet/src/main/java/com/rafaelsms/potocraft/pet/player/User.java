@@ -96,16 +96,23 @@ public class User {
     public void spawnPet() {
         despawnPet();
         // Fix pet colored name if not defined, keep if defined
-        String petColoredName =
-                profile.getPetColoredName().orElse(plugin.getConfiguration().getRandomDefaultPetNameList());
-        profile.setPetColoredName(petColoredName);
+        Optional<String> nameOptional = profile.getPetColoredName();
+        String petName;
+        if (nameOptional.isEmpty()) {
+            String randomName = plugin.getConfiguration().getRandomDefaultPetNameList();
+            profile.setPetColoredName(randomName);
+            plugin.getDatabase().saveProfile(profile);
+            petName = randomName;
+        } else {
+            petName = nameOptional.get();
+        }
+
         pet = plugin.getNpcRegistry()
                     .createNPC(profile.getPetType().orElse(plugin.getConfiguration().getDefaultPetType()),
-                               petColoredName,
+                               petName,
                                player.getLocation().add(0, 0.7, 0));
         pet.getOrAddTrait(Owner.class).setOwner(player);
         pet.setProtected(true);
-        pet.setFlyable(false);
         // Set entity
         plugin.getServer().getScheduler().runTaskTimer(plugin, bukkitTask -> {
             if (!player.isOnline() || pet == null) {
@@ -116,7 +123,11 @@ public class User {
                 return;
             }
             if (pet.getEntity() instanceof Ageable ageable) {
-                ageable.setBaby();
+                if (profile.isPetBaby()) {
+                    ageable.setBaby();
+                } else {
+                    ageable.setAdult();
+                }
             }
             attemptSetTarget(player);
             bukkitTask.cancel();

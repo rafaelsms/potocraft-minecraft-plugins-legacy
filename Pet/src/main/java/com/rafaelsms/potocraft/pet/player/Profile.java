@@ -35,7 +35,7 @@ public class Profile extends DatabaseObject {
                                     string -> EntityType.valueOf(string.toUpperCase()));
         this.petColoredName = document.getString(Keys.PET_COLORED_NAME);
         this.petEnabled = document.getBoolean(Keys.PET_ENABLED, petEnabled);
-        this.petBaby = document.getBoolean(Keys.PET_ENABLED, petBaby);
+        this.petBaby = document.getBoolean(Keys.PET_BABY, petBaby);
     }
 
     public @NotNull UUID getPlayerId() {
@@ -96,7 +96,7 @@ public class Profile extends DatabaseObject {
         document.put(Keys.PLAYER_ID, Util.convertNonNull(playerId, UUID::toString));
         document.put(Keys.PLAYER_NAME, playerName);
 
-        document.put(Keys.PET_ENTITY_TYPE, petType);
+        document.put(Keys.PET_ENTITY_TYPE, Util.convert(petType, EntityType::name));
         document.put(Keys.PET_COLORED_NAME, petColoredName);
         document.put(Keys.PET_ENABLED, petEnabled);
         document.put(Keys.PET_BABY, petBaby);

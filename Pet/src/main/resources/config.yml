@@ -74,6 +74,9 @@ language:
   pet_command:
     help: |
       <gold>Para mudar o tipo do seu pet, <click:suggest_command:'/pet <tipo>'><hover:show_text:'<gold><yellow>Clique</yellow> para mudar o tipo do seu pet.</gold>'>digite <yellow>/pet <tipo></yellow></hover></click>.</gold>
+      <gold>Para mudar a idade do seu pet, <click:suggest_command:'/pet <adulto/filhote>'><hover:show_text:'<gold><yellow>Clique</yellow> para mudar a idade do seu pet.</gold>'>digite <yellow>/pet <adulto/filhote></yellow></hover></click>.</gold>
       <gold>Para mudar o nome do seu pet, <click:suggest_command:'/pet renomear <nome>'><hover:show_text:'<gold><yellow>Clique</yellow> para mudar o nome do seu pet.</gold>'>digite <yellow>/pet renomear <nome></yellow></hover></click>.</gold>
+    entity_type_unavailable: "<red>Este tipo de pet não está disponível.</red>"
+    allowed_entity_types: "<gold>Tipos disponíveis: <yellow><list></yellow></gold>"
     pet_enabled: "<green>Seu pet foi ativado.</green> <yellow><click:run_command:'/pet'><hover:show_text:'<gold><yellow>Clique</yellow> para desativar temporariamente seu pet.</gold>'>Para desativá-lo temporariamente, digite o comando novamente.</hover></click></yellow>"
     pet_disabled: "<red>Seu pet foi desativado.</red> <yellow><click:run_command:'/pet'><hover:show_text:'<gold><yellow>Clique</yellow> para ativar seu pet novamente.</gold>'>Para ativá-lo, digite o comando novamente.</hover></click></yellow>"

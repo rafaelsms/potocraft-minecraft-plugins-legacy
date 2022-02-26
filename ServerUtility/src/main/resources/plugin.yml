@@ -12,7 +12,7 @@ commands:
     aliases: [ ec, bauender ]
   workbench:
     description: Opens a workbench wherever you are.
-    aliases: [ wb, craft, bancada ]
+    aliases: [ wb, craft, bancada, craftingtable, ct ]
   anvil:
     description: Opens an anvil wherever you are.
     aliases: [ bigorna ]

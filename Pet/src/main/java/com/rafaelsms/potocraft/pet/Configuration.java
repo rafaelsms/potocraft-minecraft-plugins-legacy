@@ -3,10 +3,12 @@ package com.rafaelsms.potocraft.pet;
 import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.util.TextUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -90,6 +92,18 @@ public class Configuration extends YamlFile {
 
     public Component getCommandHelp() {
         return TextUtil.toComponent(get("language.pet_command.help"));
+    }
+
+    public Component getCommandEntityTypeUnavailable() {
+        return TextUtil.toComponent(get("language.pet_command.entity_type_unavailable"));
+    }
+
+    public Component getCommandEntityTypeList(@NotNull Collection<EntityType> allowedEntityTypes) {
+        return TextUtil.toComponent(get("language.pet_command.allowed_entity_types"),
+                                    Template.of("list",
+                                                TextUtil.joinStrings(allowedEntityTypes,
+                                                                     ", ",
+                                                                     type -> type.name().toLowerCase())));
     }
 
     public Component getCommandPetEnabled() {
