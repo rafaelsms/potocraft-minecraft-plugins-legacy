@@ -3,7 +3,7 @@ configuration:
     mongo_uri: 'mongodb://localhost:27017'
     database_name: 'serverNameDb'
     is_exception_fatal: false
-    player_collection_name: 'combatPlayerProfile'
+    player_collection_name: 'combatPlayerProfiles'
     save_player_timer_task_ticks: 3600
 
 language:

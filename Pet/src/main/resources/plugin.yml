@@ -8,3 +8,6 @@ description: Player versus player plugin for PotoCraft.
 load: POSTWORLD
 depend:
   - Citizens
+commands:
+  pet:
+    description: Change your pets' properties.

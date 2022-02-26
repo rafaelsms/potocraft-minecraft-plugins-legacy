@@ -1,10 +1,12 @@
 package com.rafaelsms.potocraft.pet;
 
-import com.rafaelsms.potocraft.pet.listeners.InsertRemovePetListener;
+import com.rafaelsms.potocraft.pet.commands.PetCommand;
 import com.rafaelsms.potocraft.pet.listeners.UserManager;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -28,10 +30,8 @@ public class PetPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         this.npcRegistry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
-
         getServer().getPluginManager().registerEvents(userManager.getListener(), this);
-        getServer().getPluginManager().registerEvents(new InsertRemovePetListener(this), this);
-
+        registerCommand("pet", new PetCommand(this));
         logger().info("Pet enabled");
     }
 
@@ -55,7 +55,18 @@ public class PetPlugin extends JavaPlugin {
         return database;
     }
 
+    public @NotNull UserManager getUserManager() {
+        return userManager;
+    }
+
     public @NotNull NPCRegistry getNpcRegistry() {
         return npcRegistry;
+    }
+
+    private void registerCommand(@NotNull String command, @NotNull CommandExecutor commandExecutor) {
+        PluginCommand pluginCommand = getServer().getPluginCommand(command);
+        if (pluginCommand != null) {
+            pluginCommand.setExecutor(commandExecutor);
+        }
     }
 }

@@ -42,6 +42,10 @@ public class UserManager extends com.rafaelsms.potocraft.util.UserManager<User, 
     }
 
     @Override
+    protected void onJoin(User user) {
+    }
+
+    @Override
     protected void onQuit(User user) {
         // Update play time
         user.getProfile().setQuitTime();

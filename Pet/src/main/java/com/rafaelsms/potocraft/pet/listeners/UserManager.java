@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.pet.listeners;
 
 import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.pet.Permissions;
 import com.rafaelsms.potocraft.pet.PetPlugin;
 import com.rafaelsms.potocraft.pet.player.Profile;
 import com.rafaelsms.potocraft.pet.player.User;
@@ -42,11 +43,21 @@ public class UserManager extends com.rafaelsms.potocraft.util.UserManager<User, 
     }
 
     @Override
+    protected void onJoin(User user) {
+        // Spawn player's pet
+        if (user.getProfile().isPetEnabled() && user.getPlayer().hasPermission(Permissions.PET_PERMISSION)) {
+            user.spawnPet();
+        }
+    }
+
+    @Override
     protected void onQuit(User user) {
+        user.despawnPet();
     }
 
     @Override
     protected void tickUser(User user) {
+        user.tickPet();
     }
 
     @Override

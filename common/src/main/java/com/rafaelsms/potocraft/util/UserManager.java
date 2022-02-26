@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerLoadEvent;
@@ -49,6 +50,8 @@ public abstract class UserManager<U, P> {
 
     protected abstract void onLogin(U user);
 
+    protected abstract void onJoin(U user);
+
     protected abstract void onQuit(U user);
 
     protected abstract void tickUser(U user);
@@ -64,11 +67,15 @@ public abstract class UserManager<U, P> {
     }
 
     public @NotNull U getUser(@NotNull UUID playerId) {
-        return users.get(playerId);
+        synchronized (lock) {
+            return users.get(playerId);
+        }
     }
 
     public @NotNull Collection<U> getUsers() {
-        return Collections.unmodifiableCollection(users.values());
+        synchronized (lock) {
+            return Collections.unmodifiableCollection(users.values());
+        }
     }
 
     private class TickPlayersTask implements Runnable {
@@ -78,7 +85,11 @@ public abstract class UserManager<U, P> {
             synchronized (lock) {
                 // Tick all users synchronously
                 for (U user : users.values()) {
-                    tickUser(user);
+                    try {
+                        tickUser(user);
+                    } catch (Exception exception) {
+                        plugin.getSLF4JLogger().error("Exception thrown on user tick task:", exception);
+                    }
                 }
             }
         }
@@ -91,7 +102,11 @@ public abstract class UserManager<U, P> {
             synchronized (lock) {
                 // Simply save all profiles at once and hope it doesn't lag ;)
                 for (U user : users.values()) {
-                    saveUser(user);
+                    try {
+                        saveUser(user);
+                    } catch (Exception exception) {
+                        plugin.getSLF4JLogger().error("Exception thrown on user save task:", exception);
+                    }
                 }
             }
         }
@@ -150,14 +165,20 @@ public abstract class UserManager<U, P> {
                 if (profile == null || leavingPlayers.contains(event.getPlayer().getUniqueId())) {
                     plugin.getSLF4JLogger()
                           .warn("Didn't have a loaded Profile for user {} (uuid = {})",
-                                event.getPlayer().getName(),
-                                event.getPlayer().getUniqueId());
+                                event.getPlayer().getName(), event.getPlayer().getUniqueId());
                     event.disallow(PlayerLoginEvent.Result.KICK_OTHER, getKickMessageCouldNotLoadProfile());
                     return;
                 }
                 U user = retrieveUser(event, profile);
                 users.put(event.getPlayer().getUniqueId(), user);
                 onLogin(user);
+            }
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void executeJoinCallback(PlayerJoinEvent event) {
+            synchronized (lock) {
+                onJoin(getUser(event.getPlayer()));
             }
         }
 
@@ -173,8 +194,12 @@ public abstract class UserManager<U, P> {
                     leavingPlayers.remove(playerId);
                     U removedUser = users.remove(playerId);
                     if (removedUser != null) {
-                        onQuit(removedUser);
-                        saveUser(removedUser);
+                        try {
+                            onQuit(removedUser);
+                            saveUser(removedUser);
+                        } catch (Exception exception) {
+                            plugin.getSLF4JLogger().error("Exception thrown on user quit and save task:", exception);
+                        }
                     }
                 }
             });

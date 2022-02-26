@@ -22,7 +22,7 @@ public class Selection implements Runnable {
     public Selection(@NotNull BlockProtectionPlugin plugin, @NotNull User user) {
         this.plugin = plugin;
         this.user = user;
-        this.volumeUsageBar = volumeUsageBar;
+        this.volumeUsageBar = null;
         this.timeToLive = plugin.getConfiguration().getSelectionTimeToLive();
     }
 

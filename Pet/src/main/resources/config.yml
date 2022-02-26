@@ -5,10 +5,75 @@ configuration:
     is_exception_fatal: false
     player_collection_name: 'playerProfiles'
     save_player_timer_task_ticks: 3600
-  set_target_timer_ticks: 170
+  set_target_timer_ticks: 4
   max_distance_from_player: 13.0
   check_distance_timer_ticks: 12
+  min_distance_to_target: 5.0
   pet_speed_multiplier: 1.0
+  default_pet_type: CHICKEN
+  default_pet_names:
+    - Clóvis
+    - Alfredo
+    - Geraldo
+    - Manuela
+    - Jéssica
+    - Jonatas
+    - Zeus
+    - Vanessa
+    - Almeida
+    - Wanderley
+    - Vanderson
+    - xXx_kill_xXx
+    - Anabel
+    - Amanda
+    - Tigre
+    - Pão
+    - Soraya
+    - Tyago
+    - Adson
+    - <3
+    - "1337"
+    - Sebastião
+    - Paracêtamal
+    - David
+    - Wendy
+    - John
+    - Gatorade
+    - Chicken Little
+    - Vivi
+    - Jezebel
+    - Carlos
+    - Orlinda
+    - Odelício
+    - Luana
+    - C.J.
+    - J.C.
+    - CR07
+    - Beyonce
+    - DiCaprio
+    - Alberto
+    - Daniel Craig
+    - Bond, Super Bond
+    - Tom Cruise
+    - Neo
+    - Samsung
+    - Jorel
+    - Anitta Blackman
+    - Ben Dover
+    - Mike Oxlong
+    - Joji
+    - Richard Miles
+    - Dua Lipa
+    - Dia Lupa
+    - Batatinha
+    - Bethoven
 
 language:
   failed_to_retrieve_profile: "<red>Falha ao carregar seu perfil!"
+  command_for_players_only: "<red>Este comando pode ser executado apenas por jogadores."
+  pet_command:
+    help: |
+      <gold>Para mudar o tipo do seu pet, <click:suggest_command:'/pet <tipo>'><hover:show_text:'<gold><yellow>Clique</yellow> para mudar o tipo do seu pet.</gold>'><yellow></yellow></hover></click>.</gold>
+      <gold>Para mudar o nome do seu pet, <click:suggest_command:'/pet renomear <nome>'><hover:show_text:'<gold><yellow>Clique</yellow> para mudar o nome do seu pet.</gold>'><yellow></yellow></hover></click>.</gold>
+    pet_enabled: "<green>Seu pet foi ativado.</red> <yellow><click:run_command:'/pet'><hover:show_text:'<gold><yellow>Clique</yellow> para desativar temporariamente seu pet.</gold>'>Para desativá-lo temporariamente, digite o comando novamente.</hover></click></yellow>"
+    pet_disabled: "<red>Seu pet foi desativado.</red> <yellow><click:run_command:'/pet'><hover:show_text:'<gold><yellow>Clique</yellow> para ativar seu pet novamente.</gold>'>Para ativá-lo, digite o comando novamente.</hover></click></yellow>"
