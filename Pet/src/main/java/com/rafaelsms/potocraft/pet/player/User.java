@@ -1,11 +1,13 @@
 package com.rafaelsms.potocraft.pet.player;
 
+import com.rafaelsms.potocraft.pet.Permissions;
 import com.rafaelsms.potocraft.pet.PetPlugin;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.PathStrategy;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.npc.ai.StraightLineNavigationStrategy;
+import net.citizensnpcs.trait.Controllable;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Breedable;
 import org.bukkit.entity.LivingEntity;
@@ -14,6 +16,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -27,6 +30,7 @@ public class User {
     private @Nullable NPC pet = null;
     private int lastDistanceCheck = 0;
     private int lastTargetSet = 0;
+    private int remainingDamageTicks = 0;
 
     public User(@NotNull PetPlugin plugin, @NotNull Player player, @NotNull Profile profile) {
         this.plugin = plugin;
@@ -43,23 +47,44 @@ public class User {
     }
 
     public @NotNull Optional<NPC> getPet() {
-        if (!isAvailable()) {
+        if (!isPetAvailable()) {
             return Optional.empty();
         }
         assert pet != null;
         return Optional.of(pet);
     }
 
-    public boolean isAvailable() {
+    public void setDamageTicks() {
+        this.remainingDamageTicks = plugin.getConfiguration().getPetAwayForDamageTicks();
+    }
+
+    public boolean isPetAvailable() {
         return pet != null && pet.isSpawned() && player.isOnline();
     }
 
     public void tickPet() {
+        // Check if pet is hidden because of damage
+        if (remainingDamageTicks > 0) {
+            // Decrease remaining ticks
+            remainingDamageTicks--;
+            if (remainingDamageTicks <= 0 && profile.isPetEnabled()) {
+                // If finished ticking, show pet again
+                spawnPet();
+                player.sendMessage(plugin.getConfiguration().getPetCameBackAfterCombat());
+            } else if (isPetAvailable()) {
+                // Hide pet (even if it was enabled after we entered combat)
+                despawnPet();
+                player.sendMessage(plugin.getConfiguration().getPetWentAwayBecauseCombat());
+            }
+            return;
+        }
+
         // Check if pet is available
-        if (!isAvailable()) {
+        if (!isPetAvailable()) {
             return;
         }
         assert pet != null;
+
         // Make entity don't despawn
         pet.getEntity().setTicksLived(1);
         if (pet.getEntity() instanceof LivingEntity livingEntity) {
@@ -75,6 +100,14 @@ public class User {
         // Teleport if far away
         lastDistanceCheck++;
         if (lastDistanceCheck >= plugin.getConfiguration().getDistanceCheckerTimer()) {
+            lastDistanceCheck = 0;
+            // Check if changed world
+            if (!Objects.equals(player.getWorld().getUID(), pet.getEntity().getWorld().getUID())) {
+                pet.getEntity().teleportAsync(player.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                setPetTarget();
+                return;
+            }
+            // Check distance
             double petDistSq = player.getLocation().distanceSquared(pet.getEntity().getLocation());
             double maxDist = plugin.getConfiguration().getMaxDistanceFromOwner();
             double maxDistSq = maxDist * maxDist;
@@ -82,19 +115,24 @@ public class User {
                 pet.getEntity().teleportAsync(player.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 setPetTarget(player);
             }
-            lastDistanceCheck = 0;
         }
 
         // Target player
         lastTargetSet++;
         if (lastTargetSet >= plugin.getConfiguration().getPetTargetSetterTimer()) {
+            // Check if changed world
+            lastTargetSet = 0;
+            if (!Objects.equals(player.getWorld().getUID(), pet.getEntity().getWorld().getUID())) {
+                setPetTarget();
+                return;
+            }
+            // Check distance
             double petDistSq = pet.getEntity().getLocation().distanceSquared(player.getLocation());
             double maxDist = plugin.getConfiguration().getMinDistanceToTarget();
             double maxDistSq = maxDist * maxDist;
             if (petDistSq >= maxDistSq) {
                 setPetTarget();
             }
-            lastTargetSet = 0;
         }
     }
 
@@ -118,6 +156,12 @@ public class User {
                                player.getLocation().add(0, 0.7, 0));
         pet.getOrAddTrait(Owner.class).setOwner(player);
         pet.setProtected(true);
+        // Check if player can mount its pet
+        if (player.hasPermission(Permissions.CONTROLLABLE_PET)) {
+            Controllable controllable = pet.getOrAddTrait(Controllable.class);
+            controllable.setOwnerRequired(true);
+            controllable.setEnabled(true);
+        }
         // Set entity
         plugin.getServer().getScheduler().runTaskTimer(plugin, bukkitTask -> {
             if (!player.isOnline() || pet == null) {
@@ -170,7 +214,7 @@ public class User {
     }
 
     private void attemptSetTarget(@NotNull Player player) {
-        if (!isAvailable()) {
+        if (!isPetAvailable()) {
             return;
         }
         assert pet != null;

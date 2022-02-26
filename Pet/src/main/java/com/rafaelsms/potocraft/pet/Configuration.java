@@ -63,6 +63,10 @@ public class Configuration extends YamlFile {
         return Objects.requireNonNull(getDouble("configuration.pet_speed_multiplier")).floatValue();
     }
 
+    public int getPetAwayForDamageTicks() {
+        return Objects.requireNonNull(getInt("configuration.ticks_after_damage_pet_away"));
+    }
+
     public @NotNull EntityType getDefaultPetType() {
         String name = get("configuration.default_pet_type");
         try {
@@ -116,5 +120,13 @@ public class Configuration extends YamlFile {
 
     public Component getCommandPetDisabled() {
         return TextUtil.toComponent(get("language.pet_command.pet_disabled"));
+    }
+
+    public Component getPetWentAwayBecauseCombat() {
+        return TextUtil.toComponent(get("language.pet_went_away_because_of_combat"));
+    }
+
+    public Component getPetCameBackAfterCombat() {
+        return TextUtil.toComponent(get("language.pet_came_back_after_combat"));
     }
 }

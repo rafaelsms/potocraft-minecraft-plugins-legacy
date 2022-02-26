@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.pet;
 
 import com.rafaelsms.potocraft.pet.commands.PetCommand;
+import com.rafaelsms.potocraft.pet.listeners.DamageListener;
 import com.rafaelsms.potocraft.pet.listeners.UserManager;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
@@ -31,6 +32,7 @@ public class PetPlugin extends JavaPlugin {
     public void onEnable() {
         this.npcRegistry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
         getServer().getPluginManager().registerEvents(userManager.getListener(), this);
+        getServer().getPluginManager().registerEvents(new DamageListener(this), this);
         registerCommand("pet", new PetCommand(this));
         logger().info("Pet enabled");
     }

@@ -9,6 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Sittable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -48,7 +49,8 @@ public class PetCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
+    public boolean onCommand(@NotNull CommandSender sender,
+                             @NotNull Command command,
                              @NotNull String label,
                              @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
@@ -81,6 +83,8 @@ public class PetCommand implements CommandExecutor {
                 return true;
             }
             renamePet(user, fullName.get());
+        } else if (subCommand.equalsIgnoreCase("sentar") || subCommand.equalsIgnoreCase("sit")) {
+            makePetSit(user);
         } else if (subCommand.equalsIgnoreCase("adulto")) {
             makePetGrownUp(user);
         } else if (subCommand.equalsIgnoreCase("filhote") || subCommand.equalsIgnoreCase("baby")) {
@@ -102,6 +106,14 @@ public class PetCommand implements CommandExecutor {
         }
         plugin.getDatabase().saveProfile(user.getProfile());
         return true;
+    }
+
+    private void makePetSit(@NotNull User user) {
+        user.getPet().ifPresent(npc -> {
+            if (npc.getEntity() instanceof Sittable sittable) {
+                sittable.setSitting(!sittable.isSitting());
+            }
+        });
     }
 
     private void setPetType(@NotNull User user, @NotNull EntityType entityType) {
