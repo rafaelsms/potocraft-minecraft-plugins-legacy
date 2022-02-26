@@ -7,6 +7,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.npc.ai.StraightLineNavigationStrategy;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Breedable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -61,11 +62,15 @@ public class User {
         assert pet != null;
         // Make entity don't despawn
         pet.getEntity().setTicksLived(1);
-        if (pet instanceof LivingEntity livingEntity) {
+        if (pet.getEntity() instanceof LivingEntity livingEntity) {
             livingEntity.setRemoveWhenFarAway(false);
         }
         // Make pet silent
         pet.getEntity().setSilent(true);
+        // Make ageable not age
+        if (pet.getEntity() instanceof Breedable breedable) {
+            breedable.setAgeLock(true);
+        }
 
         // Teleport if far away
         lastDistanceCheck++;
@@ -122,12 +127,16 @@ public class User {
             if (!pet.isSpawned()) {
                 return;
             }
+            // Set age and fix it
             if (pet.getEntity() instanceof Ageable ageable) {
                 if (profile.isPetBaby()) {
                     ageable.setBaby();
                 } else {
                     ageable.setAdult();
                 }
+            }
+            if (pet.getEntity() instanceof Breedable breedable) {
+                breedable.setAgeLock(true);
             }
             attemptSetTarget(player);
             bukkitTask.cancel();
