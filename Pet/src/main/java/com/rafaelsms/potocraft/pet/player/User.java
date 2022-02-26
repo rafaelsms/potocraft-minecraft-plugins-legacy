@@ -98,7 +98,7 @@ public class User {
         // Fix pet colored name if not defined, keep if defined
         Optional<String> nameOptional = profile.getPetColoredName();
         String petName;
-        if (nameOptional.isEmpty()) {
+        if (nameOptional.isEmpty() || nameOptional.get().length() > 16) {
             String randomName = plugin.getConfiguration().getRandomDefaultPetNameList();
             profile.setPetColoredName(randomName);
             plugin.getDatabase().saveProfile(profile);

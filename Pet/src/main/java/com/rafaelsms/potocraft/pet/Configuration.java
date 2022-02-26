@@ -106,6 +106,10 @@ public class Configuration extends YamlFile {
                                                                      type -> type.name().toLowerCase())));
     }
 
+    public Component getPetNameTooLong() {
+        return TextUtil.toComponent(get("language.pet_command.pet_name_too_long"));
+    }
+
     public Component getCommandPetEnabled() {
         return TextUtil.toComponent(get("language.pet_command.pet_enabled"));
     }

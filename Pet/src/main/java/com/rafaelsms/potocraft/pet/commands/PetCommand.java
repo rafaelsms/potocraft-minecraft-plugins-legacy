@@ -76,6 +76,10 @@ public class PetCommand implements CommandExecutor {
                 showHelp(sender);
                 return true;
             }
+            if (fullName.get().length() > 16) {
+                sender.sendMessage(plugin.getConfiguration().getPetNameTooLong());
+                return true;
+            }
             renamePet(user, fullName.get());
         } else if (subCommand.equalsIgnoreCase("adulto")) {
             makePetGrownUp(user);
