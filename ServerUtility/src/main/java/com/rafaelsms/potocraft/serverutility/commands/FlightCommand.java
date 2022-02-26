@@ -30,7 +30,7 @@ public class FlightCommand implements CommandExecutor {
             return true;
         }
 
-        player.setFlying(!player.isFlying());
+        player.setAllowFlight(!player.getAllowFlight());
         return true;
     }
 }
