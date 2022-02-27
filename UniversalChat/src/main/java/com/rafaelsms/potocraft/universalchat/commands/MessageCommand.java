@@ -6,17 +6,20 @@ import com.rafaelsms.potocraft.universalchat.player.User;
 import com.rafaelsms.potocraft.universalchat.util.ChatUtil;
 import com.rafaelsms.potocraft.util.ChatHistory;
 import com.rafaelsms.potocraft.util.TextUtil;
+import com.rafaelsms.potocraft.util.Util;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class MessageCommand extends Command {
+public class MessageCommand extends Command implements TabExecutor {
 
     private final @NotNull UniversalChatPlugin plugin;
 
@@ -122,5 +125,13 @@ public class MessageCommand extends Command {
             (receiverUser.getReplyCandidate().isEmpty() || receiverUser.getReplyCandidate().get().equals(senderId))) {
             receiverUser.setReplyCandidate(senderId);
         }
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        if (args.length == 0) {
+            return Util.convertList(plugin.getProxy().getPlayers(), ProxiedPlayer::getName);
+        }
+        return List.of();
     }
 }
