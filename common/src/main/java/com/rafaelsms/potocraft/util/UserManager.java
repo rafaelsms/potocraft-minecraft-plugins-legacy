@@ -37,6 +37,13 @@ public abstract class UserManager<U, P> {
     private @Nullable BukkitTask savePlayerTask = null;
     private @Nullable BukkitTask tickPlayerTask = null;
 
+    /*
+     * TODO: question
+     *  - using single user manager to cross-server data sharing
+     *  - using single user manager to single-server data sharing
+     *  - centralize all database to a single instance and query through pluginmessages?
+     */
+
     protected UserManager(@NotNull JavaPlugin plugin, long savePlayerTaskPeriod) {
         this.plugin = plugin;
         this.savePlayerTaskPeriod = savePlayerTaskPeriod;

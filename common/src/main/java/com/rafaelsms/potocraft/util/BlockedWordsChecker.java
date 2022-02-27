@@ -53,7 +53,6 @@ public class BlockedWordsChecker {
         }
     }
 
-    @SuppressWarnings("SuspiciousRegexArgument")
     private Pair<String, Boolean> removeBlockedWord(@NotNull String string, boolean replaced) {
         int stringLength = string.length();
 
@@ -72,6 +71,8 @@ public class BlockedWordsChecker {
                 String beforeWord = string.substring(0, Math.max(start, 0));
                 String afterWord = string.substring(Math.min(end, stringLength), stringLength); // end is exclusive
                 String censuredWord = matcher.group(2).replaceAll(".", "-");
+                // TODO replace "-" with $&!@ maybe except for the first letter?
+                // TODO add option to show uncensored to player?
 
                 // Compose the string back
                 string = beforeWord + censuredWord + afterWord;

@@ -47,6 +47,11 @@ public class ServerProfilePlugin extends JavaPlugin {
         this.userManager = new UserManager(this);
     }
 
+    // TODO make exit proxy don't kill people (warn servers)
+    // TODO set player name color with scoreboards
+    // TODO /reportar
+    // TODO store player data and movement on database temporarily? (death, teleport, chat, command)
+
     @Override
     public void onEnable() {
         // Register listeners

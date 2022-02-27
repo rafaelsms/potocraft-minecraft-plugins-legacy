@@ -24,6 +24,8 @@ public class User {
     private @Nullable UUID replyCandidate = null;
     private @Nullable ZonedDateTime replyCandidateDate = null;
 
+    // TODO profile: /msgtoggle, /ignore
+
     public User(@NotNull UniversalChatPlugin plugin, @NotNull ProxiedPlayer player) {
         this.plugin = plugin;
         this.player = player;

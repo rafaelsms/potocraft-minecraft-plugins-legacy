@@ -39,4 +39,7 @@ public class EquipmentManager implements Listener {
             arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
         }
     }
+
+    // TODO give equipment on join
+    // TODO change equipment on upgrade
 }

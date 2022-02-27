@@ -37,6 +37,8 @@ public class QuickBreakTreeListener implements Listener {
                                                            TreeMaterial.of(Material.JUNGLE_LOG,
                                                                            Material.JUNGLE_LEAVES));
 
+    // TODO: do this only if survival AND breaking with an axe or do it with a warning
+
     private final @NotNull ServerUtilityPlugin plugin;
     private final FastBreakStorage fastBreakStorage = new FastBreakStorage();
 

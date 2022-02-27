@@ -38,6 +38,8 @@ public class VanishManager implements Listener {
         this.plugin = plugin;
     }
 
+    // TODO add permission to never be shown on tab list
+
     public void toggleVanish(@NotNull Player player) {
         if (hiddenPlayers.containsKey(player.getUniqueId())) {
             showPlayer(player);

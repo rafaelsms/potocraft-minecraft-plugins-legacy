@@ -22,6 +22,8 @@ public class LoggedOffPlayerListener implements Listener {
         this.plugin = plugin;
     }
 
+    // TODO kick if player don't log in after X seconds
+
     @EventHandler
     public void preventLoggedOffChat(ChatEvent event) {
         // Ignore cancelled

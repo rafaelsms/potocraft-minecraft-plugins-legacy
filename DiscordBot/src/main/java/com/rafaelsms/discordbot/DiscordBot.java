@@ -20,6 +20,10 @@ public class DiscordBot {
     private final @NotNull Logger logger;
     private final @NotNull JDA jda;
 
+    // TODO make command to sync with minecraft server
+    // TODO make command to show messages on discord through webhooks (for Themis)
+    // TODO show chat server on discord, allow interaction
+
     DiscordBot() throws Exception {
         System.setProperty("org.slf4j.simpleLogger.showShortLogName", "true");
         this.logger = LoggerFactory.getLogger(getClass());

@@ -72,6 +72,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new WorldBorderApplier(this), this);
         getServer().getPluginManager().registerEvents(new FlightListener(this), this);
         getServer().getPluginManager().registerEvents(new ProjectileListener(this), this);
+        // TODO keepInventory excluding for PVP option
 
         // Run world sync task
         getServer().getScheduler().runTaskTimer(this, new SyncWorldTimeTask(this), 5L, 5L);
@@ -89,6 +90,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         registerCommand("suicide", new SuicideCommand(this));
         registerCommand("kill", new KillCommand(this));
         registerCommand("fly", new FlightCommand(this));
+        // TODO make command to prevent equipment damage temporarily
 
         logger().info("ServerUtility enabled!");
     }

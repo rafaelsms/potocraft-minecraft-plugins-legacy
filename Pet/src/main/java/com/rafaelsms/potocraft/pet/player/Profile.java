@@ -22,6 +22,8 @@ public class Profile extends DatabaseObject {
     private boolean petEnabled = true;
     private boolean petBaby = true;
 
+    // TODO limit pet changes by date using permissions
+
     public Profile(@NotNull UUID playerId, @NotNull String playerName) {
         this.playerId = playerId;
         this.playerName = playerName;

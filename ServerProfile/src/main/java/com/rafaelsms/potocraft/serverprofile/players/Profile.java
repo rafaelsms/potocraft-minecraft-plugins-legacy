@@ -49,6 +49,9 @@ public class Profile extends DatabaseObject {
 
     private boolean importedEssentials = false;
 
+    // TODO /tptoggle
+    // TODO permission based particle effects for players
+
     public Profile(@NotNull UUID playerId, @NotNull String playerName) {
         this.playerId = playerId;
         this.playerName = playerName;
