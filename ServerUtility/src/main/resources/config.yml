@@ -15,6 +15,7 @@ configuration:
     damage_particle_amount: 156
     spawn_lightning_on_dead: true
     spawn_firework_on_killer: true
+  webhook_url: ""
   enable_player_logging: true
   hide_join_quit_messages: false
   delay_between_death_messages_seconds: 90

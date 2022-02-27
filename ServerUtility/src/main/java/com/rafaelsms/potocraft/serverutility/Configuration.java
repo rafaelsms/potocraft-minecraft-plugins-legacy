@@ -81,6 +81,10 @@ public class Configuration extends YamlFile {
         return get("configuration.damage_modifiers.arrow_affected_by_gravity");
     }
 
+    public String getWebhookUrl() {
+        return get("configuration.webhook_url");
+    }
+
     public Boolean isPlayerLoggingEnabled() {
         return get("configuration.enable_player_logging");
     }

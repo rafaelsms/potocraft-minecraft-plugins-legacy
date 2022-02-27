@@ -40,3 +40,5 @@ commands:
   fly:
     description: Enables a player to toggle flight mode.
     aliases: [ flight, voar ]
+  sendwebhook:
+    description: Sends a Discord Webhook message.

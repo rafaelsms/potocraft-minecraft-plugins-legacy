@@ -1,5 +1,6 @@
 package com.rafaelsms.potocraft.serverutility;
 
+import club.minnced.discord.webhook.WebhookClient;
 import com.rafaelsms.potocraft.serverutility.commands.AnvilCommand;
 import com.rafaelsms.potocraft.serverutility.commands.EnchantCommand;
 import com.rafaelsms.potocraft.serverutility.commands.EnderchestCommand;
@@ -8,6 +9,7 @@ import com.rafaelsms.potocraft.serverutility.commands.GameModeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.KillCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerTimeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerWeatherCommand;
+import com.rafaelsms.potocraft.serverutility.commands.SendDiscordhookCommand;
 import com.rafaelsms.potocraft.serverutility.commands.SuicideCommand;
 import com.rafaelsms.potocraft.serverutility.commands.WorkbenchCommand;
 import com.rafaelsms.potocraft.serverutility.listeners.DamageEffects;
@@ -35,13 +37,16 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class ServerUtilityPlugin extends JavaPlugin {
 
     private final @NotNull Configuration configuration;
+    private @Nullable WebhookClient webhookClient = null;
 
     public ServerUtilityPlugin() throws IOException {
         this.configuration = new Configuration(this);
@@ -49,6 +54,11 @@ public class ServerUtilityPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Create webhook
+        if (!configuration.getWebhookUrl().isBlank()) {
+            webhookClient = WebhookClient.withUrl(configuration.getWebhookUrl());
+        }
+
         // Register listeners
         getServer().getPluginManager().registerEvents(new WorldGameRuleApplier(this), this);
         getServer().getPluginManager().registerEvents(new HideMessagesListener(this), this);
@@ -84,6 +94,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         registerCommand("suicide", new SuicideCommand(this));
         registerCommand("kill", new KillCommand(this));
         registerCommand("fly", new FlightCommand(this));
+        registerCommand("sendwebhook", new SendDiscordhookCommand(this));
         // TODO make command to prevent equipment damage temporarily
 
         logger().info("ServerUtility enabled!");
@@ -99,6 +110,10 @@ public class ServerUtilityPlugin extends JavaPlugin {
 
     public @NotNull Configuration getConfiguration() {
         return configuration;
+    }
+
+    public @NotNull Optional<WebhookClient> getWebhookClient() {
+        return Optional.ofNullable(webhookClient);
     }
 
     public Logger logger() {
