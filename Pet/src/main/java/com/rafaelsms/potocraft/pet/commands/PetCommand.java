@@ -4,18 +4,22 @@ import com.rafaelsms.potocraft.pet.Permissions;
 import com.rafaelsms.potocraft.pet.PetPlugin;
 import com.rafaelsms.potocraft.pet.player.User;
 import com.rafaelsms.potocraft.util.TextUtil;
+import com.rafaelsms.potocraft.util.Util;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sittable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class PetCommand implements CommandExecutor {
+public class PetCommand implements TabExecutor {
 
     private final @NotNull Set<EntityType> allowedTypes = Set.of(EntityType.CHICKEN,
                                                                  EntityType.BEE,
@@ -159,5 +163,16 @@ public class PetCommand implements CommandExecutor {
 
     private void showEntityTypeList(@NotNull CommandSender sender) {
         sender.sendMessage(plugin.getConfiguration().getCommandEntityTypeList(allowedTypes));
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender,
+                                                @NotNull Command command,
+                                                @NotNull String alias,
+                                                @NotNull String[] args) {
+        List<String> suggestions = new LinkedList<>();
+        suggestions.addAll(List.of("sentar", "filhote", "adulto", "renomear"));
+        suggestions.addAll(Util.convertList(allowedTypes, type -> type.name().toLowerCase()));
+        return suggestions;
     }
 }

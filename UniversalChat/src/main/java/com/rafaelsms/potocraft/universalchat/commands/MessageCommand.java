@@ -129,7 +129,7 @@ public class MessageCommand extends Command implements TabExecutor {
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        if (args.length == 0) {
+        if (args.length <= 1) {
             return Util.convertList(plugin.getProxy().getPlayers(), ProxiedPlayer::getName);
         }
         return List.of();

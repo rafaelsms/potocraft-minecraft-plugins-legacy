@@ -114,7 +114,7 @@ public class ChangePinCommand extends Command implements TabExecutor {
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        if (args.length < 3) {
+        if (args.length <= 3) {
             return List.of("123456", "098765");
         }
         return List.of();
