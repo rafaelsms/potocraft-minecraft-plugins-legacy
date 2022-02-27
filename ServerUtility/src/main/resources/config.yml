@@ -17,7 +17,6 @@ configuration:
     spawn_firework_on_killer: true
   enable_player_logging: true
   hide_join_quit_messages: false
-  prevent_vanished_opening_chests: true
   delay_between_death_messages_seconds: 90
   delay_between_login_messages_seconds: 45
   experience_modifier:
@@ -82,9 +81,6 @@ language:
       help: "<gold>Uso: <yellow>/tempo (dia/meiodia/noite/meianoite) [fixo]"
     player_weather:
       help: "<gold>Uso: <yellow>/clima (limpo/chuvoso)"
-    vanish:
-      player_vanished: "<gold>Ficou invisível."
-      player_appeared: "<gold>Ficou visível."
     gamemode:
       help: "<gold>Uso: <yellow>/gamemode (creative/spectator/survival/adventure)"
     enchant:

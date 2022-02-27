@@ -9,7 +9,6 @@ import com.rafaelsms.potocraft.serverutility.commands.KillCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerTimeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerWeatherCommand;
 import com.rafaelsms.potocraft.serverutility.commands.SuicideCommand;
-import com.rafaelsms.potocraft.serverutility.commands.VanishCommand;
 import com.rafaelsms.potocraft.serverutility.commands.WorkbenchCommand;
 import com.rafaelsms.potocraft.serverutility.listeners.DamageEffects;
 import com.rafaelsms.potocraft.serverutility.listeners.DamageModifier;
@@ -24,7 +23,6 @@ import com.rafaelsms.potocraft.serverutility.listeners.QuickBreakOreListener;
 import com.rafaelsms.potocraft.serverutility.listeners.QuickBreakTreeListener;
 import com.rafaelsms.potocraft.serverutility.listeners.QuickReplantListener;
 import com.rafaelsms.potocraft.serverutility.listeners.RainyNightListener;
-import com.rafaelsms.potocraft.serverutility.listeners.VanishManager;
 import com.rafaelsms.potocraft.serverutility.listeners.VillagerListener;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldBorderApplier;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldConfigurationApplier;
@@ -44,17 +42,14 @@ import java.io.IOException;
 public class ServerUtilityPlugin extends JavaPlugin {
 
     private final @NotNull Configuration configuration;
-    private final @NotNull VanishManager manager;
 
     public ServerUtilityPlugin() throws IOException {
         this.configuration = new Configuration(this);
-        this.manager = new VanishManager(this);
     }
 
     @Override
     public void onEnable() {
         // Register listeners
-        getServer().getPluginManager().registerEvents(manager, this);
         getServer().getPluginManager().registerEvents(new WorldGameRuleApplier(this), this);
         getServer().getPluginManager().registerEvents(new HideMessagesListener(this), this);
         getServer().getPluginManager().registerEvents(new LavaListener(this), this);
@@ -84,7 +79,6 @@ public class ServerUtilityPlugin extends JavaPlugin {
         registerCommand("workbench", new WorkbenchCommand(this));
         registerCommand("playertime", new PlayerTimeCommand(this));
         registerCommand("playerweather", new PlayerWeatherCommand(this));
-        registerCommand("vanish", new VanishCommand(this));
         registerCommand("gamemode", new GameModeCommand(this));
         registerCommand("enchant", new EnchantCommand(this));
         registerCommand("suicide", new SuicideCommand(this));
@@ -105,10 +99,6 @@ public class ServerUtilityPlugin extends JavaPlugin {
 
     public @NotNull Configuration getConfiguration() {
         return configuration;
-    }
-
-    public @NotNull VanishManager getVanishManager() {
-        return manager;
     }
 
     public Logger logger() {

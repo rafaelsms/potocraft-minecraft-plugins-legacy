@@ -244,10 +244,6 @@ public class Configuration extends YamlFile {
         return get("configuration.hide_join_quit_messages");
     }
 
-    public Boolean isPreventVanishedOpeningChests() {
-        return get("configuration.prevent_vanished_opening_chests");
-    }
-
     public Duration getDelayBetweenDeathMessages() {
         return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.delay_between_death_messages_seconds")));
     }
@@ -313,14 +309,6 @@ public class Configuration extends YamlFile {
 
     public Component getPlayerWeatherHelp() {
         return TextUtil.toComponent(get("language.commands.player_weather.help"));
-    }
-
-    public Component getPlayerVanished() {
-        return TextUtil.toComponent(get("language.commands.vanish.player_vanished"));
-    }
-
-    public Component getPlayerAppeared() {
-        return TextUtil.toComponent(get("language.commands.vanish.player_appeared"));
     }
 
     public Component getGameModeHelp() {
