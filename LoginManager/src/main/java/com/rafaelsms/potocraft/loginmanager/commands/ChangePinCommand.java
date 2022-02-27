@@ -9,12 +9,14 @@ import com.rafaelsms.potocraft.util.TextUtil;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-public class ChangePinCommand extends Command {
+public class ChangePinCommand extends Command implements TabExecutor {
 
     // /<command> <old pin> <new pin> <new pin>
 
@@ -108,5 +110,13 @@ public class ChangePinCommand extends Command {
         } catch (Database.DatabaseException ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
         }
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        if (args.length < 3) {
+            return List.of("123456", "098765");
+        }
+        return List.of();
     }
 }

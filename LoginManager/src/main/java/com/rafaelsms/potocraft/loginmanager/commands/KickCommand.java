@@ -6,18 +6,20 @@ import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.player.ReportEntry;
 import com.rafaelsms.potocraft.util.TextUtil;
+import com.rafaelsms.potocraft.util.Util;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public class KickCommand extends Command {
+public class KickCommand extends Command implements TabExecutor {
 
     // /kick <name> <reason>
 
@@ -87,5 +89,10 @@ public class KickCommand extends Command {
             return player.getName();
         }
         return null;
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        return Util.convertList(plugin.getProxy().getPlayers(), ProxiedPlayer::getName);
     }
 }

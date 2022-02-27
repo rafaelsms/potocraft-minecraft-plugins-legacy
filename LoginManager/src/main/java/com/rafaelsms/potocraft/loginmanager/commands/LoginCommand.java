@@ -11,13 +11,15 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-public class LoginCommand extends Command {
+public class LoginCommand extends Command implements TabExecutor {
 
     private final Pattern pinExtractor = Pattern.compile("^\\d{6}$", Pattern.CASE_INSENSITIVE);
 
@@ -112,5 +114,13 @@ public class LoginCommand extends Command {
             }
         }
         Util.sendPlayerToDefaultServer(plugin, player);
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        if (args.length == 0) {
+            return List.of("123456", "098765");
+        }
+        return List.of();
     }
 }

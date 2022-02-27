@@ -7,9 +7,11 @@ import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.player.ReportEntry;
 import com.rafaelsms.potocraft.loginmanager.util.CommandUtil;
 import com.rafaelsms.potocraft.util.TextUtil;
+import com.rafaelsms.potocraft.util.Util;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-public class MuteCommand extends Command {
+public class MuteCommand extends Command implements TabExecutor {
 
     // /mute <name> [time amount] <reason>
 
@@ -91,5 +93,10 @@ public class MuteCommand extends Command {
             return player.getUniqueId();
         }
         return null;
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        return Util.convertList(plugin.getProxy().getPlayers(), ProxiedPlayer::getName);
     }
 }

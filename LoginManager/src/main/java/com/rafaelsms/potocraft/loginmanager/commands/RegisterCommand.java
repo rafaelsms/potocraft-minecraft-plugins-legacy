@@ -9,13 +9,15 @@ import com.rafaelsms.potocraft.util.TextUtil;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-public class RegisterCommand extends Command {
+public class RegisterCommand extends Command implements TabExecutor {
 
     private final Pattern pinFormat = Pattern.compile("^(\\d{6})$", Pattern.CASE_INSENSITIVE);
 
@@ -113,5 +115,13 @@ public class RegisterCommand extends Command {
 
         // Send player to default server
         Util.sendPlayerToDefaultServer(plugin, player);
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            return List.of("123456", "098765");
+        }
+        return List.of();
     }
 }

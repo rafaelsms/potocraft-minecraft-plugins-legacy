@@ -7,10 +7,12 @@ import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.player.ReportEntry;
 import com.rafaelsms.potocraft.loginmanager.util.CommandUtil;
 import com.rafaelsms.potocraft.util.TextUtil;
+import com.rafaelsms.potocraft.util.Util;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +21,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-public class TemporaryBanCommand extends Command {
+public class TemporaryBanCommand extends Command implements TabExecutor {
 
     // /tempban <name> <time> <reason (optional)>
 
@@ -95,5 +97,10 @@ public class TemporaryBanCommand extends Command {
             return player.getName();
         }
         return null;
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        return Util.convertList(plugin.getProxy().getPlayers(), ProxiedPlayer::getName);
     }
 }

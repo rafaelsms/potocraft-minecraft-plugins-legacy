@@ -5,14 +5,17 @@ import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.util.CommandUtil;
+import com.rafaelsms.potocraft.util.Util;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public class SeenCommand extends Command {
+public class SeenCommand extends Command implements TabExecutor {
 
     // /seen <name>
 
@@ -57,5 +60,10 @@ public class SeenCommand extends Command {
             profile = profileOptional.get();
         }
         sender.sendMessage(plugin.getConfiguration().getCommandSeen(plugin, profile));
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        return Util.convertList(plugin.getProxy().getPlayers(), ProxiedPlayer::getName);
     }
 }
