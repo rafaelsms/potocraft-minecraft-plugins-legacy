@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 
 public class BlockedWordsChecker {
 
+    private final String badWordReplacer = "$#@!%&?";
+
     private final Map<String, Pattern> blockedWordsRegex = new HashMap<>();
 
     private final @NotNull Logger logger;
@@ -70,8 +72,7 @@ public class BlockedWordsChecker {
                 int end = matcher.end(2);
                 String beforeWord = string.substring(0, Math.max(start, 0));
                 String afterWord = string.substring(Math.min(end, stringLength), stringLength); // end is exclusive
-                String censuredWord = matcher.group(2).replaceAll(".", "-");
-                // TODO replace "-" with $&!@ maybe except for the first letter?
+                String censuredWord = hideBadWord(matcher.group(2));
                 // TODO add option to show uncensored to player?
 
                 // Compose the string back
@@ -90,6 +91,20 @@ public class BlockedWordsChecker {
             }
         }
         return new Pair<>(string, replaced);
+    }
+
+    private String hideBadWord(@NotNull String word) {
+        // Just to be sure that we don't throw
+        if (word.length() < 1) {
+            return "";
+        }
+        // Replace each character with a special character except for the first one
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(word.charAt(0));
+        for (int i = 1; i < word.length(); i++) {
+            stringBuilder.append(badWordReplacer.charAt((i - 1) % badWordReplacer.length()));
+        }
+        return stringBuilder.toString();
     }
 
     public Optional<String> removeBlockedWords(@NotNull String string) {
