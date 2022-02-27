@@ -5,6 +5,7 @@ import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
 import com.rafaelsms.potocraft.serverutility.util.BlockSearch;
 import com.rafaelsms.potocraft.serverutility.util.FastBreakStorage;
 import com.rafaelsms.potocraft.util.Util;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -28,6 +29,13 @@ public class QuickBreakTreeListener implements Listener {
     private static final int MAX_SEARCH_DISTANCE = 33;
     private static final int MAX_MANHATTAN_DISTANCE = 2;
 
+    private final Set<Material> axeMaterials = Set.of(Material.NETHERITE_AXE,
+                                                      Material.DIAMOND_AXE,
+                                                      Material.GOLDEN_AXE,
+                                                      Material.IRON_AXE,
+                                                      Material.STONE_AXE,
+                                                      Material.WOODEN_AXE);
+
     private final Set<TreeMaterial> treeMaterials = Set.of(TreeMaterial.of(Material.OAK_LOG, Material.OAK_LEAVES),
                                                            TreeMaterial.of(Material.DARK_OAK_LOG,
                                                                            Material.DARK_OAK_LEAVES),
@@ -36,8 +44,6 @@ public class QuickBreakTreeListener implements Listener {
                                                            TreeMaterial.of(Material.ACACIA_LOG, Material.ACACIA_LEAVES),
                                                            TreeMaterial.of(Material.JUNGLE_LOG,
                                                                            Material.JUNGLE_LEAVES));
-
-    // TODO: do this only if survival AND breaking with an axe or do it with a warning
 
     private final @NotNull ServerUtilityPlugin plugin;
     private final FastBreakStorage fastBreakStorage = new FastBreakStorage();
@@ -55,6 +61,12 @@ public class QuickBreakTreeListener implements Listener {
     private void quickBreakTree(BlockBreakEvent event) {
         Player player = event.getPlayer();
         if (!player.isSneaking()) {
+            return;
+        }
+        if (player.getGameMode() != GameMode.SURVIVAL) {
+            return;
+        }
+        if (!axeMaterials.contains(player.getInventory().getItemInMainHand().getType())) {
             return;
         }
         if (!player.hasPermission(Permissions.QUICK_BREAK_TREES)) {
