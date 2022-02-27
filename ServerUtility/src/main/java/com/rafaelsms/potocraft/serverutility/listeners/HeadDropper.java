@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.serverutility.listeners;
 
 import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
+import org.bukkit.GameRule;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,6 +26,13 @@ public class HeadDropper implements Listener {
             return;
         }
         if (!plugin.getConfiguration().isPlayerHeadDropping()) {
+            return;
+        }
+        // Ignore if KeepInventory or doEntityDrops
+        if (Boolean.TRUE.equals(event.getPlayer().getWorld().getGameRuleValue(GameRule.KEEP_INVENTORY))) {
+            return;
+        }
+        if (Boolean.TRUE.equals(event.getPlayer().getWorld().getGameRuleValue(GameRule.DO_ENTITY_DROPS))) {
             return;
         }
         // Drop player head alongside all items
