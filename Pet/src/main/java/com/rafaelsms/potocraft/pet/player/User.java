@@ -67,7 +67,9 @@ public class User {
         if (remainingDamageTicks > 0) {
             // Decrease remaining ticks
             remainingDamageTicks--;
-            if (remainingDamageTicks <= 0 && profile.isPetEnabled()) {
+            if (remainingDamageTicks <= 0 &&
+                profile.isPetEnabled() &&
+                player.hasPermission(Permissions.PET_PERMISSION)) {
                 // If finished ticking, show pet again
                 spawnPet();
                 player.sendMessage(plugin.getConfiguration().getPetCameBackAfterCombat());
