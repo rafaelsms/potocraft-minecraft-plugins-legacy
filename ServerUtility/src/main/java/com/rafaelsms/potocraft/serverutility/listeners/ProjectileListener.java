@@ -5,7 +5,9 @@ import io.papermc.paper.event.entity.EntityMoveEvent;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,11 +27,27 @@ public class ProjectileListener implements Listener {
         if (!(event.getEntity() instanceof AbstractArrow arrow)) {
             return;
         }
+
+        // Apply velocity change
         arrow.setVelocity(arrow.getVelocity().multiply(plugin.getConfiguration().getArrowVelocityMultiplier()));
+        // Apply gravity change
         arrow.setGravity(plugin.getConfiguration().isArrowAffectedByGravity());
         if (!plugin.getConfiguration().isArrowAffectedByGravity()) {
             arrow.setPersistent(false);
         }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    private void fixArrowDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof AbstractArrow arrow)) {
+            return;
+        }
+        if (!(arrow.getShooter() instanceof Player)) {
+            return;
+        }
+
+        // Apply speed modifier to reduce damage
+        event.setDamage(event.getDamage() / plugin.getConfiguration().getArrowVelocityMultiplier());
     }
 
     @EventHandler(ignoreCancelled = true)

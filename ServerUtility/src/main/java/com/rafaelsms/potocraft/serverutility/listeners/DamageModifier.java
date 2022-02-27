@@ -20,12 +20,14 @@ public class DamageModifier implements Listener {
 
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    private void checkDamagedPlayer(EntityDamageEvent event) {
+    private void applyOverallDamageModifier(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player)) {
             return;
         }
 
-        // Apply our multiplier
+        // Apply our damage multiplier
+        event.setDamage(event.getDamage() * plugin.getConfiguration().getOverallDamageDealtMultiplier());
+        // Apply our armor multiplier
         event.setDamage(EntityDamageEvent.DamageModifier.ARMOR,
                         event.getDamage(EntityDamageEvent.DamageModifier.ARMOR) *
                         plugin.getConfiguration().getArmorDamageReductionMultiplier());
@@ -35,7 +37,7 @@ public class DamageModifier implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    private void changePlayerVersusPlayerDamage(EntityDamageByEntityEvent event) {
+    private void applyPlayerVersusPlayerModifier(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player)) {
             return;
         }
@@ -55,14 +57,13 @@ public class DamageModifier implements Listener {
     }
 
     @EventHandler
-    private void changeCooldownModifier(EntityDamageByEntityEvent event) {
+    private void applyCooldownModifier(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player player)) {
             return;
         }
-        double multiplier = plugin.getConfiguration().getOverallDamageDealtMultiplier();
         double factor = plugin.getConfiguration().getCooldownDamageFactor();
         float attackCooldown = player.getAttackCooldown();
-        double damageMultiplier = multiplier * Math.max((attackCooldown - factor) / (1.0 - factor), 0.0);
+        double damageMultiplier = Math.max((attackCooldown - factor) / (1.0 - factor), 0.0);
         event.setDamage(event.getDamage() * damageMultiplier);
     }
 }
