@@ -128,6 +128,9 @@ public class VanishManager implements Listener {
         if (!(event.getPlayer() instanceof Player player)) {
             return;
         }
+        if (!plugin.getConfiguration().isPreventVanishedOpeningChests()) {
+            return;
+        }
 
         if (isVanished(player) && player.getGameMode() != GameMode.SPECTATOR) {
             event.setCancelled(true);

@@ -244,6 +244,10 @@ public class Configuration extends YamlFile {
         return get("configuration.hide_join_quit_messages");
     }
 
+    public Boolean isPreventVanishedOpeningChests() {
+        return get("configuration.prevent_vanished_opening_chests");
+    }
+
     public Duration getDelayBetweenDeathMessages() {
         return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.delay_between_death_messages_seconds")));
     }
