@@ -22,9 +22,6 @@ commands:
   playerweather:
     description: Sets your world weather to your taste.
     aliases: [ pweather, clima, weather ]
-  vanish:
-    description: Hides/shows yourself to others.
-    aliases: [ v ]
   gamemode:
     description: Change your gamemode.
     aliases: [ gm, gmc, gms, gmsp, gma ]
