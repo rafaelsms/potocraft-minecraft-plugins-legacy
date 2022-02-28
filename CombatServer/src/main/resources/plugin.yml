@@ -6,3 +6,6 @@ author: rafaelsms
 website: rafaelsms.com
 description: Player versus player plugin for PotoCraft.
 load: STARTUP
+commands:
+  spawn:
+    description: Teleport player to spawn and clear its inventory.

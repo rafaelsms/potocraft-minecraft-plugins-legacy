@@ -32,7 +32,6 @@ public class StoredLocation extends DatabaseObject {
         this.z = document.getDouble(Keys.Z_KEY);
         this.yaw = Util.getOrElse(Util.convert(document.getString(Keys.YAW_KEY), Float::parseFloat), 0.0f);
         this.pitch = Util.getOrElse(Util.convert(document.getString(Keys.PITCH_KEY), Float::parseFloat), 0.0f);
-        ;
     }
 
     public @NotNull Location toLocation(@NotNull Plugin plugin) {

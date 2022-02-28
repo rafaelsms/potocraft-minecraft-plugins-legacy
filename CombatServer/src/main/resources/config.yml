@@ -8,3 +8,5 @@ configuration:
 
 language:
   failed_to_retrieve_profile: "<red>Falha ao carregar seu perfil!"
+  something_went_wrong: "<red>Alguma coisa deu errado!"
+  player_only_command: "<red>Este comando só pode ser executado por jogadores."

@@ -26,6 +26,8 @@ public class ChatListener implements Listener {
         this.plugin = plugin;
     }
 
+    // TODO colorized name (display name)
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void checkChatSpam(ChatEvent event) {
         // Ignore cancelled events and commands

@@ -1,9 +1,11 @@
 package com.rafaelsms.potocraft.combatserver;
 
+import com.rafaelsms.potocraft.combatserver.commands.SpawnCommand;
 import com.rafaelsms.potocraft.combatserver.listeners.CombatDrops;
-import com.rafaelsms.potocraft.combatserver.listeners.CombatGameRules;
 import com.rafaelsms.potocraft.combatserver.listeners.EquipmentManager;
 import com.rafaelsms.potocraft.combatserver.listeners.UserManager;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -28,9 +30,10 @@ public class CombatServerPlugin extends JavaPlugin {
     public void onEnable() {
         getServer().getPluginManager().registerEvents(userManager.getListener(), this);
         getServer().getPluginManager().registerEvents(new CombatDrops(this), this);
-        getServer().getPluginManager().registerEvents(new CombatGameRules(this), this);
         getServer().getPluginManager().registerEvents(new EquipmentManager(this), this);
         //getServer().getPluginManager().registerEvents(new TestEquipmentListener(this), this);
+
+        registerCommand("spawn", new SpawnCommand(this));
 
         logger().info("CombatServer enabled");
     }
@@ -53,5 +56,18 @@ public class CombatServerPlugin extends JavaPlugin {
 
     public @NotNull Database getDatabase() {
         return database;
+    }
+
+    public @NotNull UserManager getUserManager() {
+        return userManager;
+    }
+
+    private void registerCommand(@NotNull String commandName, @NotNull CommandExecutor commandExecutor) {
+        PluginCommand pluginCommand = getServer().getPluginCommand(commandName);
+        if (pluginCommand == null) {
+            logger().error("Failed to register command {}: it doesn't exist", commandName);
+            return;
+        }
+        pluginCommand.setExecutor(commandExecutor);
     }
 }
