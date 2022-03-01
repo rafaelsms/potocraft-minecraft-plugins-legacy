@@ -32,7 +32,7 @@ public class HeadDropper implements Listener {
         if (Boolean.TRUE.equals(event.getPlayer().getWorld().getGameRuleValue(GameRule.KEEP_INVENTORY))) {
             return;
         }
-        if (Boolean.TRUE.equals(event.getPlayer().getWorld().getGameRuleValue(GameRule.DO_ENTITY_DROPS))) {
+        if (Boolean.FALSE.equals(event.getPlayer().getWorld().getGameRuleValue(GameRule.DO_ENTITY_DROPS))) {
             return;
         }
         // Drop player head alongside all items
