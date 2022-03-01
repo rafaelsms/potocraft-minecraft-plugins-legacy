@@ -6,6 +6,8 @@ import org.bson.Document;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Arena extends DatabaseObject {
@@ -15,6 +17,8 @@ public class Arena extends DatabaseObject {
     private @NotNull String arenaName;
     private @NotNull String displayName;
     private @NotNull StoredLocation corner1, corner2;
+    private @NotNull StoredLocation teleportPoint;
+    private List<StoredLocation> spawnPoints = new ArrayList<>();
 
     // Runtime properties
     private @NotNull BoundingBox boundingBox;

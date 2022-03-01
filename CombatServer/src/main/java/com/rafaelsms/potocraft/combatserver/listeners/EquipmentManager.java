@@ -1,6 +1,10 @@
 package com.rafaelsms.potocraft.combatserver.listeners;
 
 import com.rafaelsms.potocraft.combatserver.CombatServerPlugin;
+import com.rafaelsms.potocraft.combatserver.util.InventoryContent;
+import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.util.TextUtil;
+import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.ArmorStand;
@@ -122,17 +126,35 @@ public class EquipmentManager implements Listener {
     }
 
     private void getArmorFromStand(@NotNull Player player, @NotNull ArmorStand armorStand) {
-        PlayerInventory inventory = player.getInventory();
+        PlayerInventory playerInventory = player.getInventory();
+
+        // Attempt to give item
+        Component customName = armorStand.customName();
+        if (customName != null) {
+            String kitName = TextUtil.toPlainString(customName);
+            try {
+                Optional<InventoryContent> inventoryContentOptional = plugin.getDatabase().getKit(kitName);
+                if (inventoryContentOptional.isPresent()) {
+                    InventoryContent inventoryContent = inventoryContentOptional.get();
+                    // Clear player inventory and give kit's content
+                    playerInventory.clear();
+                    inventoryContent.applyContent(playerInventory);
+                    return;
+                }
+            } catch (Database.DatabaseException ignored) {
+            }
+        }
+
         // Clear inventory
-        inventory.clear();
+        playerInventory.clear();
         // Set armor contents
-        inventory.setHelmet(armorStand.getEquipment().getHelmet());
-        inventory.setChestplate(armorStand.getEquipment().getChestplate());
-        inventory.setLeggings(armorStand.getEquipment().getLeggings());
-        inventory.setBoots(armorStand.getEquipment().getBoots());
+        playerInventory.setHelmet(armorStand.getEquipment().getHelmet());
+        playerInventory.setChestplate(armorStand.getEquipment().getChestplate());
+        playerInventory.setLeggings(armorStand.getEquipment().getLeggings());
+        playerInventory.setBoots(armorStand.getEquipment().getBoots());
         // Set main and offhand
-        inventory.setItemInMainHand(armorStand.getItem(EquipmentSlot.HAND));
-        inventory.setItemInOffHand(armorStand.getItem(EquipmentSlot.OFF_HAND));
+        playerInventory.setItemInMainHand(armorStand.getItem(EquipmentSlot.HAND));
+        playerInventory.setItemInOffHand(armorStand.getItem(EquipmentSlot.OFF_HAND));
     }
 
     // TODO give equipment on login based on upgrades

@@ -9,3 +9,5 @@ load: STARTUP
 commands:
   spawn:
     description: Teleport player to spawn and clear its inventory.
+  kit:
+    description: Create kits for players to use in combat.

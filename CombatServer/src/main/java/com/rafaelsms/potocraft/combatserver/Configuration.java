@@ -30,6 +30,10 @@ public class Configuration extends YamlFile {
         return get("configuration.database.player_collection_name");
     }
 
+    public String getMongoKitCollectionName() {
+        return get("configuration.database.kit_collection_name");
+    }
+
     public long getSaveProfileTaskTimer() {
         return Objects.requireNonNull(getLong("configuration.database.save_player_timer_task_ticks"));
     }
@@ -44,5 +48,9 @@ public class Configuration extends YamlFile {
 
     public Component getSomethingWentWrong() {
         return TextUtil.toComponent(get("language.something_went_wrong"));
+    }
+
+    public Component getKitCommandHelp() {
+        return TextUtil.toComponent(get("language.command.kit.help"));
     }
 }

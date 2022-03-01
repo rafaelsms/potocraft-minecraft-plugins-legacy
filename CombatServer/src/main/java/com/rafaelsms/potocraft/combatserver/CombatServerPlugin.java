@@ -1,5 +1,6 @@
 package com.rafaelsms.potocraft.combatserver;
 
+import com.rafaelsms.potocraft.combatserver.commands.KitCommand;
 import com.rafaelsms.potocraft.combatserver.commands.SpawnCommand;
 import com.rafaelsms.potocraft.combatserver.listeners.CombatDrops;
 import com.rafaelsms.potocraft.combatserver.listeners.EquipmentManager;
@@ -34,6 +35,7 @@ public class CombatServerPlugin extends JavaPlugin {
         //getServer().getPluginManager().registerEvents(new TestEquipmentListener(this), this);
 
         registerCommand("spawn", new SpawnCommand(this));
+        registerCommand("kit", new KitCommand(this));
 
         logger().info("CombatServer enabled");
     }

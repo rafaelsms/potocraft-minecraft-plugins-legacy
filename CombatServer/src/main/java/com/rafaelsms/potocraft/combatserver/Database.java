@@ -2,6 +2,7 @@ package com.rafaelsms.potocraft.combatserver;
 
 import com.mongodb.client.MongoCollection;
 import com.rafaelsms.potocraft.combatserver.player.Profile;
+import com.rafaelsms.potocraft.combatserver.util.InventoryContent;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,5 +43,25 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
 
     public void saveProfile(@NotNull Profile profile) {
         catchingWrapper(() -> getProfileCollection().replaceOne(profile.filterById(), profile.toDocument(), UPSERT));
+    }
+
+    private MongoCollection<Document> getKitCollection() throws DatabaseException {
+        return getDatabase().getCollection(plugin.getConfiguration().getMongoKitCollectionName());
+    }
+
+    public Optional<InventoryContent> getKit(@NotNull String kitName) throws DatabaseException {
+        return throwingWrapper(() -> {
+            Document document = getKitCollection().find(InventoryContent.filterByName(kitName)).first();
+            if (document == null) {
+                return Optional.empty();
+            }
+            return Optional.of(new InventoryContent(document));
+        });
+    }
+
+    public void saveContent(@NotNull InventoryContent inventoryContent) {
+        catchingWrapper(() -> getKitCollection().replaceOne(inventoryContent.filterByName(),
+                                                            inventoryContent.toDocument(),
+                                                            UPSERT));
     }
 }
