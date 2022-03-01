@@ -34,14 +34,15 @@ public class PlayerTimeCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
+        // Always reset player time before executing command
+        player.resetPlayerTime();
+
         if (args.length == 0 || args.length > 2) {
             sender.sendMessage(plugin.getConfiguration().getPlayerTimeHelp());
             return true;
         }
-
         Optional<Long> optionalTime = parseTime(args[0]);
         if (optionalTime.isEmpty()) {
-            player.resetPlayerTime();
             sender.sendMessage(plugin.getConfiguration().getPlayerTimeHelp());
             return true;
         }

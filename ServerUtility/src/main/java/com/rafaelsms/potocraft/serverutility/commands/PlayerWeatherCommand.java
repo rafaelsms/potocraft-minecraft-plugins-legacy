@@ -35,15 +35,16 @@ public class PlayerWeatherCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
+        // Always reset player weather
+        player.resetPlayerWeather();
+
         if (args.length != 1) {
             sender.sendMessage(plugin.getConfiguration().getPlayerWeatherHelp());
             return true;
         }
-
         Optional<WeatherType> weatherType = parseWeather(args[0]);
         if (weatherType.isEmpty()) {
             sender.sendMessage(plugin.getConfiguration().getPlayerWeatherHelp());
-            player.resetPlayerWeather();
             return true;
         }
 
