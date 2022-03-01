@@ -21,7 +21,7 @@ repositories {
 
 dependencies {
     implementation(project(':common'))
-    implementation('net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT')
+    implementation('net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT')
     implementation('net.kyori:adventure-text-serializer-legacy:4.9.3')
     implementation('net.kyori:adventure-platform-bungeecord:4.0.1')
     implementation('org.jetbrains:annotations:22.0.0')

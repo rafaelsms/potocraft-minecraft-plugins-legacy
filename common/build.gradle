@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation('net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT')
+    implementation('net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT')
     implementation('net.kyori:adventure-text-serializer-legacy:4.9.3')
     implementation('net.kyori:adventure-text-serializer-plain:4.9.3')
     implementation('net.kyori:adventure-api:4.9.3')
