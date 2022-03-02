@@ -2,7 +2,7 @@ package com.rafaelsms.potocraft.combatserver;
 
 import com.rafaelsms.potocraft.combatserver.commands.KitCommand;
 import com.rafaelsms.potocraft.combatserver.commands.SpawnCommand;
-import com.rafaelsms.potocraft.combatserver.listeners.CombatDrops;
+import com.rafaelsms.potocraft.combatserver.listeners.CombatListener;
 import com.rafaelsms.potocraft.combatserver.listeners.EquipmentManager;
 import com.rafaelsms.potocraft.combatserver.listeners.UserManager;
 import org.bukkit.command.CommandExecutor;
@@ -30,7 +30,7 @@ public class CombatServerPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents(userManager.getListener(), this);
-        getServer().getPluginManager().registerEvents(new CombatDrops(this), this);
+        getServer().getPluginManager().registerEvents(new CombatListener(this), this);
         getServer().getPluginManager().registerEvents(new EquipmentManager(this), this);
         //getServer().getPluginManager().registerEvents(new TestEquipmentListener(this), this);
 
