@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.serverutility.listeners;
 
 import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
+import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -54,6 +55,18 @@ public class DamageModifier implements Listener {
         }
 
         event.setDamage(event.getDamage() * plugin.getConfiguration().getPlayerVersusPlayerDamageMultiplier());
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    private void applyProjectileDamageMultiplier(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof AbstractArrow arrow)) {
+            return;
+        }
+        if (!(arrow.getShooter() instanceof Player)) {
+            return;
+        }
+
+        event.setDamage(event.getDamage() * plugin.getConfiguration().getArrowDamageMultiplier());
     }
 
     @EventHandler

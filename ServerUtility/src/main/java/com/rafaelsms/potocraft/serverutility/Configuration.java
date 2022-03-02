@@ -73,6 +73,10 @@ public class Configuration extends YamlFile {
         return getDouble("configuration.damage_modifiers.damage_cooldown_factor");
     }
 
+    public Double getArrowDamageMultiplier() {
+        return getDouble("configuration.damage_modifiers.arrow_damage_multiplier");
+    }
+
     public Double getArrowVelocityMultiplier() {
         return getDouble("configuration.damage_modifiers.arrow_velocity_multiplier");
     }
