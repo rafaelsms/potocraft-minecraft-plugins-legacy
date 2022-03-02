@@ -8,8 +8,8 @@ configuration:
   save_players_task_timer_in_ticks: 3600
   local_chat:
     range: 150.0
-    local_format: "<click:suggest_command:'/msg <username> '><hover:show_text:'<gold><yellow>Clique</yellow> aqui para mandar uma mensagem privada para <yellow><bold><username></bold></yellow></gold>'><displayName></hover></click><gray>:</gray> <message>"
-    no_range_format: "<click:suggest_command:'/msg <username> '><hover:show_text:'<gold><yellow>Clique</yellow> aqui para mandar uma mensagem privada para <yellow><bold><username></bold></yellow></gold>'><displayName></hover></click><gray>:</gray> <message>"
+    local_format: "<click:suggest_command:'/msg <username> '><hover:show_text:'<gold><yellow>Clique</yellow> aqui para mandar uma mensagem privada para <yellow><bold><username></bold></yellow></gold>'><displayname></hover></click><gray>:</gray> <message>"
+    no_range_format: "<click:suggest_command:'/msg <username> '><hover:show_text:'<gold><yellow>Clique</yellow> aqui para mandar uma mensagem privada para <yellow><bold><username></bold></yellow></gold>'><displayname></hover></click><gray>:</gray> <message>"
     spy_format: "<click:suggest_command:'/msg <username> '><hover:show_text:'<gold><yellow>Clique</yellow> aqui para mandar uma mensagem privada para <yellow><bold><username></bold></yellow></gold>'><gray><username></gray></hover></click><gray>:</gray> <gray><message></gray>"
   teleport:
     teleport_delay_in_ticks: 140

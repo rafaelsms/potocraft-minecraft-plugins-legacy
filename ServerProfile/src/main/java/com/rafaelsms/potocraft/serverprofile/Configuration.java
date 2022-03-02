@@ -83,7 +83,7 @@ public class Configuration extends YamlFile {
                                     Template.of("prefix", prefix),
                                     Template.of("username", senderName),
                                     Template.of("suffix", suffix),
-                                    Template.of("displayName", displayName),
+                                    Template.of("displayname", displayName),
                                     Template.of("message", message));
     }
 
