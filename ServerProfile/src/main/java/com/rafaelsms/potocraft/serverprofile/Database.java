@@ -1,5 +1,6 @@
 package com.rafaelsms.potocraft.serverprofile;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.rafaelsms.potocraft.serverprofile.players.Profile;
 import com.rafaelsms.potocraft.serverprofile.warps.Warp;
@@ -8,6 +9,7 @@ import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,6 +34,17 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
 
     private @NotNull MongoCollection<Document> getPlayerProfiles() throws DatabaseException {
         return getDatabase().getCollection(plugin.getConfiguration().getMongoPlayerProfileCollectionName());
+    }
+
+    public List<Profile> getProfileRanking() throws DatabaseException {
+        return throwingWrapper(() -> {
+            List<Profile> profiles = new LinkedList<>();
+            FindIterable<Document> documents = getPlayerProfiles().find().sort(Profile.rankingSort()).limit(7);
+            for (Document document : documents) {
+                profiles.add(new Profile(document));
+            }
+            return profiles;
+        });
     }
 
     public @NotNull Optional<Profile> loadProfile(@NotNull UUID playerId) throws DatabaseException {

@@ -52,3 +52,6 @@ commands:
   mundo:
     description: Teleports you to another world.
     aliases: [ world, worlds, mundos ]
+  top:
+    description: Shows player's kill and death ordered by amount.
+    aliases: [ ranking, rank, topo ]

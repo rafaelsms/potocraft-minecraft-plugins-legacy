@@ -2,10 +2,13 @@ package com.rafaelsms.potocraft.serverprofile;
 
 import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.serverprofile.players.Home;
+import com.rafaelsms.potocraft.serverprofile.players.Profile;
 import com.rafaelsms.potocraft.serverprofile.players.TeleportRequest;
 import com.rafaelsms.potocraft.serverprofile.warps.Warp;
 import com.rafaelsms.potocraft.util.TextUtil;
+import com.rafaelsms.potocraft.util.Util;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -13,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,6 +27,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Configuration extends YamlFile {
+
+    private static final DecimalFormat floatFormatter = new DecimalFormat("0.000");
 
     public Configuration(@NotNull ServerProfilePlugin plugin) throws IOException {
         super(plugin.getDataFolder(), "config.yml");
@@ -374,5 +380,39 @@ public class Configuration extends YamlFile {
 
     public Component getKickMessageCouldNotLoadProfile() {
         return TextUtil.toComponent(get("language.kick_messages.could_not_load_profile"));
+    }
+
+    public Component getTopNoPlayers() {
+        return TextUtil.toComponent(get("language.top.no_profiles_on_ranking"));
+    }
+
+    public Component getTopRanking(@NotNull List<Profile> rankedPlayers) {
+        if (rankedPlayers.isEmpty()) {
+            return getTopNoPlayers();
+        }
+        return TextUtil.toComponent(get("language.top.ranking_list"),
+                                    Template.of("list",
+                                                Component.join(JoinConfiguration.builder()
+                                                                                .separator(Component.newline())
+                                                                                .build(),
+                                                               Util.convertList(rankedPlayers,
+                                                                                this::getRankingEntry))));
+    }
+
+    public Component getRankingEntry(@NotNull Profile profile) {
+        int playerKills = profile.getPlayerKills();
+        int playerDeaths = profile.getDeathCount();
+        float killDeathRatio;
+        if (playerDeaths == 0) {
+            killDeathRatio = playerKills;
+        } else {
+            killDeathRatio = (float) playerKills / playerDeaths;
+        }
+        String killDeathRatioString = floatFormatter.format(killDeathRatio);
+        return TextUtil.toComponent(get("language.top.ranking_entry"),
+                                    Template.of("username", profile.getPlayerName()),
+                                    Template.of("killdeathratio", killDeathRatioString),
+                                    Template.of("killcount", String.valueOf(playerKills)),
+                                    Template.of("deathcount", String.valueOf(playerDeaths)));
     }
 }

@@ -112,3 +112,9 @@ language:
     totem_entered_in_cooldown: "<red>Seu totem entrou em <i>cooldown</i> e não fará efeito por alguns minutos."
   kick_messages:
     could_not_load_profile: "<red>Não foi possível carregar seu perfil!"
+  top:
+    no_profiles_on_ranking: "<red>Ainda não há pessoas no ranking!"
+    ranking_list: |
+      <gold><bold>R A N K I N G</bold></gold>
+      <list>
+    ranking_entry: "<yellow>* <bold><username></bold></yellow> <gray>-</gray> <gold><killcount></gold><gray>/</gray><red><deathcount></red> <gray>(KD: <killdeathratio>)</gray>"

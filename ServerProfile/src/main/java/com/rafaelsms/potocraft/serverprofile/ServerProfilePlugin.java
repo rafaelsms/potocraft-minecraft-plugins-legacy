@@ -12,6 +12,7 @@ import com.rafaelsms.potocraft.serverprofile.commands.TeleportCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.TeleportDenyCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.TeleportHereCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.TeleportOfflineCommand;
+import com.rafaelsms.potocraft.serverprofile.commands.TopCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.WarpCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.WorldCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.completers.PlayerNameCompleter;
@@ -85,6 +86,7 @@ public class ServerProfilePlugin extends JavaPlugin {
                         new TeleportHereCommand(this),
                         new PlayerNameCompleter(this, Permissions.TELEPORT_HERE));
         registerCommand("mundo", new WorldCommand(this));
+        registerCommand("top", new TopCommand(this));
 
         logger().info("ServerProfile enabled!");
     }

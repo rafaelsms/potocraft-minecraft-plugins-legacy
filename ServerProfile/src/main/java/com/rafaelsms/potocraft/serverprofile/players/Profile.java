@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.serverprofile.players;
 
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import com.rafaelsms.potocraft.database.DatabaseObject;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.util.StoredLocation;
@@ -90,6 +91,10 @@ public class Profile extends DatabaseObject {
         return playerId;
     }
 
+    public @NotNull String getPlayerName() {
+        return playerName;
+    }
+
     public void setPlayerName(@NotNull String playerName) {
         this.playerName = playerName;
     }
@@ -154,8 +159,16 @@ public class Profile extends DatabaseObject {
         this.mobKills += 1;
     }
 
+    public int getPlayerKills() {
+        return playerKills;
+    }
+
     public void incrementPlayerKill() {
         this.playerKills += 1;
+    }
+
+    public int getDeathCount() {
+        return deathCount;
     }
 
     public void incrementDeathCount() {
@@ -192,6 +205,10 @@ public class Profile extends DatabaseObject {
 
     public void setImportedEssentials() {
         this.importedEssentials = true;
+    }
+
+    public static Bson rankingSort() {
+        return Sorts.orderBy(Sorts.descending(Keys.PLAYER_KILLS), Sorts.ascending(Keys.DEATH_COUNT));
     }
 
     public static Bson filterId(@NotNull UUID playerId) {
