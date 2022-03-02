@@ -1,9 +1,12 @@
 package com.rafaelsms.potocraft.combatserver.listeners;
 
 import com.rafaelsms.potocraft.combatserver.CombatServerPlugin;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
@@ -41,6 +44,15 @@ public class CombatListener implements Listener {
         Player killer = event.getPlayer().getKiller();
         if (killer != null) {
             killer.setHealth(Objects.requireNonNull(killer.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue());
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    private void changeDeathMessageMessageType(PlayerDeathEvent event) {
+        Component deathMessage = event.deathMessage();
+        event.deathMessage(null);
+        if (deathMessage != null) {
+            plugin.getServer().sendActionBar(deathMessage.color(NamedTextColor.RED));
         }
     }
 }
