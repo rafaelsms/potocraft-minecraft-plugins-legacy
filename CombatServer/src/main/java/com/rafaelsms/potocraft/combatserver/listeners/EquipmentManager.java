@@ -24,6 +24,7 @@ import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -132,9 +133,13 @@ public class EquipmentManager implements Listener {
     }
 
     private void getArmorFromStand(@NotNull Player player, @NotNull ArmorStand armorStand) {
-        PlayerInventory playerInventory = player.getInventory();
+        // Clear effects
+        for (PotionEffect potionEffect : player.getActivePotionEffects()) {
+            player.removePotionEffect(potionEffect.getType());
+        }
 
-        // Attempt to give item
+        // Attempt to give item from database
+        PlayerInventory playerInventory = player.getInventory();
         Component customName = armorStand.customName();
         if (customName != null) {
             String kitName = TextUtil.toPlainString(customName);
@@ -151,6 +156,7 @@ public class EquipmentManager implements Listener {
             }
         }
 
+        // If it failed, get from armor stand
         // Clear inventory
         playerInventory.clear();
         // Set armor contents
