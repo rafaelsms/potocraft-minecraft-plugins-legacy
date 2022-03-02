@@ -4,6 +4,7 @@ import com.rafaelsms.potocraft.combatserver.CombatServerPlugin;
 import com.rafaelsms.potocraft.combatserver.util.InventoryContent;
 import com.rafaelsms.potocraft.database.Database;
 import com.rafaelsms.potocraft.util.TextUtil;
+import io.papermc.paper.event.entity.EntityLoadCrossbowEvent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.entity.AbstractArrow;
@@ -53,6 +54,11 @@ public class EquipmentManager implements Listener {
         if (event.getProjectile() instanceof AbstractArrow arrow) {
             arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    private void preventItemAmountDecreaseOnConsumption(EntityLoadCrossbowEvent event) {
+        event.setConsumeItem(false);
     }
 
     @EventHandler(ignoreCancelled = true)
