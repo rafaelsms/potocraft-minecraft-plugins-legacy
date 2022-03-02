@@ -75,6 +75,9 @@ public class HideMessagesListener implements Listener {
     private boolean shouldRemoveMessage(@NotNull Player player,
                                         @NotNull SpamMessageController.Type messageType,
                                         @NotNull Duration cooldownDuration) {
+        if (cooldownDuration.isNegative()) {
+            return false;
+        }
         SpamMessageController messageController = getOrCreateController(player);
         Optional<ZonedDateTime> dateTimeOptional = messageController.checkLastRecord(messageType);
         if (dateTimeOptional.isEmpty()) {
@@ -86,6 +89,9 @@ public class HideMessagesListener implements Listener {
     private void registerMessage(@NotNull Player player,
                                  @NotNull SpamMessageController.Type messageType,
                                  @NotNull Duration duration) {
+        if (duration.isNegative()) {
+            return;
+        }
         SpamMessageController controller = getOrCreateController(player);
         controller.registerMessage(messageType);
         BukkitTask bukkitTask = plugin.getServer()
