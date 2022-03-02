@@ -69,10 +69,6 @@ public class Configuration extends YamlFile {
         return getChatFormat(get("configuration.other_server_chat.spy_format"), player, message);
     }
 
-    public @NotNull BaseComponent[] getLocalChatFormat(@NotNull ProxiedPlayer player, @NotNull Component message) {
-        return getChatFormat(get("configuration.local_chat_format"), player, message);
-    }
-
     public Duration getDirectMessagesReplyDuration() {
         return Duration.ofSeconds(Objects.requireNonNull(getInt(
                 "configuration.direct_messages.reply_time_amount_seconds")));
@@ -152,11 +148,16 @@ public class Configuration extends YamlFile {
                                     .map(Server::getInfo)
                                     .map(ServerInfo::getName)
                                     .orElse(getUnknownServer());
+        String prefix = TextUtil.getPrefix(player.getUniqueId());
+        String suffix = TextUtil.getSuffix(player.getUniqueId());
+        String playerName = player.getName();
+        Component displayName = TextUtil.toLegacyComponent(prefix + playerName + suffix);
         return TextUtil.toComponentBungee(chatFormat,
                                           Template.of("server", serverName),
-                                          Template.of("prefix", TextUtil.getPrefix(player.getUniqueId())),
-                                          Template.of("username", player.getName()),
-                                          Template.of("suffix", TextUtil.getSuffix(player.getUniqueId())),
+                                          Template.of("prefix", prefix),
+                                          Template.of("username", playerName),
+                                          Template.of("suffix", suffix),
+                                          Template.of("displayName", displayName),
                                           Template.of("message", message));
     }
 }

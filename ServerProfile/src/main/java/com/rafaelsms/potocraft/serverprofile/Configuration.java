@@ -76,10 +76,14 @@ public class Configuration extends YamlFile {
                                     @NotNull UUID senderId,
                                     @NotNull String senderName,
                                     @NotNull Component message) {
+        String prefix = TextUtil.getPrefix(senderId);
+        String suffix = TextUtil.getSuffix(senderId);
+        Component displayName = TextUtil.toLegacyComponent(prefix + senderName + suffix);
         return TextUtil.toComponent(format,
-                                    Template.of("prefix", TextUtil.getPrefix(senderId)),
+                                    Template.of("prefix", prefix),
                                     Template.of("username", senderName),
-                                    Template.of("suffix", TextUtil.getSuffix(senderId)),
+                                    Template.of("suffix", suffix),
+                                    Template.of("displayName", displayName),
                                     Template.of("message", message));
     }
 
