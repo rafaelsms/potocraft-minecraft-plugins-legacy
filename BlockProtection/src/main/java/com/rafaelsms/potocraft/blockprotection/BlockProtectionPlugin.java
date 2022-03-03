@@ -1,7 +1,7 @@
 package com.rafaelsms.potocraft.blockprotection;
 
-import com.rafaelsms.potocraft.blockprotection.listeners.ProtectionManager;
 import com.rafaelsms.potocraft.blockprotection.listeners.UserManager;
+import com.rafaelsms.potocraft.blockprotection.listeners.VolumeListener;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.HandlerList;
@@ -16,13 +16,13 @@ public class BlockProtectionPlugin extends JavaPlugin {
     private final @NotNull Configuration configuration;
     private final @NotNull Database database;
     private final @NotNull UserManager userManager;
-    private final @NotNull ProtectionManager protectionManager;
+    private final @NotNull VolumeListener volumeListener;
 
     public BlockProtectionPlugin() throws IOException {
         this.configuration = new Configuration(this);
         this.database = new Database(this);
         this.userManager = new UserManager(this);
-        this.protectionManager = new ProtectionManager(this);
+        this.volumeListener = new VolumeListener(this);
     }
 
     @Override
@@ -57,8 +57,8 @@ public class BlockProtectionPlugin extends JavaPlugin {
         return userManager;
     }
 
-    public @NotNull ProtectionManager getProtectionManager() {
-        return protectionManager;
+    public @NotNull VolumeListener getProtectionManager() {
+        return volumeListener;
     }
 
     private void registerCommand(@NotNull String commandName, @NotNull CommandExecutor executor) {

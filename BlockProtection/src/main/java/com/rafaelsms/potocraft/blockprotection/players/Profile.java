@@ -53,6 +53,13 @@ public class Profile extends DatabaseObject {
         movePartsToVolume();
     }
 
+    public void consumeVolume(int volume) {
+        if (volume < 0) {
+            throw new IllegalArgumentException("Volume must be greater than zero");
+        }
+        this.volumeAvailable -= volume;
+    }
+
     private void movePartsToVolume() {
         if (volumeParts < 1.0) {
             return;

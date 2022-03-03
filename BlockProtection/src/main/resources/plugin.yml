@@ -6,6 +6,8 @@ author: rafaelsms
 website: www.potocraft.com
 description: Custom plugin for block protection at PotoCraft Server
 load: STARTUP
+depend:
+  - WorldGuard
 commands:
   protect:
     description: Enables and manages protected world regions.

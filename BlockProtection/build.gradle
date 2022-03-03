@@ -17,15 +17,20 @@ repositories {
     maven {
         url('https://repo.purpurmc.org/snapshots/')
     }
+    // WorldGuard
+    maven {
+        url('https://maven.enginehub.org/repo/')
+    }
 }
 
 dependencies {
     implementation(project(':common'))
-    implementation('net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT')
+    implementation('net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT')
     implementation('org.mongodb:mongodb-driver:3.12.10')
     implementation('com.google.code.gson:gson:2.9.0')
     implementation('org.jetbrains:annotations:22.0.0')
     compileOnly('org.purpurmc.purpur:purpur-api:1.18.1-R0.1-SNAPSHOT')
+    compileOnly('com.sk89q.worldguard:worldguard-bukkit:7.0.6')
 }
 
 java {

@@ -32,6 +32,14 @@ public class User implements Runnable {
         return profile;
     }
 
+    public void incrementVolume() {
+        this.profile.incrementVolume(getRewardVolume());
+    }
+
+    public void consumeVolume(int volume) {
+        this.profile.consumeVolume(volume);
+    }
+
     public int getMaximumVolume() {
         int maxVolume = plugin.getConfiguration().getSelectionVolumeDefaultMaximum();
         for (Map.Entry<String, Integer> entry : plugin.getConfiguration().getSelectionVolumeGroupMaximum().entrySet()) {
