@@ -4,16 +4,20 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BlockedWordsChecker {
 
-    private final String badWordReplacer = "$#@!%&?";
+    private static final Random RANDOM = new Random();
+    private static final String BAD_WORD_REPLACER = "$#@*%&";
 
     private final Map<String, Pattern> blockedWordsRegex = new HashMap<>();
 
@@ -98,11 +102,23 @@ public class BlockedWordsChecker {
         if (word.length() < 1) {
             return "";
         }
+
         // Replace each character with a special character except for the first one
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(word.charAt(0));
+        // For aesthetics only, offset bad word characters so each blocked word look different
+        ArrayList<Character> chars = new ArrayList<>(BAD_WORD_REPLACER.length());
+        for (char c : BAD_WORD_REPLACER.toCharArray()) {
+            chars.add(c);
+        }
+        Collections.shuffle(chars, RANDOM);
         for (int i = 1; i < word.length(); i++) {
-            stringBuilder.append(badWordReplacer.charAt((i - 1) % badWordReplacer.length()));
+            char c = chars.get(i % chars.size());
+            if (c == '*') {
+                stringBuilder.append("\\*");
+            } else {
+                stringBuilder.append(c);
+            }
         }
         return stringBuilder.toString();
     }
