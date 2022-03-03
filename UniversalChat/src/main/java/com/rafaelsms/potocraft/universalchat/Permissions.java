@@ -9,9 +9,9 @@ public final class Permissions {
     public static final String UNIVERSAL_CHAT = "potocraft.proxy.chat.universal";
     public static final String OTHER_SERVERS_CHAT_SPY = "potocraft.proxy.chat.other_servers.spy";
 
-    public static final String DIRECT_MESSAGES = "potocraft.commands.direct_messages";
-    public static final String DIRECT_MESSAGES_REPLY = "potocraft.commands.direct_messages.reply";
-    public static final String DIRECT_MESSAGES_SPY = "potocraft.commands.direct_messages.spy";
+    public static final String DIRECT_MESSAGES = "potocraft.command.direct_messages";
+    public static final String DIRECT_MESSAGES_REPLY = "potocraft.command.direct_messages.reply";
+    public static final String DIRECT_MESSAGES_SPY = "potocraft.command.direct_messages.spy";
 
     // Private constructor
     private Permissions() {
