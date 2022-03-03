@@ -3,6 +3,7 @@ package com.rafaelsms.potocraft.loginmanager;
 public final class Permissions {
 
     public static final String OFFLINE_AUTO_LOGIN = "potocraft.proxy.auto_login";
+    public static final String REDIRECT_TO_LAST_SERVER = "potocraft.proxy.redirect_to_last_server";
 
     public static final String COMMAND_CHANGE_PIN = "potocraft.command.change_pin";
     public static final String COMMAND_LOGIN = "potocraft.command.login";
@@ -20,7 +21,6 @@ public final class Permissions {
     public static final String COMMAND_MUTE = "potocraft.command.mute";
     public static final String COMMAND_MUTE_OFFLINE = "potocraft.command.mute.offline";
     public static final String COMMAND_MUTE_EXEMPT = "potocraft.command.mute.exempt";
-    public static final String COMMAND_HISTORY = "potocraft.command.history";
     public static final String COMMAND_SEEN = "potocraft.command.seen";
     public static final String COMMAND_LIST = "potocraft.command.list";
 

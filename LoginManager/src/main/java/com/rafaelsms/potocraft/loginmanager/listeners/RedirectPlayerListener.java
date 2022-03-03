@@ -60,6 +60,12 @@ public class RedirectPlayerListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void resetPlayersReconnectServer(ServerConnectEvent event) {
+        // No matter player's permission, we reset reconnect server so player can rejoin if his last server is offline
+        event.getPlayer().setReconnectServer(null);
+    }
+
     private @NotNull Optional<ServerInfo> getLoginServer() {
         return getServer(plugin.getConfiguration().getLoginServer());
     }

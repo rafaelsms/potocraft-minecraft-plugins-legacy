@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.loginmanager.listeners;
 
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
+import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.util.Util;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -61,6 +62,12 @@ public class ProfileUpdater implements Listener {
             Util.isPlayerLoggedIn(plugin, profile, player)) {
             profile.setLastServerName(event.getTarget().getName());
             plugin.getDatabase().saveProfileCatching(profile);
+            // Store last server information on BungeeCord's side
+            if (event.getPlayer().hasPermission(Permissions.REDIRECT_TO_LAST_SERVER)) {
+                event.getPlayer().setReconnectServer(event.getTarget());
+            } else {
+                event.getPlayer().setReconnectServer(null);
+            }
         }
     }
 
