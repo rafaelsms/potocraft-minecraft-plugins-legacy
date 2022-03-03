@@ -84,7 +84,7 @@ language:
     player_weather:
       help: "<gold>Uso: <yellow>/clima (limpo/chuvoso)"
     gamemode:
-      help: "<gold>Uso: <yellow>/gamemode (creative/spectator/survival/adventure)"
+      help: "<gold>Uso: <yellow>/gamemode (survival/creative/spectator/adventure) [nome]"
     enchant:
       help: "<gold>Uso: <yellow>/enchant (encantamento)"
       cant_enchant_item: "<red>Não é possível encantar este item"

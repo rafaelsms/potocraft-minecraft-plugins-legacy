@@ -22,9 +22,9 @@ commands:
   playerweather:
     description: Sets your world weather to your taste.
     aliases: [ pweather, clima, weather ]
-  gamemode:
+  gms:
     description: Change your gamemode.
-    aliases: [ gm, gmc, gms, gmsp, gma ]
+    aliases: [ gmc, gmsp, gma ]
   enchant:
     description: Enchant your item in hand.
     aliases: [ enchantment, encantar, encantamento ]

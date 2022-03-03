@@ -2,6 +2,8 @@ package com.rafaelsms.potocraft.serverutility.commands;
 
 import com.rafaelsms.potocraft.serverutility.Permissions;
 import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
+import com.rafaelsms.potocraft.util.TextUtil;
+import com.rafaelsms.potocraft.util.Util;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,33 +40,60 @@ public class GameModeCommand implements CommandExecutor, TabCompleter {
                              @NotNull Command command,
                              @NotNull String label,
                              @NotNull String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(plugin.getConfiguration().getPlayerOnly());
-            return true;
-        }
         if (!sender.hasPermission(Permissions.COMMAND_GAMEMODE)) {
             sender.sendMessage(plugin.getServer().getPermissionMessage());
             return true;
         }
 
-        String gameModeString = label;
-        if (args.length > 0) {
-            gameModeString = args[0];
+        // Check if label is a gamemode
+        Optional<GameMode> gameModeFromLabel = gamemodeFromString(label);
+        if (gameModeFromLabel.isEmpty()) {
+            // There must be an argument specifying game mode, search on first argument
+            if (args.length <= 0) {
+                sender.sendMessage(plugin.getConfiguration().getGameModeHelp());
+                return true;
+            }
+            Optional<GameMode> gameModeFromArgument = gamemodeFromString(args[0]);
+            if (gameModeFromArgument.isEmpty()) {
+                sender.sendMessage(plugin.getConfiguration().getGameModeHelp());
+                return true;
+            }
+            handleGameMode(gameModeFromArgument.get(), sender, TextUtil.offsetArray(args, 1).orElse(new String[0]));
+        } else {
+            handleGameMode(gameModeFromLabel.get(), sender, args);
         }
-
-        Optional<GameMode> gameModeOptional = gamemodeFromString(gameModeString);
-        if (gameModeOptional.isEmpty()) {
-            player.sendMessage(plugin.getConfiguration().getGameModeHelp());
-            return true;
-        }
-        GameMode gameMode = gameModeOptional.get();
-        if (!player.hasPermission(gamemodePermissions.get(gameMode))) {
-            sender.sendMessage(plugin.getServer().getPermissionMessage());
-            return true;
-        }
-
-        player.setGameMode(gameMode);
         return true;
+    }
+
+    private void handleGameMode(@NotNull GameMode gameMode, @NotNull CommandSender sender, @NotNull String[] args) {
+        // Check if sender has permission to this gamemode
+        if (!sender.hasPermission(gamemodePermissions.get(gameMode))) {
+            sender.sendMessage(plugin.getServer().getPermissionMessage());
+            return;
+        }
+
+        Player gamemodePlayer;
+        if (args.length > 1) { // this args already excludes the possibly gamemode-related argument
+            if (!sender.hasPermission(Permissions.COMMAND_GAMEMODE_OTHERS)) {
+                sender.sendMessage(plugin.getServer().getPermissionMessage());
+                return;
+            }
+            Optional<? extends Player> optionalPlayer =
+                    TextUtil.closestMatch(plugin.getServer().getOnlinePlayers(), Player::getName, args[0]);
+            if (optionalPlayer.isEmpty()) {
+                sender.sendMessage(plugin.getConfiguration().getPlayerNotFound());
+                return;
+            }
+            gamemodePlayer = optionalPlayer.get();
+        } else if (sender instanceof Player player) {
+            gamemodePlayer = player;
+        } else {
+            sender.sendMessage(plugin.getConfiguration().getGameModeHelp());
+            return;
+        }
+
+        // Finally, set gamemode for player
+        gamemodePlayer.setGameMode(gameMode);
     }
 
     @Override
@@ -71,16 +101,16 @@ public class GameModeCommand implements CommandExecutor, TabCompleter {
                                                 @NotNull Command command,
                                                 @NotNull String alias,
                                                 @NotNull String[] args) {
-        if (!(sender instanceof Player)) {
-            return List.of();
-        }
         if (!sender.hasPermission(Permissions.COMMAND_GAMEMODE)) {
             return List.of();
         }
-        return List.of("creative", "spectator", "adventure", "survival");
+        ArrayList<String> list = new ArrayList<>();
+        list.addAll(List.of("creative", "spectator", "adventure", "survival"));
+        list.addAll(Util.convertList(plugin.getServer().getOnlinePlayers(), Player::getName));
+        return list;
     }
 
-    private Optional<GameMode> gamemodeFromString(String string) {
+    private Optional<GameMode> gamemodeFromString(@NotNull String string) {
         string = string.toLowerCase();
         if (startsOrEndsWith(string, "a")) {
             return Optional.of(GameMode.ADVENTURE);

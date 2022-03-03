@@ -104,6 +104,13 @@ public final class TextUtil {
         return Optional.of(joinStrings(Arrays.asList(strings).subList(initialIndex, strings.length), " ", str -> str));
     }
 
+    public static <T> @NotNull Optional<T[]> offsetArray(T[] array, int initialIndex) {
+        if (initialIndex >= array.length) {
+            return Optional.empty();
+        }
+        return Optional.of(Arrays.copyOfRange(array, initialIndex + 1, array.length));
+    }
+
     public static <T> @NotNull String joinStrings(@NotNull Iterable<T> ts,
                                                   String separator,
                                                   @NotNull Function<T, String> stringFunction) {
