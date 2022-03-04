@@ -25,6 +25,7 @@ public final class Permissions {
     public static final String COMMAND_SUICIDE = "potocraft.server.suicide";
     public static final String COMMAND_KILL = "potocraft.server.kill";
     public static final String COMMAND_FLY = "potocraft.server.fly";
+    public static final String COMMAND_FLY_OTHERS = "potocraft.server.fly.others";
     public static final String COMMAND_SEND_WEBHOOK = "potocraft.server.sendwebhook";
 
     // Private constructor

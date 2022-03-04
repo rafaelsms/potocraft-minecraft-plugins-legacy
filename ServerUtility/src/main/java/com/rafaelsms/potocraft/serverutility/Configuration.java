@@ -334,4 +334,14 @@ public class Configuration extends YamlFile {
     public Component getKillHelp() {
         return TextUtil.toComponent(get("language.commands.kill.help"));
     }
+
+    public Component getFlyHelp() {
+        return TextUtil.toComponent(get("language.commands.fly.help"));
+    }
+
+    public Component getFlyStatus(String playerName, boolean allowFlight) {
+        return TextUtil.toComponent(get("language.commands.fly.status"),
+                                    Template.of("username", playerName),
+                                    Template.of("flying", allowFlight ? "enabled" : "disabled"));
+    }
 }

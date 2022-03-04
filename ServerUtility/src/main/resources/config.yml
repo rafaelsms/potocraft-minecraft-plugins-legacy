@@ -77,16 +77,19 @@ configuration:
 
 language:
   commands:
-    player_only: "<red>Comando disponível apenas para jogadores"
-    player_not_found: "<red>Jogador não encontrado!"
+    player_only: "<red>Comando disponível apenas para jogadores</red>"
+    player_not_found: "<red>Jogador não encontrado!</red>"
     player_time:
-      help: "<gold>Uso: <yellow>/tempo (dia/meiodia/noite/meianoite) [fixo]"
+      help: "<gold>Uso: <yellow>/tempo (dia/meiodia/noite/meianoite) [fixo]</yellow></gold>"
     player_weather:
-      help: "<gold>Uso: <yellow>/clima (limpo/chuvoso)"
+      help: "<gold>Uso: <yellow>/clima (limpo/chuvoso)</yellow></gold>"
     gamemode:
-      help: "<gold>Uso: <yellow>/gamemode (survival/creative/spectator/adventure) [nome]"
+      help: "<gold>Uso: <yellow>/gamemode (survival/creative/spectator/adventure) [nome]</yellow></gold>"
     enchant:
-      help: "<gold>Uso: <yellow>/enchant (encantamento)"
-      cant_enchant_item: "<red>Não é possível encantar este item"
+      help: "<gold>Uso: <yellow>/enchant (encantamento)</yellow></gold>"
+      cant_enchant_item: "<red>Não é possível encantar este item</red>"
     kill:
-      help: "<gold>Uso: <yellow>/kill (nome)"
+      help: "<gold>Uso: <yellow>/kill (nome)</yellow></gold>"
+    fly:
+      help: "<gold>Uso: <yellow>/fly [nome]</yellow></gold>"
+      status: "<gold><yellow><username></yellow> está com modo de voo <yellow><flying></yellow></gold>"

@@ -105,7 +105,9 @@ public class GameModeCommand implements CommandExecutor, TabCompleter {
             return List.of();
         }
         ArrayList<String> list = new ArrayList<>();
-        list.addAll(List.of("creative", "spectator", "adventure", "survival"));
+        if (gamemodeFromString(alias).isEmpty()) {
+            list.addAll(List.of("creative", "spectator", "adventure", "survival"));
+        }
         list.addAll(Util.convertList(plugin.getServer().getOnlinePlayers(), Player::getName));
         return list;
     }
