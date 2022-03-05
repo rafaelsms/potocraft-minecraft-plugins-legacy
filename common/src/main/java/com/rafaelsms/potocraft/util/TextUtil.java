@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.InetSocketAddress;
+import java.text.Normalizer;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,13 +103,6 @@ public final class TextUtil {
             return Optional.empty();
         }
         return Optional.of(joinStrings(Arrays.asList(strings).subList(initialIndex, strings.length), " ", str -> str));
-    }
-
-    public static <T> @NotNull Optional<T[]> offsetArray(T[] array, int initialIndex) {
-        if (initialIndex >= array.length) {
-            return Optional.empty();
-        }
-        return Optional.of(Arrays.copyOfRange(array, initialIndex + 1, array.length));
     }
 
     public static <T> @NotNull String joinStrings(@NotNull Iterable<T> ts,
@@ -208,5 +202,9 @@ public final class TextUtil {
 
     public static @NotNull BaseComponent[] toComponentBungee(@Nullable String base, Template... placeholders) {
         return BungeeComponentSerializer.get().serialize(toComponent(base, placeholders));
+    }
+
+    public static @NotNull String normalizeString(@NotNull String string) {
+        return Normalizer.normalize(string, Normalizer.Form.NFD).replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
     }
 }

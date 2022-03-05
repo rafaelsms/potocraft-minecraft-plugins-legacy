@@ -7,9 +7,11 @@ import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -138,5 +140,12 @@ public final class Util {
 
     public static <T> T getRandom(@NotNull List<T> collection) {
         return collection.get(random.nextInt(collection.size()));
+    }
+
+    public static <T> @NotNull Optional<T[]> offsetArray(T[] array, int initialIndex) {
+        if (initialIndex >= array.length) {
+            return Optional.empty();
+        }
+        return Optional.of(Arrays.copyOfRange(array, initialIndex + 1, array.length));
     }
 }

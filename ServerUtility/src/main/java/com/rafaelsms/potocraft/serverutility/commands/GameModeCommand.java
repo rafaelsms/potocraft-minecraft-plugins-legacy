@@ -58,7 +58,7 @@ public class GameModeCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(plugin.getConfiguration().getGameModeHelp());
                 return true;
             }
-            handleGameMode(gameModeFromArgument.get(), sender, TextUtil.offsetArray(args, 1).orElse(new String[0]));
+            handleGameMode(gameModeFromArgument.get(), sender, Util.offsetArray(args, 1).orElse(new String[0]));
         } else {
             handleGameMode(gameModeFromLabel.get(), sender, args);
         }

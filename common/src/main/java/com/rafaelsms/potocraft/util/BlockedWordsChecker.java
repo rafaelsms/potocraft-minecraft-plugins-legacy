@@ -3,7 +3,6 @@ package com.rafaelsms.potocraft.util;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -63,8 +62,7 @@ public class BlockedWordsChecker {
         int stringLength = string.length();
 
         // Normalize string
-        String normalizedString = Normalizer.normalize(string, Normalizer.Form.NFD);
-        normalizedString = normalizedString.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        String normalizedString = TextUtil.normalizeString(string);
 
         // Search blocked words
         for (Map.Entry<String, Pattern> entry : blockedWordsRegex.entrySet()) {
