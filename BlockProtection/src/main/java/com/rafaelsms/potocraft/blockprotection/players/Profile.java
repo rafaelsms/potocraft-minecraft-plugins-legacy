@@ -43,7 +43,7 @@ public class Profile extends DatabaseObject {
         this.playerName = playerName;
     }
 
-    public long getVolumeAvailable() {
+    public int getVolumeAvailable() {
         movePartsToVolume();
         return volumeAvailable;
     }

@@ -3,23 +3,43 @@ configuration:
     mongo_uri: "mongodb://localhost:27017"
     database_name: "serverNameDb"
     player_profile_collection: "protectionProfiles"
-    region_collection: "regions"
     save_player_task_timer_ticks: 3600
     is_exception_fatal: false
   protection:
+    protected_worlds:
+      - mundo
     selection:
       xz_offset: 6
       min_y_offset: 2
       max_y_offset: 5
+      particles_period_ticks: 12
+      selection_wand_material: "GOLDEN_SHOVEL"
     volume:
       selection_time_to_live_ticks: 1800
       default_reward_per_block: 0.15
       groups_reward_per_block:
         potocraft.protection.reward.vip: 0.6
-      default_maximum_volume: 15000
+      overall_maximum_volume: 50000
+      default_maximum_volume: 12000
       groups_maximum_volume:
-        potocraft.protection.volume.vip: 50000
+        potocraft.protection.volume.vip: 30000
+      default_deletion_payback: 0.3
+      groups_deletion_payback:
+        potocraft.protection.payback.vip: 0.6
 
 language:
   errors:
-    failed_to_fetch_profile: "<red>Falha ao carregar perfil."
+    player_only_command: "<red>Comando disponível apenas para jogadores.</red>"
+    failed_to_fetch_profile: "<red>Falha ao carregar perfil.</red>"
+    failed_to_get_region_manager: "<red>Falha ao carregar proteção.</red>"
+    no_region_permission: "<red>Você não tem permissão suficiente para editar esta região.</red>"
+  selection:
+    world_not_protected: "<red>Este mundo não está disponível para proteção</red>"
+    maximum_volume_exceeded: "<red>Volume máximo de proteção atingido!</red>"
+    volume_exceed_permission: "<red>Você não tem permissão para uma região tão grande!</red>"
+    volume_exceeded: "<red>Volume de proteção excedido!</red>"
+    minimum_volume_required: "<red>Você não possui saldo suficiente para iniciar a proteção. Quebre blocos para conseguir saldo!</red>"
+    invalid_location: "<red>Localização inválida! Tente novamente.</red>"
+    selection_started: |
+      <yellow>Bata nos blocos para selecionar a região para proteger!</yellow>
+      <yellow>Digite <bold>/proteger criar</bold> para finalizar a proteção.</yellow>

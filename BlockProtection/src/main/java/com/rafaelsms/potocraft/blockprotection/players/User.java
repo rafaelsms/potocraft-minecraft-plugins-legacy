@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class User implements Runnable {
 
@@ -16,7 +17,7 @@ public class User implements Runnable {
     private final @NotNull Player player;
     private final @NotNull Profile profile;
 
-    private @Nullable Selection selection;
+    private @Nullable Selection selection = null;
 
     public User(@NotNull BlockProtectionPlugin plugin, @NotNull Player player, @NotNull Profile profile) {
         this.plugin = plugin;
@@ -32,7 +33,22 @@ public class User implements Runnable {
         return profile;
     }
 
+    public @NotNull Optional<Selection> getSelection() {
+        return Optional.ofNullable(selection);
+    }
+
+    public @NotNull Selection getOrEmptySelection() {
+        return getSelection().orElse(new Selection(plugin, this));
+    }
+
+    public void setSelection(@Nullable Selection selection) {
+        this.selection = selection;
+    }
+
     public void incrementVolume() {
+        if (profile.getVolumeAvailable() >= getMaximumVolume()) {
+            return;
+        }
         this.profile.incrementVolume(getRewardVolume());
     }
 
@@ -60,6 +76,16 @@ public class User implements Runnable {
         return reward;
     }
 
+    public double getDeletionPayback() {
+        double paybackRatio = plugin.getConfiguration().getDeletionDefaultPayback();
+        for (Map.Entry<String, Double> entry : plugin.getConfiguration().getGroupDeletionPayback().entrySet()) {
+            if (entry.getValue() > paybackRatio && player.hasPermission(entry.getKey())) {
+                paybackRatio = entry.getValue();
+            }
+        }
+        return paybackRatio;
+    }
+
     public boolean hasEnoughVolume(int volume) {
         if (player.hasPermission(Permissions.BYPASS_VOLUME_CHECKER)) {
             return true;
@@ -67,23 +93,7 @@ public class User implements Runnable {
         return profile.getVolumeAvailable() >= volume;
     }
 
-    public void setSelection(@Nullable Selection selection) {
-        if (this.selection == selection) {
-            return;
-        }
-        if (this.selection != null) {
-            this.selection.hideBar();
-        }
-        if (selection != null) {
-            selection.showBar();
-        }
-        this.selection = selection;
-    }
-
     @Override
     public void run() {
-        if (this.selection != null) {
-            this.selection.run();
-        }
     }
 }

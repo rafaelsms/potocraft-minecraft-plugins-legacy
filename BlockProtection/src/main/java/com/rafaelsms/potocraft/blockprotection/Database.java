@@ -22,10 +22,6 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
         return getDatabase().getCollection(plugin.getConfiguration().getMongoPlayerCollection());
     }
 
-    private MongoCollection<Document> getRegionCollection() throws DatabaseException {
-        return getDatabase().getCollection(plugin.getConfiguration().getMongoRegionCollection());
-    }
-
     @Override
     protected void handleException(@NotNull DatabaseException databaseException) throws DatabaseException {
         plugin.logger().warn("Database exception:", databaseException);
