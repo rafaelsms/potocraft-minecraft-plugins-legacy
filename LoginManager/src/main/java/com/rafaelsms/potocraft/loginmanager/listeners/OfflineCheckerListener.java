@@ -79,6 +79,11 @@ public class OfflineCheckerListener implements Listener {
             return;
         }
 
+        // Don't force online mode if proxy isn't using online mode
+        if (!plugin.getProxy().getConfig().isOnlineMode()) {
+            event.completeIntent(plugin);
+            return;
+        }
         plugin.runAsync(() -> {
             // Check if player has existing account
             try {
