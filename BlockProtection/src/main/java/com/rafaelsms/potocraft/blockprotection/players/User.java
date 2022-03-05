@@ -38,7 +38,13 @@ public class User implements Runnable {
     }
 
     public @NotNull Selection getOrEmptySelection() {
-        return getSelection().orElse(new Selection(plugin, this));
+        Optional<Selection> selectionOptional = getSelection();
+        if (selectionOptional.isEmpty()) {
+            Selection selection = new Selection(plugin, this);
+            setSelection(selection);
+            return selection;
+        }
+        return selectionOptional.get();
     }
 
     public void setSelection(@Nullable Selection selection) {
@@ -46,10 +52,21 @@ public class User implements Runnable {
     }
 
     public void incrementVolume() {
-        if (profile.getVolumeAvailable() >= getMaximumVolume()) {
+        incrementVolume(getRewardVolume());
+    }
+
+    public void incrementVolume(double amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Volume must be greater than zero");
+        }
+        int maximumVolume = getMaximumVolume();
+        int volumeAvailable = profile.getVolumeAvailable();
+        // Don't allow bypassing the limit
+        if (volumeAvailable >= maximumVolume) {
             return;
         }
-        this.profile.incrementVolume(getRewardVolume());
+        // Limit how much is incremented
+        this.profile.incrementVolume(Math.min(maximumVolume - volumeAvailable, amount));
     }
 
     public void consumeVolume(int volume) {
@@ -95,5 +112,8 @@ public class User implements Runnable {
 
     @Override
     public void run() {
+        if (selection != null) {
+            selection.run();
+        }
     }
 }

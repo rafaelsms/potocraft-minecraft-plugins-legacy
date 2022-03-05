@@ -6,6 +6,7 @@ configuration:
     save_player_task_timer_ticks: 3600
     is_exception_fatal: false
   protection:
+    base_global_region: "__base__"
     protected_worlds:
       - mundo
     selection:
@@ -19,7 +20,7 @@ configuration:
       default_reward_per_block: 0.15
       groups_reward_per_block:
         potocraft.protection.reward.vip: 0.6
-      overall_maximum_volume: 50000
+      overall_maximum_volume: 80000
       default_maximum_volume: 12000
       groups_maximum_volume:
         potocraft.protection.volume.vip: 30000
@@ -30,16 +31,49 @@ configuration:
 language:
   errors:
     player_only_command: "<red>Comando disponível apenas para jogadores.</red>"
+    player_not_found: "<red>Jogador não encontrado.</red>"
+    region_not_found: "<red>Região não encontrada.</red>"
     failed_to_fetch_profile: "<red>Falha ao carregar perfil.</red>"
     failed_to_get_region_manager: "<red>Falha ao carregar proteção.</red>"
     no_region_permission: "<red>Você não tem permissão suficiente para editar esta região.</red>"
+  command:
+    help: |
+      <gold>Para criar uma proteção, digite <click:run_command:'/proteger criar'><hover:show_text:'<gold><yellow>Clique</yellow> para obter ajuda.</gold>'><yellow>/proteger criar</yellow></hover></click></gold>
+      <gold>Para deletar uma proteção, digite <click:run_command:'/proteger deletar'><hover:show_text:'<gold><yellow>Clique</yellow> para obter ajuda.</gold>'><yellow>/proteger deletar</yellow></hover></click></gold>
+      <gold>Para adicionar alguém a sua proteção, digite <click:suggest_command:'/proteger membro nome'><hover:show_text:'<gold><yellow>Clique</yellow> para adicionar uma pessoa à sua proteção.</gold>'><yellow>/proteger membro (nome)</yellow></hover></click></gold>
+      <gold>Para adicionar um dono a sua proteção, digite <click:suggest_command:'/proteger dono nome'><hover:show_text:'<gold><yellow>Clique</yellow> para adicionar um dono a sua proteção.</gold>'><yellow>/proteger dono (nome)</yellow></hover></click></gold>
+      <gold>Para cancelar a seleção, digite <click:suggest_command:'/proteger cancelar'><hover:show_text:'<gold><yellow>Clique</yellow> para limpar a seleção atual.</gold>'><yellow>/proteger cancelar</yellow></hover></click></gold>
+    cleared_selection: "<gold>Limpando seleção...</gold>"
+    expand_help: "<gold>Expanda a nova área utilizando uma <yellow><lang:item.minecraft.golden_shovel></yellow> e depois <click:run_command:'/proteger expandir'><hover:show_text:'<gold><yellow>Clique</yellow> para expandir a região existente.</gold>'>digite <yellow>/proteger expandir</yellow></hover></click></gold>"
+    delete_help: "<gold>Apague uma região sendo o criador, estando dentro dela e digitando <click:run_command:'/proteger deletar'><hover:show_text:'<gold><yellow>Clique</yellow> para deletar a região existente.</gold>'>digite <yellow>/proteger deletar</yellow></hover></click></gold>"
+    region_expanded: "<gold>Região expandida com sucesso!</gold>"
+    create_help: |
+      <gold>Para criar uma região:</gold>
+      <gold><bold>1.</bold> quebre qualquer bloco até conseguir saldo suficiente para comprar a proteção.</gold>
+      <gold><bold>2.</bold> selecione uma área batendo no chão com uma <yellow><lang:item.minecraft.golden_shovel></yellow></gold>
+      <gold><bold>3.</bold> digite <click:suggest_command:'/proteger criar nome'><hover:show_text:'<gold><yellow>Clique</yellow> para criar uma região.</gold>'><yellow>/proteger criar (nome)</yellow></hover></click></gold>
+    create_already_exists: "<red>Uma região com este nome já existe!</red>"
+    create_invalid_name: "<red>Nome inválido! Não pode possuir caracteres especiais.</red>"
+    region_deleted: "<gold>Região deletada com sucesso.</gold>"
+    toggle_member_help: "<gold>Para adicionar/remover um membro, entre na região e digite <click:suggest_command:'/proteger membro nome'><hover:show_text:'<gold><yellow>Clique</yellow> para adicionar ou remover um membro a sua proteção.</gold>'><yellow>/proteger membro (nome)</yellow></hover></click></gold>"
+    toggle_owner_help: "<gold>Para adicionar/remover um dono, entre na região e digite <click:suggest_command:'/proteger dono nome'><hover:show_text:'<gold><yellow>Clique</yellow> para adicionar ou remover um dono a sua proteção.</gold>'><yellow>/proteger dono (nome)</yellow></hover></click></gold>"
+    cant_toggle_creator: "<red>Você não pode alterar permissões do criador.</red>"
+    player_added_to_region: "<gold><yellow><username></yellow> foi adicionado(a) a região.</gold>"
+    player_removed_from_region: "<gold><yellow><username></yellow> foi removido(a) da região.</gold>"
+    creator_only: "<gold>Apenas o criador da região pode apagá-la.</gold>"
   selection:
+    selection_is_on_different_world: "<red>A seleção está em outro mundo. Limpando...</red>"
     world_not_protected: "<red>Este mundo não está disponível para proteção</red>"
     maximum_volume_exceeded: "<red>Volume máximo de proteção atingido!</red>"
     volume_exceed_permission: "<red>Você não tem permissão para uma região tão grande!</red>"
     volume_exceeded: "<red>Volume de proteção excedido!</red>"
     minimum_volume_required: "<red>Você não possui saldo suficiente para iniciar a proteção. Quebre blocos para conseguir saldo!</red>"
     invalid_location: "<red>Localização inválida! Tente novamente.</red>"
+    selection_inside_other_region: "<red>Sua seleção está dentro de outra!</red> <gold>Digite <click:run_command:'/proteger expandir'><hover:show_text:'<gold><yellow>Clique</yellow> para expandir a região atual.</gold>'><yellow>/proteger expandir</yellow></hover></click> para editar a região.</gold>"
     selection_started: |
-      <yellow>Bata nos blocos para selecionar a região para proteger!</yellow>
-      <yellow>Digite <bold>/proteger criar</bold> para finalizar a proteção.</yellow>
+      <gold>Bata nos blocos utilizando uma <yellow><lang:item.minecraft.golden_shovel></yellow> para selecionar a região!</gold>
+      <gold>Digite <click:suggest_command:'/proteger criar nome'><hover:show_text:'<gold><yellow>Clique</yellow> para criar uma região!</gold>'><yellow><bold>/proteger criar</bold></yellow></hover></click> para finalizar a proteção.</gold>
+    selection_required: "<gold>Para iniciar uma seleção, bata com uma <yellow><lang:item.minecraft.golden_shovel></yellow> no chão.</gold>"
+  regions:
+    greeting_title: "<green>Região particular.</green>"
+    leaving_title: "<red>Saindo de região particular.</red>"

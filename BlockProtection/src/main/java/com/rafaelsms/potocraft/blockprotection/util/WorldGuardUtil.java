@@ -31,8 +31,7 @@ public final class WorldGuardUtil {
 
     public static ProtectedCuboidRegion getRegion(@NotNull String id,
                                                   boolean isTransient,
-                                                  @NotNull Location lowestPoint,
-                                                  @NotNull Location highestPoint) {
+                                                  @NotNull Location lowestPoint, @NotNull Location highestPoint) {
         return new ProtectedCuboidRegion(id,
                                          isTransient,
                                          WorldGuardUtil.toBlockVector3(lowestPoint),
@@ -42,6 +41,13 @@ public final class WorldGuardUtil {
     public static @NotNull Optional<ProtectedRegion> getProtectedRegion(@NotNull BlockProtectionPlugin plugin,
                                                                         @NotNull Player player,
                                                                         boolean warnPlayer) {
+        return getProtectedRegion(plugin, player, warnPlayer, true);
+    }
+
+    public static @NotNull Optional<ProtectedRegion> getProtectedRegion(@NotNull BlockProtectionPlugin plugin,
+                                                                        @NotNull Player player,
+                                                                        boolean warnPlayer,
+                                                                        boolean requireOwner) {
         LocalPlayer localPlayer = WorldGuardUtil.toLocalPlayer(player);
         BlockVector3 playerLocation = WorldGuardUtil.toBlockVector3(player.getLocation());
         Optional<RegionManager> regionManager = plugin.getRegionManager(player);
@@ -51,7 +57,8 @@ public final class WorldGuardUtil {
         ApplicableRegionSet applicableRegions = regionManager.get().getApplicableRegions(playerLocation);
         if (applicableRegions.size() > 0) {
             // Cancel edit: does not have permission
-            if (!applicableRegions.isOwnerOfAll(localPlayer)) {
+            if ((requireOwner && !applicableRegions.isOwnerOfAll(localPlayer)) ||
+                (!requireOwner && !applicableRegions.isMemberOfAll(localPlayer))) {
                 if (warnPlayer) {
                     player.sendMessage(plugin.getConfiguration().getNoRegionPermission());
                 }

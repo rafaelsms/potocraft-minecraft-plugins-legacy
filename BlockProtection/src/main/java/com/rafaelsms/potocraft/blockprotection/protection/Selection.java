@@ -27,8 +27,9 @@ public class Selection implements Runnable {
     private final int timeToLive;
     private int age = 0;
 
-    private @Nullable ProtectedRegion protectedRegion = null;
     private int volumeCredit = 0;
+    private @Nullable ProtectedRegion protectedRegion = null;
+
     private @Nullable World selectionWorld = null;
     private @Nullable Location lowestPoint = null;
     private @Nullable Location highestPoint = null;
@@ -43,12 +44,8 @@ public class Selection implements Runnable {
                      @NotNull User user,
                      @NotNull ProtectedRegion applicableRegion) {
         this(plugin, user);
-        if (lowestPoint.getWorld() == null ||
-            highestPoint.getWorld() == null ||
-            !Objects.equals(lowestPoint.getWorld().getUID(), highestPoint.getWorld().getUID())) {
-            throw new IllegalArgumentException("Invalid location's worlds");
-        }
         this.protectedRegion = applicableRegion;
+        this.selectionWorld = user.getPlayer().getWorld();
         this.lowestPoint = BukkitAdapter.adapt(user.getPlayer().getWorld(), applicableRegion.getMinimumPoint());
         this.highestPoint = BukkitAdapter.adapt(user.getPlayer().getWorld(), applicableRegion.getMaximumPoint());
         this.volumeCredit = calculateVolume(lowestPoint, highestPoint);
@@ -100,14 +97,23 @@ public class Selection implements Runnable {
         // Check for nearby permissions
         try {
             LocalPlayer player = WorldGuardUtil.toLocalPlayer(user.getPlayer());
-            RegionManager regionManager = plugin.getRegionManager(selectionWorld);
+            RegionManager regionManager = plugin.getRegionManagerInstance(selectionWorld);
             ProtectedCuboidRegion region = getTemporaryRegion(lowestPoint, highestPoint);
             ApplicableRegionSet applicableRegions = regionManager.getApplicableRegions(region);
             if (applicableRegions.size() > 0) {
+                // Check if we are intersecting a prohibited region
                 if (!applicableRegions.isOwnerOfAll(player)) {
                     return Result.NO_PERMISSION;
                 }
-                return Result.OTHER_REGION_FOUND;
+                // Check if we are expanding a region
+                if (protectedRegion != null) {
+                    for (ProtectedRegion applicableRegion : applicableRegions) {
+                        // Block it if it is another owned region
+                        if (!applicableRegion.getId().equalsIgnoreCase(protectedRegion.getId())) {
+                            return Result.OTHER_REGION_FOUND;
+                        }
+                    }
+                }
             }
         } catch (ProtectionException ignored) {
             return Result.FAILED_PROTECTION_FETCH;
@@ -128,6 +134,13 @@ public class Selection implements Runnable {
         // Restart age because of interaction
         this.age = 0;
         return Result.ALLOWED;
+    }
+
+    public int getVolumeCost() {
+        if (lowestPoint == null || highestPoint == null) {
+            return 0;
+        }
+        return calculateVolume(lowestPoint, highestPoint) - volumeCredit;
     }
 
     public Optional<ProtectedRegion> getExistingProtectedRegion() {
@@ -153,6 +166,10 @@ public class Selection implements Runnable {
         if ((age % plugin.getConfiguration().getParticlePeriodTicks()) == 0) {
             ProtectionUtil.drawCuboid(user.getPlayer(), lowestPoint, highestPoint);
         }
+    }
+
+    public Optional<World> getSelectionWorld() {
+        return Optional.ofNullable(selectionWorld);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.blockprotection.listeners;
 
 import com.rafaelsms.potocraft.blockprotection.BlockProtectionPlugin;
+import com.rafaelsms.potocraft.blockprotection.Permissions;
 import com.rafaelsms.potocraft.blockprotection.players.User;
 import com.rafaelsms.potocraft.blockprotection.protection.Selection;
 import net.kyori.adventure.text.Component;
@@ -36,6 +37,9 @@ public class VolumeListener implements Listener {
         }
         if (event.getItem() == null ||
             event.getItem().getType() != plugin.getConfiguration().getSelectionWandMaterial()) {
+            return;
+        }
+        if (!event.getPlayer().hasPermission(Permissions.PROTECT_COMMAND)) {
             return;
         }
         // Don't allow interaction with the selection wand
@@ -77,6 +81,10 @@ public class VolumeListener implements Listener {
         // Simple warning, show on action bar
         if (playerMessage != null) {
             player.sendActionBar(playerMessage);
+        }
+        // Send tips to the player
+        if (result.isSuccessful() && selectionOptional.isEmpty()) {
+            player.sendMessage(plugin.getConfiguration().getSelectionStarted());
         }
     }
 }

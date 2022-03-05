@@ -6,7 +6,12 @@ import com.rafaelsms.potocraft.blockprotection.listeners.VolumeListener;
 import com.rafaelsms.potocraft.blockprotection.util.ProtectionException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.managers.storage.StorageException;
+import com.sk89q.worldguard.protection.regions.GlobalProtectedRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -44,6 +49,18 @@ public class BlockProtectionPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // Save all WorldGuard
+        getWorldGuardInstance().ifPresent(worldGuard -> {
+            for (RegionManager regionManager : worldGuard.getPlatform().getRegionContainer().getLoaded()) {
+                try {
+                    regionManager.save();
+                    logger().info("Saved data for WorldGuard's {} region manager", regionManager.getName());
+                } catch (StorageException exception) {
+                    logger().error("Failed to save WorldGuard data:", exception);
+                }
+            }
+        });
+
         HandlerList.unregisterAll(this);
         getServer().getScheduler().cancelTasks(this);
 
@@ -67,14 +84,18 @@ public class BlockProtectionPlugin extends JavaPlugin {
     }
 
     public @NotNull Optional<RegionManager> getRegionManager(@NotNull Player player) {
+        return getRegionManager(player.getWorld());
+    }
+
+    public @NotNull Optional<RegionManager> getRegionManager(@NotNull World world) {
         try {
-            return Optional.of(getRegionManager(player.getWorld()));
+            return Optional.of(getRegionManagerInstance(world));
         } catch (ProtectionException ignored) {
             return Optional.empty();
         }
     }
 
-    public @NotNull RegionManager getRegionManager(@NotNull World world) throws ProtectionException {
+    public @NotNull RegionManager getRegionManagerInstance(@NotNull World world) throws ProtectionException {
         WorldGuard instance = WorldGuard.getInstance();
         if (instance == null) {
             throw new ProtectionException("WorldGuard instance is not available.");
@@ -86,9 +107,71 @@ public class BlockProtectionPlugin extends JavaPlugin {
         return regionManager;
     }
 
+    public @NotNull Optional<WorldGuard> getWorldGuardInstance() {
+        try {
+            return Optional.of(getWorldGuard());
+        } catch (ProtectionException ignored) {
+            return Optional.empty();
+        }
+    }
+
+    public @NotNull WorldGuard getWorldGuard() throws ProtectionException {
+        WorldGuard instance = WorldGuard.getInstance();
+        if (instance == null) {
+            throw new ProtectionException("WorldGuard instance is not available.");
+        }
+        return instance;
+    }
+
     private void registerCommand(@NotNull String commandName, @NotNull CommandExecutor executor) {
         PluginCommand pluginCommand = getServer().getPluginCommand(commandName);
         assert pluginCommand != null;
         pluginCommand.setExecutor(executor);
+    }
+
+    public Optional<ProtectedRegion> getBaseRegion(@NotNull World world) {
+        Optional<RegionManager> managerOptional = getRegionManager(world);
+        if (managerOptional.isEmpty()) {
+            return Optional.empty();
+        }
+        RegionManager regionManager = managerOptional.get();
+        ProtectedRegion baseRegion = regionManager.getRegion(getConfiguration().getBaseGlobalRegionId());
+        if (baseRegion == null) {
+            baseRegion = new GlobalProtectedRegion(getConfiguration().getBaseGlobalRegionId());
+            // Set default flags for regions
+            baseRegion.setFlag(Flags.CREEPER_EXPLOSION, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.LAVA_FIRE, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.LAVA_FLOW, StateFlag.State.ALLOW);
+            baseRegion.setFlag(Flags.WATER_FLOW, StateFlag.State.ALLOW);
+            baseRegion.setFlag(Flags.PISTONS, StateFlag.State.ALLOW);
+            baseRegion.setFlag(Flags.CHORUS_TELEPORT, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.ENDERPEARL, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.CHEST_ACCESS, StateFlag.State.ALLOW);
+            baseRegion.setFlag(Flags.PLACE_VEHICLE, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.ENTITY_PAINTING_DESTROY, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.ITEM_FRAME_ROTATE, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.ENTITY_ITEM_FRAME_DESTROY, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.ENDER_BUILD, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.ENDERDRAGON_BLOCK_DAMAGE, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.USE_ANVIL, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.USE_DRIPLEAF, StateFlag.State.ALLOW);
+            baseRegion.setFlag(Flags.RESPAWN_ANCHORS, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.LIGHTER, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.TNT, StateFlag.State.ALLOW);
+            baseRegion.setFlag(Flags.POTION_SPLASH, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.WITHER_DAMAGE, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.OTHER_EXPLOSION, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.GREET_TITLE, getConfiguration().getGreetingTitle());
+            baseRegion.setFlag(Flags.FAREWELL_TITLE, getConfiguration().getLeavingTitle());
+            try {
+                // Save region
+                regionManager.addRegion(baseRegion);
+                regionManager.saveChanges();
+            } catch (StorageException exception) {
+                logger().error("Failed to save WorldGuard base region for {}:", world.getName(), exception);
+                return Optional.empty();
+            }
+        }
+        return Optional.of(baseRegion);
     }
 }
