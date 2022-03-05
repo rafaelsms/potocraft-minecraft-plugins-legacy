@@ -130,7 +130,7 @@ public class Profile extends DatabaseObject {
     }
 
     public @NotNull Optional<Location> getBackLocation(@NotNull ServerProfilePlugin plugin) {
-        return Optional.ofNullable(Util.convert(backLocation, storedLocation -> storedLocation.toLocation(plugin)));
+        return Optional.ofNullable(backLocation).flatMap(storedLocation -> storedLocation.toLocation(plugin));
     }
 
     public void setBackLocation(@Nullable Location location) {
@@ -142,7 +142,7 @@ public class Profile extends DatabaseObject {
     }
 
     public @NotNull Optional<Location> getDeathLocation(@NotNull ServerProfilePlugin plugin) {
-        return Optional.ofNullable(Util.convert(deathLocation, storedLocation -> storedLocation.toLocation(plugin)));
+        return Optional.ofNullable(deathLocation).flatMap(storedLocation -> storedLocation.toLocation(plugin));
     }
 
     public void setDeathLocation(@Nullable Location location) {

@@ -7,6 +7,7 @@ import com.rafaelsms.potocraft.serverprofile.players.Profile;
 import com.rafaelsms.potocraft.serverprofile.players.User;
 import com.rafaelsms.potocraft.serverprofile.util.CommandUtil;
 import com.rafaelsms.potocraft.util.Util;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -68,7 +69,12 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                         return true;
                     }
                     // Teleport player to home
-                    user.teleport(home.get().toLocation(plugin), PlayerTeleportEvent.TeleportCause.COMMAND);
+                    Optional<Location> locationOptional = home.get().toLocation(plugin);
+                    if (locationOptional.isEmpty()) {
+                        player.sendMessage(plugin.getConfiguration().getTeleportDestinationUnavailable());
+                        return true;
+                    }
+                    user.teleport(locationOptional.get(), PlayerTeleportEvent.TeleportCause.COMMAND);
                 }
                 return true;
             }
@@ -93,7 +99,12 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                         if (user.isPlayerTeleportBlocked(true)) {
                             return true;
                         }
-                        user.teleport(home.toLocation(plugin), PlayerTeleportEvent.TeleportCause.COMMAND);
+                        Optional<Location> locationOptional = home.toLocation(plugin);
+                        if (locationOptional.isEmpty()) {
+                            player.sendMessage(plugin.getConfiguration().getTeleportDestinationUnavailable());
+                            return true;
+                        }
+                        user.teleport(locationOptional.get(), PlayerTeleportEvent.TeleportCause.COMMAND);
                         return true;
                     }
                 }
@@ -103,7 +114,12 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
             Home home = homesSorted.get(0);
-            user.teleport(home.toLocation(plugin), PlayerTeleportEvent.TeleportCause.COMMAND);
+            Optional<Location> locationOptional = home.toLocation(plugin);
+            if (locationOptional.isEmpty()) {
+                player.sendMessage(plugin.getConfiguration().getTeleportDestinationUnavailable());
+                return true;
+            }
+            user.teleport(locationOptional.get(), PlayerTeleportEvent.TeleportCause.COMMAND);
             return true;
         }
 

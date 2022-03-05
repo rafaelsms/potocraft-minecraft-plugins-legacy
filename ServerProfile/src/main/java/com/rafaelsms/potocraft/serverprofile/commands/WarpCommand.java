@@ -4,6 +4,7 @@ import com.rafaelsms.potocraft.serverprofile.Permissions;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.User;
 import com.rafaelsms.potocraft.serverprofile.warps.Warp;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -54,7 +55,12 @@ public class WarpCommand implements CommandExecutor {
                 if (user.isPlayerTeleportBlocked(true)) {
                     return true;
                 }
-                user.teleport(warp.getLocation(plugin), PlayerTeleportEvent.TeleportCause.COMMAND);
+                Optional<Location> optionalLocation = warp.getLocation(plugin);
+                if (optionalLocation.isEmpty()) {
+                    player.sendMessage(plugin.getConfiguration().getTeleportDestinationUnavailable());
+                    return true;
+                }
+                user.teleport(optionalLocation.get(), PlayerTeleportEvent.TeleportCause.COMMAND);
                 return true;
             }
         }

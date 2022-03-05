@@ -3,9 +3,11 @@ package com.rafaelsms.potocraft.util;
 import com.rafaelsms.potocraft.database.DatabaseObject;
 import org.bson.Document;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class StoredLocation extends DatabaseObject {
@@ -34,8 +36,12 @@ public class StoredLocation extends DatabaseObject {
         this.pitch = Util.getOrElse(Util.convert(document.getString(Keys.PITCH_KEY), Float::parseFloat), 0.0f);
     }
 
-    public @NotNull Location toLocation(@NotNull Plugin plugin) {
-        return new Location(plugin.getServer().getWorld(worldId), x, y, z, yaw, pitch);
+    public @NotNull Optional<Location> toLocation(@NotNull Plugin plugin) {
+        World world = plugin.getServer().getWorld(worldId);
+        if (world == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new Location(world, x, y, z, yaw, pitch));
     }
 
     @Override

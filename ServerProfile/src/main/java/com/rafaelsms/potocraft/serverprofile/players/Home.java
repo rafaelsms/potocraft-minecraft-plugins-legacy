@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Home extends DatabaseObject {
 
@@ -39,7 +40,7 @@ public class Home extends DatabaseObject {
         return creationDate;
     }
 
-    public @NotNull Location toLocation(@NotNull ServerProfilePlugin plugin) {
+    public @NotNull Optional<Location> toLocation(@NotNull ServerProfilePlugin plugin) {
         return location.toLocation(plugin);
     }
 

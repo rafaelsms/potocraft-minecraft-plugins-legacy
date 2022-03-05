@@ -9,6 +9,8 @@ import org.bson.conversions.Bson;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
 public class Warp extends DatabaseObject {
 
     private final @NotNull String name;
@@ -30,7 +32,7 @@ public class Warp extends DatabaseObject {
         return name;
     }
 
-    public @NotNull Location getLocation(@NotNull ServerProfilePlugin plugin) {
+    public @NotNull Optional<Location> getLocation(@NotNull ServerProfilePlugin plugin) {
         return location.toLocation(plugin);
     }
 
