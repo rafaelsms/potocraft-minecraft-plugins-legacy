@@ -146,6 +146,11 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
             }
             return true;
         } else if (args[0].equalsIgnoreCase("deletar")) {
+            if (!sender.hasPermission(Permissions.PROTECT_COMMAND_DELETE)) {
+                sender.sendMessage(plugin.getServer().getPermissionMessage());
+                return true;
+            }
+
             Optional<ProtectedRegion> protectedRegion = WorldGuardUtil.getProtectedRegion(plugin, player, false);
             if (protectedRegion.isEmpty()) {
                 player.sendMessage(plugin.getConfiguration().getProtectDeleteHelp());
