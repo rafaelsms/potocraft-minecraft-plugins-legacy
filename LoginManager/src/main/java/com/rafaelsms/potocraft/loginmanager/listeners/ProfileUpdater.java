@@ -43,7 +43,7 @@ public class ProfileUpdater implements Listener {
 
         // Check if profile is logged in and set its join date
         if (!playerTypeRequiresLogin || Util.isPlayerLoggedIn(plugin, profile, player)) {
-            profile.setJoinDate(player.getName());
+            profile.setJoinDate(player.getName(), Util.getInetAddress(player.getSocketAddress()).orElse(null));
             plugin.getDatabase().saveProfileCatching(profile);
         }
     }

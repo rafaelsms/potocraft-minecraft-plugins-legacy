@@ -14,7 +14,6 @@ import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -90,11 +89,7 @@ public class LoginCommand extends Command implements TabExecutor {
 
         try {
             // Set as logged in and save
-            if (player.getSocketAddress() instanceof InetSocketAddress address) {
-                profile.setLoggedIn(address);
-            } else {
-                profile.setLoggedIn(null);
-            }
+            profile.setLoggedIn(Util.getInetAddress(player.getSocketAddress()).orElse(null));
             player.sendMessage(plugin.getConfiguration().getCommandLoggedIn());
             plugin.getDatabase().saveProfile(profile);
         } catch (Database.DatabaseException ignored) {

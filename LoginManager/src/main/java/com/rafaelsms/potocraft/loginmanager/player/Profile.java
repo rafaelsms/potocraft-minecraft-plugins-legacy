@@ -27,12 +27,12 @@ public class Profile extends DatabaseObject {
     /* Login information for offline players */
     private @Nullable Boolean loggedIn = null;
     private @Nullable ZonedDateTime lastLoginDate = null;
-    private @Nullable String lastLoginAddress = null;
     private @Nullable Integer pin = null;
 
     /* Play time and useful information */
     private @NotNull String lastPlayerName;
     private @Nullable String lastServerName = null;
+    private @Nullable String lastAddress = null;
     private @Nullable ZonedDateTime firstJoinDate = null;
     private @Nullable ZonedDateTime lastJoinDate = null;
     private @Nullable ZonedDateTime lastQuitDate = null;
@@ -53,11 +53,11 @@ public class Profile extends DatabaseObject {
 
         this.loggedIn = document.getBoolean(Keys.LOGGED_IN);
         this.lastLoginDate = Util.convert(document.getString(Keys.LAST_LOGIN_DATE), Util::toDateTime);
-        this.lastLoginAddress = document.getString(Keys.LAST_LOGIN_ADDRESS);
         this.pin = document.getInteger(Keys.PIN);
 
         this.lastPlayerName = document.getString(Keys.LAST_PLAYER_NAME);
         this.lastServerName = document.getString(Keys.LAST_SERVER_NAME);
+        this.lastAddress = document.getString(Keys.LAST_ADDRESS);
         this.firstJoinDate = Util.convert(document.getString(Keys.FIRST_JOIN_DATE), Util::toDateTime);
         this.lastJoinDate = Util.convert(document.getString(Keys.LAST_JOIN_DATE), Util::toDateTime);
         this.lastQuitDate = Util.convert(document.getString(Keys.LAST_QUIT_DATE), Util::toDateTime);
@@ -77,6 +77,10 @@ public class Profile extends DatabaseObject {
 
     public @NotNull Optional<String> getLastServerName() {
         return Optional.ofNullable(lastServerName);
+    }
+
+    public @NotNull Optional<String> getLastAddress() {
+        return Optional.ofNullable(lastAddress);
     }
 
     public Optional<ZonedDateTime> getLastJoinDate() {
@@ -105,7 +109,7 @@ public class Profile extends DatabaseObject {
         if (pin == null ||
             loggedIn == null ||
             address == null ||
-            !TextUtil.getIpAddress(address).equalsIgnoreCase(lastLoginAddress)) {
+            !TextUtil.getIpAddress(address).equalsIgnoreCase(lastAddress)) {
             return false;
         }
         // We asserted that player has a pin and its IP is the same, so we continue the session if logged in
@@ -128,10 +132,7 @@ public class Profile extends DatabaseObject {
         if (this.loggedIn == null || !this.loggedIn) {
             this.loggedIn = true;
             this.lastLoginDate = ZonedDateTime.now();
-            setJoinDate(lastPlayerName); // offline mode can't change names
-        }
-        if (address != null) {
-            this.lastLoginAddress = TextUtil.getIpAddress(address);
+            setJoinDate(lastPlayerName, address); // offline mode can't change names
         }
     }
 
@@ -151,13 +152,16 @@ public class Profile extends DatabaseObject {
         return true;
     }
 
-    public void setJoinDate(@NotNull String playerName) {
+    public void setJoinDate(@NotNull String playerName, @Nullable InetSocketAddress address) {
         ZonedDateTime now = ZonedDateTime.now();
         if (this.firstJoinDate == null) {
             this.firstJoinDate = now;
         }
         this.lastPlayerName = playerName;
         this.lastJoinDate = now;
+        if (address != null) {
+            this.lastAddress = TextUtil.getIpAddress(address);
+        }
     }
 
     public void setLastServerName(@Nullable String lastServerName) {
@@ -210,7 +214,7 @@ public class Profile extends DatabaseObject {
     }
 
     public static Bson filterAddress(@NotNull InetSocketAddress address) {
-        return Filters.eq(Keys.LAST_LOGIN_ADDRESS, TextUtil.getIpAddress(address));
+        return Filters.eq(Keys.LAST_ADDRESS, TextUtil.getIpAddress(address));
     }
 
     public Bson filterId() {
@@ -224,11 +228,11 @@ public class Profile extends DatabaseObject {
 
         document.put(Keys.LOGGED_IN, loggedIn);
         document.put(Keys.LAST_LOGIN_DATE, Util.convert(lastLoginDate, Util::fromDateTime));
-        document.put(Keys.LAST_LOGIN_ADDRESS, lastLoginAddress);
         document.put(Keys.PIN, pin);
 
         document.put(Keys.LAST_PLAYER_NAME, lastPlayerName);
         document.put(Keys.LAST_SERVER_NAME, lastServerName);
+        document.put(Keys.LAST_ADDRESS, lastAddress);
         document.put(Keys.FIRST_JOIN_DATE, Util.convert(firstJoinDate, Util::fromDateTime));
         document.put(Keys.LAST_JOIN_DATE, Util.convert(lastJoinDate, Util::fromDateTime));
         document.put(Keys.LAST_QUIT_DATE, Util.convert(lastQuitDate, Util::fromDateTime));
@@ -243,11 +247,11 @@ public class Profile extends DatabaseObject {
         public static final String PLAYER_ID = "_id";
         public static final String LOGGED_IN = "isLoggedIn";
         public static final String LAST_LOGIN_DATE = "lastLoginDate";
-        public static final String LAST_LOGIN_ADDRESS = "lastLoginAddress";
         public static final String PIN = "pin";
 
         public static final String LAST_PLAYER_NAME = "lastPlayerName";
         public static final String LAST_SERVER_NAME = "lastServerName";
+        public static final String LAST_ADDRESS = "lastAddress";
         public static final String FIRST_JOIN_DATE = "firstJoinDate";
         public static final String LAST_JOIN_DATE = "lastJoinDate";
         public static final String LAST_QUIT_DATE = "lastQuitDate";

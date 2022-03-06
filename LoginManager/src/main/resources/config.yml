@@ -103,14 +103,15 @@ language:
     seen:
       help: "<gold>Uso: <yellow>/seen <nome/uuid></yellow>"
       profile: |
-        <gold><yellow><gold><user_name></gold></yellow> (<user_id>):
+        <gold><yellow><gold><user_name></gold></yellow> (<click:copy_to_clipboard:'<user_id>'><hover:show_text:'<gold><yellow>Clique</yellow> para copiar UUID</gold>'><yellow><user_id></yellow></hover></click>):
+        <gold>* Último IP: <click:copy_to_clipboard:'<user_ip>'><hover:show_text:'<gold><yellow>Clique</yellow> para copiar o IP</gold>'><yellow><user_ip></yellow></hover></click>
         <gold>* Último servidor: <yellow><server_name></yellow>
         <gold>* Tempo em jogo: <yellow><play_time></yellow>
         <gold>* Última vez online: <yellow><join_date></yellow>
         <gold>* Última saída: <yellow><quit_date></yellow>
         <gold>* Ocorrências:
         %report_entries%
-      report_entry: "<gold><yellow><type></yellow> <active> de <yellow><reporter_name></yellow> até <yellow><expiration_date></yellow> por <yellow><reason></yellow>"
+      report_entry: "<hover:show_text:'<gold>Status: <yellow><active></yellow></gold><newline><gold>Operador: <yellow><reporter_name></yellow></gold><newline><gold>Data: <yellow><date></yellow></gold><newline><gold>Válido até <yellow><expiration_date></yellow></gold>'><gold><yellow><type></yellow> por <yellow><reason></yellow></gold></hover>"
     temporary_ban:
       help: "<gold>Uso: <yellow>/tempban <nome> <tempo> <razão></yellow>"
       player_offline: "<red>Jogador está offline, você não possui permissão."

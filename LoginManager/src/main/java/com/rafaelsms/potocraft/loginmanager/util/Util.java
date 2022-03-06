@@ -10,6 +10,7 @@ import net.md_5.bungee.api.event.ServerConnectEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.time.Duration;
 import java.util.Optional;
 
@@ -29,14 +30,12 @@ public final class Util {
     public static boolean isPlayerLoggedIn(@NotNull LoginManagerPlugin plugin,
                                            @NotNull Profile profile,
                                            @NotNull ProxiedPlayer player) {
-        if (player.getSocketAddress() instanceof InetSocketAddress inetSocketAddress) {
-            if (player.hasPermission(Permissions.OFFLINE_AUTO_LOGIN)) {
-                Duration autoLoginWindow = plugin.getConfiguration().getAutoLoginWindow();
-                return profile.isLoggedIn(inetSocketAddress, autoLoginWindow);
-            }
-            return profile.isLoggedIn(inetSocketAddress, Duration.ZERO);
+        Optional<InetSocketAddress> inetSocketAddress = getInetAddress(player.getSocketAddress());
+        if (inetSocketAddress.isPresent() && player.hasPermission(Permissions.OFFLINE_AUTO_LOGIN)) {
+            Duration autoLoginWindow = plugin.getConfiguration().getAutoLoginWindow();
+            return profile.isLoggedIn(inetSocketAddress.get(), autoLoginWindow);
         }
-        return profile.isLoggedIn(null, Duration.ZERO);
+        return profile.isLoggedIn(inetSocketAddress.orElse(null), Duration.ZERO);
     }
 
     public static void sendPlayerToDefaultServer(@NotNull LoginManagerPlugin plugin, @NotNull ProxiedPlayer player) {
@@ -46,5 +45,12 @@ public final class Util {
             return;
         }
         player.connect(serverInfo, ServerConnectEvent.Reason.PLUGIN);
+    }
+
+    public static @NotNull Optional<InetSocketAddress> getInetAddress(@NotNull SocketAddress address) {
+        if (address instanceof InetSocketAddress inetAddress) {
+            return Optional.of(inetAddress);
+        }
+        return Optional.empty();
     }
 }

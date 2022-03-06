@@ -66,8 +66,9 @@ public class RegisterCommand extends Command implements TabExecutor {
 
         // Check if too many uses for this IP
         try {
-            if (player.getSocketAddress() instanceof InetSocketAddress address) {
-                long count = plugin.getDatabase().getAddressUsageCount(address);
+            Optional<InetSocketAddress> address = Util.getInetAddress(player.getSocketAddress());
+            if (address.isPresent()) {
+                long count = plugin.getDatabase().getAddressUsageCount(address.get());
                 if (count >= plugin.getConfiguration().getMaxAccountsPerAddress()) {
                     player.disconnect(plugin.getConfiguration().getCommandRegisterAccountLimitForAddress());
                     return;
@@ -101,11 +102,7 @@ public class RegisterCommand extends Command implements TabExecutor {
 
         // Save status
         try {
-            if (player.getSocketAddress() instanceof InetSocketAddress address) {
-                profile.setLoggedIn(address);
-            } else {
-                profile.setLoggedIn(null);
-            }
+            profile.setLoggedIn(Util.getInetAddress(player.getSocketAddress()).orElse(null));
             player.sendMessage(plugin.getConfiguration().getCommandLoggedIn());
             plugin.getDatabase().saveProfile(profile);
             sender.sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));

@@ -49,6 +49,10 @@ public class ReportEntry extends DatabaseObject {
         return reason;
     }
 
+    public @NotNull ZonedDateTime getDate() {
+        return date;
+    }
+
     public @Nullable ZonedDateTime getExpirationDate() {
         return expirationDate;
     }
