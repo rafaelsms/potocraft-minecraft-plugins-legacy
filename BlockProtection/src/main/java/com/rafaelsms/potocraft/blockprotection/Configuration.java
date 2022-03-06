@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -181,6 +182,17 @@ public class Configuration extends YamlFile {
 
     public Component getProtectOnlyCreatorCanOperate() {
         return TextUtil.toComponent(get("language.command.creator_only"));
+    }
+
+    public Component getProtectVolumeAvailable(int minimumVolume,
+                                               int volumeAvailable,
+                                               int maximumVolume,
+                                               double reward) {
+        return TextUtil.toComponent(get("language.command.volume_available"),
+                                    Template.of("minimum_volume", String.valueOf(minimumVolume)),
+                                    Template.of("volume_available", String.valueOf(volumeAvailable)),
+                                    Template.of("volume_limit", String.valueOf(maximumVolume)),
+                                    Template.of("reward", new DecimalFormat("0.00").format(reward)));
     }
 
     public Component getProtectPlayerAddedToRegion(@NotNull String playerName) {

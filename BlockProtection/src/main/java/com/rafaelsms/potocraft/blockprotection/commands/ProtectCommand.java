@@ -35,11 +35,11 @@ import java.util.UUID;
 public class ProtectCommand implements CommandExecutor, TabCompleter {
 
     /*
+     * /proteger saldo
      * /proteger expandir
      * /proteger criar (nome região)
      * /proteger membro (nome jogador)
      * /proteger dono (nome jogador)
-     * Not yet:
      * /proteger apagar (nome região)
      */
 
@@ -97,7 +97,14 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("expandir")) {
+        if (args[0].equalsIgnoreCase("saldo")) {
+            player.sendMessage(plugin.getConfiguration()
+                                     .getProtectVolumeAvailable(plugin.getConfiguration().getDefaultBoxVolume(),
+                                                                user.getProfile().getVolumeAvailable(),
+                                                                user.getMaximumVolume(),
+                                                                user.getRewardVolume()));
+            return true;
+        } else if (args[0].equalsIgnoreCase("expandir")) {
             if (!sender.hasPermission(Permissions.PROTECT_COMMAND_EXPAND)) {
                 sender.sendMessage(plugin.getServer().getPermissionMessage());
                 return true;
