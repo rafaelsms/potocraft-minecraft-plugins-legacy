@@ -26,7 +26,9 @@ public class VolumeListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void incrementVolume(BlockBreakEvent event) {
-        plugin.getUserManager().getUser(event.getPlayer()).incrementVolume();
+        if (event.getBlock().getType().isSolid()) {
+            plugin.getUserManager().getUser(event.getPlayer()).incrementVolume();
+        }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
