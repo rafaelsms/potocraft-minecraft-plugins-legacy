@@ -79,7 +79,7 @@ public class LoggedOffPlayerListener implements Listener {
             // Filter out any commands that aren't on the allowed list
             if (!plugin.getConfiguration().getAllowedCommandsLoggedOff().contains(command)) {
                 sender.sendMessage(plugin.getConfiguration().getPunishmentMessageLoggedOff());
-                //event.setCancelled(true);
+                event.setCancelled(true);
             }
         });
     }
