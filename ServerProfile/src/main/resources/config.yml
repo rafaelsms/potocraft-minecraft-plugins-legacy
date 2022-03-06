@@ -25,6 +25,7 @@ configuration:
     player_combat_duration_ticks: 820
     mob_combat_duration_ticks: 260
     should_log_off_destroy_totem_first: false
+    player_killer_time_seconds: 45
     blocked_commands:
       - tp
       - tphere

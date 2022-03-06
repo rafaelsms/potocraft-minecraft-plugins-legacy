@@ -15,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerKickEvent;
@@ -169,6 +170,7 @@ public class CombatListener implements Listener {
             User userDamager = plugin.getUserManager().getUser(playerDamager);
             userDamager.setCombatTask(CombatTask.Type.PLAYER, combatDuration);
             userDamaged.setCombatTask(CombatTask.Type.PLAYER, combatDuration);
+            userDamaged.setKiller(playerDamager);
         } else {
             int combatDuration = plugin.getConfiguration().getMobCombatDurationTicks();
             userDamaged.setCombatTask(CombatTask.Type.MOB, combatDuration);
@@ -184,6 +186,13 @@ public class CombatListener implements Listener {
         if (combatDamageCauses.contains(event.getCause())) {
             int combatDuration = plugin.getConfiguration().getMobCombatDurationTicks();
             plugin.getUserManager().getUser(playerDamaged).setCombatTask(CombatTask.Type.MOB, combatDuration);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
+    private void assertPlayerKiller(EntityDeathEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            plugin.getUserManager().getUser(player).getKiller().ifPresent(event.getEntity()::setKiller);
         }
     }
 }

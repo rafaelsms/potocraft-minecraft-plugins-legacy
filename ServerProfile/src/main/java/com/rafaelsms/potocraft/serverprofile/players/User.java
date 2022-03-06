@@ -33,6 +33,9 @@ public class User {
     private @Nullable CombatTask combatTask = null;
     private @Nullable TeleportTask teleportTask = null;
 
+    private @Nullable ZonedDateTime killerDamageTime = null;
+    private @Nullable Player killer = null;
+
     public User(@NotNull ServerProfilePlugin plugin, @NotNull Player player, @NotNull Profile profile) {
         this.plugin = plugin;
         this.player = player;
@@ -154,8 +157,8 @@ public class User {
                 case IN_COOLDOWN -> player.sendMessage(plugin.getConfiguration()
                                                              .getTeleportInCooldown(getTeleportCooldownSeconds()));
                 case PLAYER_UNAVAILABLE -> player.sendMessage(plugin.getConfiguration().getTeleportFailed());
-                case ALREADY_TELEPORTING -> player.sendMessage(plugin.getConfiguration()
-                                                                     .getTeleportAlreadyTeleporting());
+                case ALREADY_TELEPORTING ->
+                        player.sendMessage(plugin.getConfiguration().getTeleportAlreadyTeleporting());
                 case IN_COMBAT -> player.sendMessage(plugin.getConfiguration().getTeleportPlayerInCombat());
             }
         }
@@ -285,6 +288,19 @@ public class User {
         if (teleportTask != null) {
             teleportTask.run();
         }
+    }
+
+    public void setKiller(@Nullable Player killer) {
+        this.killer = killer;
+        this.killerDamageTime = ZonedDateTime.now();
+    }
+
+    public @NotNull Optional<Player> getKiller() {
+        if (killerDamageTime != null &&
+            killerDamageTime.plus(plugin.getConfiguration().getPlayerKillerTimeout()).isBefore(ZonedDateTime.now())) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(killer);
     }
 
     public enum TeleportResult {

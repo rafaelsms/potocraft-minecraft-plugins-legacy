@@ -138,6 +138,10 @@ public class Configuration extends YamlFile {
         return get("configuration.combat.should_log_off_destroy_totem_first");
     }
 
+    public Duration getPlayerKillerTimeout() {
+        return get("configuration.combat.player_killer_time_seconds");
+    }
+
     public List<String> getCombatBlockedCommands() {
         return get("configuration.combat.blocked_commands");
     }

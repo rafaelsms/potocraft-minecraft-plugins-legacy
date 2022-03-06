@@ -3,6 +3,7 @@ package com.rafaelsms.potocraft.serverprofile.listeners;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.Profile;
+import com.rafaelsms.potocraft.serverprofile.players.User;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,7 +25,11 @@ public class StatisticsListener implements Listener {
     }
 
     private Profile getProfile(@NotNull Player player) {
-        return plugin.getUserManager().getUser(player).getProfile();
+        return getUser(player).getProfile();
+    }
+
+    private User getUser(@NotNull Player player) {
+        return plugin.getUserManager().getUser(player);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
