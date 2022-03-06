@@ -5,6 +5,7 @@ import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.util.Util;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
+import net.md_5.bungee.api.event.TabCompleteEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +42,37 @@ public class LoggedOffPlayerListener implements Listener {
                 return;
             }
             event.setCancelled(true);
+        });
+    }
+
+    @EventHandler
+    public void preventLoggedOffUsingAutoComplete(TabCompleteEvent event) {
+        // Ignore cancelled
+        if (event.isCancelled()) {
+            return;
+        }
+
+        Util.getPlayer(event.getSender()).ifPresent(sender -> {
+            // Ignore if logged on
+            if (isPlayerLoggedOn(sender)) {
+                return;
+            }
+
+            // Split commands
+            String[] words = event.getCursor().split(" ");
+
+            // Supposed to be a command
+            String command = words[0];
+            if (command.length() < 1) {
+                event.setCancelled(true);
+                return;
+            }
+            command = command.substring(1);
+
+            // Filter out any commands that aren't on the allowed list
+            if (!plugin.getConfiguration().getAllowedCommandsLoggedOff().contains(command)) {
+                event.setCancelled(true);
+            }
         });
     }
 
