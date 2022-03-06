@@ -126,6 +126,10 @@ language:
     player_punished: "<gold>Jogador <yellow><player></yellow> punido."
     player_unpunished: "<gold><player> teve sua punição revogada."
     player_is_not_punished: "<red><player> não está punido."
+    ping:
+      help: "<gold>Uso: <yellow>/ping [nome]</yellow></gold>"
+      self_ping: "<gold>Seu ping é <yellow><ping> ms</yellow>.</gold>"
+      other_player_ping: "<gold>O ping de <yellow><username></yellow> é <yellow><ping> ms</yellow>.</gold>"
   kick_messages:
     could_not_check_mojang: |
       <red>Falha ao consultar servidor da Microsoft.

@@ -23,6 +23,8 @@ public final class Permissions {
     public static final String COMMAND_MUTE_EXEMPT = "potocraft.command.mute.exempt";
     public static final String COMMAND_SEEN = "potocraft.command.seen";
     public static final String COMMAND_LIST = "potocraft.command.list";
+    public static final String COMMAND_PING = "potocraft.command.ping";
+    public static final String COMMAND_PING_OTHERS = "potocraft.command.ping.others";
 
     // Private constructor
     private Permissions() {

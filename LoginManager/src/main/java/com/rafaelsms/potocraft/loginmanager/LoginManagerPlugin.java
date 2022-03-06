@@ -6,6 +6,7 @@ import com.rafaelsms.potocraft.loginmanager.commands.KickCommand;
 import com.rafaelsms.potocraft.loginmanager.commands.ListCommand;
 import com.rafaelsms.potocraft.loginmanager.commands.LoginCommand;
 import com.rafaelsms.potocraft.loginmanager.commands.MuteCommand;
+import com.rafaelsms.potocraft.loginmanager.commands.PingCommand;
 import com.rafaelsms.potocraft.loginmanager.commands.RegisterCommand;
 import com.rafaelsms.potocraft.loginmanager.commands.SeenCommand;
 import com.rafaelsms.potocraft.loginmanager.commands.TemporaryBanCommand;
@@ -65,6 +66,7 @@ public class LoginManagerPlugin extends Plugin {
         getProxy().getPluginManager().registerCommand(this, new KickCommand(this));
         getProxy().getPluginManager().registerCommand(this, new ListCommand(this));
         getProxy().getPluginManager().registerCommand(this, new SeenCommand(this));
+        getProxy().getPluginManager().registerCommand(this, new PingCommand(this));
 
         logger().info("LoginManager enabled!");
     }

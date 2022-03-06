@@ -295,6 +295,21 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponentBungee(get("language.commands.kick.help"));
     }
 
+    public @NotNull BaseComponent[] getCommandPingHelp() {
+        return TextUtil.toComponentBungee(get("language.commands.ping.help"));
+    }
+
+    public @NotNull BaseComponent[] getCommandPing(int ping) {
+        return TextUtil.toComponentBungee(get("language.commands.ping.self_ping"),
+                                          Template.of("ping", String.valueOf(Math.min(ping, 999))));
+    }
+
+    public @NotNull BaseComponent[] getCommandPingOthers(@NotNull String playerName, int ping) {
+        return TextUtil.toComponentBungee(get("language.commands.ping.other_player_ping"),
+                                          Template.of("username", playerName),
+                                          Template.of("ping", String.valueOf(Math.min(ping, 999))));
+    }
+
     public @NotNull BaseComponent[] getKickMessageCouldNotCheckMojangUsername() {
         return TextUtil.toComponentBungee(get("language.kick_messages.could_not_check_mojang"));
     }
