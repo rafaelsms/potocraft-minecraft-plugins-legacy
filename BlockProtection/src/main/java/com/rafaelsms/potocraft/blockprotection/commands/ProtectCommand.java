@@ -146,7 +146,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
             }
             return true;
         } else if (args[0].equalsIgnoreCase("deletar")) {
-            Optional<ProtectedRegion> protectedRegion = WorldGuardUtil.getProtectedRegion(plugin, player, false, true);
+            Optional<ProtectedRegion> protectedRegion = WorldGuardUtil.getProtectedRegion(plugin, player, false);
             if (protectedRegion.isEmpty()) {
                 player.sendMessage(plugin.getConfiguration().getProtectDeleteHelp());
                 return true;
@@ -321,13 +321,13 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
         }
 
         // Toggle player status
-        boolean playerAdded;
-        if (addAsOwner) {
-            playerAdded = togglePlayer(protectedRegion.get().getOwners(), offlinePlayer.getUniqueId());
-        } else {
-            playerAdded = togglePlayer(protectedRegion.get().getMembers(), offlinePlayer.getUniqueId());
+        Optional<Boolean> togglePlayer = togglePlayer(protectedRegion.get(), addAsOwner, offlinePlayer.getUniqueId());
+        if (togglePlayer.isEmpty()) {
+            player.sendMessage(plugin.getConfiguration().getProtectPlayerIsOwner());
+            return;
         }
 
+        boolean playerAdded = togglePlayer.get();
         try {
             // Save and send message
             regionManager.get().saveChanges();
@@ -340,24 +340,29 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(message);
         } catch (StorageException exception) {
             // Revert changes (toggle back)
-            if (addAsOwner) {
-                togglePlayer(protectedRegion.get().getOwners(), offlinePlayer.getUniqueId());
-            } else {
-                togglePlayer(protectedRegion.get().getMembers(), offlinePlayer.getUniqueId());
-            }
+            togglePlayer(protectedRegion.get(), addAsOwner, offlinePlayer.getUniqueId());
             // Warn about failure
             plugin.logger().error("Failed to save changes to WorldGuard:", exception);
             player.sendMessage(plugin.getConfiguration().getFailedToFetchRegions());
         }
     }
 
-    private boolean togglePlayer(@NotNull DefaultDomain defaultDomain, @NotNull UUID playerId) {
+    private Optional<Boolean> togglePlayer(@NotNull ProtectedRegion region, boolean asOwner, @NotNull UUID playerId) {
+        DefaultDomain defaultDomain;
+        if (asOwner) {
+            defaultDomain = region.getOwners();
+        } else {
+            if (region.getOwners().contains(playerId)) {
+                return Optional.empty();
+            }
+            defaultDomain = region.getMembers();
+        }
         if (defaultDomain.contains(playerId)) {
             defaultDomain.removePlayer(playerId);
-            return false;
+            return Optional.of(false);
         } else {
             defaultDomain.addPlayer(playerId);
-            return true;
+            return Optional.of(true);
         }
     }
 }

@@ -139,30 +139,23 @@ public class BlockProtectionPlugin extends JavaPlugin {
         if (baseRegion == null) {
             baseRegion = new GlobalProtectedRegion(getConfiguration().getBaseGlobalRegionId());
             // Set default flags for regions
-            baseRegion.setFlag(Flags.CREEPER_EXPLOSION, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.LAVA_FIRE, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.LAVA_FLOW, StateFlag.State.ALLOW);
-            baseRegion.setFlag(Flags.WATER_FLOW, StateFlag.State.ALLOW);
-            baseRegion.setFlag(Flags.PISTONS, StateFlag.State.ALLOW);
-            baseRegion.setFlag(Flags.CHORUS_TELEPORT, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.ENDERPEARL, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.USE, StateFlag.State.ALLOW);
+            baseRegion.setFlag(Flags.DAMAGE_ANIMALS, StateFlag.State.ALLOW);
+            baseRegion.setFlag(Flags.TRAMPLE_BLOCKS, StateFlag.State.ALLOW);
             baseRegion.setFlag(Flags.CHEST_ACCESS, StateFlag.State.ALLOW);
-            baseRegion.setFlag(Flags.PLACE_VEHICLE, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.ENTITY_PAINTING_DESTROY, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.ITEM_FRAME_ROTATE, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.ENTITY_ITEM_FRAME_DESTROY, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.ENDER_BUILD, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.ENDERDRAGON_BLOCK_DAMAGE, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.USE_ANVIL, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.USE_DRIPLEAF, StateFlag.State.ALLOW);
-            baseRegion.setFlag(Flags.RESPAWN_ANCHORS, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.LIGHTER, StateFlag.State.DENY);
             baseRegion.setFlag(Flags.TNT, StateFlag.State.ALLOW);
-            baseRegion.setFlag(Flags.POTION_SPLASH, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.WITHER_DAMAGE, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.OTHER_EXPLOSION, StateFlag.State.DENY);
             baseRegion.setFlag(Flags.GREET_TITLE, getConfiguration().getGreetingTitle());
             baseRegion.setFlag(Flags.FAREWELL_TITLE, getConfiguration().getLeavingTitle());
+            // Anti-griefing measures
+            baseRegion.setFlag(Flags.WITHER_DAMAGE, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.ENDERPEARL, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.CHORUS_TELEPORT, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.CREEPER_EXPLOSION, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.ENDERDRAGON_BLOCK_DAMAGE, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.OTHER_EXPLOSION, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.RAVAGER_RAVAGE, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.FIRE_SPREAD, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.FIREWORK_DAMAGE, StateFlag.State.DENY);
             try {
                 // Save region
                 regionManager.addRegion(baseRegion);

@@ -175,6 +175,10 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponent(get("language.command.cant_toggle_creator"));
     }
 
+    public Component getProtectPlayerIsOwner() {
+        return TextUtil.toComponent(get("language.command.player_is_owner"));
+    }
+
     public Component getProtectOnlyCreatorCanOperate() {
         return TextUtil.toComponent(get("language.command.creator_only"));
     }
@@ -227,6 +231,10 @@ public class Configuration extends YamlFile {
 
     public Component getSelectionRequired() {
         return TextUtil.toComponent(get("language.selection.selection_required"));
+    }
+
+    public Component getRegionRequired() {
+        return TextUtil.toComponent(get("language.selection.region_required"));
     }
 
     public String getGreetingTitle() {

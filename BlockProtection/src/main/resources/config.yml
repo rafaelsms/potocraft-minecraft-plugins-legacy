@@ -38,8 +38,8 @@ language:
     no_region_permission: "<red>Você não tem permissão suficiente para editar esta região.</red>"
   command:
     help: |
-      <gold>Para criar uma proteção, digite <click:run_command:'/proteger criar'><hover:show_text:'<gold><yellow>Clique</yellow> para obter ajuda.</gold>'><yellow>/proteger criar</yellow></hover></click></gold>
-      <gold>Para deletar uma proteção, digite <click:run_command:'/proteger deletar'><hover:show_text:'<gold><yellow>Clique</yellow> para obter ajuda.</gold>'><yellow>/proteger deletar</yellow></hover></click></gold>
+      <gold>Para criar uma proteção, digite <click:run_command:'/proteger criar'><hover:show_text:'<gold><yellow>Clique</yellow> para criar uma proteção.</gold>'><yellow>/proteger criar</yellow></hover></click></gold>
+      <gold>Para deletar uma proteção, digite <click:run_command:'/proteger deletar'><hover:show_text:'<gold><yellow>Clique</yellow> para deletar uma proteção.</gold>'><yellow>/proteger deletar</yellow></hover></click></gold>
       <gold>Para adicionar alguém a sua proteção, digite <click:suggest_command:'/proteger membro nome'><hover:show_text:'<gold><yellow>Clique</yellow> para adicionar uma pessoa à sua proteção.</gold>'><yellow>/proteger membro (nome)</yellow></hover></click></gold>
       <gold>Para adicionar um dono a sua proteção, digite <click:suggest_command:'/proteger dono nome'><hover:show_text:'<gold><yellow>Clique</yellow> para adicionar um dono a sua proteção.</gold>'><yellow>/proteger dono (nome)</yellow></hover></click></gold>
       <gold>Para cancelar a seleção, digite <click:suggest_command:'/proteger cancelar'><hover:show_text:'<gold><yellow>Clique</yellow> para limpar a seleção atual.</gold>'><yellow>/proteger cancelar</yellow></hover></click></gold>
@@ -60,6 +60,7 @@ language:
     cant_toggle_creator: "<red>Você não pode alterar permissões do criador.</red>"
     player_added_to_region: "<gold><yellow><username></yellow> foi adicionado(a) a região.</gold>"
     player_removed_from_region: "<gold><yellow><username></yellow> foi removido(a) da região.</gold>"
+    player_is_owner: "<red>Jogador é um dono, não é possível removê-lo como membro.</red>"
     creator_only: "<gold>Apenas o criador da região pode apagá-la.</gold>"
   selection:
     selection_is_on_different_world: "<red>A seleção está em outro mundo. Limpando...</red>"
@@ -73,7 +74,9 @@ language:
     selection_started: |
       <gold>Bata nos blocos utilizando uma <yellow><lang:item.minecraft.golden_shovel></yellow> para selecionar a região!</gold>
       <gold>Digite <click:suggest_command:'/proteger criar nome'><hover:show_text:'<gold><yellow>Clique</yellow> para criar uma região!</gold>'><yellow><bold>/proteger criar</bold></yellow></hover></click> para finalizar a proteção.</gold>
+      <gold>Digite <click:run_command:'/proteger cancelar'><hover:show_text:'<gold><yellow>Clique</yellow> para cancelar a seleção.</gold>'><yellow><bold>/proteger cancelar</bold></yellow></hover></click> para cancelar a seleção.</gold>
     selection_required: "<gold>Para iniciar uma seleção, bata com uma <yellow><lang:item.minecraft.golden_shovel></yellow> no chão.</gold>"
+    region_required: "<red>É necessário estar dentro de uma região.</red>"
   regions:
     greeting_title: "<green>Região particular.</green>"
     leaving_title: "<red>Saindo de região particular.</red>"

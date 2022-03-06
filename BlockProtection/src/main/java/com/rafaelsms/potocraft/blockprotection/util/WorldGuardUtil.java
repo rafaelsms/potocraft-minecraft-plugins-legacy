@@ -9,6 +9,7 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionType;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public final class WorldGuardUtil {
+
+    public static final String GLOBAL_REGION = "__global__";
 
     // Private constructor
     private WorldGuardUtil() {
@@ -31,7 +34,8 @@ public final class WorldGuardUtil {
 
     public static ProtectedCuboidRegion getRegion(@NotNull String id,
                                                   boolean isTransient,
-                                                  @NotNull Location lowestPoint, @NotNull Location highestPoint) {
+                                                  @NotNull Location lowestPoint,
+                                                  @NotNull Location highestPoint) {
         return new ProtectedCuboidRegion(id,
                                          isTransient,
                                          WorldGuardUtil.toBlockVector3(lowestPoint),
@@ -52,31 +56,37 @@ public final class WorldGuardUtil {
         BlockVector3 playerLocation = WorldGuardUtil.toBlockVector3(player.getLocation());
         Optional<RegionManager> regionManager = plugin.getRegionManager(player);
         if (regionManager.isEmpty()) {
+            if (warnPlayer) {
+                player.sendMessage(plugin.getConfiguration().getFailedToFetchRegions());
+            }
             return Optional.empty();
         }
         ApplicableRegionSet applicableRegions = regionManager.get().getApplicableRegions(playerLocation);
         if (applicableRegions.size() > 0) {
             // Cancel edit: does not have permission
-            if ((requireOwner && !applicableRegions.isOwnerOfAll(localPlayer)) ||
-                (!requireOwner && !applicableRegions.isMemberOfAll(localPlayer))) {
-                if (warnPlayer) {
-                    player.sendMessage(plugin.getConfiguration().getNoRegionPermission());
+            for (ProtectedRegion applicableRegion : applicableRegions) {
+                if (applicableRegion.getType() == RegionType.GLOBAL &&
+                    (applicableRegion.getId().equalsIgnoreCase(plugin.getConfiguration().getBaseGlobalRegionId()) ||
+                     applicableRegion.getId().equalsIgnoreCase(GLOBAL_REGION))) {
+                    continue;
                 }
-                return Optional.empty();
+                if ((requireOwner && !applicableRegion.isOwner(localPlayer)) ||
+                    (!requireOwner && !applicableRegion.isMember(localPlayer))) {
+                    if (warnPlayer) {
+                        player.sendMessage(plugin.getConfiguration().getNoRegionPermission());
+                    }
+                    return Optional.empty();
+                }
+                return Optional.of(applicableRegion);
             }
-            if (applicableRegions.size() == 1) {
-                for (ProtectedRegion protectedRegion : applicableRegions) {
-                    return Optional.of(protectedRegion);
-                }
-                return Optional.empty();
-            } else {
-                if (warnPlayer) {
-                    player.sendMessage(plugin.getConfiguration().getSelectionInsideOtherRegion());
-                }
-                return Optional.empty();
+            if (warnPlayer) {
+                player.sendMessage(plugin.getConfiguration().getRegionRequired());
             }
+            return Optional.empty();
         } else {
-            // TODO não tem região aqui
+            if (warnPlayer) {
+                player.sendMessage(plugin.getConfiguration().getRegionRequired());
+            }
             return Optional.empty();
         }
     }

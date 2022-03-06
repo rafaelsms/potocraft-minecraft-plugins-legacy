@@ -5,12 +5,14 @@ import com.rafaelsms.potocraft.blockprotection.players.User;
 import com.rafaelsms.potocraft.blockprotection.util.ProtectionException;
 import com.rafaelsms.potocraft.blockprotection.util.ProtectionUtil;
 import com.rafaelsms.potocraft.blockprotection.util.WorldGuardUtil;
+import com.rafaelsms.potocraft.util.Util;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionType;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
@@ -69,12 +71,9 @@ public class Selection implements Runnable {
             this.highestPoint = null;
         }
 
-        // Update location
-        if (lowestPoint == null || highestPoint == null) {
-            this.lowestPoint = location.clone();
-            this.highestPoint = location.clone();
-        }
         // Find lowest and highest points
+        Location lowestPoint = Util.getOrElse(this.lowestPoint, location.clone());
+        Location highestPoint = Util.getOrElse(this.highestPoint, location.clone());
         int minYOffset = plugin.getConfiguration().getSelectionMinYOffset();
         int maxYOffset = plugin.getConfiguration().getSelectionMaxYOffset();
         int xzOffset = plugin.getConfiguration().getSelectionXZOffset();
@@ -85,8 +84,8 @@ public class Selection implements Runnable {
         int minZ = Math.min(lowestPoint.getBlockZ(), location.getBlockZ() - xzOffset);
         int maxZ = Math.max(highestPoint.getBlockZ(), location.getBlockZ() + xzOffset);
         // Make points
-        Location lowestPoint = new Location(selectionWorld, minX, minY, minZ);
-        Location highestPoint = new Location(selectionWorld, maxX, maxY, maxZ);
+        lowestPoint = new Location(selectionWorld, minX, minY, minZ);
+        highestPoint = new Location(selectionWorld, maxX, maxY, maxZ);
 
         // Check for overall maximum volume
         int selectionVolume = calculateVolume(lowestPoint, highestPoint);
@@ -102,16 +101,24 @@ public class Selection implements Runnable {
             ApplicableRegionSet applicableRegions = regionManager.getApplicableRegions(region);
             if (applicableRegions.size() > 0) {
                 // Check if we are intersecting a prohibited region
-                if (!applicableRegions.isOwnerOfAll(player)) {
-                    return Result.NO_PERMISSION;
-                }
-                // Check if we are expanding a region
-                if (protectedRegion != null) {
-                    for (ProtectedRegion applicableRegion : applicableRegions) {
-                        // Block it if it is another owned region
+                for (ProtectedRegion applicableRegion : applicableRegions) {
+                    if (applicableRegion.getType() == RegionType.GLOBAL &&
+                        (applicableRegion.getId().equalsIgnoreCase(plugin.getConfiguration().getBaseGlobalRegionId()) ||
+                         applicableRegion.getId().equalsIgnoreCase(WorldGuardUtil.GLOBAL_REGION))) {
+                        continue;
+                    }
+                    if (!applicableRegion.isOwner(player)) {
+                        return Result.NO_PERMISSION;
+                    }
+                    // Check if we are expanding a region
+                    if (protectedRegion != null) {
+                        // Block it if it is yet another region
                         if (!applicableRegion.getId().equalsIgnoreCase(protectedRegion.getId())) {
                             return Result.OTHER_REGION_FOUND;
                         }
+                    } else {
+                        // If not and we found another region, suggest expanding it
+                        return Result.OTHER_REGION_FOUND;
                     }
                 }
             }
