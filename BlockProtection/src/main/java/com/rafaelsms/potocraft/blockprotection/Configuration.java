@@ -69,7 +69,9 @@ public class Configuration extends YamlFile {
     }
 
     public int getDefaultBoxVolume() {
-        return getSelectionXZOffset() * getSelectionXZOffset() * (getSelectionMinYOffset() + getSelectionMaxYOffset());
+        return (2 * (getSelectionXZOffset() + 1)) *
+               (2 * (getSelectionXZOffset() + 1)) *
+               (getSelectionMinYOffset() + getSelectionMaxYOffset() + 1);
     }
 
     public int getSelectionTimeToLive() {
@@ -217,8 +219,8 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponent(get("language.selection.maximum_volume_exceeded"));
     }
 
-    public Component getSelectionVolumeExceeded() {
-        return TextUtil.toComponent(get("language.selection.volume_exceeded"));
+    public Component getSelectionNotEnoughVolume() {
+        return TextUtil.toComponent(get("language.selection.not_enough_volume"));
     }
 
     public Component getSelectionMinimumVolumeRequired() {

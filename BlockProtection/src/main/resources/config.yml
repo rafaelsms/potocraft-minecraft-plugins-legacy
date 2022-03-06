@@ -71,7 +71,7 @@ language:
     world_not_protected: "<red>Este mundo não está disponível para proteção</red>"
     maximum_volume_exceeded: "<red>Volume máximo de proteção atingido!</red>"
     volume_exceed_permission: "<red>Você não tem permissão para uma região tão grande!</red>"
-    volume_exceeded: "<red>Volume de proteção excedido!</red>"
+    not_enough_volume: "<red>Saldo de proteção insuficiente! Quebre mais blocos!</red>"
     minimum_volume_required: "<red>Você não possui saldo suficiente para iniciar a proteção. Quebre blocos para conseguir saldo!</red>"
     invalid_location: "<red>Localização inválida! Tente novamente.</red>"
     selection_inside_other_region: "<red>Sua seleção está dentro de outra!</red> <gold>Digite <click:run_command:'/proteger expandir'><hover:show_text:'<gold><yellow>Clique</yellow> para expandir a região atual.</gold>'><yellow>/proteger expandir</yellow></hover></click> para editar a região.</gold>"

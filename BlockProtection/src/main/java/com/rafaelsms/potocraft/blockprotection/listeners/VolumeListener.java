@@ -61,7 +61,7 @@ public class VolumeListener implements Listener {
         Component playerMessage = switch (result) {
             case WORLD_NOT_PROTECTED -> plugin.getConfiguration().getSelectionWorldNotProtected();
             case MAX_VOLUME_EXCEEDED -> plugin.getConfiguration().getSelectionMaximumVolumeExceeded();
-            case NOT_ENOUGH_VOLUME -> plugin.getConfiguration().getSelectionVolumeExceeded();
+            case NOT_ENOUGH_VOLUME -> plugin.getConfiguration().getSelectionNotEnoughVolume();
             case VOLUME_EXCEED_PERMISSION -> plugin.getConfiguration().getSelectionVolumeExceedPermission();
             case INVALID_LOCATION -> plugin.getConfiguration().getSelectionInvalidLocation();
             case OTHER_REGION_FOUND -> plugin.getConfiguration().getSelectionInsideOtherRegion();

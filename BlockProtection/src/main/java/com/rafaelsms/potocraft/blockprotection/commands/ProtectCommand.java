@@ -124,7 +124,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
             } else {
                 Selection selection = selectionOptional.get();
                 if (!user.hasEnoughVolume(selection.getVolumeCost())) {
-                    sender.sendMessage(plugin.getConfiguration().getSelectionVolumeExceeded());
+                    sender.sendMessage(plugin.getConfiguration().getSelectionNotEnoughVolume());
                     return true;
                 }
 
@@ -209,7 +209,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
             }
             // Check volume cost
             if (!user.hasEnoughVolume(selectionOptional.get().getVolumeCost())) {
-                sender.sendMessage(plugin.getConfiguration().getSelectionVolumeExceeded());
+                sender.sendMessage(plugin.getConfiguration().getSelectionNotEnoughVolume());
                 return true;
             }
 
@@ -295,7 +295,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
                                                 @NotNull String alias,
                                                 @NotNull String[] args) {
         if (args.length == 1) {
-            return List.of("criar", "expandir", "deletar", "membro", "dono", "cancelar");
+            return List.of("saldo", "criar", "expandir", "deletar", "membro", "dono", "cancelar");
         } else {
             return Util.convertList(plugin.getServer().getOnlinePlayers(), Player::getName);
         }
