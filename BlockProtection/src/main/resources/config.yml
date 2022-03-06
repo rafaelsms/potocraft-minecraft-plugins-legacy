@@ -10,16 +10,16 @@ configuration:
     protected_worlds:
       - mundo
     selection:
-      xz_offset: 6
+      xz_offset: 4
       min_y_offset: 2
-      max_y_offset: 5
+      max_y_offset: 6
       particles_period_ticks: 12
       selection_wand_material: "GOLDEN_SHOVEL"
     volume:
       selection_time_to_live_ticks: 1800
-      default_reward_per_block: 0.15
+      default_reward_per_block: 0.75
       groups_reward_per_block:
-        potocraft.protection.reward.vip: 0.6
+        potocraft.protection.reward.vip: 1.8
       overall_maximum_volume: 80000
       default_maximum_volume: 12000
       groups_maximum_volume:
