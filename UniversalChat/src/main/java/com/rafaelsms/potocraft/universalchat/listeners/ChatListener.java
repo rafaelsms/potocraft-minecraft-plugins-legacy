@@ -118,6 +118,11 @@ public class ChatListener implements Listener {
 
         // Format the message
         String message = event.getMessage().replaceFirst(chatPrefix, "");
+        // Ignore empty messages
+        if (message.isBlank()) {
+            event.setCancelled(true);
+            return;
+        }
         Component messageComponent = ChatUtil.parseMessage(player, message);
         @NotNull BaseComponent[] chatMessage = plugin.getConfiguration().getGlobalChatFormat(player, messageComponent);
         @NotNull BaseComponent[] spyMessage =
@@ -175,6 +180,11 @@ public class ChatListener implements Listener {
 
         // Format the message
         String message = event.getMessage().replaceFirst(chatPrefix, "");
+        // Ignore empty messages
+        if (message.isBlank()) {
+            event.setCancelled(true);
+            return;
+        }
         Component messageComponent = ChatUtil.parseMessage(player, message);
         @NotNull BaseComponent[] chatMessage =
                 plugin.getConfiguration().getUniversalChatFormat(player, messageComponent);
@@ -195,6 +205,11 @@ public class ChatListener implements Listener {
         }
         // Ignore non-players
         if (!(event.getSender() instanceof ProxiedPlayer sendingPlayer)) {
+            return;
+        }
+        // Ignore empty messages
+        if (event.getMessage().isBlank()) {
+            event.setCancelled(true);
             return;
         }
 
