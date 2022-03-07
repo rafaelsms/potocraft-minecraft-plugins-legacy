@@ -139,7 +139,7 @@ public class Configuration extends YamlFile {
     }
 
     public Duration getPlayerKillerTimeout() {
-        return get("configuration.combat.player_killer_time_seconds");
+        return Duration.ofSeconds(Objects.requireNonNull(getInt("configuration.combat.player_killer_time_seconds")));
     }
 
     public List<String> getCombatBlockedCommands() {
