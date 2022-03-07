@@ -7,6 +7,7 @@ public final class Permissions {
     public static final String QUICK_BREAK_CROP = "potocraft.server.quick_break.crop";
 
     public static final String KEEP_EXPERIENCE = "potocraft.server.keep_experience";
+    public static final String BYPASS_HEAD_DROP = "potocraft.server.bypass_head_drop";
 
     public static final String COMMAND_ANVIL = "potocraft.server.anvil";
     public static final String COMMAND_ENDERCHEST = "potocraft.server.enderchest";

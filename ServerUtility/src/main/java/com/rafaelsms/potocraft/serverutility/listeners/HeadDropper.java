@@ -1,5 +1,6 @@
 package com.rafaelsms.potocraft.serverutility.listeners;
 
+import com.rafaelsms.potocraft.serverutility.Permissions;
 import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
 import org.bukkit.GameRule;
 import org.bukkit.Material;
@@ -33,6 +34,9 @@ public class HeadDropper implements Listener {
             return;
         }
         if (Boolean.FALSE.equals(event.getPlayer().getWorld().getGameRuleValue(GameRule.DO_ENTITY_DROPS))) {
+            return;
+        }
+        if (event.getPlayer().hasPermission(Permissions.BYPASS_HEAD_DROP)) {
             return;
         }
         // Drop player head alongside all items
