@@ -31,8 +31,11 @@ import com.rafaelsms.potocraft.serverutility.listeners.VillagerListener;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldBorderApplier;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldConfigurationApplier;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldGameRuleApplier;
+import com.rafaelsms.potocraft.serverutility.listeners.WorldGuardNoDeathDropsFlag;
+import com.rafaelsms.potocraft.serverutility.listeners.WorldGuardNoEquipmentDamageFlag;
 import com.rafaelsms.potocraft.serverutility.tasks.SyncWorldTimeTask;
 import com.rafaelsms.potocraft.serverutility.tasks.TimedPVPTask;
+import com.sk89q.worldguard.WorldGuard;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
@@ -50,8 +53,23 @@ public class ServerUtilityPlugin extends JavaPlugin {
     private final @NotNull Configuration configuration;
     private @Nullable WebhookClient webhookClient = null;
 
+    // Custom WorldGuard flags
+    private WorldGuardNoEquipmentDamageFlag noEquipmentDamageFlag = null;
+    private WorldGuardNoDeathDropsFlag noDeathDropsFlag = null;
+
     public ServerUtilityPlugin() throws IOException {
         this.configuration = new Configuration(this);
+    }
+
+    @Override
+    public void onLoad() {
+        try {
+            this.noEquipmentDamageFlag = new WorldGuardNoEquipmentDamageFlag(this);
+            this.noDeathDropsFlag = new WorldGuardNoDeathDropsFlag(this);
+        } catch (NoClassDefFoundError exception) {
+            logger().error("Failed to initialize WorldGuard's custom flags: Class \"{}\" not found",
+                           exception.getMessage());
+        }
     }
 
     @Override
@@ -81,6 +99,12 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ProjectileListener(this), this);
         getServer().getPluginManager().registerEvents(new NightVisionListener(), this);
         getServer().getPluginManager().registerEvents(new FirstSpawnPointListener(this), this);
+        if (noEquipmentDamageFlag != null) {
+            getServer().getPluginManager().registerEvents(noEquipmentDamageFlag, this);
+        }
+        if (noDeathDropsFlag != null) {
+            getServer().getPluginManager().registerEvents(noDeathDropsFlag, this);
+        }
         // TODO keepInventory excluding for PVP option
 
         // Run world sync task
@@ -118,6 +142,10 @@ public class ServerUtilityPlugin extends JavaPlugin {
 
     public @NotNull Optional<WebhookClient> getWebhookClient() {
         return Optional.ofNullable(webhookClient);
+    }
+
+    public @NotNull Optional<WorldGuard> getWorldGuard() {
+        return Optional.ofNullable(WorldGuard.getInstance());
     }
 
     public Logger logger() {

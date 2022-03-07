@@ -6,6 +6,8 @@ author: rafaelsms
 website: rafaelsms.com
 description: Utility plugin for PotoCraft.
 load: STARTUP
+softdepend:
+  - WorldGuard
 commands:
   enderchest:
     description: Opens your enderchest wherever you are.
