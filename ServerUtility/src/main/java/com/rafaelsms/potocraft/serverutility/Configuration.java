@@ -260,6 +260,10 @@ public class Configuration extends YamlFile {
         return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.delay_between_login_messages_seconds")));
     }
 
+    public Boolean isForceFirstSpawnLocation() {
+        return get("configuration.force_first_spawn_location");
+    }
+
     public List<World> getSyncedTimeWorlds() {
         List<World> worlds = new ArrayList<>();
         List<String> worldNames = Objects.requireNonNull(get("configuration.worlds_with_synced_real_time"));

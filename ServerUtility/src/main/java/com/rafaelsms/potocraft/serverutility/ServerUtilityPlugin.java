@@ -15,6 +15,7 @@ import com.rafaelsms.potocraft.serverutility.commands.WorkbenchCommand;
 import com.rafaelsms.potocraft.serverutility.listeners.DamageEffects;
 import com.rafaelsms.potocraft.serverutility.listeners.DamageModifier;
 import com.rafaelsms.potocraft.serverutility.listeners.ExperienceModifier;
+import com.rafaelsms.potocraft.serverutility.listeners.FirstSpawnPointListener;
 import com.rafaelsms.potocraft.serverutility.listeners.FlightListener;
 import com.rafaelsms.potocraft.serverutility.listeners.HeadDropper;
 import com.rafaelsms.potocraft.serverutility.listeners.HideMessagesListener;
@@ -79,6 +80,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new FlightListener(this), this);
         getServer().getPluginManager().registerEvents(new ProjectileListener(this), this);
         getServer().getPluginManager().registerEvents(new NightVisionListener(), this);
+        getServer().getPluginManager().registerEvents(new FirstSpawnPointListener(this), this);
         // TODO keepInventory excluding for PVP option
 
         // Run world sync task

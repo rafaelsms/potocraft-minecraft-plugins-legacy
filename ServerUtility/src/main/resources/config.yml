@@ -21,6 +21,7 @@ configuration:
   hide_join_quit_messages: false
   delay_between_death_messages_seconds: 90
   delay_between_login_messages_seconds: 45
+  force_first_spawn_location: true
   experience_modifier:
     enabled: true
     default_modifier: 0.8
