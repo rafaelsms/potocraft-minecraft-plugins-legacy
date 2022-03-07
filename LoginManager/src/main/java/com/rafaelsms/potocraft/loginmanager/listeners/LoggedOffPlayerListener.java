@@ -8,6 +8,7 @@ import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.TabCompleteEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -25,7 +26,7 @@ public class LoggedOffPlayerListener implements Listener {
 
     // TODO kick if player don't log in after X seconds
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void preventLoggedOffChat(ChatEvent event) {
         // Ignore cancelled
         if (event.isCancelled()) {
@@ -45,7 +46,7 @@ public class LoggedOffPlayerListener implements Listener {
         });
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void preventLoggedOffUsingAutoComplete(TabCompleteEvent event) {
         // Ignore cancelled
         if (event.isCancelled()) {
@@ -76,7 +77,7 @@ public class LoggedOffPlayerListener implements Listener {
         });
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void preventLoggedOffUsingCommands(ChatEvent event) {
         // Ignore cancelled
         if (event.isCancelled()) {
