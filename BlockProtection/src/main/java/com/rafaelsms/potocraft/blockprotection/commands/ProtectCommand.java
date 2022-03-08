@@ -40,7 +40,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
      * /proteger criar (nome região)
      * /proteger membro (nome jogador)
      * /proteger dono (nome jogador)
-     * /proteger apagar (nome região)
+     * /proteger deletar
      */
 
     private final @NotNull BlockProtectionPlugin plugin;
@@ -215,7 +215,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
 
             // Check if region exists
             String regionName = TextUtil.normalizeString(args[1]);
-            String regionId = "%s-%s".formatted(player.getUniqueId().toString(), regionName);
+            String regionId = "%s-%s".formatted(player.getUniqueId().toString(), regionName).toLowerCase();
             if (!ProtectedRegion.isValidId(regionId)) {
                 sender.sendMessage(plugin.getConfiguration().getProtectInvalidName());
                 return true;
@@ -303,7 +303,9 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
 
     private void togglePlayerOnRegion(@NotNull Player player, @NotNull String playerName, boolean addAsOwner) {
         OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayerIfCached(playerName);
-        if (offlinePlayer == null || offlinePlayer.getName() == null) {
+        if (offlinePlayer == null ||
+            offlinePlayer.getName() == null ||
+            Objects.equals(player.getUniqueId(), offlinePlayer.getUniqueId())) {
             player.sendMessage(plugin.getConfiguration().getPlayerNotFound());
             return;
         }

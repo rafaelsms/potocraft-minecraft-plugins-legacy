@@ -102,9 +102,7 @@ public class Selection implements Runnable {
             if (applicableRegions.size() > 0) {
                 // Check if we are intersecting a prohibited region
                 for (ProtectedRegion applicableRegion : applicableRegions) {
-                    if (applicableRegion.getType() == RegionType.GLOBAL &&
-                        (applicableRegion.getId().equalsIgnoreCase(plugin.getConfiguration().getBaseGlobalRegionId()) ||
-                         applicableRegion.getId().equalsIgnoreCase(WorldGuardUtil.GLOBAL_REGION))) {
+                    if (applicableRegion.getType() == RegionType.GLOBAL) {
                         continue;
                     }
                     if (!applicableRegion.isOwner(player)) {

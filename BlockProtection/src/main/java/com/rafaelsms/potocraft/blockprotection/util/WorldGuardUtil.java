@@ -65,9 +65,7 @@ public final class WorldGuardUtil {
         if (applicableRegions.size() > 0) {
             // Cancel edit: does not have permission
             for (ProtectedRegion applicableRegion : applicableRegions) {
-                if (applicableRegion.getType() == RegionType.GLOBAL &&
-                    (applicableRegion.getId().equalsIgnoreCase(plugin.getConfiguration().getBaseGlobalRegionId()) ||
-                     applicableRegion.getId().equalsIgnoreCase(GLOBAL_REGION))) {
+                if (applicableRegion.getType() == RegionType.GLOBAL) {
                     continue;
                 }
                 if ((requireOwner && !applicableRegion.isOwner(localPlayer)) ||

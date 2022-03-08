@@ -84,7 +84,13 @@ public class Profile extends DatabaseObject {
     }
 
     public boolean isRegionOwner(@NotNull String regionId) {
-        return this.regionNameId.containsValue(regionId);
+        // Compare ignoring case
+        for (String otherRegionId : this.regionNameId.values()) {
+            if (regionId.equalsIgnoreCase(otherRegionId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void addCreatedRegion(@NotNull String regionName, @NotNull String regionId) {
