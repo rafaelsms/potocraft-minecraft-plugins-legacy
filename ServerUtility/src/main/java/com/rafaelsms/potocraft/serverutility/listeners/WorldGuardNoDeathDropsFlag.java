@@ -21,10 +21,8 @@ public class WorldGuardNoDeathDropsFlag extends WorldGuardStateFlagRegister {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     private void preventItemDroppingOnDeath(PlayerDeathEvent event) {
         Optional<Boolean> flagOptional = testFlag(event.getPlayer().getLocation(), event.getPlayer());
-        if (flagOptional.isEmpty()) {
-            return;
-        }
-        if (flagOptional.get()) {
+        // Empty when WorldGuard failed to search the database
+        if (flagOptional.isEmpty() || flagOptional.get()) {
             // Keep level and inventory
             event.setKeepLevel(true);
             event.setKeepInventory(true);

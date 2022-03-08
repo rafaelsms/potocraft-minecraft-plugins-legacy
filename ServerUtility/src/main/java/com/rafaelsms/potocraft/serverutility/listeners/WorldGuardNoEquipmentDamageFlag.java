@@ -20,10 +20,8 @@ public class WorldGuardNoEquipmentDamageFlag extends WorldGuardStateFlagRegister
     @EventHandler(ignoreCancelled = true)
     private void denyEquipmentDamageFlag(PlayerItemDamageEvent event) {
         Optional<Boolean> flagOptional = testFlag(event.getPlayer().getLocation(), event.getPlayer());
-        if (flagOptional.isEmpty()) {
-            return;
-        }
-        if (flagOptional.get()) {
+        // Empty when WorldGuard failed to search the database
+        if (flagOptional.isEmpty() || flagOptional.get()) {
             event.setCancelled(true);
         }
     }
