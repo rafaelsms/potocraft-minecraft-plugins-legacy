@@ -36,6 +36,9 @@ public class HeadDropper implements Listener {
         if (Boolean.FALSE.equals(event.getPlayer().getWorld().getGameRuleValue(GameRule.DO_ENTITY_DROPS))) {
             return;
         }
+        if (event.getKeepInventory()) {
+            return;
+        }
         if (event.getPlayer().hasPermission(Permissions.BYPASS_HEAD_DROP)) {
             return;
         }
