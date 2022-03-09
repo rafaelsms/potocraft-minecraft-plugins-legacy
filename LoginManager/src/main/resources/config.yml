@@ -95,6 +95,7 @@ language:
       no_server_available: |
         <red>Falha ao transferir: servidor não encontrado.
         <red>Digite <yellow>/server</yellow> para mudar de servidor manualmente.
+      weak_pin_used: "<red>SENHA OBVIA DETECTADA! Altere sua senha digitando <yellow>/mudarsenha</yellow>!</red>"
     unban:
       help: "<gold>Uso: <yellow>/unban <nome></yellow>"
     ban:

@@ -174,6 +174,10 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponentBungee(get("language.commands.login.no_server_available"));
     }
 
+    public @NotNull BaseComponent[] getCommandLoginWithWeakPin() {
+        return TextUtil.toComponentBungee(get("language.commands.login.weak_pin_used"));
+    }
+
     public @NotNull BaseComponent[] getCommandUnbanHelp() {
         return TextUtil.toComponentBungee(get("language.commands.unban.help"));
     }

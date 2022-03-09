@@ -87,6 +87,12 @@ public class LoginCommand extends Command implements TabExecutor {
             return;
         }
 
+        if (pinOptional.get().equals(98765) || pinOptional.get().equals(123456)) {
+            for (int i = 0; i < 3; i++) {
+                player.sendMessage(plugin.getConfiguration().getCommandLoginWithWeakPin());
+            }
+        }
+
         try {
             // Set as logged in and save
             profile.setLoggedIn(Util.getInetAddress(player.getSocketAddress()).orElse(null));
