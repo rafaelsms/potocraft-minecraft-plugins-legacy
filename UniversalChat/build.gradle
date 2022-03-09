@@ -7,11 +7,6 @@ group 'com.rafaelsms'
 version '0.1'
 
 repositories {
-    // MiniMessage
-    maven {
-        name('sonatype-oss-snapshots')
-        url('https://oss.sonatype.org/content/repositories/snapshots/')
-    }
     mavenCentral()
     // Waterfall
     maven {
@@ -21,9 +16,9 @@ repositories {
 
 dependencies {
     implementation(project(':common'))
-    implementation('net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT')
-    implementation('net.kyori:adventure-text-serializer-legacy:4.9.3')
-    implementation('net.kyori:adventure-platform-bungeecord:4.0.1')
+    implementation('net.kyori:adventure-text-minimessage:4.10.1')
+    implementation('net.kyori:adventure-text-serializer-legacy:4.10.1')
+    implementation('net.kyori:adventure-platform-bungeecord:4.1.0')
     implementation('org.jetbrains:annotations:22.0.0')
     compileOnly('net.luckperms:api:5.4')
     compileOnly('io.github.waterfallmc:waterfall-api:1.18-R0.1-SNAPSHOT')

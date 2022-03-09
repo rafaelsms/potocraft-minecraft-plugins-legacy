@@ -7,6 +7,7 @@ import com.rafaelsms.potocraft.blockprotection.util.ProtectionException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.flags.RegionGroup;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.managers.storage.StorageException;
@@ -139,17 +140,27 @@ public class BlockProtectionPlugin extends JavaPlugin {
         if (baseRegion == null) {
             baseRegion = new GlobalProtectedRegion(getConfiguration().getBaseGlobalRegionId());
             // Set default flags for regions
-            baseRegion.setFlag(Flags.USE, StateFlag.State.ALLOW);
-            baseRegion.setFlag(Flags.DAMAGE_ANIMALS, StateFlag.State.ALLOW);
-            baseRegion.setFlag(Flags.TRAMPLE_BLOCKS, StateFlag.State.ALLOW);
-            baseRegion.setFlag(Flags.CHEST_ACCESS, StateFlag.State.ALLOW);
-            baseRegion.setFlag(Flags.TNT, StateFlag.State.ALLOW);
+            baseRegion.setFlag(Flags.USE, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.USE.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+            baseRegion.setFlag(Flags.DAMAGE_ANIMALS, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.DAMAGE_ANIMALS.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+            baseRegion.setFlag(Flags.DAMAGE_ANIMALS.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+            baseRegion.setFlag(Flags.TRAMPLE_BLOCKS, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.TRAMPLE_BLOCKS.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+            baseRegion.setFlag(Flags.CHEST_ACCESS, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.CHEST_ACCESS.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+            baseRegion.setFlag(Flags.TNT, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.TNT.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+            baseRegion.setFlag(Flags.ENDERPEARL, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.ENDERPEARL.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+            baseRegion.setFlag(Flags.CHORUS_TELEPORT, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.CHORUS_TELEPORT.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+            baseRegion.setFlag(Flags.POTION_SPLASH, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.POTION_SPLASH.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
             baseRegion.setFlag(Flags.GREET_TITLE, getConfiguration().getGreetingTitle());
             baseRegion.setFlag(Flags.FAREWELL_TITLE, getConfiguration().getLeavingTitle());
             // Anti-griefing measures
             baseRegion.setFlag(Flags.WITHER_DAMAGE, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.ENDERPEARL, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.CHORUS_TELEPORT, StateFlag.State.DENY);
             baseRegion.setFlag(Flags.CREEPER_EXPLOSION, StateFlag.State.DENY);
             baseRegion.setFlag(Flags.ENDERDRAGON_BLOCK_DAMAGE, StateFlag.State.DENY);
             baseRegion.setFlag(Flags.OTHER_EXPLOSION, StateFlag.State.DENY);

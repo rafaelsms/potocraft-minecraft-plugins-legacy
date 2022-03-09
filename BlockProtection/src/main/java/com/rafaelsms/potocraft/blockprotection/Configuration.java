@@ -3,7 +3,7 @@ package com.rafaelsms.potocraft.blockprotection;
 import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.util.TextUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
@@ -191,20 +191,20 @@ public class Configuration extends YamlFile {
                                                int maximumVolume,
                                                double reward) {
         return TextUtil.toComponent(get("language.command.volume_available"),
-                                    Template.of("minimum_volume", String.valueOf(minimumVolume)),
-                                    Template.of("volume_available", String.valueOf(volumeAvailable)),
-                                    Template.of("volume_limit", String.valueOf(maximumVolume)),
-                                    Template.of("reward", new DecimalFormat("0.00").format(reward)));
+                                    Placeholder.unparsed("minimum_volume", String.valueOf(minimumVolume)),
+                                    Placeholder.unparsed("volume_available", String.valueOf(volumeAvailable)),
+                                    Placeholder.unparsed("volume_limit", String.valueOf(maximumVolume)),
+                                    Placeholder.unparsed("reward", new DecimalFormat("0.00").format(reward)));
     }
 
     public Component getProtectPlayerAddedToRegion(@NotNull String playerName) {
         return TextUtil.toComponent(get("language.command.player_added_to_region"),
-                                    Template.of("username", playerName));
+                                    Placeholder.unparsed("username", playerName));
     }
 
     public Component getProtectPlayerRemovedFromRegion(@NotNull String playerName) {
         return TextUtil.toComponent(get("language.command.player_removed_from_region"),
-                                    Template.of("username", playerName));
+                                    Placeholder.unparsed("username", playerName));
     }
 
     public Component getSelectionWorldNotProtected() {

@@ -3,7 +3,7 @@ package com.rafaelsms.potocraft.pet;
 import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.util.TextUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
@@ -104,10 +104,10 @@ public class Configuration extends YamlFile {
 
     public Component getCommandEntityTypeList(@NotNull Collection<EntityType> allowedEntityTypes) {
         return TextUtil.toComponent(get("language.pet_command.allowed_entity_types"),
-                                    Template.of("list",
-                                                TextUtil.joinStrings(allowedEntityTypes,
-                                                                     ", ",
-                                                                     type -> type.name().toLowerCase())));
+                                    Placeholder.unparsed("list",
+                                                         TextUtil.joinStrings(allowedEntityTypes,
+                                                                              ", ",
+                                                                              type -> type.name().toLowerCase())));
     }
 
     public Component getPetNameTooLong() {

@@ -9,7 +9,7 @@ import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
@@ -86,11 +86,11 @@ public class Configuration extends YamlFile {
         String suffix = TextUtil.getSuffix(senderId);
         Component displayName = TextUtil.toLegacyComponent(prefix + senderName + suffix);
         return TextUtil.toComponent(format,
-                                    Template.of("prefix", prefix),
-                                    Template.of("username", senderName),
-                                    Template.of("suffix", suffix),
-                                    Template.of("displayname", displayName),
-                                    Template.of("message", message));
+                                    Placeholder.parsed("prefix", prefix),
+                                    Placeholder.parsed("username", senderName),
+                                    Placeholder.parsed("suffix", suffix),
+                                    Placeholder.component("displayname", displayName),
+                                    Placeholder.component("message", message));
     }
 
     public Component getNobodyHeardYou() {
@@ -189,15 +189,16 @@ public class Configuration extends YamlFile {
             worldName = world.getName().replaceAll("_", " ");
         }
         return TextUtil.toComponent(get("language.combat.your_death_location_is"),
-                                    Template.of("world", worldName),
-                                    Template.of("x", String.valueOf(location.getBlockX())),
-                                    Template.of("y", String.valueOf(location.getBlockY())),
-                                    Template.of("z", String.valueOf(location.getBlockZ())));
+                                    Placeholder.unparsed("world", worldName),
+                                    Placeholder.unparsed("x", String.valueOf(location.getBlockX())),
+                                    Placeholder.unparsed("y", String.valueOf(location.getBlockY())),
+                                    Placeholder.unparsed("z", String.valueOf(location.getBlockZ())));
     }
 
     public Component getHardcoreBanMessage(@NotNull ZonedDateTime expirationDate) {
         return TextUtil.toComponent(get("language.combat.hardcore.banned"),
-                                    Template.of("expiration_date", getDateTimeFormatter().format(expirationDate)));
+                                    Placeholder.unparsed("expiration_date",
+                                                         getDateTimeFormatter().format(expirationDate)));
     }
 
     public Component getTeleportBarTitle() {
@@ -230,7 +231,7 @@ public class Configuration extends YamlFile {
 
     public Component getTeleportInCooldown(long cooldownSeconds) {
         String messageFormat = get("language.teleport.in_cooldown");
-        return TextUtil.toComponent(messageFormat, Template.of("cooldown", String.valueOf(cooldownSeconds)));
+        return TextUtil.toComponent(messageFormat, Placeholder.unparsed("cooldown", String.valueOf(cooldownSeconds)));
     }
 
     public Component getTeleportFailed() {
@@ -259,20 +260,21 @@ public class Configuration extends YamlFile {
 
     public Component getTeleportRequestReceived(@NotNull String username) {
         return TextUtil.toComponent(get("language.teleport.requests.teleport_received"),
-                                    Template.of("username", username));
+                                    Placeholder.unparsed("username", username));
     }
 
     public Component getTeleportHereRequestReceived(@NotNull String username) {
         return TextUtil.toComponent(get("language.teleport.requests.teleport_here_received"),
-                                    Template.of("username", username));
+                                    Placeholder.unparsed("username", username));
     }
 
     public Component getTeleportRequestSent(@NotNull String username) {
-        return TextUtil.toComponent(get("language.teleport.requests.sent"), Template.of("username", username));
+        return TextUtil.toComponent(get("language.teleport.requests.sent"), Placeholder.unparsed("username", username));
     }
 
     public Component getTeleportRequestNotUpdated(@NotNull String username) {
-        return TextUtil.toComponent(get("language.teleport.requests.not_updated"), Template.of("username", username));
+        return TextUtil.toComponent(get("language.teleport.requests.not_updated"),
+                                    Placeholder.unparsed("username", username));
     }
 
     public Component getTeleportRequestNotFound() {
@@ -285,12 +287,12 @@ public class Configuration extends YamlFile {
 
     public Component getTeleportRequestManyFound(@NotNull Collection<TeleportRequest> requests) {
         return TextUtil.toComponent(get("language.teleport.requests.many_found"),
-                                    Template.of("list",
-                                                TextUtil.joinStrings(requests,
-                                                                     ", ",
-                                                                     request -> request.getRequester()
-                                                                                       .getPlayer()
-                                                                                       .getName())));
+                                    Placeholder.unparsed("list",
+                                                         TextUtil.joinStrings(requests,
+                                                                              ", ",
+                                                                              request -> request.getRequester()
+                                                                                                .getPlayer()
+                                                                                                .getName())));
     }
 
     public Component getTeleportRequestsSentCancelled() {
@@ -304,7 +306,7 @@ public class Configuration extends YamlFile {
 
     public Component getTeleportHomeList(@NotNull List<Home> homes) {
         return TextUtil.toComponent(get("language.teleport.homes.list"),
-                                    Template.of("list", TextUtil.joinStrings(homes, ", ", Home::getName)));
+                                    Placeholder.unparsed("list", TextUtil.joinStrings(homes, ", ", Home::getName)));
     }
 
     public Component getTeleportHomeMaxCapacity() {
@@ -337,7 +339,7 @@ public class Configuration extends YamlFile {
 
     public Component getTeleportHomeDeleteHelp(@NotNull Collection<Home> homes) {
         return TextUtil.toComponent(get("language.teleport.homes.delete_help"),
-                                    Template.of("list", TextUtil.joinStrings(homes, ", ", Home::getName)));
+                                    Placeholder.unparsed("list", TextUtil.joinStrings(homes, ", ", Home::getName)));
     }
 
     public Component getTeleportWarpManageHelp() {
@@ -358,7 +360,7 @@ public class Configuration extends YamlFile {
 
     public Component getTeleportWarpList(@NotNull Collection<Warp> warps) {
         return TextUtil.toComponent(get("language.teleport.warps.list"),
-                                    Template.of("list", TextUtil.joinStrings(warps, ", ", Warp::getName)));
+                                    Placeholder.unparsed("list", TextUtil.joinStrings(warps, ", ", Warp::getName)));
     }
 
     public Component getTeleportWarpNotFound() {
@@ -367,7 +369,7 @@ public class Configuration extends YamlFile {
 
     public Component getTeleportWorldList(@NotNull Collection<World> worlds) {
         return TextUtil.toComponent(get("language.teleport.worlds.list"),
-                                    Template.of("list", TextUtil.joinStrings(worlds, ", ", World::getName)));
+                                    Placeholder.unparsed("list", TextUtil.joinStrings(worlds, ", ", World::getName)));
     }
 
     public Component getTeleportWorldNotFound() {
@@ -395,12 +397,12 @@ public class Configuration extends YamlFile {
             return getTopNoPlayers();
         }
         return TextUtil.toComponent(get("language.top.ranking_list"),
-                                    Template.of("list",
-                                                Component.join(JoinConfiguration.builder()
-                                                                                .separator(Component.newline())
-                                                                                .build(),
-                                                               Util.convertList(rankedPlayers,
-                                                                                this::getRankingEntry))));
+                                    Placeholder.component("list",
+                                                          Component.join(JoinConfiguration.builder()
+                                                                                          .separator(Component.newline())
+                                                                                          .build(),
+                                                                         Util.convertList(rankedPlayers,
+                                                                                          this::getRankingEntry))));
     }
 
     public Component getRankingEntry(@NotNull Profile profile) {
@@ -414,9 +416,9 @@ public class Configuration extends YamlFile {
         }
         String killDeathRatioString = floatFormatter.format(killDeathRatio);
         return TextUtil.toComponent(get("language.top.ranking_entry"),
-                                    Template.of("username", profile.getPlayerName()),
-                                    Template.of("killdeathratio", killDeathRatioString),
-                                    Template.of("killcount", String.valueOf(playerKills)),
-                                    Template.of("deathcount", String.valueOf(playerDeaths)));
+                                    Placeholder.unparsed("username", profile.getPlayerName()),
+                                    Placeholder.unparsed("killdeathratio", killDeathRatioString),
+                                    Placeholder.unparsed("killcount", String.valueOf(playerKills)),
+                                    Placeholder.unparsed("deathcount", String.valueOf(playerDeaths)));
     }
 }
