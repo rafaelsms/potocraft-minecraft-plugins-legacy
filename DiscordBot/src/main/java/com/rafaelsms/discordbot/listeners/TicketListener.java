@@ -64,10 +64,11 @@ public class TicketListener extends ListenerAdapter {
                                                               Emoji.fromUnicode("🔪"))),
                                        ActionRow.of(Button.of(ButtonStyle.PRIMARY,
                                                               QUESTION_ID,
-                                                              "Tirar dúvida", Emoji.fromUnicode("🙋"))),
+                                                              "Pedir ajuda",
+                                                              Emoji.fromUnicode("🙋"))),
                                        ActionRow.of(Button.of(ButtonStyle.PRIMARY,
                                                               CHECKOUT_ID,
-                                                              "Reivindicar compras do site",
+                                                              "Conseguir compras do site",
                                                               Emoji.fromUnicode("🛍")))).complete();
             // Fix permission for channel
             DiscordUtil.setRolePermissions(lobbyChannel.getPermissionContainer(),
