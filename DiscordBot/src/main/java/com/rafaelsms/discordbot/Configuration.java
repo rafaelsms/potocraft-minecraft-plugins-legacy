@@ -47,6 +47,10 @@ public class Configuration extends YamlFile {
         return get("configuration.tickets.lobby_channel_name");
     }
 
+    public boolean isMentionsShouldBeRemoved() {
+        return Objects.requireNonNull(get("configuration.mention_should_be_removed"));
+    }
+
     public Duration getMentioningTimeout() {
         return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.mentions_user_timeout_seconds")));
     }

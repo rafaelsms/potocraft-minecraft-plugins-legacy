@@ -9,6 +9,7 @@ configuration:
   tickets:
     category_name: 'Tickets'
     lobby_channel_name: 'Iniciar-ticket'
+  mention_should_be_removed: true
   mentions_user_timeout_seconds: 300
   blocked_word_user_timeout_seconds: 300
   blocked_words:
@@ -263,7 +264,10 @@ configuration:
     - pepeca
 
 language:
-  message_mentions_user_directly: "[ mensagem apagada: _menciona algum usuário diretamente, não faça isso. Se precisar de ajuda, crie um ticket!_ ]"
+  message_mentions_user_directly: |
+    Evite enviar mensagens marcando outras pessoas!
+    
+    Responda desativando notificações e não marque utilizando @
   tickets:
     open_ticket_message: |
       **Seja bem vindo a PotoCraft!**

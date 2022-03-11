@@ -48,7 +48,10 @@ public class BlockMentionsListener extends ListenerAdapter {
                                   member,
                                   bot.getConfiguration().getMentioningTimeout(),
                                   "mentioning");
-        message.reply(bot.getConfiguration().getMentionWarningMessage())
-               .queue(warningMessage -> message.delete().queue());
+        message.reply(bot.getConfiguration().getMentionWarningMessage()).queue(warningMessage -> {
+            if (bot.getConfiguration().isMentionsShouldBeRemoved()) {
+                message.delete().queue();
+            }
+        });
     }
 }
