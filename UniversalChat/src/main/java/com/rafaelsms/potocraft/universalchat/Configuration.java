@@ -121,14 +121,14 @@ public class Configuration extends YamlFile {
     public @NotNull BaseComponent[] getDirectMessagesOutgoingFormat(@NotNull String receiverName,
                                                                     @NotNull Component message) {
         return TextUtil.toComponentBungee(get("language.direct_messages.outgoing_format"),
-                                          Placeholder.unparsed("receiver", receiverName),
+                                          Placeholder.parsed("receiver", receiverName),
                                           Placeholder.component("message", message));
     }
 
     public @NotNull BaseComponent[] getDirectMessagesIncomingFormat(@NotNull String senderName,
                                                                     @NotNull Component message) {
         return TextUtil.toComponentBungee(get("language.direct_messages.incoming_format"),
-                                          Placeholder.unparsed("sender", senderName),
+                                          Placeholder.parsed("sender", senderName),
                                           Placeholder.component("message", message));
     }
 
@@ -136,8 +136,8 @@ public class Configuration extends YamlFile {
                                                                @NotNull String receiverName,
                                                                @NotNull Component message) {
         return TextUtil.toComponentBungee(get("language.direct_messages.spy_format"),
-                                          Placeholder.unparsed("sender", senderName),
-                                          Placeholder.unparsed("receiver", receiverName),
+                                          Placeholder.parsed("sender", senderName),
+                                          Placeholder.parsed("receiver", receiverName),
                                           Placeholder.component("message", message));
     }
 
@@ -153,9 +153,9 @@ public class Configuration extends YamlFile {
         String playerName = player.getName();
         Component displayName = TextUtil.toLegacyComponent(prefix + playerName + suffix);
         return TextUtil.toComponentBungee(chatFormat,
-                                          Placeholder.unparsed("server", serverName),
+                                          Placeholder.parsed("server", serverName),
                                           Placeholder.parsed("prefix", prefix),
-                                          Placeholder.unparsed("username", playerName),
+                                          Placeholder.parsed("username", playerName),
                                           Placeholder.parsed("suffix", suffix),
                                           Placeholder.component("displayname", displayName),
                                           Placeholder.component("message", message));

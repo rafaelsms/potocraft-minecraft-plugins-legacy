@@ -267,9 +267,9 @@ public class Configuration extends YamlFile {
         String lastQuitDate =
                 Util.convertFallback(profile.getLastQuitDate().orElse(null), getDateTimeFormatter()::format, "?");
         return TextUtil.toComponentBungee(get("language.commands.seen.profile"),
-                                          Placeholder.unparsed("user_name", profile.getLastPlayerName()),
-                                          Placeholder.unparsed("user_id", profile.getPlayerId().toString()),
-                                          Placeholder.unparsed("user_ip", profile.getLastAddress().orElse("?")),
+                                          Placeholder.parsed("user_name", profile.getLastPlayerName()),
+                                          Placeholder.parsed("user_id", profile.getPlayerId().toString()),
+                                          Placeholder.parsed("user_ip", profile.getLastAddress().orElse("?")),
                                           Placeholder.unparsed("server_name", profile.getLastServerName().orElse("?")),
                                           Placeholder.unparsed("play_time", playTime),
                                           Placeholder.unparsed("join_date", lastJoinDate),
