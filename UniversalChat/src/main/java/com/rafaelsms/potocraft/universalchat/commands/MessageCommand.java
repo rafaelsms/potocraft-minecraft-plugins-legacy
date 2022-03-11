@@ -102,8 +102,10 @@ public class MessageCommand extends Command implements TabExecutor {
                                                                                messageComponent);
 
         // Send to players
-        sender.sendMessage(outgoingFormat);
-        receiver.sendMessage(incomingFormat);
+        if (senderId != null) {
+            ((ProxiedPlayer) sender).sendMessage(senderId, outgoingFormat);
+        }
+        receiver.sendMessage(senderId, incomingFormat);
         // Send to all spies
         for (ProxiedPlayer onlinePlayer : plugin.getProxy().getPlayers()) {
             if (onlinePlayer.hasPermission(Permissions.DIRECT_MESSAGES_SPY)) {
@@ -114,7 +116,11 @@ public class MessageCommand extends Command implements TabExecutor {
                 if (onlinePlayer.getUniqueId().equals(senderId)) {
                     continue;
                 }
-                onlinePlayer.sendMessage(spyFormat);
+                if (senderId != null) {
+                    onlinePlayer.sendMessage(senderId, spyFormat);
+                } else {
+                    onlinePlayer.sendMessage(spyFormat);
+                }
             }
         }
         plugin.getProxy().getConsole().sendMessage(spyFormat);

@@ -136,7 +136,7 @@ public class ChatListener implements Listener {
         }
         ServerInfo server = serverOptional.get();
         for (ProxiedPlayer serverPlayer : server.getPlayers()) {
-            serverPlayer.sendMessage(chatMessage);
+            serverPlayer.sendMessage(player.getUniqueId(), chatMessage);
         }
         String serverName = server.getName();
         // Check for any spy
@@ -149,7 +149,7 @@ public class ChatListener implements Listener {
             }
             // Check if player has spy permission
             if (onlinePlayer.hasPermission(Permissions.GLOBAL_CHAT_SPY)) {
-                onlinePlayer.sendMessage(spyMessage);
+                onlinePlayer.sendMessage(player.getUniqueId(), spyMessage);
             }
         }
         plugin.getProxy().getConsole().sendMessage(spyMessage);
@@ -192,7 +192,7 @@ public class ChatListener implements Listener {
 
         // Send the message for everybody
         for (ProxiedPlayer onlinePlayer : plugin.getProxy().getPlayers()) {
-            onlinePlayer.sendMessage(chatMessage);
+            onlinePlayer.sendMessage(player.getUniqueId(), chatMessage);
         }
         plugin.getProxy().getConsole().sendMessage(chatMessage);
     }
@@ -241,7 +241,7 @@ public class ChatListener implements Listener {
             if (!onlinePlayer.hasPermission(Permissions.OTHER_SERVERS_CHAT_SPY)) {
                 continue;
             }
-            onlinePlayer.sendMessage(spyMessage);
+            onlinePlayer.sendMessage(sendingPlayer.getUniqueId(), spyMessage);
         }
         plugin.getProxy().getConsole().sendMessage(spyMessage);
     }

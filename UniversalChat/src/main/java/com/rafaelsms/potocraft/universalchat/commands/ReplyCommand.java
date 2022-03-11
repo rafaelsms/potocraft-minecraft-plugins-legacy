@@ -102,8 +102,8 @@ public class ReplyCommand extends Command {
                                                                                messageComponent);
 
         // Send to players
-        player.sendMessage(outgoingFormat);
-        receiver.sendMessage(incomingFormat);
+        player.sendMessage(player.getUniqueId(), outgoingFormat);
+        receiver.sendMessage(player.getUniqueId(), incomingFormat);
         // Send to all spies
         for (ProxiedPlayer onlinePlayer : plugin.getProxy().getPlayers()) {
             if (onlinePlayer.hasPermission(Permissions.DIRECT_MESSAGES_SPY)) {
@@ -114,7 +114,7 @@ public class ReplyCommand extends Command {
                 if (onlinePlayer.getUniqueId().equals(player.getUniqueId())) {
                     continue;
                 }
-                onlinePlayer.sendMessage(spyFormat);
+                onlinePlayer.sendMessage(player.getUniqueId(), spyFormat);
             }
         }
         plugin.getProxy().getConsole().sendMessage(spyFormat);
