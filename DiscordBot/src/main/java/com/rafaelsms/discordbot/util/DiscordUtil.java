@@ -10,7 +10,9 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.List;
 
 public final class DiscordUtil {
@@ -90,5 +92,19 @@ public final class DiscordUtil {
                                 null,
                                 null,
                                 List.of());
+    }
+
+    public static void timeoutMember(@NotNull DiscordBot bot,
+                                     @NotNull Guild guild,
+                                     @NotNull Member member,
+                                     @Nullable Duration timeoutDuration,
+                                     @NotNull String auditReason) {
+        if (timeoutDuration != null && timeoutDuration.toSeconds() > 0) {
+            Member botMember = guild.getMember(bot.getJda().getSelfUser());
+            if (botMember != null && botMember.canInteract(member)) {
+                member.timeoutFor(timeoutDuration).reason(auditReason).queue();
+                bot.getLogger().info("Timed out {} for {}", member.getUser().getName(), auditReason);
+            }
+        }
     }
 }

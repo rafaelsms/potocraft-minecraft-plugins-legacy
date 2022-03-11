@@ -62,13 +62,11 @@ public class BlockedWordsListener extends ListenerAdapter {
             } else {
                 replacement.queue(msg -> message.delete().queue());
             }
-            if (bot.getConfiguration().getCursedTimeout().toSeconds() > 0) {
-                Member botMember = message.getGuild().getMember(bot.getJda().getSelfUser());
-                if (botMember != null && botMember.canInteract(member)) {
-                    member.timeoutFor(bot.getConfiguration().getCursedTimeout()).reason("cursing").queue();
-                    bot.getLogger().info("Timed out {} for cursing", member.getUser().getName());
-                }
-            }
+            DiscordUtil.timeoutMember(bot,
+                                      message.getGuild(),
+                                      member,
+                                      bot.getConfiguration().getCursedTimeout(),
+                                      "cursing");
         });
     }
 }

@@ -47,6 +47,10 @@ public class Configuration extends YamlFile {
         return get("configuration.tickets.lobby_channel_name");
     }
 
+    public Duration getMentioningTimeout() {
+        return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.mentions_user_timeout_seconds")));
+    }
+
     public Duration getCursedTimeout() {
         return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.blocked_word_user_timeout_seconds")));
     }
@@ -75,7 +79,7 @@ public class Configuration extends YamlFile {
         return get("language.tickets.ticket_channel_already_exists");
     }
 
-    public String getMessageContainsBlockedWords() {
-        return get("language.message_contains_blocked_words");
+    public String getMentionWarningMessage() {
+        return get("language.message_mentions_user_directly");
     }
 }
