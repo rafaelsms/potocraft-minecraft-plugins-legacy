@@ -124,10 +124,6 @@ public class Selection implements Runnable {
             return Result.FAILED_PROTECTION_FETCH;
         }
 
-        // Check for player-specific maximum region volume
-        if (selectionVolume > user.getMaximumVolume()) {
-            return Result.NOT_ENOUGH_VOLUME;
-        }
         // Check for player available volume
         if (!user.hasEnoughVolume(selectionVolume - volumeCredit)) {
             return Result.NOT_ENOUGH_VOLUME;
