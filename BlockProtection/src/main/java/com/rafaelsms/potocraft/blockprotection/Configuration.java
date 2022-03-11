@@ -106,6 +106,10 @@ public class Configuration extends YamlFile {
         return get("configuration.protection.volume.groups_maximum_volume");
     }
 
+    public double getSelectionMaxXZRatio() {
+        return Objects.requireNonNull(getDouble("configuration.protection.volume.maximum_xz_selection_ratio"));
+    }
+
     public Component getPlayerOnlyCommand() {
         return TextUtil.toComponent(get("language.errors.player_only_command"));
     }
@@ -221,6 +225,10 @@ public class Configuration extends YamlFile {
 
     public Component getSelectionNotEnoughVolume() {
         return TextUtil.toComponent(get("language.selection.not_enough_volume"));
+    }
+
+    public Component getSelectionTooNarrow() {
+        return TextUtil.toComponent(get("language.selection.too_narrow"));
     }
 
     public Component getSelectionMinimumVolumeRequired() {

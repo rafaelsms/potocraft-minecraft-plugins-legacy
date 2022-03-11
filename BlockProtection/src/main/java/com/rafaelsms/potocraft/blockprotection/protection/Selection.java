@@ -137,6 +137,20 @@ public class Selection implements Runnable {
         return Result.ALLOWED;
     }
 
+    public boolean testMaximumXZRatio() {
+        if (lowestPoint == null || highestPoint == null) {
+            return false;
+        }
+        int deltaX = Math.abs(highestPoint.getBlockX() - lowestPoint.getBlockX());
+        int deltaZ = Math.abs(highestPoint.getBlockZ() - lowestPoint.getBlockZ());
+        if (deltaX == 0 || deltaZ == 0) {
+            return false;
+        }
+        double maxXZRatio = plugin.getConfiguration().getSelectionMaxXZRatio();
+        double ratio = Math.max((double) deltaX / deltaZ, (double) deltaZ / deltaX);
+        return ratio <= maxXZRatio;
+    }
+
     public int getVolumeCost() {
         if (lowestPoint == null || highestPoint == null) {
             return 0;

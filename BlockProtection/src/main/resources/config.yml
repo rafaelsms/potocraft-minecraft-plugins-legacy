@@ -27,6 +27,7 @@ configuration:
       default_deletion_payback: 0.3
       groups_deletion_payback:
         potocraft.protection.payback.vip: 0.6
+      maximum_xz_selection_ratio: 6.5
 
 language:
   errors:
@@ -81,6 +82,7 @@ language:
       <gold>Digite <click:run_command:'/proteger cancelar'><hover:show_text:'<gold><yellow>Clique</yellow> para cancelar a seleção.</gold>'><yellow><bold>/proteger cancelar</bold></yellow></hover></click> para cancelar a seleção.</gold>
     selection_required: "<gold>Para iniciar uma seleção, bata com uma <yellow><lang:item.minecraft.golden_shovel></yellow> no chão.</gold>"
     region_required: "<red>É necessário estar dentro de uma região.</red>"
+    too_narrow: "<red>Sua seleção é muito estreita, longa. Faça mais retangular!</red>"
   regions:
     greeting_title: "<green>Região particular.</green>"
     leaving_title: "<red>Saindo de região particular.</red>"

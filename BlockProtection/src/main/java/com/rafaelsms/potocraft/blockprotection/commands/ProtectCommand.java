@@ -127,6 +127,11 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
                     sender.sendMessage(plugin.getConfiguration().getSelectionNotEnoughVolume());
                     return true;
                 }
+                // Check volume ratio
+                if (!selectionOptional.get().testMaximumXZRatio()) {
+                    sender.sendMessage(plugin.getConfiguration().getSelectionTooNarrow());
+                    return true;
+                }
 
                 ProtectedRegion existingRegion = selection.getExistingProtectedRegion().get();
                 Optional<ProtectedRegion> newRegion = selection.getProtectedRegion(existingRegion.getId(), false);
@@ -210,6 +215,11 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
             // Check volume cost
             if (!user.hasEnoughVolume(selectionOptional.get().getVolumeCost())) {
                 sender.sendMessage(plugin.getConfiguration().getSelectionNotEnoughVolume());
+                return true;
+            }
+            // Check volume ratio
+            if (!selectionOptional.get().testMaximumXZRatio()) {
+                sender.sendMessage(plugin.getConfiguration().getSelectionTooNarrow());
                 return true;
             }
 
