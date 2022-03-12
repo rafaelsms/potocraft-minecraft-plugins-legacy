@@ -100,7 +100,9 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ProjectileListener(this), this);
         getServer().getPluginManager().registerEvents(new NightVisionListener(), this);
         getServer().getPluginManager().registerEvents(new FirstSpawnPointListener(this), this);
-        getServer().getPluginManager().registerEvents(new PurpurEnderchestBlocker(this), this);
+        if (configuration.isBlockEnderchestWithoutPermissions()) {
+            getServer().getPluginManager().registerEvents(new PurpurEnderchestBlocker(this), this);
+        }
         if (noEquipmentDamageFlag != null) {
             getServer().getPluginManager().registerEvents(noEquipmentDamageFlag, this);
         }
