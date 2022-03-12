@@ -22,6 +22,7 @@ configuration:
   delay_between_death_messages_seconds: 90
   delay_between_login_messages_seconds: 45
   force_first_spawn_location: true
+  block_purpur_enderchests_without_permissions: true
   experience_modifier:
     enabled: true
     default_modifier: 0.8
@@ -77,6 +78,9 @@ configuration:
       constant_pvp_setting: false
 
 language:
+  no_enderchest_permissions:
+    kick_message: "<red>Falha ao checar permissões!</red><newline><red>Não poderá entrar para evitar a perda de itens.</red>"
+    warning_message: "<red>Falha ao checar permissões para enderchest</red>"
   commands:
     player_only: "<red>Comando disponível apenas para jogadores</red>"
     player_not_found: "<red>Jogador não encontrado!</red>"

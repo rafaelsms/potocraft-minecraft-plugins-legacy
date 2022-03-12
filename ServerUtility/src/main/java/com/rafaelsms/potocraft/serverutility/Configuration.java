@@ -264,6 +264,10 @@ public class Configuration extends YamlFile {
         return get("configuration.force_first_spawn_location");
     }
 
+    public Boolean isBlockEnderchestWithoutPermissions() {
+        return get("configuration.block_purpur_enderchests_without_permissions");
+    }
+
     public List<World> getSyncedTimeWorlds() {
         List<World> worlds = new ArrayList<>();
         List<String> worldNames = Objects.requireNonNull(get("configuration.worlds_with_synced_real_time"));
@@ -343,9 +347,17 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponent(get("language.commands.fly.help"));
     }
 
-    public Component getFlyStatus(String playerName, boolean allowFlight) {
+    public Component getFlyStatus(@NotNull String playerName, boolean allowFlight) {
         return TextUtil.toComponent(get("language.commands.fly.status"),
                                     Placeholder.unparsed("username", playerName),
                                     Placeholder.unparsed("flying", allowFlight ? "enabled" : "disabled"));
+    }
+
+    public Component getFailedEnderchestKickMessage() {
+        return TextUtil.toComponent(get("language.no_enderchest_permissions.kick_message"));
+    }
+
+    public Component getFailedEnderchestInventoryMessage() {
+        return TextUtil.toComponent(get("language.no_enderchest_permissions.warning_message"));
     }
 }

@@ -8,6 +8,7 @@ description: Utility plugin for PotoCraft.
 load: STARTUP
 softdepend:
   - WorldGuard
+  - LuckPerms
 commands:
   enderchest:
     description: Opens your enderchest wherever you are.

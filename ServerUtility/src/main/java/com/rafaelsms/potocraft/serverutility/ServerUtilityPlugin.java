@@ -23,6 +23,7 @@ import com.rafaelsms.potocraft.serverutility.listeners.LavaListener;
 import com.rafaelsms.potocraft.serverutility.listeners.NightVisionListener;
 import com.rafaelsms.potocraft.serverutility.listeners.PlayerLogging;
 import com.rafaelsms.potocraft.serverutility.listeners.ProjectileListener;
+import com.rafaelsms.potocraft.serverutility.listeners.PurpurEnderchestBlocker;
 import com.rafaelsms.potocraft.serverutility.listeners.QuickBreakOreListener;
 import com.rafaelsms.potocraft.serverutility.listeners.QuickBreakTreeListener;
 import com.rafaelsms.potocraft.serverutility.listeners.QuickReplantListener;
@@ -99,6 +100,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ProjectileListener(this), this);
         getServer().getPluginManager().registerEvents(new NightVisionListener(), this);
         getServer().getPluginManager().registerEvents(new FirstSpawnPointListener(this), this);
+        getServer().getPluginManager().registerEvents(new PurpurEnderchestBlocker(this), this);
         if (noEquipmentDamageFlag != null) {
             getServer().getPluginManager().registerEvents(noEquipmentDamageFlag, this);
         }
