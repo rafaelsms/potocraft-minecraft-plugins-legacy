@@ -113,6 +113,7 @@ public class ChatListener implements Listener {
         // Check player permission
         if (!player.hasPermission(Permissions.GLOBAL_CHAT)) {
             player.sendMessage(plugin.getConfiguration().getNoPermission());
+            event.setCancelled(true);
             return;
         }
 
@@ -175,6 +176,7 @@ public class ChatListener implements Listener {
         // Check player permission
         if (!player.hasPermission(Permissions.UNIVERSAL_CHAT)) {
             player.sendMessage(plugin.getConfiguration().getNoPermission());
+            event.setCancelled(true);
             return;
         }
 
