@@ -27,11 +27,12 @@ public class PingCommand extends Command implements TabExecutor {
     public void execute(CommandSender sender, String[] args) {
         if (args.length < 1) {
             if (!(sender instanceof ProxiedPlayer player)) {
-                sender.sendMessage(plugin.getConfiguration().getCommandPingHelp());
+                // Calculate average ping for console
+                sender.sendMessage(plugin.getConfiguration().getCommandPing(-1, getAveragePing()));
                 return;
             }
 
-            sender.sendMessage(plugin.getConfiguration().getCommandPing(player.getPing()));
+            sender.sendMessage(plugin.getConfiguration().getCommandPing(player.getPing(), getAveragePing()));
             return;
         }
         if (!sender.hasPermission(Permissions.COMMAND_PING_OTHERS)) {
@@ -47,11 +48,29 @@ public class PingCommand extends Command implements TabExecutor {
             return;
         }
         sender.sendMessage(plugin.getConfiguration()
-                                 .getCommandPingOthers(playerOptional.get().getName(), playerOptional.get().getPing()));
+                                 .getCommandPingOthers(playerOptional.get().getName(),
+                                                       playerOptional.get().getPing(),
+                                                       getAveragePing()));
     }
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
         return Util.convertList(plugin.getProxy().getPlayers(), ProxiedPlayer::getName);
+    }
+
+    private int getAveragePing() {
+        int playerCount = 0;
+        int sum = 0;
+        for (ProxiedPlayer player : plugin.getProxy().getPlayers()) {
+            int ping = player.getPing();
+            if (ping >= 0) {
+                sum += ping;
+                playerCount++;
+            }
+        }
+        if (playerCount == 0) {
+            return 0;
+        }
+        return sum / playerCount;
     }
 }
