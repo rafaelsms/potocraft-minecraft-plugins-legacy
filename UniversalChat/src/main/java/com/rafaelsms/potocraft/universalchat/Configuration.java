@@ -2,6 +2,7 @@ package com.rafaelsms.potocraft.universalchat;
 
 import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.util.TextUtil;
+import com.rafaelsms.potocraft.util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -72,6 +74,20 @@ public class Configuration extends YamlFile {
     public Duration getDirectMessagesReplyDuration() {
         return Duration.ofSeconds(Objects.requireNonNull(getInt(
                 "configuration.direct_messages.reply_time_amount_seconds")));
+    }
+
+    public boolean getBroadcastEnabled() {
+        return Objects.requireNonNull(get("configuration.broadcast_messages.enabled"));
+    }
+
+    public Duration getBroadcastPeriod() {
+        return Duration.ofSeconds(Objects.requireNonNull(getInt("configuration.broadcast_messages.period_in_seconds")));
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<BaseComponent[]> getBroadcastMessages() {
+        return Util.convertList((Collection<String>) get("configuration.broadcast_messages.messages"),
+                                TextUtil::toComponentBungee);
     }
 
     public List<String> getBlockedWordsList() {
