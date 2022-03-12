@@ -23,6 +23,7 @@ configuration:
   delay_between_login_messages_seconds: 45
   force_first_spawn_location: true
   block_purpur_enderchests_without_permissions: true
+  nearby_players_range_blocks: 150.0
   experience_modifier:
     enabled: true
     default_modifier: 0.8
@@ -98,3 +99,6 @@ language:
     fly:
       help: "<gold>Uso: <yellow>/fly [nome]</yellow></gold>"
       status: "<gold><yellow><username></yellow> está com modo de voo <yellow><flying></yellow></gold>"
+    near:
+      nobody_near_you: "<gold>Não há ninguém próximo de você.</gold>"
+      nearby_players: "<gold>Jogadores próximos: <yellow><list></yellow></gold>"

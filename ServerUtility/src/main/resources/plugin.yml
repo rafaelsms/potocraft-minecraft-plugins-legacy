@@ -42,3 +42,6 @@ commands:
     aliases: [ flight, voar ]
   sendwebhook:
     description: Sends a Discord Webhook message.
+  near:
+    description: Shows nearby players around you or around other player.
+    aliases: [ proximo, perto ]

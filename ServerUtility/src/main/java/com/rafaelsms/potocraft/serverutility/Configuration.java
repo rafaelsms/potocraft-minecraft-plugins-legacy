@@ -268,6 +268,10 @@ public class Configuration extends YamlFile {
         return get("configuration.block_purpur_enderchests_without_permissions");
     }
 
+    public double getNearbyPlayersRange() {
+        return Objects.requireNonNull(getDouble("configuration.nearby_players_range_blocks"));
+    }
+
     public List<World> getSyncedTimeWorlds() {
         List<World> worlds = new ArrayList<>();
         List<String> worldNames = Objects.requireNonNull(get("configuration.worlds_with_synced_real_time"));
@@ -309,6 +313,14 @@ public class Configuration extends YamlFile {
             builder.setConstantCombat(constantCombat);
         }
         return builder.build();
+    }
+
+    public Component getFailedEnderchestKickMessage() {
+        return TextUtil.toComponent(get("language.no_enderchest_permissions.kick_message"));
+    }
+
+    public Component getFailedEnderchestInventoryMessage() {
+        return TextUtil.toComponent(get("language.no_enderchest_permissions.warning_message"));
     }
 
     public Component getPlayerOnly() {
@@ -353,11 +365,15 @@ public class Configuration extends YamlFile {
                                     Placeholder.unparsed("flying", allowFlight ? "enabled" : "disabled"));
     }
 
-    public Component getFailedEnderchestKickMessage() {
-        return TextUtil.toComponent(get("language.no_enderchest_permissions.kick_message"));
-    }
-
-    public Component getFailedEnderchestInventoryMessage() {
-        return TextUtil.toComponent(get("language.no_enderchest_permissions.warning_message"));
+    public Component getNearbyPlayers(@NotNull Map<Player, Double> nearbyPlayers) {
+        if (nearbyPlayers.isEmpty()) {
+            return TextUtil.toComponent(get("language.commands.near.nobody_near_you"));
+        }
+        String playerList = TextUtil.joinStrings(nearbyPlayers.entrySet(),
+                                                 ", ",
+                                                 entry -> "%s (%f)".formatted(entry.getKey().getName(),
+                                                                              entry.getValue()));
+        return TextUtil.toComponent(get("language.commands.near.nearby_players"),
+                                    Placeholder.parsed("list", playerList));
     }
 }

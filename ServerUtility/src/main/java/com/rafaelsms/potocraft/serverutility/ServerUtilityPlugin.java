@@ -7,6 +7,7 @@ import com.rafaelsms.potocraft.serverutility.commands.EnderchestCommand;
 import com.rafaelsms.potocraft.serverutility.commands.FlightCommand;
 import com.rafaelsms.potocraft.serverutility.commands.GameModeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.KillCommand;
+import com.rafaelsms.potocraft.serverutility.commands.NearCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerTimeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerWeatherCommand;
 import com.rafaelsms.potocraft.serverutility.commands.SendDiscordhookCommand;
@@ -127,7 +128,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         registerCommand("kill", new KillCommand(this));
         registerCommand("fly", new FlightCommand(this));
         registerCommand("sendwebhook", new SendDiscordhookCommand(this));
-        // TODO make command to prevent equipment damage temporarily
+        registerCommand("near", new NearCommand(this));
 
         logger().info("ServerUtility enabled!");
     }
