@@ -123,6 +123,12 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(plugin.getConfiguration().getProtectExpandHelp());
             } else {
                 Selection selection = selectionOptional.get();
+                // Check if other regions exists in the same place
+                if (selectionOptional.get().hasOtherProtectedRegionsOnSelection().orElse(true)) {
+                    sender.sendMessage(plugin.getConfiguration().getSelectionInsideOtherRegion());
+                    return true;
+                }
+                // Check if player has enough volume
                 if (!user.hasEnoughVolume(selection.getVolumeCost())) {
                     sender.sendMessage(plugin.getConfiguration().getSelectionNotEnoughVolume());
                     return true;
@@ -210,6 +216,11 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
             Optional<Selection> selectionOptional = user.getSelection();
             if (selectionOptional.isEmpty()) {
                 sender.sendMessage(plugin.getConfiguration().getSelectionRequired());
+                return true;
+            }
+            // Check if other regions exists
+            if (selectionOptional.get().hasOtherProtectedRegionsOnSelection().orElse(true)) {
+                sender.sendMessage(plugin.getConfiguration().getSelectionInsideOtherRegion());
                 return true;
             }
             // Check volume cost

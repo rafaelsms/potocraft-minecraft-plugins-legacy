@@ -7,6 +7,7 @@ import com.rafaelsms.potocraft.blockprotection.util.ProtectionUtil;
 import com.rafaelsms.potocraft.blockprotection.util.WorldGuardUtil;
 import com.rafaelsms.potocraft.util.Util;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -53,6 +54,34 @@ public class Selection implements Runnable {
         this.volumeCredit = calculateVolume(lowestPoint, highestPoint);
     }
 
+    public Optional<Boolean> hasOtherProtectedRegionsOnSelection() {
+        // Make the worst
+        if (selectionWorld == null || lowestPoint == null || highestPoint == null) {
+            return Optional.empty();
+        }
+        try {
+            RegionManager regionManager = plugin.getRegionManagerInstance(selectionWorld);
+            ProtectedCuboidRegion region = getTemporaryRegion(lowestPoint, highestPoint);
+            ApplicableRegionSet applicableRegions = regionManager.getApplicableRegions(region);
+            if (applicableRegions.size() > 0) {
+                // Check if we are intersecting a prohibited region
+                for (ProtectedRegion applicableRegion : applicableRegions) {
+                    if (applicableRegion.getType() == RegionType.GLOBAL) {
+                        continue;
+                    }
+                    // Ignore if we are editing this region
+                    if (protectedRegion != null && applicableRegion.getId().equalsIgnoreCase(protectedRegion.getId())) {
+                        continue;
+                    }
+                    return Optional.of(true);
+                }
+            }
+        } catch (ProtectionException e) {
+            return Optional.empty();
+        }
+        return Optional.of(false);
+    }
+
     public Result select(@NotNull Location location) {
         // Check for selection world
         if (location.getWorld() == null) {
@@ -71,31 +100,55 @@ public class Selection implements Runnable {
             this.highestPoint = null;
         }
 
+        // Check if we can expand instead
+        try {
+            if (this.lowestPoint == null || this.highestPoint == null) {
+                LocalPlayer player = WorldGuardUtil.toLocalPlayer(user.getPlayer());
+                RegionManager regionManager = plugin.getRegionManagerInstance(selectionWorld);
+                BlockVector3 position = WorldGuardUtil.toBlockVector3(location);
+                ApplicableRegionSet applicableRegions = regionManager.getApplicableRegions(position);
+                if (applicableRegions.size() > 0) {
+                    for (ProtectedRegion applicableRegion : applicableRegions) {
+                        if (applicableRegion.getType() == RegionType.GLOBAL) {
+                            continue;
+                        }
+                        if (!applicableRegion.isOwner(player)) {
+                            return Result.NO_PERMISSION;
+                        } else if (protectedRegion == null) {
+                            // Select current
+                            this.protectedRegion = applicableRegion;
+                            this.lowestPoint =
+                                    BukkitAdapter.adapt(location.getWorld(), protectedRegion.getMinimumPoint());
+                            this.highestPoint =
+                                    BukkitAdapter.adapt(location.getWorld(), protectedRegion.getMaximumPoint());
+                        } else {
+                            // If we are expanding and already found another region, something is wrong
+                            return Result.OTHER_REGION_FOUND;
+                        }
+                    }
+                }
+            }
+        } catch (ProtectionException ignored) {
+            return Result.FAILED_PROTECTION_FETCH;
+        }
+
         // Find lowest and highest points
-        Location lowestPoint = Util.getOrElse(this.lowestPoint, location.clone());
-        Location highestPoint = Util.getOrElse(this.highestPoint, location.clone());
+        Location currentLowestPoint = Util.getOrElse(this.lowestPoint, location.clone());
+        Location currentHighestPoint = Util.getOrElse(this.highestPoint, location.clone());
         int minYOffset = plugin.getConfiguration().getSelectionMinYOffset();
         int maxYOffset = plugin.getConfiguration().getSelectionMaxYOffset();
         int xzOffset = plugin.getConfiguration().getSelectionXZOffset();
-        int minX = Math.min(lowestPoint.getBlockX(), location.getBlockX() - xzOffset);
-        int maxX = Math.max(highestPoint.getBlockX(), location.getBlockX() + xzOffset);
-        int minY = Math.min(lowestPoint.getBlockY(), location.getBlockY() - minYOffset);
-        int maxY = Math.max(highestPoint.getBlockY(), location.getBlockY() + maxYOffset);
-        int minZ = Math.min(lowestPoint.getBlockZ(), location.getBlockZ() - xzOffset);
-        int maxZ = Math.max(highestPoint.getBlockZ(), location.getBlockZ() + xzOffset);
+        Location selectionLowestPoint = location.clone().add(-xzOffset, -minYOffset, -xzOffset);
+        Location selectionHighestPoint = location.clone().add(+xzOffset, maxYOffset, +xzOffset);
         // Make points
-        lowestPoint = new Location(selectionWorld, minX, minY, minZ);
-        highestPoint = new Location(selectionWorld, maxX, maxY, maxZ);
-
-        // Check for overall maximum volume
-        int selectionVolume = calculateVolume(lowestPoint, highestPoint);
-        if (selectionVolume >= plugin.getConfiguration().getOverallMaximumVolume()) {
-            return Result.MAX_VOLUME_EXCEEDED;
+        Location lowestPoint = ProtectionUtil.getMinimumCoordinates(currentLowestPoint, selectionLowestPoint);
+        Location highestPoint = ProtectionUtil.getMaximumCoordinates(currentHighestPoint, selectionHighestPoint);
+        if (ProtectionUtil.isLocationHigher(lowestPoint, highestPoint)) {
+            return Result.NO_PERMISSION;
         }
 
-        // Check for nearby permissions
+        // Check for nearby regions
         try {
-            LocalPlayer player = WorldGuardUtil.toLocalPlayer(user.getPlayer());
             RegionManager regionManager = plugin.getRegionManagerInstance(selectionWorld);
             ProtectedCuboidRegion region = getTemporaryRegion(lowestPoint, highestPoint);
             ApplicableRegionSet applicableRegions = regionManager.getApplicableRegions(region);
@@ -105,23 +158,29 @@ public class Selection implements Runnable {
                     if (applicableRegion.getType() == RegionType.GLOBAL) {
                         continue;
                     }
-                    if (!applicableRegion.isOwner(player)) {
-                        return Result.NO_PERMISSION;
+                    // Ignore if we are editing this region
+                    if (protectedRegion != null && applicableRegion.getId().equalsIgnoreCase(protectedRegion.getId())) {
+                        continue;
                     }
-                    // Check if we are expanding a region
-                    if (protectedRegion != null) {
-                        // Block it if it is yet another region
-                        if (!applicableRegion.getId().equalsIgnoreCase(protectedRegion.getId())) {
-                            return Result.OTHER_REGION_FOUND;
-                        }
-                    } else {
-                        // If not and we found another region, suggest expanding it
+                    // Adapt selection around existing regions
+                    Location minPoint = BukkitAdapter.adapt(location.getWorld(), applicableRegion.getMinimumPoint());
+                    Location maxPoint = BukkitAdapter.adapt(location.getWorld(), applicableRegion.getMaximumPoint());
+                    lowestPoint = ProtectionUtil.getMaximumCoordinates(minPoint, lowestPoint);
+                    highestPoint = ProtectionUtil.getMinimumCoordinates(maxPoint, highestPoint);
+                    // If this breaks our selection, restart
+                    if (ProtectionUtil.isLocationHigher(lowestPoint, highestPoint)) {
                         return Result.OTHER_REGION_FOUND;
                     }
                 }
             }
         } catch (ProtectionException ignored) {
             return Result.FAILED_PROTECTION_FETCH;
+        }
+
+        // Check for overall maximum volume
+        int selectionVolume = calculateVolume(lowestPoint, highestPoint);
+        if (selectionVolume >= plugin.getConfiguration().getOverallMaximumVolume()) {
+            return Result.MAX_VOLUME_EXCEEDED;
         }
 
         // Check for player available volume
@@ -211,7 +270,6 @@ public class Selection implements Runnable {
         OTHER_REGION_FOUND,
         MAX_VOLUME_EXCEEDED,
         NOT_ENOUGH_VOLUME,
-        VOLUME_EXCEED_PERMISSION,
         NO_PERMISSION,
         ALLOWED;
 
@@ -220,11 +278,7 @@ public class Selection implements Runnable {
         }
 
         public boolean shouldCancel() {
-            return switch (this) {
-                case WORLD_NOT_PROTECTED, MAX_VOLUME_EXCEEDED, FAILED_PROTECTION_FETCH, INVALID_LOCATION, NO_PERMISSION ->
-                        true;
-                default -> false;
-            };
+            return !isSuccessful();
         }
     }
 }

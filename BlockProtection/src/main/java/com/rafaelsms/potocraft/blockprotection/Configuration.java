@@ -235,10 +235,6 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponent(get("language.selection.minimum_volume_required"));
     }
 
-    public Component getSelectionVolumeExceedPermission() {
-        return TextUtil.toComponent(get("language.selection.volume_exceed_permission"));
-    }
-
     public Component getSelectionInvalidLocation() {
         return TextUtil.toComponent(get("language.selection.invalid_location"));
     }
