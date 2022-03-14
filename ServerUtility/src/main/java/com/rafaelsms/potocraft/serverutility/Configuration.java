@@ -265,7 +265,15 @@ public class Configuration extends YamlFile {
     }
 
     public Boolean isBlockEnderchestWithoutPermissions() {
-        return get("configuration.block_purpur_enderchests_without_permissions");
+        return get("configuration.purpur_permissions.block_enderchest_without_permissions");
+    }
+
+    public Boolean isBlockSpawnerPlaceWithoutPermission() {
+        return get("configuration.purpur_permissions.block_spawner_place_without_permissions");
+    }
+
+    public Boolean isWarnOnSpawnerBlockDamage() {
+        return get("configuration.purpur_permissions.warn_on_spawner_damage");
     }
 
     public double getNearbyPlayersRange() {
@@ -315,12 +323,20 @@ public class Configuration extends YamlFile {
         return builder.build();
     }
 
+    public Component getSpawnerNoPermissionToPlace() {
+        return TextUtil.toComponent(get("language.purpur_permissions.spawner_permissions.no_permission_to_place"));
+    }
+
+    public Component getSpawnerWarningBreak() {
+        return TextUtil.toComponent(get("language.purpur_permissions.spawner_permissions.warning_message"));
+    }
+
     public Component getFailedEnderchestKickMessage() {
-        return TextUtil.toComponent(get("language.no_enderchest_permissions.kick_message"));
+        return TextUtil.toComponent(get("language.purpur_permissions.enderchest_permissions.kick_message"));
     }
 
     public Component getFailedEnderchestInventoryMessage() {
-        return TextUtil.toComponent(get("language.no_enderchest_permissions.warning_message"));
+        return TextUtil.toComponent(get("language.purpur_permissions.enderchest_permissions.warning_message"));
     }
 
     public Component getPlayerOnly() {

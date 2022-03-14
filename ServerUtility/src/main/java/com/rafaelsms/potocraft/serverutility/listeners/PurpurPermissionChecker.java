@@ -7,8 +7,12 @@ import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.cacheddata.CachedPermissionData;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.types.PermissionNode;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -19,8 +23,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class PurpurEnderchestBlocker implements Listener {
+public class PurpurPermissionChecker implements Listener {
 
+    private final String PLACE_SPAWNER_PERMISSION = "purpur.place.spawners";
     private final String MAXIMUM_ENDERCHEST_PERMISSION = "purpur.enderchest.rows.six";
     private final Set<String> enderchestPermissions = Set.of("purpur.enderchest.rows.one",
                                                              "purpur.enderchest.rows.two",
@@ -31,13 +36,13 @@ public class PurpurEnderchestBlocker implements Listener {
 
     private final @NotNull ServerUtilityPlugin plugin;
 
-    public PurpurEnderchestBlocker(@NotNull ServerUtilityPlugin plugin) {
+    public PurpurPermissionChecker(@NotNull ServerUtilityPlugin plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
     private void preventJoin(AsyncPlayerPreLoginEvent event) {
-        if (isMissingPermission(event.getUniqueId())) {
+        if (isMissingEnderchestPermission(event.getUniqueId())) {
             Component message = plugin.getConfiguration().getFailedEnderchestKickMessage();
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, message);
         }
@@ -46,7 +51,7 @@ public class PurpurEnderchestBlocker implements Listener {
     @EventHandler
     private void preventOpenInventory(InventoryOpenEvent event) {
         if (event.getInventory().getType() == InventoryType.ENDER_CHEST &&
-            isMissingPermission(event.getPlayer().getUniqueId())) {
+            isMissingEnderchestPermission(event.getPlayer().getUniqueId())) {
             event.getPlayer().sendMessage(plugin.getConfiguration().getFailedEnderchestInventoryMessage());
             event.setCancelled(true);
         }
@@ -54,8 +59,8 @@ public class PurpurEnderchestBlocker implements Listener {
 
     @EventHandler
     private void setPermissionToQuit(PlayerQuitEvent event) {
-        if (isMissingPermission(event.getPlayer().getUniqueId()) &&
-            !setTemporaryPermission(event.getPlayer().getUniqueId())) {
+        if (isMissingEnderchestPermission(event.getPlayer().getUniqueId()) &&
+            !setTemporaryEnderchestPermission(event.getPlayer().getUniqueId())) {
             plugin.logger()
                   .error("Player is missing enderchest permissions and couldn't set up temporary one: {} (UUID = {})",
                          event.getPlayer().getName(),
@@ -63,7 +68,10 @@ public class PurpurEnderchestBlocker implements Listener {
         }
     }
 
-    private boolean isMissingPermission(@NotNull UUID playerId) {
+    private boolean isMissingEnderchestPermission(@NotNull UUID playerId) {
+        if (!plugin.getConfiguration().isBlockEnderchestWithoutPermissions()) {
+            return false;
+        }
         try {
             LuckPerms luckPerms = LuckPermsProvider.get();
             User user = luckPerms.getUserManager().loadUser(playerId).join();
@@ -79,7 +87,7 @@ public class PurpurEnderchestBlocker implements Listener {
         }
     }
 
-    private boolean setTemporaryPermission(@NotNull UUID playerId) {
+    private boolean setTemporaryEnderchestPermission(@NotNull UUID playerId) {
         try {
             LuckPerms luckPerms = LuckPermsProvider.get();
             User user = luckPerms.getUserManager().loadUser(playerId).join();
@@ -92,5 +100,37 @@ public class PurpurEnderchestBlocker implements Listener {
         } catch (Throwable ignored) {
             return false;
         }
+    }
+
+    @EventHandler
+    private void preventSpawnerPlacement(BlockPlaceEvent event) {
+        if (event.getBlockPlaced().getType() != Material.SPAWNER) {
+            return;
+        }
+        if (!plugin.getConfiguration().isBlockSpawnerPlaceWithoutPermission()) {
+            return;
+        }
+        if (event.getPlayer().hasPermission(PLACE_SPAWNER_PERMISSION)) {
+            return;
+        }
+        if (event.getPlayer().getGameMode() != GameMode.SURVIVAL) {
+            return;
+        }
+        event.getPlayer().sendMessage(plugin.getConfiguration().getSpawnerNoPermissionToPlace());
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    private void warnSpawnerBreak(BlockDamageEvent event) {
+        if (event.getBlock().getType() != Material.SPAWNER) {
+            return;
+        }
+        if (!plugin.getConfiguration().isWarnOnSpawnerBlockDamage()) {
+            return;
+        }
+        if (event.getPlayer().getGameMode() != GameMode.SURVIVAL) {
+            return;
+        }
+        event.getPlayer().sendMessage(plugin.getConfiguration().getSpawnerWarningBreak());
     }
 }

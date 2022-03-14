@@ -22,7 +22,10 @@ configuration:
   delay_between_death_messages_seconds: 90
   delay_between_login_messages_seconds: 45
   force_first_spawn_location: true
-  block_purpur_enderchests_without_permissions: true
+  purpur_permissions:
+    block_enderchest_without_permissions: true
+    block_spawner_place_without_permissions: true
+    warn_on_spawner_damage: true
   nearby_players_range_blocks: 150.0
   experience_modifier:
     enabled: true
@@ -79,9 +82,13 @@ configuration:
       constant_pvp_setting: false
 
 language:
-  no_enderchest_permissions:
-    kick_message: "<red>Falha ao checar permissões!</red><newline><red>Não poderá entrar para evitar a perda de itens.</red>"
-    warning_message: "<red>Falha ao checar permissões para enderchest</red>"
+  purpur_permissions:
+    spawner_permissions:
+      no_permission_to_place: "<red>Você não é VIP para conseguir colocar spawners.</red>"
+      warning_message: "<gold>Apenas VIPs com <lang:item.minecraft.netherite_pickaxe> encantada com <lang:enchantment.minecraft.silk_touche> podem quebrar e obter o spawner.</gold>"
+    enderchest_permissions:
+      kick_message: "<red>Falha ao checar permissões!</red><newline><red>Não poderá entrar para evitar a perda de itens.</red>"
+      warning_message: "<red>Falha ao checar permissões para enderchest</red>"
   commands:
     player_only: "<red>Comando disponível apenas para jogadores</red>"
     player_not_found: "<red>Jogador não encontrado!</red>"

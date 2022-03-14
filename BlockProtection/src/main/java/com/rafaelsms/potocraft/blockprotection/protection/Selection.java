@@ -162,11 +162,14 @@ public class Selection implements Runnable {
                     if (protectedRegion != null && applicableRegion.getId().equalsIgnoreCase(protectedRegion.getId())) {
                         continue;
                     }
+                    // TODO fix this logic (relevant screenshot)
                     // Adapt selection around existing regions
                     Location minPoint = BukkitAdapter.adapt(location.getWorld(), applicableRegion.getMinimumPoint());
                     Location maxPoint = BukkitAdapter.adapt(location.getWorld(), applicableRegion.getMaximumPoint());
-                    lowestPoint = ProtectionUtil.getMaximumCoordinates(minPoint, lowestPoint);
-                    highestPoint = ProtectionUtil.getMinimumCoordinates(maxPoint, highestPoint);
+                    boolean highestIsHigher = ProtectionUtil.isLocationHigher(highestPoint, maxPoint);
+                    boolean lowestIsLower = ProtectionUtil.isLocationHigher(lowestPoint, minPoint);
+                    lowestPoint = ProtectionUtil.getMaximumCoordinates(minPoint.add(+1, +1, +1), lowestPoint);
+                    highestPoint = ProtectionUtil.getMinimumCoordinates(minPoint.add(-1, 0, -1), highestPoint);
                     // If this breaks our selection, restart
                     if (ProtectionUtil.isLocationHigher(lowestPoint, highestPoint)) {
                         return Result.OTHER_REGION_FOUND;
