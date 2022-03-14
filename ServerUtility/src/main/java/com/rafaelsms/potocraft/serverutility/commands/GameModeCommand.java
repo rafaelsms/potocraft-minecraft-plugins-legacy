@@ -73,7 +73,7 @@ public class GameModeCommand implements CommandExecutor, TabCompleter {
         }
 
         Player gamemodePlayer;
-        if (args.length > 1) { // this args already excludes the possibly gamemode-related argument
+        if (args.length > 0) { // this args already excludes the possibly gamemode-related argument
             if (!sender.hasPermission(Permissions.COMMAND_GAMEMODE_OTHERS)) {
                 sender.sendMessage(plugin.getServer().getPermissionMessage());
                 return;
