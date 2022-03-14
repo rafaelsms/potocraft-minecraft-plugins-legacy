@@ -4,6 +4,7 @@ import com.rafaelsms.potocraft.serverutility.Permissions;
 import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -70,6 +71,12 @@ public class NearCommand implements CommandExecutor, TabCompleter {
         double maxDistance = plugin.getConfiguration().getNearbyPlayersRange();
         for (Player otherPlayer : player.getWorld().getPlayers()) {
             if (otherPlayer.getUniqueId().equals(player.getUniqueId())) {
+                continue;
+            }
+            if (otherPlayer.getGameMode() == GameMode.CREATIVE || otherPlayer.getGameMode() == GameMode.SPECTATOR) {
+                continue;
+            }
+            if (otherPlayer.hasPermission(Permissions.COMMAND_NEAR_BYPASS)) {
                 continue;
             }
             double distance = player.getLocation().distance(otherPlayer.getLocation());

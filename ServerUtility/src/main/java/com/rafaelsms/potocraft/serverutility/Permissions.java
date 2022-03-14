@@ -29,6 +29,7 @@ public final class Permissions {
     public static final String COMMAND_FLY_OTHERS = "potocraft.server.fly.others";
     public static final String COMMAND_SEND_WEBHOOK = "potocraft.server.sendwebhook";
     public static final String COMMAND_NEAR = "potocraft.server.near";
+    public static final String COMMAND_NEAR_BYPASS = "potocraft.server.near.bypass";
     public static final String COMMAND_NEAR_OTHERS = "potocraft.server.near.others";
 
     // Private constructor
