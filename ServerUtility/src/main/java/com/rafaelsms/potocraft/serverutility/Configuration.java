@@ -407,8 +407,8 @@ public class Configuration extends YamlFile {
         }
         String playerList = TextUtil.joinStrings(nearbyPlayers.entrySet(),
                                                  ", ",
-                                                 entry -> "%s (%f)".formatted(entry.getKey().getName(),
-                                                                              entry.getValue()));
+                                                 entry -> "%s (%.1f)".formatted(entry.getKey().getName(),
+                                                                                entry.getValue()));
         return TextUtil.toComponent(get("language.commands.near.nearby_players"),
                                     Placeholder.parsed("list", playerList));
     }
