@@ -1,13 +1,27 @@
 configuration:
   damage_modifiers:
-    overall_damage_dealt_multiplier: 0.885
-    pvp_damage_multiplier: 1.125
-    armor_damage_reduction_multiplier: 0.845
-    enchantment_damage_reduction_multiplier: 0.793
-    damage_cooldown_factor: 0.72
-    arrow_damage_multiplier: 1.5
+    overall_damage_dealt_multiplier: 1.0
+    pvp_damage_multiplier: 1.0
+    damage_cooldown_factor: 0.0
+    arrow_damage_multiplier: 1.0
     arrow_velocity_multiplier: 1.0
     arrow_affected_by_gravity: true
+    # Each will be multiplied for every armor type
+    # so small changes have great gameplay impact
+    # For instance:
+    #   Full netherite = (netherite modifier)^4
+    per_armor_type:
+      leather_modifier: 1.0
+      iron_chain_modifier: 1.0
+      iron_modifier: 1.0
+      gold_modifier: 1.0
+      diamond_modifier: 1.0
+      netherite_modifier: 1.0
+    per_protection_enchantment:
+      - 1.0 # level 1
+      - 1.0 # level 2
+      - 1.0 # level 3
+      - 1.0 # level 4
   villager:
     prevent_all_enchanted_books: false
     prevent_treasure_enchanted_books: true
@@ -85,7 +99,7 @@ language:
   purpur_permissions:
     spawner_permissions:
       no_permission_to_place: "<red>Você não é VIP para conseguir colocar spawners.</red>"
-      warning_message: "<gold>Apenas VIPs com <lang:item.minecraft.netherite_pickaxe> encantada com <lang:enchantment.minecraft.silk_touche> podem quebrar e obter o spawner.</gold>"
+      warning_message: "<gold>Apenas VIPs com <lang:item.minecraft.netherite_pickaxe> encantada com <lang:enchantment.minecraft.silk_touch> podem quebrar e obter o spawner.</gold>"
     enderchest_permissions:
       kick_message: "<red>Falha ao checar permissões!</red><newline><red>Não poderá entrar para evitar a perda de itens.</red>"
       warning_message: "<red>Falha ao checar permissões para enderchest</red>"

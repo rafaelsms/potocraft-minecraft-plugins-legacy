@@ -61,14 +61,6 @@ public class Configuration extends YamlFile {
         return getDouble("configuration.damage_modifiers.pvp_damage_multiplier");
     }
 
-    public Double getArmorDamageReductionMultiplier() {
-        return getDouble("configuration.damage_modifiers.armor_damage_reduction_multiplier");
-    }
-
-    public Double getEnchantmentDamageReductionMultiplier() {
-        return getDouble("configuration.damage_modifiers.enchantment_damage_reduction_multiplier");
-    }
-
     public Double getCooldownDamageFactor() {
         return getDouble("configuration.damage_modifiers.damage_cooldown_factor");
     }
@@ -83,6 +75,34 @@ public class Configuration extends YamlFile {
 
     public Boolean isArrowAffectedByGravity() {
         return get("configuration.damage_modifiers.arrow_affected_by_gravity");
+    }
+
+    public Double getLeatherArmorModifier() {
+        return getDouble("configuration.damage_modifiers.per_armor_type.leather_modifier");
+    }
+
+    public Double getIronChainArmorModifier() {
+        return getDouble("configuration.damage_modifiers.per_armor_type.iron_chain_modifier");
+    }
+
+    public Double getIronArmorModifier() {
+        return getDouble("configuration.damage_modifiers.per_armor_type.iron_modifier");
+    }
+
+    public Double getGoldArmorModifier() {
+        return getDouble("configuration.damage_modifiers.per_armor_type.gold_modifier");
+    }
+
+    public Double getDiamondArmorModifier() {
+        return getDouble("configuration.damage_modifiers.per_armor_type.diamond_modifier");
+    }
+
+    public Double getNetheriteArmorModifier() {
+        return getDouble("configuration.damage_modifiers.per_armor_type.netherite_modifier");
+    }
+
+    public List<Double> getProtectionEnchantmentArmorMultiplier() {
+        return get("configuration.damage_modifiers.per_protection_enchantment");
     }
 
     public String getWebhookUrl() {
