@@ -4,6 +4,7 @@ import com.rafaelsms.potocraft.serverutility.Permissions;
 import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
 import com.rafaelsms.potocraft.serverutility.util.BlockSearch;
 import com.rafaelsms.potocraft.serverutility.util.FastBreakStorage;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -56,6 +57,9 @@ public class QuickBreakOreListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void quickBreakOreVein(BlockBreakEvent event) {
         Player player = event.getPlayer();
+        if (player.getGameMode() != GameMode.SURVIVAL) {
+            return;
+        }
         if (player.isSneaking()) {
             return;
         }
