@@ -87,6 +87,11 @@ public class EnchantCommand implements CommandExecutor, TabCompleter {
             }
             level = enchantment.getMaxLevel();
         }
+        if (level <= 0) {
+            hand.removeEnchantment(enchantment);
+            player.getInventory().setItemInMainHand(hand);
+            return true;
+        }
 
         hand.addEnchantment(enchantment, level);
         player.getInventory().setItemInMainHand(hand);
