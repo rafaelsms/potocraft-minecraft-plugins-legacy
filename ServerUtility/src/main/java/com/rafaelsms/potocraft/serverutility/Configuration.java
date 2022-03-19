@@ -5,6 +5,7 @@ import com.rafaelsms.potocraft.serverutility.util.WorldCombatConfig;
 import com.rafaelsms.potocraft.util.TextUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.luckperms.api.node.types.InheritanceNode;
 import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
 import org.bukkit.NamespacedKey;
@@ -284,6 +285,10 @@ public class Configuration extends YamlFile {
         return get("configuration.force_first_spawn_location");
     }
 
+    public String getVipGroupName() {
+        return get("configuration.luck_perms_vip_group_name");
+    }
+
     public Boolean isBlockEnderchestWithoutPermissions() {
         return get("configuration.purpur_permissions.block_enderchest_without_permissions");
     }
@@ -411,5 +416,20 @@ public class Configuration extends YamlFile {
                                                                                 entry.getValue()));
         return TextUtil.toComponent(get("language.commands.near.nearby_players"),
                                     Placeholder.parsed("list", playerList));
+    }
+
+    public Component getVipRemainingTime(@Nullable InheritanceNode node) {
+        if (node == null || node.hasExpired() || !node.getValue()) {
+            return TextUtil.toComponent(get("language.commands.vip.help"));
+        }
+        if (!node.hasExpiry()) {
+            return TextUtil.toComponent(get("language.commands.vip.unlimited_vip"));
+        }
+        assert node.getExpiryDuration() != null;
+        String expirationDate =
+                DateTimeFormatter.ofPattern(Objects.requireNonNull(get("language.commands.vip.date_time_format")))
+                                 .format(ZonedDateTime.now().plus(node.getExpiryDuration()));
+        return TextUtil.toComponent(get("language.commands.vip.vip_expiration_date"),
+                                    Placeholder.unparsed("expiration_date", expirationDate));
     }
 }

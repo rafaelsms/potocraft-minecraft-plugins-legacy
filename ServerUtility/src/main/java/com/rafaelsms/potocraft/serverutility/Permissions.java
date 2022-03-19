@@ -31,6 +31,7 @@ public final class Permissions {
     public static final String COMMAND_NEAR = "potocraft.server.near";
     public static final String COMMAND_NEAR_BYPASS = "potocraft.server.near.bypass";
     public static final String COMMAND_NEAR_OTHERS = "potocraft.server.near.others";
+    public static final String COMMAND_VIP = "potocraft.server.vip";
 
     // Private constructor
     private Permissions() {

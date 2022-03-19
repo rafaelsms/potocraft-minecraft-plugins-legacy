@@ -45,3 +45,5 @@ commands:
   near:
     description: Shows nearby players around you or around other player.
     aliases: [ proximo, perto ]
+  vip:
+    description: Shows when your VIP subscription will end.

@@ -161,7 +161,7 @@ public final class TextUtil {
             if (prefixString != null) {
                 prefix = prefixString;
             }
-        } catch (Exception ignored) {
+        } catch (Throwable ignored) {
         }
         return prefix;
     }
@@ -175,7 +175,7 @@ public final class TextUtil {
             if (suffixString != null) {
                 suffix = suffixString;
             }
-        } catch (Exception ignored) {
+        } catch (Throwable ignored) {
         }
         return suffix;
     }

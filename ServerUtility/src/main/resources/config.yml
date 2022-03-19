@@ -36,6 +36,7 @@ configuration:
   delay_between_death_messages_seconds: 90
   delay_between_login_messages_seconds: 45
   force_first_spawn_location: true
+  luck_perms_vip_group_name: "vip"
   purpur_permissions:
     block_enderchest_without_permissions: true
     block_spawner_place_without_permissions: true
@@ -123,3 +124,8 @@ language:
     near:
       nobody_near_you: "<gold>Não há ninguém próximo de você.</gold>"
       nearby_players: "<gold>Jogadores próximos: <yellow><list></yellow></gold>"
+    vip:
+      help: "<click:open_url:'https://www.potocraft.com/vip-e-benef%C3%ADcios'><hover:show_text:'<gold><yellow>Clique</yellow> para abrir o site e ver os benefícios!</gold>'><red>Você não é VIP!</red> <gold>Você pode se tornar VIP através do site <yellow>potocraft.com</yellow>!</gold></hover></click>"
+      date_time_format: "dd' de 'MMM' às 'H'h'mm"
+      vip_expiration_date: "<gold>Seu VIP acaba no dia <yellow><expiration_date></yellow>.</gold>"
+      unlimited_vip: "<gold>Seu VIP não possui limite atualmente.</gold>"

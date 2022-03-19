@@ -12,6 +12,7 @@ import com.rafaelsms.potocraft.serverutility.commands.PlayerTimeCommand;
 import com.rafaelsms.potocraft.serverutility.commands.PlayerWeatherCommand;
 import com.rafaelsms.potocraft.serverutility.commands.SendDiscordhookCommand;
 import com.rafaelsms.potocraft.serverutility.commands.SuicideCommand;
+import com.rafaelsms.potocraft.serverutility.commands.VipCommand;
 import com.rafaelsms.potocraft.serverutility.commands.WorkbenchCommand;
 import com.rafaelsms.potocraft.serverutility.listeners.DamageEffects;
 import com.rafaelsms.potocraft.serverutility.listeners.DamageModifier;
@@ -127,6 +128,7 @@ public class ServerUtilityPlugin extends JavaPlugin {
         registerCommand("fly", new FlightCommand(this));
         registerCommand("sendwebhook", new SendDiscordhookCommand(this));
         registerCommand("near", new NearCommand(this));
+        registerCommand("vip", new VipCommand(this));
 
         logger().info("ServerUtility enabled!");
     }
