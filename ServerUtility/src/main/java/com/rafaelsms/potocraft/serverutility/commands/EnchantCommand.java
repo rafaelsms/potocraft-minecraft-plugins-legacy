@@ -57,6 +57,24 @@ public class EnchantCommand implements CommandExecutor, TabCompleter {
 
         Enchantment enchantment = enchantmentOptional.get();
         ItemStack hand = player.getInventory().getItemInMainHand();
+
+        // Check if we are removing enchantment
+        int level = enchantment.getMaxLevel();
+        if (args.length == 2) {
+            try {
+                level = Integer.parseInt(args[1]);
+            } catch (NumberFormatException ignored) {
+                player.sendMessage(plugin.getConfiguration().getEnchantHelp());
+                return true;
+            }
+        }
+        if (level <= 0) {
+            hand.removeEnchantment(enchantment);
+            player.getInventory().setItemInMainHand(hand);
+            return true;
+        }
+
+        // Check conflicting
         if (!enchantment.canEnchantItem(hand)) {
             player.sendMessage(plugin.getConfiguration().getEnchantCantEnchantItem());
             return true;
@@ -70,15 +88,7 @@ public class EnchantCommand implements CommandExecutor, TabCompleter {
             }
         }
 
-        int level = enchantment.getMaxLevel();
-        if (args.length == 2) {
-            try {
-                level = Integer.parseInt(args[1]);
-            } catch (NumberFormatException ignored) {
-                player.sendMessage(plugin.getConfiguration().getEnchantHelp());
-                return true;
-            }
-        }
+        // Add enchantment
         if (level > enchantment.getMaxLevel()) {
             if (sender.hasPermission(Permissions.COMMAND_ENCHANTMENT_UNSAFE)) {
                 hand.addUnsafeEnchantment(enchantment, level);
@@ -87,12 +97,6 @@ public class EnchantCommand implements CommandExecutor, TabCompleter {
             }
             level = enchantment.getMaxLevel();
         }
-        if (level <= 0) {
-            hand.removeEnchantment(enchantment);
-            player.getInventory().setItemInMainHand(hand);
-            return true;
-        }
-
         hand.addEnchantment(enchantment, level);
         player.getInventory().setItemInMainHand(hand);
         return true;
