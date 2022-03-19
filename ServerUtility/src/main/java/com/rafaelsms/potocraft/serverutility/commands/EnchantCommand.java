@@ -74,18 +74,14 @@ public class EnchantCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        // Check conflicting
+        // Check unsafe and if conflicting
         if (!enchantment.canEnchantItem(hand)) {
             player.sendMessage(plugin.getConfiguration().getEnchantCantEnchantItem());
             return true;
         }
-        if (!sender.hasPermission(Permissions.COMMAND_ENCHANTMENT_CONFLICTING)) {
-            for (Enchantment otherEnchantment : hand.getEnchantments().keySet()) {
-                if (otherEnchantment.conflictsWith(enchantment)) {
-                    player.sendMessage(plugin.getConfiguration().getEnchantCantEnchantItem());
-                    return true;
-                }
-            }
+        if (!sender.hasPermission(Permissions.COMMAND_ENCHANTMENT_CONFLICTING) && conflictsWith(enchantment, hand)) {
+            player.sendMessage(plugin.getConfiguration().getEnchantCantEnchantItem());
+            return true;
         }
 
         // Add enchantment
@@ -111,7 +107,9 @@ public class EnchantCommand implements CommandExecutor, TabCompleter {
             ItemStack hand = player.getInventory().getItemInMainHand();
             ArrayList<Enchantment> enchantments = new ArrayList<>();
             for (Enchantment enchantment : Enchantment.values()) {
-                if (enchantment.canEnchantItem(hand)) {
+                if (enchantment.canEnchantItem(hand) &&
+                    (sender.hasPermission(Permissions.COMMAND_ENCHANTMENT_CONFLICTING) ||
+                     !conflictsWith(enchantment, hand))) {
                     enchantments.add(enchantment);
                 }
             }
@@ -119,5 +117,14 @@ public class EnchantCommand implements CommandExecutor, TabCompleter {
         }
         return Util.convertList(Arrays.asList(Enchantment.values()),
                                 enchantment -> enchantment.getKey().getKey().toLowerCase());
+    }
+
+    private boolean conflictsWith(@NotNull Enchantment inserting, @NotNull ItemStack item) {
+        for (Enchantment existingEnchantment : item.getEnchantments().keySet()) {
+            if (inserting.conflictsWith(existingEnchantment)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
