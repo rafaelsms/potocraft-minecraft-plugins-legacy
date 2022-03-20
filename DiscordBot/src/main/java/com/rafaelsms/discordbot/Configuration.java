@@ -56,7 +56,15 @@ public class Configuration extends YamlFile {
     }
 
     public int getMaximumMessageLength() {
-        return Objects.requireNonNull(getInt("configuration.message_length_limiter.length_limit"));
+        return Objects.requireNonNull(getInt("configuration.message_length_limiter.maximum_length"));
+    }
+
+    public int getMaximumNewLines() {
+        return Objects.requireNonNull(getInt("configuration.message_length_limiter.maximum_new_line_count"));
+    }
+
+    public int getMaximumEmojiCount() {
+        return Objects.requireNonNull(getInt("configuration.message_length_limiter.maximum_emoji_count"));
     }
 
     public Duration getExceededLengthTimeoutDuration() {

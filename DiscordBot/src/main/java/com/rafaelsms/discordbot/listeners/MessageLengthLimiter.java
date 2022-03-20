@@ -42,16 +42,36 @@ public class MessageLengthLimiter extends ListenerAdapter {
         if (DiscordUtil.isOperator(bot, member) || member.getUser().isBot() || member.getUser().isSystem()) {
             return;
         }
-        if (message.getContentRaw().length() < bot.getConfiguration().getMaximumMessageLength()) {
+        if (isMessageAppropriate(message.getContentRaw())) {
             return;
         }
         DiscordUtil.timeoutMember(bot,
                                   message.getGuild(),
                                   member,
                                   bot.getConfiguration().getExceededLengthTimeoutDuration(),
-                                  "message too long");
+                                  "message too long or contains too many new lines or emojis");
         if (bot.getConfiguration().shouldLengthyMessagesBeRemoved()) {
             message.delete().queue();
         }
+    }
+
+    private boolean isMessageAppropriate(@NotNull String content) {
+        return content.length() <= bot.getConfiguration().getMaximumMessageLength() &&
+               countNewLine(content) <= bot.getConfiguration().getMaximumNewLines() &&
+               countEmoticons(content) <= bot.getConfiguration().getMaximumEmojiCount();
+    }
+
+    private int countNewLine(@NotNull String content) {
+        return content.length() - content.replace("\n", "").length();
+    }
+
+    private int countEmoticons(@NotNull String content) {
+        int emoticons = 0;
+        for (char c : content.toCharArray()) {
+            if (Character.isSurrogate(c)) {
+                emoticons++;
+            }
+        }
+        return emoticons / 2;
     }
 }

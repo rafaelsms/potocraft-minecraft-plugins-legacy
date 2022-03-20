@@ -12,7 +12,9 @@ configuration:
   message_length_limiter:
     enabled: true
     should_be_removed: true
-    length_limit: 700
+    maximum_length: 500
+    maximum_new_line_count: 4
+    maximum_emoji_count: 6
     user_timeout_seconds: 120
   mentions:
     should_be_removed: true
