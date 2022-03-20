@@ -4,15 +4,22 @@ import com.destroystokyo.paper.event.player.PlayerElytraBoostEvent;
 import com.destroystokyo.paper.event.player.PlayerStartSpectatingEntityEvent;
 import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
 import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
+import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Tag;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,6 +69,25 @@ public class PlayerLogging implements Listener {
         }
     }
 
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    private void log(PlayerDeathEvent event) {
+        logPlayer(event.getPlayer(), event.getPlayer().getLocation(), "died");
+        // List player items with enchantments to console
+        for (ItemStack itemStack : event.getPlayer().getInventory().getContents()) {
+            if (itemStack == null || itemStack.getType() == Material.AIR) {
+                continue;
+            }
+            if (!itemStack.getEnchantments().isEmpty()) {
+                logEnchantments(itemStack);
+            }
+            if (Tag.SHULKER_BOXES.isTagged(itemStack.getType()) &&
+                itemStack.getItemMeta() instanceof BlockStateMeta blockStateMeta &&
+                blockStateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
+                logContents(shulkerBox);
+            }
+        }
+    }
+
     private void logPlayer(@NotNull Player player, @NotNull Location location, @Nullable String action) {
         if (plugin.getConfiguration().isPlayerLoggingEnabled()) {
             plugin.logger()
@@ -72,5 +98,28 @@ public class PlayerLogging implements Listener {
                                                                   location.getBlockY(),
                                                                   location.getBlockZ()));
         }
+    }
+
+    private void logEnchantments(@NotNull ItemStack itemStack) {
+        plugin.logger()
+              .info("Player had %s with [ %s ]".formatted(itemStack.getType().name(), getEnchantmentString(itemStack)));
+    }
+
+    private void logContents(@NotNull ShulkerBox shulkerBox) {
+        for (ItemStack itemStack : shulkerBox.getInventory().getContents()) {
+            if (itemStack == null || itemStack.getType() == Material.AIR) {
+                continue;
+            }
+            plugin.logger()
+                  .info("Shulker box had %d x %s enchanted with [ %s ]".formatted(itemStack.getAmount(),
+                                                                                  itemStack.getType().getKey().getKey(),
+                                                                                  getEnchantmentString(itemStack)));
+        }
+    }
+
+    private String getEnchantmentString(@NotNull ItemStack itemStack) {
+        return TextUtil.joinStrings(itemStack.getEnchantments().entrySet(),
+                                    ", ",
+                                    entry -> "%s %d".formatted(entry.getKey().getKey().getKey(), entry.getValue()));
     }
 }

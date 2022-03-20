@@ -4,7 +4,6 @@ import com.rafaelsms.potocraft.serverprofile.Permissions;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.User;
 import com.rafaelsms.potocraft.serverprofile.players.tasks.CombatTask;
-import com.rafaelsms.potocraft.util.TextUtil;
 import org.bukkit.Location;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
@@ -21,7 +20,6 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -89,24 +87,6 @@ public class CombatListener implements Listener {
         Location location = event.getEntity().getLocation();
         user.getProfile().setDeathLocation(location);
         user.getProfile().setBackLocation(location);
-        // Log death information
-        plugin.logger()
-              .info("Player %s died at world = %s, %d %d %d".formatted(player.getName(),
-                                                                       location.getWorld().getName(),
-                                                                       location.getBlockX(),
-                                                                       location.getBlockY(),
-                                                                       location.getBlockZ()));
-        // List player drops with enchantments to console
-        for (ItemStack itemStack : event.getDrops()) {
-            if (itemStack.getEnchantments().size() == 0) {
-                continue;
-            }
-            String enchantmentList = TextUtil.joinStrings(itemStack.getEnchantments().entrySet(),
-                                                          ", ",
-                                                          entry -> "%s %d".formatted(entry.getKey().getKey().getKey(),
-                                                                                     entry.getValue()));
-            plugin.logger().info("Dropped: %s with %s".formatted(itemStack.getType().name(), enchantmentList));
-        }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
