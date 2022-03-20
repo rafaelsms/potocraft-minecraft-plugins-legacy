@@ -9,14 +9,11 @@ import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
-
-public class BlockMentionsListener extends ListenerAdapter {
+public class MessageLengthLimiter extends ListenerAdapter {
 
     private final @NotNull DiscordBot bot;
 
-    public BlockMentionsListener(@NotNull DiscordBot bot) {
+    public MessageLengthLimiter(@NotNull DiscordBot bot) {
         this.bot = bot;
     }
 
@@ -31,9 +28,6 @@ public class BlockMentionsListener extends ListenerAdapter {
     }
 
     private void handleMessage(@NotNull Message message) {
-        if (message.getMentionedUsers().isEmpty()) {
-            return;
-        }
         if (message.getCategory() != null &&
             message.getCategory().getName().equalsIgnoreCase(bot.getConfiguration().getTicketCategoryName())) {
             return;
@@ -45,29 +39,16 @@ public class BlockMentionsListener extends ListenerAdapter {
         if (DiscordUtil.isOperator(bot, member) || member.getUser().isBot() || member.getUser().isSystem()) {
             return;
         }
+        if (message.getContentRaw().length() < bot.getConfiguration().getMaximumMessageLength()) {
+            return;
+        }
         DiscordUtil.timeoutMember(bot,
                                   message.getGuild(),
                                   member,
-                                  bot.getConfiguration().getMentioningTimeout(),
-                                  "mentioning");
-        // Check if we should warn users
-        if (bot.getConfiguration().isMentionsShouldBeWarned()) {
-            message.reply(bot.getConfiguration().getMentionWarningMessage()).queue(warningMessage -> {
-                // Delete mention based on configuration
-                if (bot.getConfiguration().isMentionsShouldBeRemoved()) {
-                    message.delete().queue();
-                }
-                // Delete warning message based on configuration
-                Duration warningDuration = bot.getConfiguration().getMentionsWarningDuration();
-                if (warningDuration != null && !warningDuration.isNegative() && warningDuration.toSeconds() > 0) {
-                    warningMessage.delete().queueAfter(warningDuration.toMillis(), TimeUnit.MILLISECONDS);
-                }
-            });
-        } else {
-            // Delete mention based on configuration
-            if (bot.getConfiguration().isMentionsShouldBeRemoved()) {
-                message.delete().queue();
-            }
+                                  bot.getConfiguration().getExceededLengthTimeoutDuration(),
+                                  "message too long");
+        if (bot.getConfiguration().shouldLengthyMessagesBeRemoved()) {
+            message.delete().queue();
         }
     }
 }

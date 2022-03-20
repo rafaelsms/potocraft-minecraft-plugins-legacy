@@ -47,20 +47,49 @@ public class Configuration extends YamlFile {
         return get("configuration.tickets.lobby_channel_name");
     }
 
+    public boolean isLengthLimiterEnabled() {
+        return Objects.requireNonNull(get("configuration.message_length_limiter.enabled"));
+    }
+
+    public boolean shouldLengthyMessagesBeRemoved() {
+        return Objects.requireNonNull(get("configuration.message_length_limiter.should_be_removed"));
+    }
+
+    public int getMaximumMessageLength() {
+        return Objects.requireNonNull(getInt("configuration.message_length_limiter.length_limit"));
+    }
+
+    public Duration getExceededLengthTimeoutDuration() {
+        return Duration.ofSeconds(Objects.requireNonNull(getLong(
+                "configuration.message_length_limiter.user_timeout_seconds")));
+    }
+
     public boolean isMentionsShouldBeRemoved() {
-        return Objects.requireNonNull(get("configuration.mention_should_be_removed"));
+        return Objects.requireNonNull(get("configuration.mentions.should_be_removed"));
+    }
+
+    public boolean isMentionsShouldBeWarned() {
+        return Objects.requireNonNull(get("configuration.mentions.should_be_warned"));
+    }
+
+    public Duration getMentionsWarningDuration() {
+        return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.mentions.warn_message_duration_seconds")));
     }
 
     public Duration getMentioningTimeout() {
-        return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.mentions_user_timeout_seconds")));
+        return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.mentions.user_timeout_seconds")));
+    }
+
+    public boolean isCursingBlockerEnabled() {
+        return Objects.requireNonNull(get("configuration.blocked_words.enabled"));
     }
 
     public Duration getCursedTimeout() {
-        return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.blocked_word_user_timeout_seconds")));
+        return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.blocked_words.user_timeout_seconds")));
     }
 
     public List<String> getBlockedWords() {
-        return get("configuration.blocked_words");
+        return get("configuration.blocked_words.word_list");
     }
 
     public String getOpenTicketMessage() {

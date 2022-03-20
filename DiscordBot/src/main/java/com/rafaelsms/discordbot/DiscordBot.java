@@ -2,6 +2,7 @@ package com.rafaelsms.discordbot;
 
 import com.rafaelsms.discordbot.listeners.BlockMentionsListener;
 import com.rafaelsms.discordbot.listeners.BlockedWordsListener;
+import com.rafaelsms.discordbot.listeners.MessageLengthLimiter;
 import com.rafaelsms.discordbot.listeners.RemovedMessagesListener;
 import com.rafaelsms.discordbot.listeners.SetActivityListener;
 import com.rafaelsms.discordbot.listeners.TicketListener;
@@ -50,6 +51,7 @@ public class DiscordBot {
         this.jda.addEventListener(new TicketListener(this));
         this.jda.addEventListener(new RemovedMessagesListener(this));
         this.jda.addEventListener(new BlockMentionsListener(this));
+        this.jda.addEventListener(new MessageLengthLimiter(this));
     }
 
     public @NotNull Logger getLogger() {

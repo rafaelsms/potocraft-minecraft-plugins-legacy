@@ -35,7 +35,7 @@ public class BlockedWordsListener extends ListenerAdapter {
 
     private void handleMessageContent(Message message) {
         Member member = message.getMember();
-        if (member == null) {
+        if (member == null || !bot.getConfiguration().isCursingBlockerEnabled()) {
             return;
         }
         wordsChecker.removeBlockedWords(message.getContentRaw()).ifPresent(string -> {

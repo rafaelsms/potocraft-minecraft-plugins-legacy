@@ -99,7 +99,7 @@ public final class DiscordUtil {
                                      @NotNull Member member,
                                      @Nullable Duration timeoutDuration,
                                      @NotNull String auditReason) {
-        if (timeoutDuration != null && timeoutDuration.toSeconds() > 0) {
+        if (timeoutDuration != null && !timeoutDuration.isNegative() && timeoutDuration.toSeconds() > 0) {
             Member botMember = guild.getMember(bot.getJda().getSelfUser());
             if (botMember != null && botMember.canInteract(member)) {
                 member.timeoutFor(timeoutDuration).reason(auditReason).queue();
