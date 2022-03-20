@@ -28,6 +28,9 @@ public class MessageLengthLimiter extends ListenerAdapter {
     }
 
     private void handleMessage(@NotNull Message message) {
+        if (!bot.getConfiguration().isLengthLimiterEnabled()) {
+            return;
+        }
         if (message.getCategory() != null &&
             message.getCategory().getName().equalsIgnoreCase(bot.getConfiguration().getTicketCategoryName())) {
             return;
