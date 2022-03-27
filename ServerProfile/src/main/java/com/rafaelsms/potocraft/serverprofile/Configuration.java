@@ -134,6 +134,14 @@ public class Configuration extends YamlFile {
         return getInt("configuration.combat.player_combat_duration_ticks");
     }
 
+    public Boolean isOutOfCombatDeathDroppingItems() {
+        return get("configuration.combat.out_of_combat_death_should_drop_items");
+    }
+
+    public Boolean isOutOfCombatDeathDroppingExperience() {
+        return get("configuration.combat.out_of_combat_death_should_drop_experience");
+    }
+
     public Boolean isCombatLogOffDestroysTotemFirst() {
         return get("configuration.combat.should_log_off_destroy_totem_first");
     }

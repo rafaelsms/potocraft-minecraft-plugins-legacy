@@ -175,4 +175,35 @@ public class CombatListener implements Listener {
             plugin.getUserManager().getUser(player).getKiller().ifPresent(event.getEntity()::setKiller);
         }
     }
+
+    @EventHandler(ignoreCancelled = true)
+    private void keepInventoryOutsideCombat(PlayerDeathEvent event) {
+        // If we are dropping items, leave it as is
+        if (plugin.getConfiguration().isOutOfCombatDeathDroppingItems()) {
+            return;
+        }
+        // If player is in combat, leave it as is
+        if (plugin.getUserManager().getUser(event.getPlayer()).isInCombat()) {
+            return;
+        }
+        // Otherwise, keep inventory and drop nothing
+        event.setKeepInventory(true);
+        event.getDrops().clear();
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    private void keepExperienceOutsideCombat(PlayerDeathEvent event) {
+        // If we are dropping experience, leave it as is
+        if (plugin.getConfiguration().isOutOfCombatDeathDroppingExperience()) {
+            return;
+        }
+        // If player is in combat, leave it as is
+        if (plugin.getUserManager().getUser(event.getPlayer()).isInCombat()) {
+            return;
+        }
+        // Otherwise, keep experience and drop nothing
+        event.setKeepLevel(true);
+        event.setShouldDropExperience(false);
+        event.setDroppedExp(0);
+    }
 }

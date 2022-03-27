@@ -24,6 +24,8 @@ configuration:
   combat:
     player_combat_duration_ticks: 820
     mob_combat_duration_ticks: 260
+    out_of_combat_death_should_drop_items: true
+    out_of_combat_death_should_drop_experience: true
     should_log_off_destroy_totem_first: false
     player_killer_time_seconds: 45
     blocked_commands:
@@ -32,6 +34,8 @@ configuration:
       - warp
       - spawn
       - tpaccept
+      - enderchest
+      - suicide
     hardcore:
       enabled: false
       default_ban_time_in_seconds: 21600
@@ -45,7 +49,7 @@ language:
   chat:
     nobody_heard_you: "<click:suggest_command:'!escreva a mensagem aqui'><hover:show_text:'<gold>Por exemplo, envie: <yellow>!olá! alguém quer jogar comigo?</yellow></gold>'><red>Ninguém te ouviu! <gold>Tente gritar: digite <yellow><bold>!</bold></yellow> antes da sua mensagem.</gold></hover></click>"
   combat:
-    bar_title: "<red>Se sair ou se a conexão cair, irá morrer!"
+    bar_title: "<red>Se morrer, perderá itens! Se sair ou se a conexão cair, irá morrer!"
     command_is_blocked_while_in_combat: "<red>Este comando está bloqueado em combate."
     unknown_world_name: "mundo desconhecido"
     your_death_location_is: "<red>Você morreu em <yellow><world></yellow> nas coordenadas <yellow>x = <x></yellow>, <yellow>y = <y></yellow>, <yellow>z = <z></yellow>."
