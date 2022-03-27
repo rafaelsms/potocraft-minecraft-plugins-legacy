@@ -107,6 +107,11 @@ public class OfflineCheckerListener implements Listener {
         connection.setConnectTimeout(2000);
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Accept", "application/json");
-        return connection.getResponseCode() == 200;
+        int responseCode = connection.getResponseCode();
+        if (responseCode < 200 || responseCode >= 300) {
+            throw new IOException("Mojang API may be unavailable, returned %d".formatted(responseCode));
+        }
+        // If it wasn't an error code, probably is 200 for found profile or 204 (No content) for available name
+        return responseCode == 200;
     }
 }
