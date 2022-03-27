@@ -260,21 +260,21 @@ public class Configuration extends YamlFile {
 
     public Component getTeleportRequestReceived(@NotNull String username) {
         return TextUtil.toComponent(get("language.teleport.requests.teleport_received"),
-                                    Placeholder.unparsed("username", username));
+                                    Placeholder.parsed("username", username));
     }
 
     public Component getTeleportHereRequestReceived(@NotNull String username) {
         return TextUtil.toComponent(get("language.teleport.requests.teleport_here_received"),
-                                    Placeholder.unparsed("username", username));
+                                    Placeholder.parsed("username", username));
     }
 
     public Component getTeleportRequestSent(@NotNull String username) {
-        return TextUtil.toComponent(get("language.teleport.requests.sent"), Placeholder.unparsed("username", username));
+        return TextUtil.toComponent(get("language.teleport.requests.sent"), Placeholder.parsed("username", username));
     }
 
     public Component getTeleportRequestNotUpdated(@NotNull String username) {
         return TextUtil.toComponent(get("language.teleport.requests.not_updated"),
-                                    Placeholder.unparsed("username", username));
+                                    Placeholder.parsed("username", username));
     }
 
     public Component getTeleportRequestNotFound() {
@@ -416,7 +416,7 @@ public class Configuration extends YamlFile {
         }
         String killDeathRatioString = floatFormatter.format(killDeathRatio);
         return TextUtil.toComponent(get("language.top.ranking_entry"),
-                                    Placeholder.unparsed("username", profile.getPlayerName()),
+                                    Placeholder.parsed("username", profile.getPlayerName()),
                                     Placeholder.unparsed("killdeathratio", killDeathRatioString),
                                     Placeholder.unparsed("killcount", String.valueOf(playerKills)),
                                     Placeholder.unparsed("deathcount", String.valueOf(playerDeaths)));
