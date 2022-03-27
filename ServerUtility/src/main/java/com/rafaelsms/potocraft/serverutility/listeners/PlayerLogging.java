@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,8 +21,13 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public class PlayerLogging implements Listener {
 
@@ -77,9 +83,11 @@ public class PlayerLogging implements Listener {
             if (itemStack == null || itemStack.getType() == Material.AIR) {
                 continue;
             }
-            if (!itemStack.getEnchantments().isEmpty()) {
-                logEnchantments(itemStack);
-            }
+            Optional<String> enchantmentString = getEnchantmentString(itemStack);
+            enchantmentString.ifPresent(s -> plugin.logger()
+                                                   .info("Player had %d x %s %s".formatted(itemStack.getAmount(),
+                                                                                           itemStack.getType().name(),
+                                                                                           s)));
             if (Tag.SHULKER_BOXES.isTagged(itemStack.getType()) &&
                 itemStack.getItemMeta() instanceof BlockStateMeta blockStateMeta &&
                 blockStateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
@@ -100,25 +108,32 @@ public class PlayerLogging implements Listener {
         }
     }
 
-    private void logEnchantments(@NotNull ItemStack itemStack) {
-        plugin.logger()
-              .info("Player had %s with [ %s ]".formatted(itemStack.getType().name(), getEnchantmentString(itemStack)));
-    }
-
     private void logContents(@NotNull ShulkerBox shulkerBox) {
         for (ItemStack itemStack : shulkerBox.getInventory().getContents()) {
             if (itemStack == null || itemStack.getType() == Material.AIR) {
                 continue;
             }
             plugin.logger()
-                  .info("Shulker box had %d x %s enchanted with [ %s ]".formatted(itemStack.getAmount(),
-                                                                                  itemStack.getType().getKey().getKey(),
-                                                                                  getEnchantmentString(itemStack)));
+                  .info("Shulker box had %d x %s %s".formatted(itemStack.getAmount(),
+                                                               itemStack.getType().getKey().getKey(),
+                                                               getEnchantmentString(itemStack).orElse("")));
         }
     }
 
-    private String getEnchantmentString(@NotNull ItemStack itemStack) {
-        return TextUtil.joinStrings(itemStack.getEnchantments().entrySet(),
+    private Optional<String> getEnchantmentString(@NotNull ItemStack itemStack) {
+        if (!itemStack.getEnchantments().isEmpty()) {
+            return Optional.of("enchanted with [ %s ]".formatted(getEnchantmentEnumeration(itemStack.getEnchantments()
+                                                                                                    .entrySet())));
+        }
+        if (itemStack.getItemMeta() instanceof EnchantmentStorageMeta enchantmentStorage) {
+            return Optional.of("enchanted with [ %s ]".formatted(getEnchantmentEnumeration(enchantmentStorage.getStoredEnchants()
+                                                                                                             .entrySet())));
+        }
+        return Optional.empty();
+    }
+
+    private String getEnchantmentEnumeration(Set<Map.Entry<Enchantment, Integer>> entries) {
+        return TextUtil.joinStrings(entries,
                                     ", ",
                                     entry -> "%s %d".formatted(entry.getKey().getKey().getKey(), entry.getValue()));
     }
