@@ -99,9 +99,9 @@ public class DamageEffects implements Listener {
                   .spawnParticle(Particle.BLOCK_DUST,
                                  effectLocation,
                                  particleAmount,
-                                 entity.getWidth() * 0.38,
-                                 entity.getHeight() * 0.64,
-                                 entity.getWidth() * 0.38,
+                                 entity.getWidth() * 0.3,
+                                 entity.getHeight() * 0.25,
+                                 entity.getWidth() * 0.3,
                                  blockData);
         }
     }
