@@ -103,6 +103,9 @@ public class RemovedMessagesListener extends ListenerAdapter {
         if (event.getChannel().getName().equalsIgnoreCase(bot.getConfiguration().getRemovedMessagesChannelName())) {
             return;
         }
+        if (message.getAuthor().isBot()) {
+            return;
+        }
         Optional<TextChannel> channelOptional = getDeletedMessagesTextChannel(event.getGuild());
         if (channelOptional.isEmpty()) {
             return;
