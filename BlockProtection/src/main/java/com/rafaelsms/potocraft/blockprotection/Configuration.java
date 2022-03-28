@@ -2,6 +2,7 @@ package com.rafaelsms.potocraft.blockprotection;
 
 import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.util.TextUtil;
+import com.rafaelsms.potocraft.util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
@@ -40,7 +41,8 @@ public class Configuration extends YamlFile {
     }
 
     public List<String> getProtectedWorlds() {
-        return get("configuration.protection.protected_worlds");
+        List<String> worldNames = get("configuration.protection.protected_worlds");
+        return Util.convertList(worldNames, String::toLowerCase);
     }
 
     public Boolean isMongoDatabaseExceptionFatal() {

@@ -59,20 +59,20 @@ public class VolumeListener implements Listener {
 
         // Get or make empty selection if it doesn't exist
         Selection selection = user.getOrEmptySelection();
-        Selection.Result result = selection.select(clickedBlock.getLocation());
+        Selection.Result result = selection.makeSelection(clickedBlock.getLocation());
         Component playerMessage = switch (result) {
-            case WORLD_NOT_PROTECTED -> plugin.getConfiguration().getSelectionWorldNotProtected();
-            case MAX_VOLUME_EXCEEDED -> plugin.getConfiguration().getSelectionMaximumVolumeExceeded();
-            case NOT_ENOUGH_VOLUME -> plugin.getConfiguration().getSelectionNotEnoughVolume();
-            case INVALID_LOCATION -> plugin.getConfiguration().getSelectionInvalidLocation();
-            case OTHER_REGION_FOUND -> plugin.getConfiguration().getSelectionInsideOtherRegion();
-            case NO_PERMISSION -> plugin.getConfiguration().getNoRegionPermission();
-            case FAILED_PROTECTION_FETCH -> plugin.getConfiguration().getFailedToFetchRegions();
+            case WORLD_IS_NOT_PROTECTED -> plugin.getConfiguration().getSelectionWorldNotProtected();
+            case SELECTION_MAX_VOLUME_EXCEEDED -> plugin.getConfiguration().getSelectionMaximumVolumeExceeded();
+            case NOT_ENOUGH_VOLUME_ON_PROFILE -> plugin.getConfiguration().getSelectionNotEnoughVolume();
+            case INVALID_LOCATION_WORLD -> plugin.getConfiguration().getSelectionInvalidLocation();
+            case OTHER_REGION_WITH_PERMISSION_FOUND -> plugin.getConfiguration().getSelectionInsideOtherRegion();
+            case OTHER_REGION_WITHOUT_PERMISSION_FOUND -> plugin.getConfiguration().getNoRegionPermission();
+            case FAILED_PROTECTION_DATA_FETCH -> plugin.getConfiguration().getFailedToFetchRegions();
             default -> null;
         };
 
         // Important message, send through chat
-        if (result.shouldCancel()) {
+        if (result.shouldCancelSelection()) {
             if (playerMessage != null) {
                 player.sendMessage(playerMessage);
             }
@@ -84,7 +84,7 @@ public class VolumeListener implements Listener {
             player.sendActionBar(playerMessage);
         }
         // Send tips to the player
-        if (result.isSuccessful() && selectionOptional.isEmpty()) {
+        if (result.selectionSucceeded() && selectionOptional.isEmpty()) {
             player.sendMessage(plugin.getConfiguration().getSelectionStarted());
         }
     }

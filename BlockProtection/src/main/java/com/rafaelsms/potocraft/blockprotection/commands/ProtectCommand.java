@@ -148,6 +148,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
                 newRegion.get().copyFrom(existingRegion);
 
                 try {
+                    // We do not need to remove old region since the new one will have the same id and replace it
                     regionManager.get().addRegion(newRegion.get());
                     regionManager.get().saveChanges();
                     user.setSelection(null);
