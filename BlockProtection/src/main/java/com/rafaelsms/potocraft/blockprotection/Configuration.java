@@ -186,14 +186,11 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponent(get("language.command.creator_only"));
     }
 
-    public Component getProtectVolumeAvailable(int minimumVolume,
-                                               int volumeAvailable,
-                                               int maximumVolume,
-                                               double reward) {
-        return TextUtil.toComponent(get("language.command.volume_available"),
-                                    Placeholder.unparsed("minimum_volume", String.valueOf(minimumVolume)),
-                                    Placeholder.unparsed("volume_available", String.valueOf(volumeAvailable)),
-                                    Placeholder.unparsed("volume_limit", String.valueOf(maximumVolume)),
+    public Component getProtectAreaAvailable(int minimumArea, int areaAvailable, int areaLimit, double reward) {
+        return TextUtil.toComponent(get("language.command.area_available"),
+                                    Placeholder.unparsed("minimum_area", String.valueOf(minimumArea)),
+                                    Placeholder.unparsed("area_available", String.valueOf(areaAvailable)),
+                                    Placeholder.unparsed("area_limit", String.valueOf(areaLimit)),
                                     Placeholder.unparsed("reward", new DecimalFormat("0.00").format(reward)));
     }
 
@@ -215,20 +212,20 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponent(get("language.selection.selection_is_on_different_world"));
     }
 
-    public Component getSelectionMaximumVolumeExceeded() {
-        return TextUtil.toComponent(get("language.selection.maximum_volume_exceeded"));
+    public Component getSelectionMaximumAreaExceeded() {
+        return TextUtil.toComponent(get("language.selection.maximum_area_exceeded"));
     }
 
-    public Component getSelectionNotEnoughVolume() {
-        return TextUtil.toComponent(get("language.selection.not_enough_volume"));
+    public Component getSelectionNotEnoughArea() {
+        return TextUtil.toComponent(get("language.selection.not_enough_area"));
     }
 
     public Component getSelectionTooNarrow() {
         return TextUtil.toComponent(get("language.selection.too_narrow"));
     }
 
-    public Component getSelectionMinimumVolumeRequired() {
-        return TextUtil.toComponent(get("language.selection.minimum_volume_required"));
+    public Component getSelectionMinimumAreaRequired() {
+        return TextUtil.toComponent(get("language.selection.minimum_area_required"));
     }
 
     public Component getSelectionInvalidLocation() {

@@ -63,16 +63,15 @@ language:
     player_removed_from_region: "<gold><yellow><username></yellow> foi removido(a) da região.</gold>"
     player_is_owner: "<red>Jogador é um dono, não é possível removê-lo como membro.</red>"
     creator_only: "<gold>Apenas o criador da região pode apagá-la.</gold>"
-    volume_available: |
-      <gold>Você possui <yellow><volume_available> blocos de proteção disponíveis</yellow> (limite: <red><volume_limit></red>, mínimo necessário para proteger: <yellow><minimum_volume> blocos</yellow>).
+    area_available: |
+      <gold>Você possui <yellow><area_available> blocos de proteção disponíveis</yellow> (limite: <red><area_limit></red>, mínimo necessário para proteger: <yellow><minimum_area> blocos</yellow>).
       <gold>Você recebe <yellow><reward></yellow> bloco protegido a cada bloco quebrado (qualquer bloco).</gold>
   selection:
     selection_is_on_different_world: "<red>A seleção está em outro mundo. Limpando...</red>"
     world_not_protected: "<red>Este mundo não está disponível para proteção</red>"
-    maximum_volume_exceeded: "<red>Volume máximo de proteção atingido!</red>"
-    volume_exceed_permission: "<red>Você não tem permissão para uma região tão grande!</red>"
-    not_enough_volume: "<red>Saldo de proteção insuficiente! Quebre mais blocos!</red>"
-    minimum_volume_required: "<red>Você não possui saldo suficiente para iniciar a proteção. Quebre blocos para conseguir saldo!</red>"
+    maximum_area_exceeded: "<red>Área máxima de proteção atingida!</red>"
+    not_enough_area: "<red>Saldo de proteção insuficiente!</red> <click:run_command:'/proteger saldo'><hover:show_text:'<gold><yellow>Clique</yellow> para ver seu saldo de proteção.</gold>'><gold>Digite <yellow>/proteger saldo</yellow> para conferir seu saldo.</gold></hover></click>"
+    minimum_area_required: "<red>Você não possui saldo suficiente para iniciar a proteção.</red> <click:run_command:'/proteger saldo'><hover:show_text:'<gold><yellow>Clique</yellow> para ver seu saldo de proteção.</gold>'><gold>Digite <yellow>/proteger saldo</yellow> para conferir seu saldo.</gold></hover></click>"
     invalid_location: "<red>Localização inválida! Tente novamente.</red>"
     selection_inside_other_region: "<red>Sua seleção está dentro de outra!</red> <gold>Digite <click:run_command:'/proteger expandir'><hover:show_text:'<gold><yellow>Clique</yellow> para expandir a região atual.</gold>'><yellow>/proteger expandir</yellow></hover></click> para editar a região.</gold>"
     selection_started: |

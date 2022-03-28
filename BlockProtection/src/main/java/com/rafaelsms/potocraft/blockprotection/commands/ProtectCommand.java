@@ -99,10 +99,10 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
 
         if (args[0].equalsIgnoreCase("saldo")) {
             player.sendMessage(plugin.getConfiguration()
-                                     .getProtectVolumeAvailable(plugin.getConfiguration().getDefaultBoxArea(),
-                                                                user.getProfile().getAreaAvailable(),
-                                                                user.getMaximumArea(),
-                                                                user.getRewardArea()));
+                                     .getProtectAreaAvailable(plugin.getConfiguration().getDefaultBoxArea(),
+                                                              user.getProfile().getAreaAvailable(),
+                                                              user.getMaximumArea(),
+                                                              user.getRewardArea()));
             return true;
         } else if (args[0].equalsIgnoreCase("expandir")) {
             if (!sender.hasPermission(Permissions.PROTECT_COMMAND_EXPAND)) {
@@ -130,7 +130,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
                 }
                 // Check if player has enough volume
                 if (!user.hasEnoughArea(selection.getAreaCost())) {
-                    sender.sendMessage(plugin.getConfiguration().getSelectionNotEnoughVolume());
+                    sender.sendMessage(plugin.getConfiguration().getSelectionNotEnoughArea());
                     return true;
                 }
                 // Check volume ratio
@@ -226,7 +226,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
             }
             // Check volume cost
             if (!user.hasEnoughArea(selectionOptional.get().getAreaCost())) {
-                sender.sendMessage(plugin.getConfiguration().getSelectionNotEnoughVolume());
+                sender.sendMessage(plugin.getConfiguration().getSelectionNotEnoughArea());
                 return true;
             }
             // Check volume ratio

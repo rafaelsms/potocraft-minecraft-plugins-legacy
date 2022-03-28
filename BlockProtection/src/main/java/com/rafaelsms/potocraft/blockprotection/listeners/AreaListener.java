@@ -53,7 +53,7 @@ public class AreaListener implements Listener {
         // Check if player has minimum volume for selection
         Optional<Selection> selectionOptional = user.getSelection();
         if (selectionOptional.isEmpty() && !user.hasEnoughArea(plugin.getConfiguration().getDefaultBoxArea())) {
-            player.sendMessage(plugin.getConfiguration().getSelectionMinimumVolumeRequired());
+            player.sendMessage(plugin.getConfiguration().getSelectionMinimumAreaRequired());
             return;
         }
 
@@ -62,8 +62,8 @@ public class AreaListener implements Listener {
         Selection.Result result = selection.makeSelection(clickedBlock.getLocation());
         Component playerMessage = switch (result) {
             case WORLD_IS_NOT_PROTECTED -> plugin.getConfiguration().getSelectionWorldNotProtected();
-            case SELECTION_MAX_VOLUME_EXCEEDED -> plugin.getConfiguration().getSelectionMaximumVolumeExceeded();
-            case NOT_ENOUGH_VOLUME_ON_PROFILE -> plugin.getConfiguration().getSelectionNotEnoughVolume();
+            case SELECTION_MAX_VOLUME_EXCEEDED -> plugin.getConfiguration().getSelectionMaximumAreaExceeded();
+            case NOT_ENOUGH_VOLUME_ON_PROFILE -> plugin.getConfiguration().getSelectionNotEnoughArea();
             case INVALID_LOCATION_WORLD -> plugin.getConfiguration().getSelectionInvalidLocation();
             case OTHER_REGION_WITH_PERMISSION_FOUND -> plugin.getConfiguration().getSelectionInsideOtherRegion();
             case OTHER_REGION_WITHOUT_PERMISSION_FOUND -> plugin.getConfiguration().getNoRegionPermission();
