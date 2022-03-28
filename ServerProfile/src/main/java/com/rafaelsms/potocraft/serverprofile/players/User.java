@@ -157,8 +157,8 @@ public class User {
                 case IN_COOLDOWN -> player.sendMessage(plugin.getConfiguration()
                                                              .getTeleportInCooldown(getTeleportCooldownSeconds()));
                 case PLAYER_UNAVAILABLE -> player.sendMessage(plugin.getConfiguration().getTeleportFailed());
-                case ALREADY_TELEPORTING ->
-                        player.sendMessage(plugin.getConfiguration().getTeleportAlreadyTeleporting());
+                case ALREADY_TELEPORTING -> player.sendMessage(plugin.getConfiguration()
+                                                                     .getTeleportAlreadyTeleporting());
                 case IN_COMBAT -> player.sendMessage(plugin.getConfiguration().getTeleportPlayerInCombat());
             }
         }
@@ -219,10 +219,17 @@ public class User {
     }
 
     public void setCombatTask(@NotNull CombatTask.Type combatType, int durationTicks) {
+        if (durationTicks < 0) {
+            return;
+        }
         setCombatTask(new CombatTask(plugin, this, combatType, durationTicks));
     }
 
-    public void setCombatTask(@Nullable CombatTask combatTask) {
+    public void clearCombatTask() {
+        setCombatTask(null);
+    }
+
+    private void setCombatTask(@Nullable CombatTask combatTask) {
         // Check if player has bypass permission and remove combat if existing
         if (player.hasPermission(Permissions.COMBAT_BYPASS)) {
             // Cancel existing task if player received permission afterwards

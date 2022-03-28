@@ -32,7 +32,7 @@ public class CombatTask implements Runnable {
 
     public void cancelTask() {
         user.getPlayer().hideBossBar(progressBar);
-        user.setCombatTask(null);
+        user.clearCombatTask();
     }
 
     public void resetTime() {
