@@ -14,7 +14,6 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionType;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
@@ -126,6 +125,7 @@ public class Selection implements Runnable {
                         this.protectedRegion = applicableRegion;
                         this.lowCorner = BukkitAdapter.adapt(location.getWorld(), protectedRegion.getMinimumPoint());
                         this.highCorner = BukkitAdapter.adapt(location.getWorld(), protectedRegion.getMaximumPoint());
+                        this.areaCredit = calculateArea(lowCorner, highCorner);
                     } else {
                         // If we are expanding and already found another region, something is wrong
                         return Result.OTHER_REGION_WITH_PERMISSION_FOUND;
@@ -172,38 +172,24 @@ public class Selection implements Runnable {
                     if (!applicableRegion.isOwner(player)) {
                         return Result.OTHER_REGION_WITHOUT_PERMISSION_FOUND;
                     }
-
-                    // Adapt selection around existing regions
-                    Location minPoint = BukkitAdapter.adapt(location.getWorld(), applicableRegion.getMinimumPoint());
-                    Location maxPoint = BukkitAdapter.adapt(location.getWorld(), applicableRegion.getMaximumPoint());
-                    boolean highestInside = ProtectionUtil.isLocationHigher(highestPoint, minPoint);
-                    boolean lowestInside = ProtectionUtil.isLocationHigher(lowestPoint, maxPoint);
-                    // If we are enclosing another region, abort
-                    if (highestInside && lowestInside) {
-                        user.getPlayer().sendMessage(Component.text("lowestInside and highestInside"));
-                        return Result.OTHER_REGION_WITH_PERMISSION_FOUND;
-                    } else if (highestInside) {
-                        user.getPlayer().sendMessage(Component.text("highestInside, trimming..."));
-                        trimConflict(highestPoint, minPoint, false);
+                    // If there is no protected region, we can expand this (as applicableRegion has player as owner)
+                    if (protectedRegion == null) {
+                        // Expand it
+                        this.protectedRegion = applicableRegion;
+                        Location minPoint = BukkitAdapter.adapt(selectionWorld, applicableRegion.getMinimumPoint());
+                        Location maxPoint = BukkitAdapter.adapt(selectionWorld, applicableRegion.getMaximumPoint());
+                        this.areaCredit = calculateArea(minPoint, maxPoint);
+                        lowestPoint = ProtectionUtil.getMinimumCoordinates(lowestPoint, minPoint);
+                        highestPoint = ProtectionUtil.getMaximumCoordinates(highestPoint, maxPoint);
+                        // Recheck for existing regions inside it
                         checkApplicableRegions = true;
-                        break;
-                    } else if (lowestInside) {
-                        user.getPlayer().sendMessage(Component.text("lowestInside, trimming..."));
-                        trimConflict(lowestPoint, maxPoint, true);
-                        checkApplicableRegions = true;
-                        break;
-                    } else {
-                        user.getPlayer().sendMessage(Component.text("we did not find a point inside"));
-                        // How we got here?
-                        return Result.FAILED_PROTECTION_DATA_FETCH;
                     }
                 }
+            }
 
-                // If this breaks our selection, restart
-                if (ProtectionUtil.isLocationHigher(lowestPoint, highestPoint)) {
-                    user.getPlayer().sendMessage(Component.text("messed up points, restarting..."));
-                    return Result.OTHER_REGION_WITH_PERMISSION_FOUND;
-                }
+            // If this breaks our selection, restart
+            if (ProtectionUtil.isLocationHigher(lowestPoint, highestPoint)) {
+                return Result.OTHER_REGION_WITH_PERMISSION_FOUND;
             }
         } catch (ProtectionException ignored) {
             return Result.FAILED_PROTECTION_DATA_FETCH;
