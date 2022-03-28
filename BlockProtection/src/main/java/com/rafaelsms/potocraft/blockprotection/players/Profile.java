@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Profile extends DatabaseObject {
@@ -18,9 +19,9 @@ public class Profile extends DatabaseObject {
 
     private final Map<String, String> regionNameId = new HashMap<>();
 
-    // Volume available for making regions
-    private int volumeAvailable = 0;
-    private double volumeParts = 0.0;
+    // Area available for making regions
+    private int areaAvailable = 0;
+    private double areaParts = 0.0;
 
     public Profile(@NotNull UUID playerId, @NotNull String playerName) {
         this.playerId = playerId;
@@ -38,8 +39,10 @@ public class Profile extends DatabaseObject {
             }
         }
 
-        this.volumeAvailable = document.getInteger(Keys.VOLUME_AVAILABLE);
-        this.volumeParts = document.getDouble(Keys.VOLUME_PARTS);
+        this.areaAvailable = Objects.requireNonNullElseGet(document.getInteger(Keys.AREA_AVAILABLE),
+                                                           () -> document.getInteger(Keys.VOLUME_AVAILABLE) / 8);
+        this.areaParts = Objects.requireNonNullElseGet(document.getDouble(Keys.AREA_PARTS),
+                                                       () -> document.getDouble(Keys.VOLUME_PARTS) / 8.0);
     }
 
     public @NotNull UUID getPlayerId() {
@@ -54,33 +57,33 @@ public class Profile extends DatabaseObject {
         this.playerName = playerName;
     }
 
-    public int getVolumeAvailable() {
-        movePartsToVolume();
-        return volumeAvailable;
+    public int getAreaAvailable() {
+        movePartsToArea();
+        return areaAvailable;
     }
 
-    public void incrementVolume(double amount) {
+    public void incrementArea(double amount) {
         if (amount < 0) {
-            throw new IllegalArgumentException("Volume must be greater than zero");
+            throw new IllegalArgumentException("Area must be greater than zero");
         }
-        this.volumeParts += amount;
-        movePartsToVolume();
+        this.areaParts += amount;
+        movePartsToArea();
     }
 
-    public void consumeVolume(int volume) {
-        if (volume < 0) {
-            throw new IllegalArgumentException("Volume must be greater than zero");
+    public void consumeArea(int area) {
+        if (area < 0) {
+            throw new IllegalArgumentException("Area must be greater than zero");
         }
-        this.volumeAvailable -= volume;
+        this.areaAvailable -= area;
     }
 
-    private void movePartsToVolume() {
-        if (volumeParts < 1.0) {
+    private void movePartsToArea() {
+        if (areaParts < 1.0) {
             return;
         }
-        int integer = (int) volumeParts;
-        this.volumeParts = volumeParts - integer;
-        this.volumeAvailable += integer;
+        int integer = (int) areaParts;
+        this.areaParts = areaParts - integer;
+        this.areaAvailable += integer;
     }
 
     public boolean isRegionOwner(@NotNull String regionId) {
@@ -115,8 +118,8 @@ public class Profile extends DatabaseObject {
         regionMap.putAll(regionNameId);
         document.put(Keys.CREATED_REGION_IDS, regionMap);
 
-        document.put(Keys.VOLUME_AVAILABLE, volumeAvailable);
-        document.put(Keys.VOLUME_PARTS, volumeParts);
+        document.put(Keys.AREA_AVAILABLE, areaAvailable);
+        document.put(Keys.AREA_PARTS, areaParts);
         return document;
     }
 
@@ -129,6 +132,8 @@ public class Profile extends DatabaseObject {
 
         private static final String VOLUME_AVAILABLE = "volumeAvailable";
         private static final String VOLUME_PARTS = "volumeParts";
+        private static final String AREA_AVAILABLE = "areaAvailable";
+        private static final String AREA_PARTS = "areaParts";
 
         // Private constructor
         private Keys() {

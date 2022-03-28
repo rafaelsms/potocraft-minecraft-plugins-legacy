@@ -16,18 +16,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class VolumeListener implements Listener {
+public class AreaListener implements Listener {
 
     private final @NotNull BlockProtectionPlugin plugin;
 
-    public VolumeListener(@NotNull BlockProtectionPlugin plugin) {
+    public AreaListener(@NotNull BlockProtectionPlugin plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    private void incrementVolume(BlockBreakEvent event) {
+    private void incrementArea(BlockBreakEvent event) {
         if (event.getBlock().getType().isSolid()) {
-            plugin.getUserManager().getUser(event.getPlayer()).incrementVolume();
+            plugin.getUserManager().getUser(event.getPlayer()).incrementArea();
         }
     }
 
@@ -52,7 +52,7 @@ public class VolumeListener implements Listener {
 
         // Check if player has minimum volume for selection
         Optional<Selection> selectionOptional = user.getSelection();
-        if (selectionOptional.isEmpty() && !user.hasEnoughVolume(plugin.getConfiguration().getDefaultBoxVolume())) {
+        if (selectionOptional.isEmpty() && !user.hasEnoughArea(plugin.getConfiguration().getDefaultBoxArea())) {
             player.sendMessage(plugin.getConfiguration().getSelectionMinimumVolumeRequired());
             return;
         }

@@ -99,10 +99,10 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
 
         if (args[0].equalsIgnoreCase("saldo")) {
             player.sendMessage(plugin.getConfiguration()
-                                     .getProtectVolumeAvailable(plugin.getConfiguration().getDefaultBoxVolume(),
-                                                                user.getProfile().getVolumeAvailable(),
-                                                                user.getMaximumVolume(),
-                                                                user.getRewardVolume()));
+                                     .getProtectVolumeAvailable(plugin.getConfiguration().getDefaultBoxArea(),
+                                                                user.getProfile().getAreaAvailable(),
+                                                                user.getMaximumArea(),
+                                                                user.getRewardArea()));
             return true;
         } else if (args[0].equalsIgnoreCase("expandir")) {
             if (!sender.hasPermission(Permissions.PROTECT_COMMAND_EXPAND)) {
@@ -129,7 +129,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 // Check if player has enough volume
-                if (!user.hasEnoughVolume(selection.getVolumeCost())) {
+                if (!user.hasEnoughArea(selection.getAreaCost())) {
                     sender.sendMessage(plugin.getConfiguration().getSelectionNotEnoughVolume());
                     return true;
                 }
@@ -152,7 +152,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
                     regionManager.get().addRegion(newRegion.get());
                     regionManager.get().saveChanges();
                     user.setSelection(null);
-                    user.consumeVolume(selection.getVolumeCost());
+                    user.consumeArea(selection.getAreaCost());
                 } catch (StorageException exception) {
                     // Revert region replacement
                     regionManager.get().removeRegion(newRegion.get().getId());
@@ -191,7 +191,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
             try {
                 regionManager.get().saveChanges();
                 // Give back volume but using the permission-based limiter
-                user.incrementVolume(user.getDeletionPayback() * protectedRegion.get().volume());
+                user.incrementArea(user.getDeletionPayback() * protectedRegion.get().volume());
                 player.sendMessage(plugin.getConfiguration().getProtectRegionDeleted());
             } catch (StorageException exception) {
                 // Revert change
@@ -225,7 +225,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
             // Check volume cost
-            if (!user.hasEnoughVolume(selectionOptional.get().getVolumeCost())) {
+            if (!user.hasEnoughArea(selectionOptional.get().getAreaCost())) {
                 sender.sendMessage(plugin.getConfiguration().getSelectionNotEnoughVolume());
                 return true;
             }
@@ -270,7 +270,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
                 regionManager.get().addRegion(protectedRegion.get());
                 regionManager.get().saveChanges();
                 user.setSelection(null);
-                user.consumeVolume(protectedRegion.get().volume());
+                user.consumeArea(protectedRegion.get().volume());
                 user.getProfile().addCreatedRegion(regionName, regionId);
             } catch (StorageException exception) {
                 regionManager.get().removeRegion(regionId);

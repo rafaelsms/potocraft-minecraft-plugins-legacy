@@ -62,30 +62,23 @@ public final class WorldGuardUtil {
             return Optional.empty();
         }
         ApplicableRegionSet applicableRegions = regionManager.get().getApplicableRegions(playerLocation);
-        if (applicableRegions.size() > 0) {
-            // Cancel edit: does not have permission
-            for (ProtectedRegion applicableRegion : applicableRegions) {
-                if (applicableRegion.getType() == RegionType.GLOBAL) {
-                    continue;
+        // Cancel edit: does not have permission
+        for (ProtectedRegion applicableRegion : applicableRegions) {
+            if (applicableRegion.getType() == RegionType.GLOBAL) {
+                continue;
+            }
+            if ((requireOwner && !applicableRegion.isOwner(localPlayer)) ||
+                (!requireOwner && !applicableRegion.isMember(localPlayer))) {
+                if (warnPlayer) {
+                    player.sendMessage(plugin.getConfiguration().getNoRegionPermission());
                 }
-                if ((requireOwner && !applicableRegion.isOwner(localPlayer)) ||
-                    (!requireOwner && !applicableRegion.isMember(localPlayer))) {
-                    if (warnPlayer) {
-                        player.sendMessage(plugin.getConfiguration().getNoRegionPermission());
-                    }
-                    return Optional.empty();
-                }
-                return Optional.of(applicableRegion);
+                return Optional.empty();
             }
-            if (warnPlayer) {
-                player.sendMessage(plugin.getConfiguration().getRegionRequired());
-            }
-            return Optional.empty();
-        } else {
-            if (warnPlayer) {
-                player.sendMessage(plugin.getConfiguration().getRegionRequired());
-            }
-            return Optional.empty();
+            return Optional.of(applicableRegion);
         }
+        if (warnPlayer) {
+            player.sendMessage(plugin.getConfiguration().getRegionRequired());
+        }
+        return Optional.empty();
     }
 }

@@ -53,12 +53,8 @@ public class Configuration extends YamlFile {
         return Objects.requireNonNull(getInt("configuration.protection.selection.xz_offset"));
     }
 
-    public int getSelectionMinYOffset() {
-        return Objects.requireNonNull(getInt("configuration.protection.selection.min_y_offset"));
-    }
-
-    public int getSelectionMaxYOffset() {
-        return Objects.requireNonNull(getInt("configuration.protection.selection.max_y_offset"));
+    public int getSelectionMinYProtection() {
+        return Objects.requireNonNull(getInt("configuration.protection.selection.min_y_protected"));
     }
 
     public int getParticlePeriodTicks() {
@@ -70,46 +66,44 @@ public class Configuration extends YamlFile {
         return Objects.requireNonNull(Material.matchMaterial(materialName));
     }
 
-    public int getDefaultBoxVolume() {
-        return (2 * (getSelectionXZOffset() + 1)) *
-               (2 * (getSelectionXZOffset() + 1)) *
-               (getSelectionMinYOffset() + getSelectionMaxYOffset() + 1);
+    public int getDefaultBoxArea() {
+        return (2 * (getSelectionXZOffset() + 1)) * (2 * (getSelectionXZOffset() + 1));
     }
 
     public int getSelectionTimeToLive() {
-        return Objects.requireNonNull(getInt("configuration.protection.volume.selection_time_to_live_ticks"));
-    }
-
-    public Double getSelectionVolumeDefaultReward() {
-        return getDouble("configuration.protection.volume.default_reward_per_block");
-    }
-
-    public Map<String, Double> getSelectionVolumeGroupReward() {
-        return get("configuration.protection.volume.groups_reward_per_block");
-    }
-
-    public Double getDeletionDefaultPayback() {
-        return getDouble("configuration.protection.volume.default_deletion_payback");
-    }
-
-    public Map<String, Double> getGroupDeletionPayback() {
-        return get("configuration.protection.volume.groups_deletion_payback");
-    }
-
-    public int getOverallMaximumVolume() {
-        return Objects.requireNonNull(getInt("configuration.protection.volume.overall_maximum_volume"));
-    }
-
-    public int getSelectionVolumeDefaultMaximum() {
-        return Objects.requireNonNull(getInt("configuration.protection.volume.default_maximum_volume"));
-    }
-
-    public Map<String, Integer> getSelectionVolumeGroupMaximum() {
-        return get("configuration.protection.volume.groups_maximum_volume");
+        return Objects.requireNonNull(getInt("configuration.protection.area.selection_time_to_live_ticks"));
     }
 
     public double getSelectionMaxXZRatio() {
-        return Objects.requireNonNull(getDouble("configuration.protection.volume.maximum_xz_selection_ratio"));
+        return Objects.requireNonNull(getDouble("configuration.protection.area.maximum_xz_selection_ratio"));
+    }
+
+    public Double getSelectionAreaDefaultReward() {
+        return getDouble("configuration.protection.area.default_reward_per_block");
+    }
+
+    public Map<String, Double> getSelectionAreaGroupReward() {
+        return get("configuration.protection.area.groups_reward_per_block");
+    }
+
+    public int getOverallMaximumArea() {
+        return Objects.requireNonNull(getInt("configuration.protection.area.overall_maximum_area"));
+    }
+
+    public int getSelectionAreaDefaultMaximum() {
+        return Objects.requireNonNull(getInt("configuration.protection.area.default_maximum_area"));
+    }
+
+    public Map<String, Integer> getSelectionAreaGroupMaximum() {
+        return get("configuration.protection.area.groups_maximum_area");
+    }
+
+    public Double getDeletionDefaultPayback() {
+        return getDouble("configuration.protection.area.default_deletion_payback");
+    }
+
+    public Map<String, Double> getGroupDeletionPayback() {
+        return get("configuration.protection.area.groups_deletion_payback");
     }
 
     public Component getPlayerOnlyCommand() {

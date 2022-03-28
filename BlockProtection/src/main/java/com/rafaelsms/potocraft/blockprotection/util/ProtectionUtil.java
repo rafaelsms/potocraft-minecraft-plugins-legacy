@@ -18,39 +18,36 @@ public final class ProtectionUtil {
                                   @NotNull Location highestPoint) {
         assertSameWorld(lowestPoint, highestPoint);
         Location location = lowestPoint.clone();
+        Location playerLocation = player.getLocation();
         // +1 will draw the particle right on the edge of the selection (since the entire block is being selected)
         int startX = lowestPoint.getBlockX();
         int endX = highestPoint.getBlockX() + 1;
-        int startY = lowestPoint.getBlockY();
-        int endY = highestPoint.getBlockY() + 1;
+        int startY = Math.max(lowestPoint.getBlockY(), playerLocation.getBlockY() - 16);
+        int endY = Math.min(highestPoint.getBlockY() + 1, playerLocation.getBlockY() + 16);
         int startZ = lowestPoint.getBlockZ();
         int endZ = highestPoint.getBlockZ() + 1;
 
         // For every X, we draw 4 lines (at each yz corner)
         for (int dx = 0; dx <= (endX - startX); dx++) {
-            spawnParticle(player, location.set(startX + dx, startY, startZ));
-            spawnParticle(player, location.set(startX + dx, startY, endZ));
-            spawnParticle(player, location.set(startX + dx, endY, startZ));
-            spawnParticle(player, location.set(startX + dx, endY, endZ));
+            drawPoint(player, location.set(startX + dx, playerLocation.getBlockY(), startZ));
+            drawPoint(player, location.set(startX + dx, playerLocation.getBlockY(), endZ));
         }
         // For every Y, we draw 4 lines (at each xz corner)
-        for (int dy = 0; dy <= (endY - startY); dy++) {
-            spawnParticle(player, location.set(startX, startY + dy, startZ));
-            spawnParticle(player, location.set(startX, startY + dy, endZ));
-            spawnParticle(player, location.set(endX, startY + dy, startZ));
-            spawnParticle(player, location.set(endX, startY + dy, endZ));
+        for (int dy = 0; dy <= (endY - startY); dy += 2) {
+            drawPoint(player, location.set(startX, startY + dy, startZ));
+            drawPoint(player, location.set(startX, startY + dy, endZ));
+            drawPoint(player, location.set(endX, startY + dy, startZ));
+            drawPoint(player, location.set(endX, startY + dy, endZ));
         }
         // For every Z, we draw 4 lines (at each xy corner)
         for (int dz = 0; dz <= (endZ - startZ); dz++) {
-            spawnParticle(player, location.set(startX, startY, startZ + dz));
-            spawnParticle(player, location.set(startX, endY, startZ + dz));
-            spawnParticle(player, location.set(endX, startY, startZ + dz));
-            spawnParticle(player, location.set(endX, endY, startZ + dz));
+            drawPoint(player, location.set(startX, playerLocation.getBlockY(), startZ + dz));
+            drawPoint(player, location.set(endX, playerLocation.getBlockY(), startZ + dz));
         }
     }
 
-    private static void spawnParticle(@NotNull Player player, @NotNull Location location) {
-        player.spawnParticle(Particle.FLAME, location, 1, 0, 0, 0, 0);
+    private static void drawPoint(@NotNull Player player, @NotNull Location location) {
+        player.spawnParticle(Particle.FLAME, location.add(0, 0.5, 0), 1, 0, 0, 0, 0);
     }
 
     public static @NotNull Location getMinimumCoordinates(@NotNull Location location1, @NotNull Location location2) {
@@ -69,11 +66,11 @@ public final class ProtectionUtil {
                             Math.max(location1.getBlockZ(), location2.getBlockZ()));
     }
 
-    public static boolean isLocationHigher(@NotNull Location supposedlyLower, @NotNull Location supposedlyHigher) {
-        assertSameWorld(supposedlyLower, supposedlyHigher);
-        return supposedlyLower.getBlockX() >= supposedlyHigher.getBlockX() ||
-               supposedlyLower.getBlockY() >= supposedlyHigher.getBlockY() ||
-               supposedlyLower.getBlockZ() >= supposedlyHigher.getBlockZ();
+    public static boolean isLocationHigher(@NotNull Location supposedlyHigher, @NotNull Location supposedlyLower) {
+        assertSameWorld(supposedlyHigher, supposedlyLower);
+        return supposedlyHigher.getBlockX() >= supposedlyLower.getBlockX() ||
+               supposedlyHigher.getBlockY() >= supposedlyLower.getBlockY() ||
+               supposedlyHigher.getBlockZ() >= supposedlyLower.getBlockZ();
     }
 
     private static void assertSameWorld(@NotNull Location location1, @NotNull Location location2) {

@@ -51,41 +51,41 @@ public class User implements Runnable {
         this.selection = selection;
     }
 
-    public void incrementVolume() {
-        incrementVolume(getRewardVolume());
+    public void incrementArea() {
+        incrementArea(getRewardArea());
     }
 
-    public void incrementVolume(double amount) {
+    public void incrementArea(double amount) {
         if (amount < 0) {
-            throw new IllegalArgumentException("Volume must be greater than zero");
+            throw new IllegalArgumentException("Area must be greater than zero");
         }
-        int maximumVolume = getMaximumVolume();
-        int volumeAvailable = profile.getVolumeAvailable();
+        int maximumArea = getMaximumArea();
+        int areaAvailable = profile.getAreaAvailable();
         // Don't allow bypassing the limit
-        if (volumeAvailable >= maximumVolume) {
+        if (areaAvailable >= maximumArea) {
             return;
         }
         // Limit how much is incremented
-        this.profile.incrementVolume(Math.min(maximumVolume - volumeAvailable, amount));
+        this.profile.incrementArea(Math.min(maximumArea - areaAvailable, amount));
     }
 
-    public void consumeVolume(int volume) {
-        this.profile.consumeVolume(volume);
+    public void consumeArea(int area) {
+        this.profile.consumeArea(area);
     }
 
-    public int getMaximumVolume() {
-        int maxVolume = plugin.getConfiguration().getSelectionVolumeDefaultMaximum();
-        for (Map.Entry<String, Integer> entry : plugin.getConfiguration().getSelectionVolumeGroupMaximum().entrySet()) {
-            if (entry.getValue() > maxVolume && player.hasPermission(entry.getKey())) {
-                maxVolume = entry.getValue();
+    public int getMaximumArea() {
+        int maxArea = plugin.getConfiguration().getSelectionAreaDefaultMaximum();
+        for (Map.Entry<String, Integer> entry : plugin.getConfiguration().getSelectionAreaGroupMaximum().entrySet()) {
+            if (entry.getValue() > maxArea && player.hasPermission(entry.getKey())) {
+                maxArea = entry.getValue();
             }
         }
-        return maxVolume;
+        return maxArea;
     }
 
-    public double getRewardVolume() {
-        double reward = plugin.getConfiguration().getSelectionVolumeDefaultReward();
-        for (Map.Entry<String, Double> entry : plugin.getConfiguration().getSelectionVolumeGroupReward().entrySet()) {
+    public double getRewardArea() {
+        double reward = plugin.getConfiguration().getSelectionAreaDefaultReward();
+        for (Map.Entry<String, Double> entry : plugin.getConfiguration().getSelectionAreaGroupReward().entrySet()) {
             if (entry.getValue() > reward && player.hasPermission(entry.getKey())) {
                 reward = entry.getValue();
             }
@@ -103,11 +103,11 @@ public class User implements Runnable {
         return paybackRatio;
     }
 
-    public boolean hasEnoughVolume(int volume) {
-        if (player.hasPermission(Permissions.BYPASS_VOLUME_CHECKER)) {
+    public boolean hasEnoughArea(int area) {
+        if (player.hasPermission(Permissions.BYPASS_AREA_CHECKER)) {
             return true;
         }
-        return profile.getVolumeAvailable() >= volume;
+        return profile.getAreaAvailable() >= area;
     }
 
     @Override

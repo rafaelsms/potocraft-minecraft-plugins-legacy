@@ -1,8 +1,8 @@
 package com.rafaelsms.potocraft.blockprotection;
 
 import com.rafaelsms.potocraft.blockprotection.commands.ProtectCommand;
+import com.rafaelsms.potocraft.blockprotection.listeners.AreaListener;
 import com.rafaelsms.potocraft.blockprotection.listeners.UserManager;
-import com.rafaelsms.potocraft.blockprotection.listeners.VolumeListener;
 import com.rafaelsms.potocraft.blockprotection.util.ProtectionException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
@@ -41,7 +41,7 @@ public class BlockProtectionPlugin extends JavaPlugin {
     public void onEnable() {
         // Register events
         getServer().getPluginManager().registerEvents(userManager.getListener(), this);
-        getServer().getPluginManager().registerEvents(new VolumeListener(this), this);
+        getServer().getPluginManager().registerEvents(new AreaListener(this), this);
 
         registerCommand("protect", new ProtectCommand(this));
 
