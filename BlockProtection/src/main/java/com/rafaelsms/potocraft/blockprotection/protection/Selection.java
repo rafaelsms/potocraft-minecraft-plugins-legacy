@@ -183,7 +183,9 @@ public class Selection implements Runnable {
                         highestPoint = ProtectionUtil.getMaximumCoordinates(highestPoint, maxPoint);
                         // Recheck for existing regions inside it
                         checkApplicableRegions = true;
+                        continue;
                     }
+                    return Result.OTHER_REGION_WITH_PERMISSION_FOUND;
                 }
             }
 
