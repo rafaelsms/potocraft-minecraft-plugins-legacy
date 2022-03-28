@@ -90,6 +90,9 @@ public class Selection implements Runnable {
     }
 
     private Result select(@NotNull Location location) {
+        // Restart age because of interaction
+        this.age = 0;
+
         // Check for selection world
         if (location.getWorld() == null) {
             return Result.INVALID_LOCATION_WORLD;
@@ -211,8 +214,6 @@ public class Selection implements Runnable {
         // Update locations
         this.lowCorner = lowestPoint;
         this.highCorner = highestPoint;
-        // Restart age because of interaction
-        this.age = 0;
         return Result.SELECTION_ALLOWED;
     }
 
