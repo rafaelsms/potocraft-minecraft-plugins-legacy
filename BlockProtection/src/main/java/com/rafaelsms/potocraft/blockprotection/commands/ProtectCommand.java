@@ -219,6 +219,10 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(plugin.getConfiguration().getSelectionRequired());
                 return true;
             }
+            if (selectionOptional.get().isEditingRegion()) {
+                sender.sendMessage(plugin.getConfiguration().getSelectionForExpandingOnly());
+                return true;
+            }
             // Check if other regions exists
             if (selectionOptional.get().hasOtherProtectedRegionsOnSelection().orElse(true)) {
                 sender.sendMessage(plugin.getConfiguration().getSelectionInsideOtherRegion());
@@ -270,7 +274,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
                 regionManager.get().addRegion(protectedRegion.get());
                 regionManager.get().saveChanges();
                 user.setSelection(null);
-                user.consumeArea(protectedRegion.get().volume());
+                user.consumeArea(selectionOptional.get().getAreaCost());
                 user.getProfile().addCreatedRegion(regionName, regionId);
             } catch (StorageException exception) {
                 regionManager.get().removeRegion(regionId);

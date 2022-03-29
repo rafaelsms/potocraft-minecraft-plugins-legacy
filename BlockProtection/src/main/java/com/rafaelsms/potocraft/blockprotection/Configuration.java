@@ -244,6 +244,10 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponent(get("language.selection.selection_required"));
     }
 
+    public Component getSelectionForExpandingOnly() {
+        return TextUtil.toComponent(get("language.selection.selection_for_expanding_only"));
+    }
+
     public Component getRegionRequired() {
         return TextUtil.toComponent(get("language.selection.region_required"));
     }

@@ -54,6 +54,10 @@ public class Selection implements Runnable {
         this.areaCredit = calculateArea(lowCorner, highCorner);
     }
 
+    public boolean isEditingRegion() {
+        return protectedRegion != null;
+    }
+
     public Optional<Boolean> hasOtherProtectedRegionsOnSelection() {
         // Make the worst
         if (selectionWorld == null || lowCorner == null || highCorner == null) {

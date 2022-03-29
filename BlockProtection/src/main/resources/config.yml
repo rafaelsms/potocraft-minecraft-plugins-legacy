@@ -79,6 +79,7 @@ language:
       <gold>Digite <click:suggest_command:'/proteger criar nome'><hover:show_text:'<gold><yellow>Clique</yellow> para criar uma região!</gold>'><yellow><bold>/proteger criar</bold></yellow></hover></click> para finalizar a proteção.</gold>
       <gold>Digite <click:run_command:'/proteger cancelar'><hover:show_text:'<gold><yellow>Clique</yellow> para cancelar a seleção.</gold>'><yellow><bold>/proteger cancelar</bold></yellow></hover></click> para cancelar a seleção.</gold>
     selection_required: "<gold>Para iniciar uma seleção, bata com uma <yellow><lang:item.minecraft.golden_shovel></yellow> no chão.</gold>"
+    selection_for_expanding_only: "<click:suggest_command:'/proteger expandir'><hover:show_text:'<gold><yellow>Clique</yellow> para salvar sua expansão de região.</gold>'><gold>Sua seleção está editando uma região! Digite <yellow>/proteger expandir</yellow> para salvar.</gold></hover></click>"
     region_required: "<red>É necessário estar dentro de uma região.</red>"
     too_narrow: "<red>Sua seleção é muito estreita, longa. Faça mais retangular!</red>"
   regions:
