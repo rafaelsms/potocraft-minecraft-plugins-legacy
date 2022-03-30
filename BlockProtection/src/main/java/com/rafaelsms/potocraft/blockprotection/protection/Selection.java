@@ -148,9 +148,15 @@ public class Selection implements Runnable {
         Location currentHighestPoint = Util.getOrElse(this.highCorner, location.clone());
         int xzOffset = plugin.getConfiguration().getSelectionXZOffset();
         Location selectionLowestPoint = location.clone().add(-xzOffset, 0, -xzOffset);
-        selectionLowestPoint.setY(plugin.getConfiguration().getSelectionMinYProtection());
+        int minYProtection = plugin.getConfiguration().getSelectionMinYProtection();
+        if (selectionLowestPoint.getBlockY() > minYProtection) {
+            selectionLowestPoint.setY(minYProtection);
+        }
         Location selectionHighestPoint = location.clone().add(+xzOffset, 0, +xzOffset);
-        selectionHighestPoint.setY(selectionWorld.getMaxHeight());
+        int maxYProtection = selectionWorld.getMaxHeight();
+        if (selectionHighestPoint.getBlockY() <= selectionWorld.getMaxHeight()) {
+            selectionHighestPoint.setY(maxYProtection);
+        }
         // Make points
         Location lowestPoint = ProtectionUtil.getMinimumCoordinates(currentLowestPoint, selectionLowestPoint);
         Location highestPoint = ProtectionUtil.getMaximumCoordinates(currentHighestPoint, selectionHighestPoint);
