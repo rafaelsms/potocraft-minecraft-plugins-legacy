@@ -9,6 +9,7 @@ load: STARTUP
 softdepend:
   - WorldGuard
   - LuckPerms
+  - Vulcan
 commands:
   enderchest:
     description: Opens your enderchest wherever you are.

@@ -43,6 +43,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -151,6 +152,11 @@ public class ServerUtilityPlugin extends JavaPlugin {
 
     public @NotNull Optional<WorldGuard> getWorldGuard() {
         return Optional.ofNullable(WorldGuard.getInstance());
+    }
+
+    public boolean isVulcanIntegrationAvailable() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("Vulcan");
+        return plugin != null && plugin.isEnabled();
     }
 
     public Logger logger() {

@@ -26,9 +26,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 
 public class QuickReplantListener implements Listener {
+
+    private static final int MAX_BLOCKS_SELECTED = 128;
+    private static final int MAX_BREAKS_PER_TICK = 3;
+    private static final int BLOCK_BREAK_PERIOD = 1;
 
     private final Set<Crop> cropMaterials = Set.of(Crop.of(Material.CARROTS, Material.CARROT),
                                                    Crop.of(Material.POTATOES, Material.POTATO),
@@ -36,11 +39,12 @@ public class QuickReplantListener implements Listener {
                                                    Crop.of(Material.NETHER_WART));
 
     private final @NotNull ServerUtilityPlugin plugin;
-    private final FastBreakStorage fastBreakStorage = new FastBreakStorage(new ReplantTask());
+    private final FastBreakStorage fastBreakStorage;
     private final HashMap<Location, Crop> storedCropType = new HashMap<>();
 
     public QuickReplantListener(@NotNull ServerUtilityPlugin plugin) {
         this.plugin = plugin;
+        this.fastBreakStorage = FastBreakStorage.build(plugin, new ReplantTask(), MAX_BREAKS_PER_TICK);
     }
 
     @EventHandler
@@ -51,7 +55,7 @@ public class QuickReplantListener implements Listener {
             if (fastBreakStorage.isEmpty()) {
                 storedCropType.clear();
             }
-        }, 1, 1);
+        }, BLOCK_BREAK_PERIOD, BLOCK_BREAK_PERIOD);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -124,13 +128,13 @@ public class QuickReplantListener implements Listener {
     }
 
     private @NotNull Optional<Map<Location, Block>> getSameGrownCrop(@NotNull Block block, @NotNull Crop crop) {
-        return Optional.of(BlockSearch.searchBlocks(block, crop::isDoneCrop));
+        return Optional.of(BlockSearch.searchBlocks(block, crop::isDoneCrop, MAX_BLOCKS_SELECTED));
     }
 
-    private class ReplantTask implements Consumer<Block> {
+    private class ReplantTask implements FastBreakStorage.BrokenBlockConsumer {
 
         @Override
-        public void accept(Block block) {
+        public void onBroken(@NotNull Block block, @NotNull Player player) {
             Crop crop = storedCropType.remove(block.getLocation());
             if (crop == null) {
                 return;

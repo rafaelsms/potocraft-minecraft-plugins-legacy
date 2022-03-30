@@ -28,6 +28,9 @@ public class QuickBreakTreeListener implements Listener {
     // Max height is 30 according to wiki
     private static final int MAX_SEARCH_DISTANCE = 33;
     private static final int MAX_MANHATTAN_DISTANCE = 2;
+    private static final int MAX_BLOCKS_SELECTED = 128;
+    private static final int MAX_BREAKS_PER_TICK = 1;
+    private static final int BREAK_PERIOD = 2;
 
     private final Set<Material> axeMaterials = Set.of(Material.NETHERITE_AXE,
                                                       Material.DIAMOND_AXE,
@@ -46,15 +49,16 @@ public class QuickBreakTreeListener implements Listener {
                                                                            Material.JUNGLE_LEAVES));
 
     private final @NotNull ServerUtilityPlugin plugin;
-    private final FastBreakStorage fastBreakStorage = new FastBreakStorage();
+    private final FastBreakStorage fastBreakStorage;
 
     public QuickBreakTreeListener(@NotNull ServerUtilityPlugin plugin) {
         this.plugin = plugin;
+        this.fastBreakStorage = FastBreakStorage.build(plugin, null, MAX_BREAKS_PER_TICK);
     }
 
     @EventHandler
     private void registerTasks(ServerLoadEvent event) {
-        plugin.getServer().getScheduler().runTaskTimer(plugin, fastBreakStorage::tickBreak, 1, 1);
+        plugin.getServer().getScheduler().runTaskTimer(plugin, fastBreakStorage::tickBreak, BREAK_PERIOD, BREAK_PERIOD);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -93,13 +97,19 @@ public class QuickBreakTreeListener implements Listener {
                                                                  new TreeLogPredicate(treeMaterial,
                                                                                       block.getLocation(),
                                                                                       MAX_MANHATTAN_DISTANCE,
-                                                                                      MAX_SEARCH_DISTANCE));
+                                                                                      MAX_SEARCH_DISTANCE),
+                                                                 MAX_BLOCKS_SELECTED);
             Map<Location, Block> leaves = BlockSearch.searchBlocks(block,
                                                                    new TreePredicate(treeMaterial,
                                                                                      logs,
                                                                                      block.getLocation(),
                                                                                      MAX_MANHATTAN_DISTANCE,
-                                                                                     MAX_SEARCH_DISTANCE));
+                                                                                     MAX_SEARCH_DISTANCE),
+                                                                   MAX_BLOCKS_SELECTED);
+            // If there aren't any leaf, return no tree
+            if (leaves.isEmpty()) {
+                return Optional.empty();
+            }
             logs.putAll(leaves);
             return Optional.of(logs);
         }

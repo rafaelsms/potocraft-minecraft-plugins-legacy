@@ -14,8 +14,6 @@ import java.util.function.Predicate;
 
 public class BlockSearch {
 
-    private static final int MAX_BLOCKS = 1000;
-
     private static final BlockFace[] BLOCK_FACES;
 
     static {
@@ -39,20 +37,25 @@ public class BlockSearch {
 
     private final @NotNull Block startingBlock;
     private final @NotNull Predicate<Block> selectionPredicate;
+    private final int maxBlocksSelected;
 
-    public BlockSearch(@NotNull Block startingBlock, @NotNull Predicate<Block> selectionPredicate) {
+    public BlockSearch(@NotNull Block startingBlock,
+                       @NotNull Predicate<Block> selectionPredicate,
+                       int maxBlocksSelected) {
         this.startingBlock = startingBlock;
         this.selectionPredicate = selectionPredicate;
+        this.maxBlocksSelected = maxBlocksSelected;
     }
 
     public static Map<Location, Block> searchBlocks(@NotNull Block block,
-                                                    @NotNull Predicate<Block> selectionPredicate) {
-        return new BlockSearch(block, selectionPredicate).search();
+                                                    @NotNull Predicate<Block> selectionPredicate,
+                                                    int maxBlocksSelected) {
+        return new BlockSearch(block, selectionPredicate, maxBlocksSelected).search();
     }
 
     public Map<Location, Block> search() {
         blockQueue.add(startingBlock);
-        while (!blockQueue.isEmpty() && selectedBlocks.size() < MAX_BLOCKS) {
+        while (!blockQueue.isEmpty() && selectedBlocks.size() < maxBlocksSelected) {
             Block block = blockQueue.pop();
             Location blockLocation = block.getLocation();
             // Execute block

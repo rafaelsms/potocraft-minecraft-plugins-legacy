@@ -1,35 +1,53 @@
 package com.rafaelsms.potocraft.serverutility.util;
 
+import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.Optional;
 
 public class FastBreakStorage {
 
-    private static final int MAX_BREAKS_PER_TICK = 1;
+    public static final @NotNull BrokenBlockConsumer NO_OP_CONSUMER = (block, player) -> {
+    };
 
     private final Map<Player, ItemStack> playerTools = Collections.synchronizedMap(new HashMap<>());
     private final Map<Player, Map<Location, Block>> playerBlocks = Collections.synchronizedMap(new HashMap<>());
     private final Map<Location, Block> blocks = Collections.synchronizedMap(new HashMap<>());
 
-    private final @NotNull Consumer<Block> consumeOnBreak;
+    private final @NotNull BrokenBlockConsumer consumeOnBreak;
+    private final int maxBreaksPerTick;
 
-    public FastBreakStorage() {
-        this.consumeOnBreak = (block) -> {
-        };
+    protected FastBreakStorage(@NotNull BrokenBlockConsumer consumeOnBreak, int maxBreaksPerTick) {
+        this.consumeOnBreak = consumeOnBreak;
+        this.maxBreaksPerTick = maxBreaksPerTick;
     }
 
-    public FastBreakStorage(@NotNull Consumer<Block> consumeOnBreak) {
-        this.consumeOnBreak = consumeOnBreak;
+    public static FastBreakStorage build(@NotNull ServerUtilityPlugin plugin,
+                                         @Nullable BrokenBlockConsumer consumer,
+                                         int maxBreaksPerTick) {
+        BrokenBlockConsumer blockConsumer = Optional.ofNullable(consumer).orElse(NO_OP_CONSUMER);
+        if (plugin.isVulcanIntegrationAvailable()) {
+            try {
+                VulcanIntegrationConsumer integrationConsumer = new VulcanIntegrationConsumer(blockConsumer);
+                plugin.getServer().getPluginManager().registerEvents(integrationConsumer, plugin);
+                return new FastBreakStorage(integrationConsumer, maxBreaksPerTick);
+            } catch (Throwable throwable) {
+                plugin.logger()
+                      .warn("Couldn't initialize Vulcan AntiCheat integration for quick break: {}",
+                            throwable.getLocalizedMessage());
+            }
+        }
+        return new FastBreakStorage(blockConsumer, maxBreaksPerTick);
     }
 
     public boolean isEmpty() {
@@ -73,19 +91,21 @@ public class FastBreakStorage {
             Iterator<Block> blockIterator = playerBlocks.values().iterator();
             while (blockIterator.hasNext()) {
                 Block block = blockIterator.next();
-                ItemStack tool = playerTools.get(player);
-                blocks.remove(block.getLocation());
+                player.breakBlock(block);
                 blockIterator.remove();
-                block.breakNaturally(tool);
-                consumeOnBreak.accept(block);
+                consumeOnBreak.onBroken(block, player);
 
                 // Stop if broke too many blocks this tick already
                 processedBlocks++;
-                if (processedBlocks > MAX_BREAKS_PER_TICK) {
+                if (processedBlocks >= maxBreaksPerTick) {
                     break;
                 }
             }
         }
+    }
+
+    public interface BrokenBlockConsumer {
+        void onBroken(@NotNull Block block, @NotNull Player player);
     }
 
 }
