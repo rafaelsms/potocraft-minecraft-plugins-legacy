@@ -1,8 +1,9 @@
 configuration:
   database:
     mongo_uri: "mongodb://localhost:27017"
-    database_name: "serverNameDb"
+    database_name: "minecraftDb"
     player_profile_collection: "protectionProfiles"
+    player_profile_namespace: "serverName"
     save_player_task_timer_ticks: 3600
     is_exception_fatal: false
   protection:

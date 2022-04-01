@@ -1,6 +1,6 @@
 package com.rafaelsms.discordbot;
 
-import com.rafaelsms.potocraft.YamlFile;
+import com.rafaelsms.potocraft.util.YamlFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

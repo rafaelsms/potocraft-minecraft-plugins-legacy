@@ -3,13 +3,13 @@ package com.rafaelsms.potocraft.combatserver.listeners;
 import com.rafaelsms.potocraft.combatserver.CombatServerPlugin;
 import com.rafaelsms.potocraft.combatserver.player.Profile;
 import com.rafaelsms.potocraft.combatserver.player.User;
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class UserManager extends com.rafaelsms.potocraft.util.UserManager<User, Profile> {
+public class UserManager extends com.rafaelsms.potocraft.player.UserManager<User, Profile> {
 
     private final @NotNull CombatServerPlugin plugin;
 
@@ -24,10 +24,8 @@ public class UserManager extends com.rafaelsms.potocraft.util.UserManager<User, 
     }
 
     @Override
-    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws Database.DatabaseException {
-        return plugin.getDatabase()
-                     .getProfile(event.getUniqueId())
-                     .orElse(new Profile(event.getUniqueId(), event.getName()));
+    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException {
+        return Profile.fetch(plugin, event.getUniqueId());
     }
 
     @Override
@@ -37,8 +35,6 @@ public class UserManager extends com.rafaelsms.potocraft.util.UserManager<User, 
 
     @Override
     protected void onLogin(User user) {
-        // Update player name
-        user.getProfile().setPlayerName(user.getPlayer().getName());
     }
 
     @Override
@@ -54,7 +50,7 @@ public class UserManager extends com.rafaelsms.potocraft.util.UserManager<User, 
     }
 
     @Override
-    protected void saveUser(User user) {
-        plugin.getDatabase().saveProfile(user.getProfile());
+    protected void saveUser(User user) throws DatabaseException {
+        user.getProfile().save();
     }
 }

@@ -1,6 +1,6 @@
-package com.rafaelsms.potocraft.util;
+package com.rafaelsms.potocraft.player;
 
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -51,7 +51,7 @@ public abstract class UserManager<U, P> {
 
     protected abstract Component getKickMessageCouldNotLoadProfile();
 
-    protected abstract P retrieveProfile(AsyncPlayerPreLoginEvent event) throws Database.DatabaseException;
+    protected abstract P retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException;
 
     protected abstract U retrieveUser(PlayerLoginEvent event, @NotNull P profile);
 
@@ -63,7 +63,7 @@ public abstract class UserManager<U, P> {
 
     protected abstract void tickUser(U user);
 
-    protected abstract void saveUser(U user);
+    protected abstract void saveUser(U user) throws DatabaseException;
 
     public @NotNull UserManagerListener getListener() {
         return new UserManagerListener();
@@ -111,6 +111,8 @@ public abstract class UserManager<U, P> {
                 for (U user : users.values()) {
                     try {
                         saveUser(user);
+                    } catch (DatabaseException exception) {
+                        plugin.getSLF4JLogger().warn("Failed to save user:", exception);
                     } catch (Exception exception) {
                         plugin.getSLF4JLogger().error("Exception thrown on user save task:", exception);
                     }
@@ -158,7 +160,7 @@ public abstract class UserManager<U, P> {
                     }
                     loadedProfiles.put(event.getUniqueId(), profile);
                 }
-            } catch (Database.DatabaseException ignored) {
+            } catch (DatabaseException ignored) {
                 plugin.getSLF4JLogger()
                       .warn("Failed to load profile for {} (uuid={})", event.getName(), event.getUniqueId());
                 event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, getKickMessageCouldNotLoadProfile());
@@ -204,6 +206,8 @@ public abstract class UserManager<U, P> {
                         try {
                             onQuit(removedUser);
                             saveUser(removedUser);
+                        } catch (DatabaseException exception) {
+                            plugin.getSLF4JLogger().warn("Failed to save user:", exception);
                         } catch (Exception exception) {
                             plugin.getSLF4JLogger().error("Exception thrown on user quit and save task:", exception);
                         }

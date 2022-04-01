@@ -1,12 +1,12 @@
 package com.rafaelsms.potocraft.serverprofile;
 
-import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.serverprofile.players.Home;
 import com.rafaelsms.potocraft.serverprofile.players.Profile;
 import com.rafaelsms.potocraft.serverprofile.players.TeleportRequest;
 import com.rafaelsms.potocraft.serverprofile.warps.Warp;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
+import com.rafaelsms.potocraft.util.YamlFile;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;

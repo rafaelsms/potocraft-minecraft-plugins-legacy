@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.loginmanager.commands;
 
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
@@ -106,7 +106,7 @@ public class RegisterCommand extends Command implements TabExecutor {
             player.sendMessage(plugin.getConfiguration().getCommandLoggedIn());
             plugin.getDatabase().saveProfile(profile);
             sender.sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
-        } catch (Database.DatabaseException ignored) {
+        } catch (DatabaseException ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
         }
 

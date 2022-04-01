@@ -1,8 +1,8 @@
 package com.rafaelsms.potocraft.serverutility;
 
-import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.serverutility.util.WorldCombatConfig;
 import com.rafaelsms.potocraft.util.TextUtil;
+import com.rafaelsms.potocraft.util.YamlFile;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.luckperms.api.node.types.InheritanceNode;

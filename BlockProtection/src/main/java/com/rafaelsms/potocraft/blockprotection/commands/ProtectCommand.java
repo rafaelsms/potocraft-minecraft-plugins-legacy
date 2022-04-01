@@ -6,7 +6,7 @@ import com.rafaelsms.potocraft.blockprotection.players.Profile;
 import com.rafaelsms.potocraft.blockprotection.players.User;
 import com.rafaelsms.potocraft.blockprotection.protection.Selection;
 import com.rafaelsms.potocraft.blockprotection.util.WorldGuardUtil;
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
 import com.sk89q.worldguard.WorldGuard;
@@ -349,12 +349,11 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
         }
 
         try {
-            Optional<Profile> profile = plugin.getDatabase().getProfile(offlinePlayer.getUniqueId());
-            if (profile.isPresent() && profile.get().isRegionOwner(protectedRegion.get().getId())) {
+            if (Profile.fetch(plugin, offlinePlayer.getUniqueId()).isRegionOwner(protectedRegion.get().getId())) {
                 player.sendMessage(plugin.getConfiguration().getProtectCantToggleCreator());
                 return;
             }
-        } catch (Database.DatabaseException exception) {
+        } catch (DatabaseException exception) {
             plugin.logger().error("Failed to fetch player profile:", exception);
             player.sendMessage(plugin.getConfiguration().getFailedToFetchProfile());
             return;

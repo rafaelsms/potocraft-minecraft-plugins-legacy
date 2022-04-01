@@ -1,12 +1,12 @@
 package com.rafaelsms.potocraft.universalchat;
 
 
+import com.rafaelsms.potocraft.player.BlockedWordsManager;
 import com.rafaelsms.potocraft.universalchat.commands.MessageCommand;
 import com.rafaelsms.potocraft.universalchat.commands.ReplyCommand;
 import com.rafaelsms.potocraft.universalchat.listeners.ChatListener;
 import com.rafaelsms.potocraft.universalchat.listeners.UserManager;
 import com.rafaelsms.potocraft.universalchat.tasks.BroadcastTask;
-import com.rafaelsms.potocraft.util.BlockedWordsChecker;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -19,12 +19,12 @@ public class UniversalChatPlugin extends Plugin {
 
     private final @NotNull Configuration configuration;
     private final @NotNull UserManager userManager;
-    private final @NotNull BlockedWordsChecker blockedWordsChecker;
+    private final @NotNull BlockedWordsManager blockedWordsManager;
 
     public UniversalChatPlugin() throws IOException {
         this.configuration = new Configuration(getDataFolder().toPath());
         this.userManager = new UserManager(this);
-        this.blockedWordsChecker = new BlockedWordsChecker(logger(), configuration.getBlockedWordsList());
+        this.blockedWordsManager = new BlockedWordsManager(logger(), configuration.getBlockedWordsList());
     }
 
     @Override
@@ -66,7 +66,7 @@ public class UniversalChatPlugin extends Plugin {
         return userManager;
     }
 
-    public @NotNull BlockedWordsChecker getWordsChecker() {
-        return blockedWordsChecker;
+    public @NotNull BlockedWordsManager getWordsChecker() {
+        return blockedWordsManager;
     }
 }

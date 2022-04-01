@@ -1,7 +1,7 @@
 package com.rafaelsms.potocraft.combatserver;
 
-import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.util.TextUtil;
+import com.rafaelsms.potocraft.util.YamlFile;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,72 +1,73 @@
 package com.rafaelsms.potocraft.blockprotection.players;
 
-import com.mongodb.client.model.Filters;
-import com.rafaelsms.potocraft.database.DatabaseObject;
-import com.rafaelsms.potocraft.util.Util;
+import com.mongodb.client.MongoCollection;
+import com.rafaelsms.potocraft.blockprotection.BlockProtectionPlugin;
+import com.rafaelsms.potocraft.database.CachedField;
+import com.rafaelsms.potocraft.database.DatabaseException;
+import com.rafaelsms.potocraft.database.IdentifiedDatabaseStored;
+import com.rafaelsms.potocraft.database.MapField;
+import com.rafaelsms.potocraft.database.SimpleField;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.List;
 import java.util.UUID;
 
-public class Profile extends DatabaseObject {
+public class Profile extends IdentifiedDatabaseStored {
 
-    private final @NotNull UUID playerId;
-    private @NotNull String playerName;
+    private final @NotNull BlockProtectionPlugin plugin;
 
-    private final Map<String, String> regionNameId = new HashMap<>();
+    private final MapField<String> regionNames;
+    private final SimpleField<Integer> areaAvailable;
+    private final SimpleField<Double> areaParts;
 
-    // Area available for making regions
-    private int areaAvailable = 0;
-    private double areaParts = 0.0;
-
-    public Profile(@NotNull UUID playerId, @NotNull String playerName) {
-        this.playerId = playerId;
-        this.playerName = playerName;
+    private Profile(@NotNull BlockProtectionPlugin plugin, @NotNull UUID playerId) throws DatabaseException {
+        super(playerId);
+        this.plugin = plugin;
+        String namespace = plugin.getDatabase().getProfileNamespace();
+        this.regionNames = new MapField<>(namespace, "regionMap", collectionProvider);
+        this.areaAvailable = new SimpleField<>(namespace, "areaAvailable", collectionProvider, 0);
+        this.areaParts = new SimpleField<>(namespace, "areaParts", collectionProvider, 0.0);
+        fetchAllFields().ifPresent(document -> {
+            this.regionNames.readFrom(document);
+            this.areaAvailable.readFrom(document);
+            this.areaParts.readFrom(document);
+        });
     }
 
-    public Profile(@NotNull Document document) {
-        this.playerId = Util.convertNonNull(document.getString(Keys.PLAYER_ID), UUID::fromString);
-        this.playerName = document.getString(Keys.PLAYER_NAME);
-
-        Document regionMap = document.get(Keys.CREATED_REGION_IDS, Document.class);
-        if (regionMap != null) {
-            for (Map.Entry<String, Object> entry : regionMap.entrySet()) {
-                regionNameId.put(entry.getKey(), (String) entry.getValue());
-            }
-        }
-
-        this.areaAvailable = Objects.requireNonNullElseGet(document.getInteger(Keys.AREA_AVAILABLE),
-                                                           () -> document.getInteger(Keys.VOLUME_AVAILABLE) / 8);
-        this.areaParts = Objects.requireNonNullElseGet(document.getDouble(Keys.AREA_PARTS),
-                                                       () -> document.getDouble(Keys.VOLUME_PARTS) / 8.0);
+    public static Profile fetch(@NotNull BlockProtectionPlugin plugin, @NotNull UUID playerId) throws
+                                                                                               DatabaseException {
+        return new Profile(plugin, playerId);
     }
 
-    public @NotNull UUID getPlayerId() {
-        return playerId;
+    @Override
+    protected List<CachedField<?>> getOtherRegisteredFields() {
+        return List.of(regionNames, areaAvailable, areaParts);
     }
 
-    public @NotNull String getPlayerName() {
-        return playerName;
+    @Override
+    protected MongoCollection<Document> getMongoCollection() throws DatabaseException {
+        return plugin.getDatabase().getPlayerCollection();
     }
 
-    public void setPlayerName(@NotNull String playerName) {
-        this.playerName = playerName;
+    private int getAreaAvailableInternal() {
+        return areaAvailable.getOrDefault().orElseThrow();
+    }
+
+    private double getAreaPartsInternal() {
+        return this.areaParts.getOrDefault().orElseThrow();
     }
 
     public int getAreaAvailable() {
         movePartsToArea();
-        return areaAvailable;
+        return getAreaAvailableInternal();
     }
 
     public void incrementArea(double amount) {
         if (amount < 0) {
             throw new IllegalArgumentException("Area must be greater than zero");
         }
-        this.areaParts += amount;
+        this.areaParts.set(getAreaPartsInternal() + amount);
         movePartsToArea();
     }
 
@@ -74,21 +75,22 @@ public class Profile extends DatabaseObject {
         if (area < 0) {
             throw new IllegalArgumentException("Area must be greater than zero");
         }
-        this.areaAvailable -= area;
+        this.areaAvailable.set(getAreaAvailable() - area);
     }
 
     private void movePartsToArea() {
+        double areaParts = getAreaPartsInternal();
         if (areaParts < 1.0) {
             return;
         }
         int integer = (int) areaParts;
-        this.areaParts = areaParts - integer;
-        this.areaAvailable += integer;
+        this.areaParts.set(areaParts - integer);
+        this.areaAvailable.set(getAreaAvailableInternal() + integer);
     }
 
     public boolean isRegionOwner(@NotNull String regionId) {
         // Compare ignoring case
-        for (String otherRegionId : this.regionNameId.values()) {
+        for (String otherRegionId : regionNames.values()) {
             if (regionId.equalsIgnoreCase(otherRegionId)) {
                 return true;
             }
@@ -97,46 +99,6 @@ public class Profile extends DatabaseObject {
     }
 
     public void addCreatedRegion(@NotNull String regionName, @NotNull String regionId) {
-        this.regionNameId.put(regionName, regionId);
-    }
-
-    public static Bson filterId(@NotNull UUID playerId) {
-        return Filters.eq(Keys.PLAYER_ID, Util.convertNonNull(playerId, UUID::toString));
-    }
-
-    public Bson filterId() {
-        return filterId(playerId);
-    }
-
-    @Override
-    public @NotNull Document toDocument() {
-        Document document = new Document();
-        document.put(Keys.PLAYER_ID, Util.convertNonNull(playerId, UUID::toString));
-        document.put(Keys.PLAYER_NAME, playerName);
-
-        Document regionMap = new Document();
-        regionMap.putAll(regionNameId);
-        document.put(Keys.CREATED_REGION_IDS, regionMap);
-
-        document.put(Keys.AREA_AVAILABLE, areaAvailable);
-        document.put(Keys.AREA_PARTS, areaParts);
-        return document;
-    }
-
-    private static final class Keys {
-
-        private static final String PLAYER_ID = "_id";
-        private static final String PLAYER_NAME = "playerName";
-
-        private static final String CREATED_REGION_IDS = "regionMap";
-
-        private static final String VOLUME_AVAILABLE = "volumeAvailable";
-        private static final String VOLUME_PARTS = "volumeParts";
-        private static final String AREA_AVAILABLE = "areaAvailable";
-        private static final String AREA_PARTS = "areaParts";
-
-        // Private constructor
-        private Keys() {
-        }
+        this.regionNames.put(regionName, regionId);
     }
 }

@@ -1,15 +1,12 @@
 package com.rafaelsms.potocraft.blockprotection;
 
 import com.mongodb.client.MongoCollection;
-import com.rafaelsms.potocraft.blockprotection.players.Profile;
-import com.rafaelsms.potocraft.util.Util;
+import com.rafaelsms.potocraft.database.BaseDatabase;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-import java.util.UUID;
-
-public class Database extends com.rafaelsms.potocraft.database.Database {
+public class Database extends BaseDatabase {
 
     private final @NotNull BlockProtectionPlugin plugin;
 
@@ -18,29 +15,11 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
         this.plugin = plugin;
     }
 
-    private MongoCollection<Document> getPlayerCollection() throws DatabaseException {
-        return getDatabase().getCollection(plugin.getConfiguration().getMongoPlayerCollection());
+    public MongoCollection<Document> getPlayerCollection() throws DatabaseException {
+        return getClient().getCollection(plugin.getConfiguration().getMongoPlayerCollection());
     }
 
-    @Override
-    protected void handleException(@NotNull DatabaseException databaseException) throws DatabaseException {
-        plugin.logger().warn("Database exception:", databaseException);
-        if (plugin.getConfiguration().isMongoDatabaseExceptionFatal()) {
-            plugin.getServer().shutdown();
-        }
-        throw databaseException;
-    }
-
-    public Optional<Profile> getProfile(@NotNull UUID playerId) throws DatabaseException {
-        return throwingWrapper(() -> {
-            Document playerProfile = getPlayerCollection().find(Profile.filterId(playerId)).first();
-            return Optional.ofNullable(Util.convert(playerProfile, Profile::new));
-        });
-    }
-
-    public void saveProfileCatching(@NotNull Profile profile) {
-        catchingWrapper(() -> {
-            getPlayerCollection().replaceOne(profile.filterId(), profile.toDocument(), UPSERT);
-        });
+    public @NotNull String getProfileNamespace() {
+        return plugin.getConfiguration().getMongoPlayerNamespace();
     }
 }

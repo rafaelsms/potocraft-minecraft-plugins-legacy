@@ -1,8 +1,8 @@
 package com.rafaelsms.potocraft.universalchat;
 
-import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
+import com.rafaelsms.potocraft.util.YamlFile;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.md_5.bungee.api.chat.BaseComponent;

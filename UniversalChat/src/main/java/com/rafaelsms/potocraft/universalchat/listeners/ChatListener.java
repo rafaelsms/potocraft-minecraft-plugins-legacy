@@ -1,10 +1,10 @@
 package com.rafaelsms.potocraft.universalchat.listeners;
 
+import com.rafaelsms.potocraft.player.ChatHistory;
 import com.rafaelsms.potocraft.universalchat.Permissions;
 import com.rafaelsms.potocraft.universalchat.UniversalChatPlugin;
 import com.rafaelsms.potocraft.universalchat.player.User;
 import com.rafaelsms.potocraft.universalchat.util.ChatUtil;
-import com.rafaelsms.potocraft.util.ChatHistory;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -75,7 +75,7 @@ public class ChatListener implements Listener {
             return;
         }
         // Remove any blocked words very early and for every chat
-        event.setMessage(plugin.getWordsChecker().removeBlockedWords(event.getMessage()).orElse(event.getMessage()));
+        event.setMessage(plugin.getWordsChecker().censorBlockedWord(event.getMessage()).orElse(event.getMessage()));
     }
 
     @EventHandler(priority = EventPriority.LOW)

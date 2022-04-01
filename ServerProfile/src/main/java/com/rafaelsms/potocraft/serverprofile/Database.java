@@ -2,6 +2,8 @@ package com.rafaelsms.potocraft.serverprofile;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.rafaelsms.potocraft.database.BaseDatabase;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.serverprofile.players.Profile;
 import com.rafaelsms.potocraft.serverprofile.warps.Warp;
 import com.rafaelsms.potocraft.util.TextUtil;
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Database extends com.rafaelsms.potocraft.database.Database {
+public class Database extends BaseDatabase {
 
     private final @NotNull ServerProfilePlugin plugin;
 
@@ -33,7 +35,7 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
     }
 
     private @NotNull MongoCollection<Document> getPlayerProfiles() throws DatabaseException {
-        return getDatabase().getCollection(plugin.getConfiguration().getMongoPlayerProfileCollectionName());
+        return getClient().getCollection(plugin.getConfiguration().getMongoPlayerProfileCollectionName());
     }
 
     public List<Profile> getProfileRanking() throws DatabaseException {
@@ -64,7 +66,7 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
     }
 
     private @NotNull MongoCollection<Document> getWarpsCollection() throws DatabaseException {
-        return getDatabase().getCollection(plugin.getConfiguration().getMongoWarpsCollectionName());
+        return getClient().getCollection(plugin.getConfiguration().getMongoWarpsCollectionName());
     }
 
     public @NotNull Optional<List<Warp>> getWarps() {

@@ -1,7 +1,7 @@
 package com.rafaelsms.potocraft.combatserver.util;
 
 import com.mongodb.client.model.Filters;
-import com.rafaelsms.potocraft.database.DatabaseObject;
+import com.rafaelsms.potocraft.database.DatabaseStored;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.Binary;
@@ -13,7 +13,7 @@ import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class InventoryContent extends DatabaseObject {
+public class InventoryContent extends DatabaseStored {
 
     private final @NotNull String kitName;
 

@@ -1,10 +1,10 @@
 package com.rafaelsms.potocraft.universalchat.commands;
 
+import com.rafaelsms.potocraft.player.ChatHistory;
 import com.rafaelsms.potocraft.universalchat.Permissions;
 import com.rafaelsms.potocraft.universalchat.UniversalChatPlugin;
 import com.rafaelsms.potocraft.universalchat.player.User;
 import com.rafaelsms.potocraft.universalchat.util.ChatUtil;
-import com.rafaelsms.potocraft.util.ChatHistory;
 import com.rafaelsms.potocraft.util.TextUtil;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.CommandSender;
@@ -51,7 +51,7 @@ public class ReplyCommand extends Command {
             return;
         }
         String message = stringOptional.get();
-        message = plugin.getWordsChecker().removeBlockedWords(message).orElse(message);
+        message = plugin.getWordsChecker().censorBlockedWord(message).orElse(message);
 
         Optional<UUID> replyCandidateOptional = senderUser.getReplyCandidate();
         if (replyCandidateOptional.isEmpty()) {

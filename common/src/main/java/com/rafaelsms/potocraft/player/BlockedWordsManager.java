@@ -1,5 +1,7 @@
-package com.rafaelsms.potocraft.util;
+package com.rafaelsms.potocraft.player;
 
+import com.rafaelsms.potocraft.util.Pair;
+import com.rafaelsms.potocraft.util.TextUtil;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -13,7 +15,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BlockedWordsChecker {
+public class BlockedWordsManager {
 
     private static final Random RANDOM = new Random();
     private static final String BAD_WORD_REPLACER = "$#@*%&";
@@ -22,7 +24,7 @@ public class BlockedWordsChecker {
 
     private final @NotNull Logger logger;
 
-    public BlockedWordsChecker(@NotNull Logger logger, @NotNull Collection<String> blockedWords) {
+    public BlockedWordsManager(@NotNull Logger logger, @NotNull Collection<String> blockedWords) {
         this.logger = logger;
 
         // [^A-Za-z0-9] differs from \W because of underline ('_')
@@ -58,7 +60,7 @@ public class BlockedWordsChecker {
         }
     }
 
-    private Pair<String, Boolean> removeBlockedWord(@NotNull String string, boolean replaced) {
+    private Pair<String, Boolean> censorBlockedWord(@NotNull String string, boolean replaced) {
         int stringLength = string.length();
 
         // Normalize string
@@ -74,7 +76,7 @@ public class BlockedWordsChecker {
                 int end = matcher.end(2);
                 String beforeWord = string.substring(0, Math.max(start, 0));
                 String afterWord = string.substring(Math.min(end, stringLength), stringLength); // end is exclusive
-                String censuredWord = hideBadWord(matcher.group(2));
+                String censuredWord = censorWord(matcher.group(2));
                 // TODO add option to show uncensored to player?
 
                 // Compose the string back
@@ -89,13 +91,13 @@ public class BlockedWordsChecker {
                         matcher.group(2),
                         censuredWord,
                         string);
-                return removeBlockedWord(string, true);
+                return censorBlockedWord(string, true);
             }
         }
         return new Pair<>(string, replaced);
     }
 
-    private String hideBadWord(@NotNull String word) {
+    private String censorWord(@NotNull String word) {
         // Just to be sure that we don't throw
         if (word.length() < 1) {
             return "";
@@ -121,14 +123,12 @@ public class BlockedWordsChecker {
         return stringBuilder.toString();
     }
 
-    public Optional<String> removeBlockedWords(@NotNull String string) {
-        Pair<String, Boolean> pair = removeBlockedWord(string, false);
-        if (pair.second) {
-            return Optional.of(pair.first);
+    public Optional<String> censorBlockedWord(@NotNull String string) {
+        Pair<String, Boolean> pair = censorBlockedWord(string, false);
+        if (pair.second()) {
+            return Optional.of(pair.first());
         }
         return Optional.empty();
     }
 
-    private record Pair<R, S>(R first, S second) {
-    }
 }

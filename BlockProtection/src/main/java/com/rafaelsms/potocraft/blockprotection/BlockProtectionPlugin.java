@@ -160,13 +160,14 @@ public class BlockProtectionPlugin extends JavaPlugin {
             baseRegion.setFlag(Flags.GREET_TITLE, getConfiguration().getGreetingTitle());
             baseRegion.setFlag(Flags.FAREWELL_TITLE, getConfiguration().getLeavingTitle());
             // Anti-griefing measures
-            baseRegion.setFlag(Flags.WITHER_DAMAGE, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.CREEPER_EXPLOSION, StateFlag.State.DENY);
+            // Creeper, wither are not denied, you should prevent block damage through WorldGuard's configuration file
             baseRegion.setFlag(Flags.ENDERDRAGON_BLOCK_DAMAGE, StateFlag.State.DENY);
-            baseRegion.setFlag(Flags.OTHER_EXPLOSION, StateFlag.State.DENY);
             baseRegion.setFlag(Flags.RAVAGER_RAVAGE, StateFlag.State.DENY);
             baseRegion.setFlag(Flags.FIRE_SPREAD, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.FIREWORK_DAMAGE.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
             baseRegion.setFlag(Flags.FIREWORK_DAMAGE, StateFlag.State.DENY);
+            baseRegion.setFlag(Flags.OTHER_EXPLOSION.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+            baseRegion.setFlag(Flags.OTHER_EXPLOSION, StateFlag.State.DENY);
             try {
                 // Save region
                 regionManager.addRegion(baseRegion);

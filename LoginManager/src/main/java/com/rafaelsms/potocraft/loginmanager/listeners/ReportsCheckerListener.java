@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.loginmanager.listeners;
 
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.player.ReportEntry;
@@ -44,7 +44,7 @@ public class ReportsCheckerListener implements Listener {
             Optional<Profile> profileOptional;
             try {
                 profileOptional = plugin.getDatabase().getProfile(connection.getUniqueId());
-            } catch (Database.DatabaseException ignored) {
+            } catch (DatabaseException ignored) {
                 event.setCancelReason(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
                 event.setCancelled(true);
                 event.completeIntent(plugin);
@@ -94,7 +94,7 @@ public class ReportsCheckerListener implements Listener {
         Optional<Profile> profileOptional;
         try {
             profileOptional = plugin.getDatabase().getProfile(player.getUniqueId());
-        } catch (Database.DatabaseException ignored) {
+        } catch (DatabaseException ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
             event.setCancelled(true);
             return;
@@ -184,7 +184,7 @@ public class ReportsCheckerListener implements Listener {
                 }
             }
             return false;
-        } catch (Database.DatabaseException ignored) {
+        } catch (DatabaseException ignored) {
             return true;
         }
     }

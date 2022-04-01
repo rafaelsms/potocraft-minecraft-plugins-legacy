@@ -2,9 +2,9 @@ package com.rafaelsms.potocraft.serverprofile.players;
 
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
-import com.rafaelsms.potocraft.database.DatabaseObject;
+import com.rafaelsms.potocraft.database.DatabaseStored;
+import com.rafaelsms.potocraft.database.LocationField;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
-import com.rafaelsms.potocraft.util.StoredLocation;
 import com.rafaelsms.potocraft.util.Util;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Profile extends DatabaseObject {
+public class Profile extends DatabaseStored {
 
     private final @NotNull UUID playerId;
     private @NotNull String playerName;
@@ -32,9 +32,9 @@ public class Profile extends DatabaseObject {
     private final Map<String, Home> homes = Collections.synchronizedMap(new HashMap<>());
 
     private @Nullable ZonedDateTime lastTeleportDate = null;
-    private @Nullable StoredLocation backLocation = null;
+    private @Nullable LocationField backLocation = null;
     private @Nullable ZonedDateTime deathDateTime = null;
-    private @Nullable StoredLocation deathLocation = null;
+    private @Nullable LocationField deathLocation = null;
     private @Nullable ZonedDateTime lastTotemUsage = null;
 
     private final @NotNull ZonedDateTime lastJoinDateTime = ZonedDateTime.now();
@@ -69,9 +69,9 @@ public class Profile extends DatabaseObject {
         }
 
         this.lastTeleportDate = Util.toDateTime(document.getString(Keys.LAST_TELEPORT_DATE));
-        this.backLocation = Util.convert(document.get(Keys.BACK_LOCATION, Document.class), StoredLocation::new);
+        this.backLocation = Util.convert(document.get(Keys.BACK_LOCATION, Document.class), LocationField::new);
         this.deathDateTime = Util.convert(document.getString(Keys.DEATH_DATE_TIME), Util::toDateTime);
-        this.deathLocation = Util.convert(document.get(Keys.DEATH_LOCATION, Document.class), StoredLocation::new);
+        this.deathLocation = Util.convert(document.get(Keys.DEATH_LOCATION, Document.class), LocationField::new);
         this.lastTotemUsage = Util.convert(document.getString(Keys.TOTEM_USED_DATE), Util::toDateTime);
 
         this.playTimeMillis = Util.getCatchingOrElse(() -> document.getLong(Keys.PLAY_TIME_MILLIS), 0L);
@@ -130,11 +130,11 @@ public class Profile extends DatabaseObject {
     }
 
     public @NotNull Optional<Location> getBackLocation(@NotNull ServerProfilePlugin plugin) {
-        return Optional.ofNullable(backLocation).flatMap(storedLocation -> storedLocation.toLocation(plugin));
+        return Optional.ofNullable(backLocation).flatMap(locationField -> locationField.toLocation(plugin));
     }
 
     public void setBackLocation(@Nullable Location location) {
-        this.backLocation = Util.convert(location, StoredLocation::new);
+        this.backLocation = Util.convert(location, LocationField::new);
     }
 
     public Optional<ZonedDateTime> getDeathDateTime() {
@@ -142,11 +142,11 @@ public class Profile extends DatabaseObject {
     }
 
     public @NotNull Optional<Location> getDeathLocation(@NotNull ServerProfilePlugin plugin) {
-        return Optional.ofNullable(deathLocation).flatMap(storedLocation -> storedLocation.toLocation(plugin));
+        return Optional.ofNullable(deathLocation).flatMap(locationField -> locationField.toLocation(plugin));
     }
 
     public void setDeathLocation(@Nullable Location location) {
-        this.deathLocation = Util.convert(location, StoredLocation::new);
+        this.deathLocation = Util.convert(location, LocationField::new);
         this.deathDateTime = ZonedDateTime.now();
     }
 
@@ -249,9 +249,9 @@ public class Profile extends DatabaseObject {
         document.put(Keys.HOMES, Util.convertList(this.homes.values(), Home::toDocument));
 
         document.put(Keys.LAST_TELEPORT_DATE, Util.fromDateTime(this.lastTeleportDate));
-        document.put(Keys.BACK_LOCATION, Util.convert(backLocation, StoredLocation::toDocument));
+        document.put(Keys.BACK_LOCATION, Util.convert(backLocation, LocationField::toDocument));
         document.put(Keys.DEATH_DATE_TIME, Util.convert(deathDateTime, Util::fromDateTime));
-        document.put(Keys.DEATH_LOCATION, Util.convert(deathLocation, StoredLocation::toDocument));
+        document.put(Keys.DEATH_LOCATION, Util.convert(deathLocation, LocationField::toDocument));
         document.put(Keys.TOTEM_USED_DATE, Util.convert(lastTotemUsage, Util::fromDateTime));
 
         document.put(Keys.LAST_JOIN_DATE, Util.convertNonNull(lastJoinDateTime, Util::fromDateTime));

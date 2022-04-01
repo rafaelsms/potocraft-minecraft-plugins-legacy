@@ -1,8 +1,8 @@
 package com.rafaelsms.potocraft.serverprofile.players;
 
-import com.rafaelsms.potocraft.database.DatabaseObject;
+import com.rafaelsms.potocraft.database.DatabaseStored;
+import com.rafaelsms.potocraft.database.LocationField;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
-import com.rafaelsms.potocraft.util.StoredLocation;
 import com.rafaelsms.potocraft.util.Util;
 import org.bson.Document;
 import org.bukkit.Location;
@@ -12,24 +12,24 @@ import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Home extends DatabaseObject {
+public class Home extends DatabaseStored {
 
     private final @NotNull String name;
     private final @NotNull ZonedDateTime creationDate;
-    private final @NotNull StoredLocation location;
+    private final @NotNull LocationField location;
 
     public Home(@NotNull String name, @NotNull Location location) {
         this.name = name;
         assert location.getWorld() != null;
         this.creationDate = ZonedDateTime.now();
-        this.location = new StoredLocation(location);
+        this.location = new LocationField(location);
     }
 
     public Home(@NotNull Document document) {
         super(document);
         this.name = document.getString(Keys.NAME);
         this.creationDate = Objects.requireNonNull(Util.toDateTime(document.getString(Keys.CREATION_DATE)));
-        this.location = Util.convertNonNull(document.get(Keys.LOCATION, Document.class), StoredLocation::new);
+        this.location = Util.convertNonNull(document.get(Keys.LOCATION, Document.class), LocationField::new);
     }
 
     public @NotNull String getName() {
@@ -66,7 +66,7 @@ public class Home extends DatabaseObject {
         Document document = new Document();
         document.put(Keys.NAME, name);
         document.put(Keys.CREATION_DATE, Util.fromDateTime(creationDate));
-        document.put(Keys.LOCATION, Util.convertNonNull(location, StoredLocation::toDocument));
+        document.put(Keys.LOCATION, Util.convertNonNull(location, LocationField::toDocument));
         return document;
     }
 

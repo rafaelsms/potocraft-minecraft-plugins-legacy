@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.serverprofile.listeners;
 
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.Profile;
 import com.rafaelsms.potocraft.serverprofile.players.User;
@@ -9,7 +9,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class UserManager extends com.rafaelsms.potocraft.util.UserManager<User, Profile> {
+public class UserManager extends com.rafaelsms.potocraft.player.UserManager<User, Profile> {
 
     private final @NotNull ServerProfilePlugin plugin;
 
@@ -24,7 +24,7 @@ public class UserManager extends com.rafaelsms.potocraft.util.UserManager<User, 
     }
 
     @Override
-    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws Database.DatabaseException {
+    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException {
         return plugin.getDatabase()
                      .loadProfile(event.getUniqueId())
                      .orElse(new Profile(event.getUniqueId(), event.getName()));

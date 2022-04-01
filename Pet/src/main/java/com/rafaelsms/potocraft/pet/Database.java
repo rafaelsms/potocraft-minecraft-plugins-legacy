@@ -1,6 +1,8 @@
 package com.rafaelsms.potocraft.pet;
 
 import com.mongodb.client.MongoCollection;
+import com.rafaelsms.potocraft.database.BaseDatabase;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.pet.player.Profile;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
@@ -8,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Database extends com.rafaelsms.potocraft.database.Database {
+public class Database extends BaseDatabase {
 
     private final @NotNull PetPlugin plugin;
 
@@ -27,7 +29,7 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
     }
 
     private MongoCollection<Document> getProfileCollection() throws DatabaseException {
-        return getDatabase().getCollection(plugin.getConfiguration().getMongoPlayerCollectionName());
+        return getClient().getCollection(plugin.getConfiguration().getMongoPlayerCollectionName());
     }
 
     public Optional<Profile> getProfile(UUID playerId) throws DatabaseException {

@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.loginmanager.commands;
 
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
@@ -63,7 +63,7 @@ public class LoginCommand extends Command implements TabExecutor {
                 player.sendMessage(plugin.getConfiguration().getCommandLoginAlreadyLoggedIn());
                 return;
             }
-        } catch (Database.DatabaseException ignored) {
+        } catch (DatabaseException ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
             return;
         }
@@ -98,7 +98,7 @@ public class LoginCommand extends Command implements TabExecutor {
             profile.setLoggedIn(Util.getInetAddress(player.getSocketAddress()).orElse(null));
             player.sendMessage(plugin.getConfiguration().getCommandLoggedIn());
             plugin.getDatabase().saveProfile(profile);
-        } catch (Database.DatabaseException ignored) {
+        } catch (DatabaseException ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
         }
 

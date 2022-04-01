@@ -1,8 +1,8 @@
 package com.rafaelsms.potocraft.universalchat.player;
 
+import com.rafaelsms.potocraft.player.ChatHistory;
 import com.rafaelsms.potocraft.universalchat.Permissions;
 import com.rafaelsms.potocraft.universalchat.UniversalChatPlugin;
-import com.rafaelsms.potocraft.util.ChatHistory;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

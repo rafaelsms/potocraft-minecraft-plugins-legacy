@@ -2,7 +2,7 @@ package com.rafaelsms.discordbot.listeners;
 
 import com.rafaelsms.discordbot.DiscordBot;
 import com.rafaelsms.discordbot.util.DiscordUtil;
-import com.rafaelsms.potocraft.util.BlockedWordsChecker;
+import com.rafaelsms.potocraft.player.BlockedWordsManager;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -16,11 +16,11 @@ import java.awt.*;
 public class BlockedWordsListener extends ListenerAdapter {
 
     private final @NotNull DiscordBot bot;
-    private final @NotNull BlockedWordsChecker wordsChecker;
+    private final @NotNull BlockedWordsManager wordsChecker;
 
     public BlockedWordsListener(@NotNull DiscordBot bot) {
         this.bot = bot;
-        this.wordsChecker = new BlockedWordsChecker(bot.getLogger(), bot.getConfiguration().getBlockedWords());
+        this.wordsChecker = new BlockedWordsManager(bot.getLogger(), bot.getConfiguration().getBlockedWords());
     }
 
     @Override
@@ -38,7 +38,7 @@ public class BlockedWordsListener extends ListenerAdapter {
         if (member == null || !bot.getConfiguration().isCursingBlockerEnabled()) {
             return;
         }
-        wordsChecker.removeBlockedWords(message.getContentRaw()).ifPresent(string -> {
+        wordsChecker.censorBlockedWord(message.getContentRaw()).ifPresent(string -> {
             MessageAction replacement = message.getTextChannel()
                                                .sendMessageEmbeds(DiscordUtil.getQuoteMessage(member,
                                                                                               Color.ORANGE.getRGB(),
@@ -46,9 +46,7 @@ public class BlockedWordsListener extends ListenerAdapter {
             for (Message.Attachment attachment : message.getAttachments()) {
                 attachment.downloadToFile().whenComplete((file, throwable) -> {
                     if (throwable != null || file == null) {
-                        bot.getLogger()
-                           .warn("Failed to download attachment {} ({})",
-                                 attachment.getId(),
+                        bot.getLogger().warn("Failed to download attachment {} ({})", attachment.getId(),
                                  attachment.getContentType());
                         return;
                     }

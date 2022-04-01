@@ -3,6 +3,8 @@ package com.rafaelsms.potocraft.loginmanager;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
+import com.rafaelsms.potocraft.database.BaseDatabase;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
@@ -13,7 +15,7 @@ import java.net.InetSocketAddress;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Database extends com.rafaelsms.potocraft.database.Database {
+public class Database extends BaseDatabase {
 
     private static final int SEARCH_LIMIT = 6;
 
@@ -33,7 +35,7 @@ public class Database extends com.rafaelsms.potocraft.database.Database {
     }
 
     private MongoCollection<Document> getPlayerCollection() throws DatabaseException {
-        return getDatabase().getCollection(plugin.getConfiguration().getMongoPlayerProfileCollection());
+        return getClient().getCollection(plugin.getConfiguration().getMongoPlayerProfileCollection());
     }
 
     public @NotNull Optional<Profile> getProfile(@NotNull UUID playerId) throws DatabaseException {

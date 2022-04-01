@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.loginmanager.commands;
 
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
@@ -48,7 +48,7 @@ public class SeenCommand extends Command implements TabExecutor {
                     return;
                 }
                 profile = profileOptional.get();
-            } catch (Database.DatabaseException ignored) {
+            } catch (DatabaseException ignored) {
                 sender.sendMessage(plugin.getConfiguration().getCommandFailedToSearchProfile());
                 return;
             }

@@ -1,10 +1,10 @@
 package com.rafaelsms.potocraft.loginmanager;
 
-import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.player.ReportEntry;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
+import com.rafaelsms.potocraft.util.YamlFile;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;

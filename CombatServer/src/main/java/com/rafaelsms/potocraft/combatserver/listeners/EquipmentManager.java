@@ -2,7 +2,7 @@ package com.rafaelsms.potocraft.combatserver.listeners;
 
 import com.rafaelsms.potocraft.combatserver.CombatServerPlugin;
 import com.rafaelsms.potocraft.combatserver.util.InventoryContent;
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.util.TextUtil;
 import io.papermc.paper.event.entity.EntityLoadCrossbowEvent;
 import net.kyori.adventure.text.Component;
@@ -152,7 +152,7 @@ public class EquipmentManager implements Listener {
                     inventoryContent.applyContent(playerInventory);
                     return;
                 }
-            } catch (Database.DatabaseException ignored) {
+            } catch (DatabaseException ignored) {
             }
         }
 
