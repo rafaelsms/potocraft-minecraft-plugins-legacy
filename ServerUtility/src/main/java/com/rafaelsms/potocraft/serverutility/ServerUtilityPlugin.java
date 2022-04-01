@@ -159,6 +159,11 @@ public class ServerUtilityPlugin extends JavaPlugin {
         return plugin != null && plugin.isEnabled();
     }
 
+    public boolean isLACIntegrationAvailable() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("LightAntiCheat");
+        return plugin != null && plugin.isEnabled();
+    }
+
     public Logger logger() {
         return getSLF4JLogger();
     }
