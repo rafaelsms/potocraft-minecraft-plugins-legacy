@@ -10,6 +10,7 @@ softdepend:
   - WorldGuard
   - LuckPerms
   - Vulcan
+  - LightAntiCheat
 commands:
   enderchest:
     description: Opens your enderchest wherever you are.
