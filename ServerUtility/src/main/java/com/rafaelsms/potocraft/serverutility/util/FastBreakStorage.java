@@ -4,11 +4,9 @@ import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -21,9 +19,9 @@ public class FastBreakStorage {
     public static final @NotNull BrokenBlockConsumer NO_OP_CONSUMER = (block, player) -> {
     };
 
-    private final Map<Player, ItemStack> playerTools = Collections.synchronizedMap(new HashMap<>());
-    private final Map<Player, Map<Location, Block>> playerBlocks = Collections.synchronizedMap(new HashMap<>());
-    private final Map<Location, Block> blocks = Collections.synchronizedMap(new HashMap<>());
+    private final Object lock = new Object();
+    private final Map<Player, Map<Location, Block>> playerBlocks = new HashMap<>();
+    private final Map<Location, Block> blocks = new HashMap<>();
 
     private final @NotNull BrokenBlockConsumer consumeOnBreak;
     private final int maxBreaksPerTick;
@@ -71,61 +69,69 @@ public class FastBreakStorage {
     }
 
     public boolean isEmpty() {
-        return blocks.isEmpty();
+        synchronized (lock) {
+            return blocks.isEmpty();
+        }
     }
 
     public void addBlocks(@NotNull Player player, @NotNull Map<Location, Block> blocks) {
-        if (blocks.isEmpty()) {
-            return;
+        synchronized (lock) {
+            if (blocks.isEmpty()) {
+                return;
+            }
+            Map<Location, Block> existingMap = playerBlocks.getOrDefault(player, new LinkedHashMap<>());
+            existingMap.putAll(blocks);
+            this.blocks.putAll(blocks);
+            playerBlocks.put(player, existingMap);
         }
-        Map<Location, Block> existingMap = playerBlocks.getOrDefault(player, new LinkedHashMap<>());
-        existingMap.putAll(blocks);
-        this.blocks.putAll(blocks);
-        playerTools.put(player, player.getInventory().getItemInMainHand());
-        playerBlocks.put(player, existingMap);
     }
 
     public boolean containsBlock(@NotNull Block block) {
-        return blocks.containsKey(block.getLocation());
+        synchronized (lock) {
+            return blocks.containsKey(block.getLocation());
+        }
     }
 
     public void tickBreak() {
-        Iterator<Map.Entry<Player, Map<Location, Block>>> iterator = playerBlocks.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Player, Map<Location, Block>> entry = iterator.next();
-            Player player = entry.getKey();
-            Map<Location, Block> playerBlocks = entry.getValue();
+        synchronized (lock) {
+            Iterator<Map.Entry<Player, Map<Location, Block>>> iterator = playerBlocks.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<Player, Map<Location, Block>> entry = iterator.next();
+                Player player = entry.getKey();
+                Map<Location, Block> playerBlocks = entry.getValue();
 
-            // Check if player left
-            if (!player.isOnline()) {
-                iterator.remove();
-                continue;
-            }
+                // Check if player left
+                if (!player.isOnline()) {
+                    iterator.remove();
+                    continue;
+                }
 
-            if (playerBlocks.isEmpty()) {
-                iterator.remove();
-                continue;
-            }
+                if (playerBlocks.isEmpty()) {
+                    iterator.remove();
+                    continue;
+                }
 
-            int processedBlocks = 0;
-            Iterator<Block> blockIterator = playerBlocks.values().iterator();
-            while (blockIterator.hasNext()) {
-                Block block = blockIterator.next();
-                player.breakBlock(block);
-                blockIterator.remove();
-                consumeOnBreak.onBroken(block, player);
+                int processedBlocks = 0;
+                Iterator<Block> blockIterator = playerBlocks.values().iterator();
+                while (blockIterator.hasNext()) {
+                    Block block = blockIterator.next();
+                    player.breakBlock(block);
+                    blockIterator.remove();
+                    consumeOnBreak.onBroken(block, player);
 
-                // Stop if broke too many blocks this tick already
-                processedBlocks++;
-                if (processedBlocks >= maxBreaksPerTick) {
-                    break;
+                    // Stop if broke too many blocks this tick already
+                    processedBlocks++;
+                    if (processedBlocks >= maxBreaksPerTick) {
+                        break;
+                    }
                 }
             }
         }
     }
 
     public interface BrokenBlockConsumer {
-        void onBroken(@NotNull Block block, @NotNull Player player);
-    }
 
+        void onBroken(@NotNull Block block, @NotNull Player player);
+
+    }
 }
