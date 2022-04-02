@@ -16,8 +16,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
@@ -44,9 +47,19 @@ public class PlayerLogging implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void log(PlayerTeleportEvent event) {
+        Location to = event.getTo();
         logPlayer(event.getPlayer(),
-                  event.getTo(),
-                  "teleported by %s".formatted(event.getCause().name().toLowerCase()));
+                  event.getFrom(),
+                  "teleported by %s to %s, %d %d %d".formatted(event.getCause().name().toLowerCase(),
+                                                               to.getWorld().getName(),
+                                                               to.getBlockX(),
+                                                               to.getBlockY(),
+                                                               to.getBlockZ()));
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    private void log(PlayerJoinEvent event) {
+        logPlayer(event.getPlayer(), event.getPlayer().getLocation(), "joined");
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -56,7 +69,22 @@ public class PlayerLogging implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void log(PlayerPortalEvent event) {
-        logPlayer(event.getPlayer(), event.getPlayer().getLocation(), "entered portal");
+        logPlayer(event.getPlayer(), event.getFrom(), "entered portal to %s".formatted(parseLocation(event.getTo())));
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    private void log(PlayerRespawnEvent event) {
+        logPlayer(event.getPlayer(),
+                  event.getRespawnLocation(),
+                  "respawned with level %d".formatted(event.getPlayer().getLevel()));
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    private void log(PlayerItemBreakEvent event) {
+        logPlayer(event.getPlayer(),
+                  event.getPlayer().getLocation(),
+                  "item %s %s broke".formatted(event.getBrokenItem().getType(),
+                                               getEnchantmentString(event.getBrokenItem()).orElse("")));
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -77,46 +105,60 @@ public class PlayerLogging implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void log(PlayerDeathEvent event) {
-        logPlayer(event.getPlayer(), event.getPlayer().getLocation(), "died");
+        Player player = event.getPlayer();
+        if (event.getKeepInventory()) {
+            logPlayer(player, player.getLocation(), "died at level %d keeping inventory".formatted(player.getLevel()));
+            return;
+        }
+
+        logPlayer(player,
+                  player.getLocation(),
+                  "died at level %d dropping %d items".formatted(player.getLevel(), event.getDrops().size()));
         // List player items with enchantments to console
-        for (ItemStack itemStack : event.getPlayer().getInventory().getContents()) {
+        for (ItemStack itemStack : player.getInventory().getContents()) {
             if (itemStack == null || itemStack.getType() == Material.AIR) {
                 continue;
             }
             Optional<String> enchantmentString = getEnchantmentString(itemStack);
             enchantmentString.ifPresent(s -> plugin.logger()
-                                                   .info("Player had %d x %s %s".formatted(itemStack.getAmount(),
-                                                                                           itemStack.getType().name(),
-                                                                                           s)));
+                                                   .info("{} had {} x {} {}",
+                                                         player.getName(),
+                                                         itemStack.getAmount(),
+                                                         itemStack.getType().name(),
+                                                         s));
             if (Tag.SHULKER_BOXES.isTagged(itemStack.getType()) &&
                 itemStack.getItemMeta() instanceof BlockStateMeta blockStateMeta &&
                 blockStateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
-                logContents(shulkerBox);
+                logContents(player, shulkerBox);
             }
         }
     }
 
-    private void logPlayer(@NotNull Player player, @NotNull Location location, @Nullable String action) {
+    private String parseLocation(@NotNull Location location) {
+        return "world %s, %d %d %d".formatted(location.getWorld().getName(),
+                                              location.getBlockX(),
+                                              location.getBlockY(),
+                                              location.getBlockZ());
+    }
+
+    private void logPlayer(@NotNull Player player, @NotNull Location printedLocation, @Nullable String action) {
         if (plugin.getConfiguration().isPlayerLoggingEnabled()) {
             plugin.logger()
-                  .info("%s %s at world = %s, %d %d %d".formatted(player.getName(),
-                                                                  Util.getOrElse(action, ""),
-                                                                  player.getWorld().getName(),
-                                                                  location.getBlockX(),
-                                                                  location.getBlockY(),
-                                                                  location.getBlockZ()));
+                  .info("{} {} at {}", player.getName(), Util.getOrElse(action, ""), parseLocation(printedLocation));
         }
     }
 
-    private void logContents(@NotNull ShulkerBox shulkerBox) {
+    private void logContents(@NotNull Player player, @NotNull ShulkerBox shulkerBox) {
         for (ItemStack itemStack : shulkerBox.getInventory().getContents()) {
             if (itemStack == null || itemStack.getType() == Material.AIR) {
                 continue;
             }
             plugin.logger()
-                  .info("Shulker box had %d x %s %s".formatted(itemStack.getAmount(),
-                                                               itemStack.getType().getKey().getKey(),
-                                                               getEnchantmentString(itemStack).orElse("")));
+                  .info("Shulker box of {} had {} x {} {}",
+                        player.getName(),
+                        itemStack.getAmount(),
+                        itemStack.getType().getKey().getKey(),
+                        getEnchantmentString(itemStack).orElse(""));
         }
     }
 
