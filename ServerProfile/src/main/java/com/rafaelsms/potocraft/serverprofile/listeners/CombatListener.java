@@ -124,7 +124,12 @@ public class CombatListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void setOutOfCombat(PlayerDeathEvent event) {
-        plugin.getUserManager().getUser(event.getPlayer()).clearCombatTask();
+        User user = plugin.getUserManager().getUser(event.getPlayer());
+        if (user.isInCombat()) {
+            plugin.logger()
+                  .info("Player {} ({}) died in combat.", event.getPlayer().getName(), event.getPlayer().getUniqueId());
+        }
+        user.clearCombatTask();
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
