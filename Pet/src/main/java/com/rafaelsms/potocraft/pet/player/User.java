@@ -98,6 +98,15 @@ public class User {
         if (pet.getEntity() instanceof Breedable breedable) {
             breedable.setAgeLock(true);
         }
+        // Force age lock
+        if (pet.getEntity() instanceof Ageable ageable) {
+            ageable.setAge(1);
+            if (profile.isPetBaby()) {
+                ageable.setBaby();
+            } else {
+                ageable.setAdult();
+            }
+        }
 
         // Teleport if far away
         lastDistanceCheck++;
