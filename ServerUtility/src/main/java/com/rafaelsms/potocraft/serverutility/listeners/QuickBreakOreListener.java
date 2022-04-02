@@ -37,6 +37,7 @@ public class QuickBreakOreListener implements Listener {
                                                                  TagPredictor.of(Tag.REDSTONE_ORES),
                                                                  TagPredictor.of(Tag.DIAMOND_ORES),
                                                                  MaterialPredictor.of(Material.NETHER_QUARTZ_ORE),
+                                                                 MaterialPredictor.of(Material.GLOWSTONE),
                                                                  MaterialPredictor.of(Material.ANCIENT_DEBRIS));
 
     private final @NotNull ServerUtilityPlugin plugin;
