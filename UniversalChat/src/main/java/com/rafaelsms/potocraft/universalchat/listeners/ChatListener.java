@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.universalchat.listeners;
 
-import com.rafaelsms.potocraft.player.ChatHistory;
+import com.rafaelsms.potocraft.player.MessageHistory;
 import com.rafaelsms.potocraft.universalchat.Permissions;
 import com.rafaelsms.potocraft.universalchat.UniversalChatPlugin;
 import com.rafaelsms.potocraft.universalchat.player.User;
@@ -53,7 +53,7 @@ public class ChatListener implements Listener {
 
         // Check with old messages of user
         User user = plugin.getUserManager().getUser(player.getUniqueId());
-        ChatHistory.ChatResult chatResult = user.getChatHistory().getSendMessageResult(event.getMessage());
+        MessageHistory.ChatResult chatResult = user.getChatHistory().getSendMessageResult(event.getMessage());
         switch (chatResult) {
             case TOO_FREQUENT -> {
                 player.sendMessage(plugin.getConfiguration().getMessagesTooFrequent());

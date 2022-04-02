@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.universalchat.player;
 
-import com.rafaelsms.potocraft.player.ChatHistory;
+import com.rafaelsms.potocraft.player.MessageHistory;
 import com.rafaelsms.potocraft.universalchat.Permissions;
 import com.rafaelsms.potocraft.universalchat.UniversalChatPlugin;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -19,7 +19,7 @@ public class User {
     private final @NotNull ProxiedPlayer player;
     private final @NotNull UUID playerId;
 
-    private final @NotNull ChatHistory chatHistory;
+    private final @NotNull MessageHistory messageHistory;
 
     private @Nullable UUID replyCandidate = null;
     private @Nullable ZonedDateTime replyCandidateDate = null;
@@ -30,11 +30,11 @@ public class User {
         this.plugin = plugin;
         this.player = player;
         this.playerId = player.getUniqueId();
-        this.chatHistory = new PlayerChatHistory();
+        this.messageHistory = new PlayerMessageHistory();
     }
 
-    public @NotNull ChatHistory getChatHistory() {
-        return chatHistory;
+    public @NotNull MessageHistory getChatHistory() {
+        return messageHistory;
     }
 
     public @NotNull Optional<UUID> getReplyCandidate() {
@@ -70,7 +70,7 @@ public class User {
         return Objects.hash(playerId);
     }
 
-    private class PlayerChatHistory extends ChatHistory {
+    private class PlayerMessageHistory extends MessageHistory {
 
         @Override
         protected int getComparatorThreshold() {

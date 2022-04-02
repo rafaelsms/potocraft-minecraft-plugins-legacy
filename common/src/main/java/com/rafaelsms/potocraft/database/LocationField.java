@@ -12,31 +12,27 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
-public class LocationField extends UncachedField<Location> {
+public class LocationField extends CachedField<Location> {
 
-    private final JavaPlugin plugin;
+    private final @NotNull JavaPlugin plugin;
 
-    public LocationField(@NotNull JavaPlugin plugin, @NotNull String key) {
-        super(key);
+    public LocationField(@Nullable String namespace,
+                         @NotNull String key,
+                         @NotNull CollectionProvider provider,
+                         @Nullable Location defaultValue,
+                         @NotNull JavaPlugin plugin) {
+        super(namespace, key, provider, defaultValue);
         this.plugin = plugin;
     }
 
-    @Override
-    protected @Nullable Location parseFromDatabase(@Nullable Object databaseObject, Location defaultValue) {
-        try {
-            Document document = (Document) Optional.ofNullable(databaseObject).orElseThrow();
-            UUID worldId = UUID.fromString(Optional.ofNullable(document.getString(Keys.WORLD_ID)).orElseThrow());
-            World world = Optional.ofNullable(plugin.getServer().getWorld(worldId)).orElseThrow();
-            double x = Optional.ofNullable(document.getDouble(Keys.X)).orElseThrow();
-            double y = Optional.ofNullable(document.getDouble(Keys.Y)).orElseThrow();
-            double z = Optional.ofNullable(document.getDouble(Keys.Z)).orElseThrow();
-            float yaw = Float.parseFloat(Optional.ofNullable(document.getString(Keys.YAW)).orElseThrow());
-            float pitch = Float.parseFloat(Optional.ofNullable(document.getString(Keys.PITCH)).orElseThrow());
-            return new Location(world, x, y, z, yaw, pitch);
-        } catch (NoSuchElementException ignored) {
-            return null;
-        }
+    public LocationField(@Nullable String namespace,
+                         @NotNull String key,
+                         @NotNull CollectionProvider provider,
+                         @NotNull JavaPlugin plugin) {
+        super(namespace, key, provider);
+        this.plugin = plugin;
     }
+
 
     @SuppressWarnings("unchecked")
     @Override
@@ -52,6 +48,23 @@ public class LocationField extends UncachedField<Location> {
         document.put(Keys.YAW, String.valueOf(value.getYaw()));
         document.put(Keys.PITCH, String.valueOf(value.getPitch()));
         return (V) document;
+    }
+
+    @Override
+    protected @Nullable Location parseFromDocument(@Nullable Object databaseObject, @Nullable Location defaultValue) {
+        try {
+            Document document = (Document) Optional.ofNullable(databaseObject).orElseThrow();
+            UUID worldId = UUID.fromString(Optional.ofNullable(document.getString(Keys.WORLD_ID)).orElseThrow());
+            World world = Optional.ofNullable(plugin.getServer().getWorld(worldId)).orElseThrow();
+            double x = Optional.ofNullable(document.getDouble(Keys.X)).orElseThrow();
+            double y = Optional.ofNullable(document.getDouble(Keys.Y)).orElseThrow();
+            double z = Optional.ofNullable(document.getDouble(Keys.Z)).orElseThrow();
+            float yaw = Float.parseFloat(Optional.ofNullable(document.getString(Keys.YAW)).orElseThrow());
+            float pitch = Float.parseFloat(Optional.ofNullable(document.getString(Keys.PITCH)).orElseThrow());
+            return new Location(world, x, y, z, yaw, pitch);
+        } catch (NoSuchElementException ignored) {
+            return null;
+        }
     }
 
     private static final class Keys {

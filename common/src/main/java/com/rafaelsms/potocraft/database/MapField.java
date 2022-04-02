@@ -17,7 +17,8 @@ import java.util.Set;
  * To change this map, use its {@link Map's} methods, but won't fetch the database if the value is not cached, resulting
  * in data loss through overwriting.
  *
- * @param <V>
+ * @param <V> type of values used. If not readable/writable directly from {@link Document}, it will be necessary to
+ *            extend this class and reimplementing {@link this#parseFromDocument(Object, Map)}.
  */
 public class MapField<V> extends CachedField<Map<String, V>> implements Map<String, V> {
 

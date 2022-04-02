@@ -8,7 +8,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public abstract class ChatHistory {
+public abstract class MessageHistory {
 
     private final Deque<Message> messages = new ArrayDeque<>();
 
@@ -72,8 +72,7 @@ public abstract class ChatHistory {
 
     public enum ChatResult {
 
-        SIMILAR_MESSAGES, TOO_FREQUENT, ALLOWED,
-        ;
+        SIMILAR_MESSAGES, TOO_FREQUENT, ALLOWED;
 
         public boolean isAllowed() {
             return this == ALLOWED;

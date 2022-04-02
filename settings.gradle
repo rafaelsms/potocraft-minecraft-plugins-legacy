@@ -10,5 +10,6 @@ include 'GameServer'
 include 'CombatServer'
 include 'TestPlugin'
 include 'Pet'
-findProject(':TestPlugin:TestPlugin')?.name = 'TestPlugin'
+include 'BukkitPlugin'
+include 'BungeeCordPlugin'
 

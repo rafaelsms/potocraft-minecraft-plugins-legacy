@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.universalchat.commands;
 
-import com.rafaelsms.potocraft.player.ChatHistory;
+import com.rafaelsms.potocraft.player.MessageHistory;
 import com.rafaelsms.potocraft.universalchat.Permissions;
 import com.rafaelsms.potocraft.universalchat.UniversalChatPlugin;
 import com.rafaelsms.potocraft.universalchat.player.User;
@@ -73,8 +73,8 @@ public class ReplyCommand extends Command {
         }
 
         // Check if player is spamming
-        ChatHistory chatHistory = senderUser.getChatHistory();
-        ChatHistory.ChatResult chatResult = chatHistory.getSendMessageResult(message);
+        MessageHistory messageHistory = senderUser.getChatHistory();
+        MessageHistory.ChatResult chatResult = messageHistory.getSendMessageResult(message);
         switch (chatResult) {
             case SIMILAR_MESSAGES -> {
                 player.sendMessage(plugin.getConfiguration().getMessagesTooSimilar());
@@ -86,7 +86,7 @@ public class ReplyCommand extends Command {
             }
         }
         // Set message as sent if it wasn't cancelled
-        chatHistory.sentMessage(message);
+        messageHistory.sentMessage(message);
 
         // Set reply candidate for sender
         senderUser.setReplyCandidate(receiver.getUniqueId());

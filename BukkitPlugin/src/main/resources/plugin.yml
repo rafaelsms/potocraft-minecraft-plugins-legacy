@@ -1,0 +1,8 @@
+name: BukkitPlugin
+main: com.rafaelsms.bukkitplugin.BukkitPlugin
+version: "0.1"
+api-version: 1.18
+author: rafaelsms
+website: www.potocraft.com
+description: Custom plugin for PotoCraft Server
+load: STARTUP
