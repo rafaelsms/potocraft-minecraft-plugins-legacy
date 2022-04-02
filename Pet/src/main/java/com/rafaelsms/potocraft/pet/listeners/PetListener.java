@@ -9,13 +9,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class DamageListener implements Listener {
+public class PetListener implements Listener {
 
     private final @NotNull PetPlugin plugin;
 
-    public DamageListener(@NotNull PetPlugin plugin) {
+    public PetListener(@NotNull PetPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -37,6 +38,13 @@ public class DamageListener implements Listener {
 
         if (damager != null && event.getEntity() instanceof LivingEntity) {
             plugin.getUserManager().getUser(damager).setDamageTicks();
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    private void preventItemStealing(EntityPickupItemEvent event) {
+        if (plugin.getNpcRegistry().isNPC(event.getEntity())) {
+            event.setCancelled(true);
         }
     }
 }
