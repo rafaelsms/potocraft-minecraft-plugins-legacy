@@ -25,7 +25,9 @@ configuration:
     player_combat_duration_ticks: 820
     mob_combat_duration_ticks: 260
     out_of_combat_death_should_drop_items: true
+    minimum_combat_type_to_drop_items: "player"
     out_of_combat_death_should_drop_experience: true
+    minimum_combat_type_to_drop_experience: "mob"
     should_log_off_destroy_totem_first: false
     player_killer_time_seconds: 45
     blocked_commands:

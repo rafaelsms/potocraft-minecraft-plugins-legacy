@@ -3,7 +3,7 @@ package com.rafaelsms.potocraft.serverprofile.listeners;
 import com.rafaelsms.potocraft.serverprofile.Permissions;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.User;
-import com.rafaelsms.potocraft.serverprofile.players.tasks.CombatTask;
+import com.rafaelsms.potocraft.serverprofile.util.CombatType;
 import org.bukkit.Location;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
@@ -27,17 +27,21 @@ import java.util.Set;
 
 public class CombatListener implements Listener {
 
-    private final Set<EntityDamageEvent.DamageCause> combatDamageCauses = Set.of(EntityDamageEvent.DamageCause.LAVA,
-                                                                                 EntityDamageEvent.DamageCause.MELTING,
-                                                                                 EntityDamageEvent.DamageCause.PROJECTILE,
-                                                                                 EntityDamageEvent.DamageCause.ENTITY_EXPLOSION,
-                                                                                 EntityDamageEvent.DamageCause.BLOCK_EXPLOSION,
-                                                                                 EntityDamageEvent.DamageCause.DRAGON_BREATH,
-                                                                                 EntityDamageEvent.DamageCause.FALLING_BLOCK,
-                                                                                 EntityDamageEvent.DamageCause.FIRE,
-                                                                                 EntityDamageEvent.DamageCause.FIRE_TICK,
-                                                                                 EntityDamageEvent.DamageCause.POISON,
-                                                                                 EntityDamageEvent.DamageCause.THORNS);
+    private final CombatType specialCausesType = CombatType.MOB;
+    private final Set<EntityDamageEvent.DamageCause> specialDamageCauses = Set.of(EntityDamageEvent.DamageCause.LAVA,
+                                                                                  EntityDamageEvent.DamageCause.MELTING,
+                                                                                  EntityDamageEvent.DamageCause.PROJECTILE,
+                                                                                  EntityDamageEvent.DamageCause.ENTITY_EXPLOSION,
+                                                                                  EntityDamageEvent.DamageCause.BLOCK_EXPLOSION,
+                                                                                  EntityDamageEvent.DamageCause.DRAGON_BREATH,
+                                                                                  EntityDamageEvent.DamageCause.FALLING_BLOCK,
+                                                                                  EntityDamageEvent.DamageCause.FIRE,
+                                                                                  EntityDamageEvent.DamageCause.FIRE_TICK,
+                                                                                  EntityDamageEvent.DamageCause.POISON,
+                                                                                  EntityDamageEvent.DamageCause.THORNS,
+                                                                                  EntityDamageEvent.DamageCause.DROWNING,
+                                                                                  EntityDamageEvent.DamageCause.FREEZE,
+                                                                                  EntityDamageEvent.DamageCause.SUFFOCATION);
 
     private final @NotNull ServerProfilePlugin plugin;
 
@@ -45,7 +49,7 @@ public class CombatListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     private void cancelCommandInCombat(PlayerCommandPreprocessEvent event) {
         User user = plugin.getUserManager().getUser(event.getPlayer());
         if (!user.isInCombat()) {
@@ -80,7 +84,7 @@ public class CombatListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void storeDeathLocation(PlayerDeathEvent event) {
         Player player = event.getPlayer();
         User user = plugin.getUserManager().getUser(player);
@@ -109,7 +113,7 @@ public class CombatListener implements Listener {
         player.sendMessage(plugin.getConfiguration().getCombatDeathLocation(locationOptional.get()));
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR)
     private void killInCombat(PlayerQuitEvent event) {
         User user = plugin.getUserManager().getUser(event.getPlayer());
         if (!user.isInCombat()) {
@@ -122,17 +126,19 @@ public class CombatListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR)
     private void setOutOfCombat(PlayerDeathEvent event) {
         User user = plugin.getUserManager().getUser(event.getPlayer());
-        if (user.isInCombat()) {
-            plugin.logger()
-                  .info("Player {} ({}) died in combat.", event.getPlayer().getName(), event.getPlayer().getUniqueId());
-        }
+        user.getCombatType()
+            .ifPresent(combatType -> plugin.logger()
+                                           .info("Player {} ({}) died in {} combat.",
+                                                 event.getPlayer().getName(),
+                                                 event.getPlayer().getUniqueId(),
+                                                 combatType.name().toLowerCase()));
         user.clearCombatTask();
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR)
     private void setOutOfCombat(PlayerKickEvent event) {
         plugin.getUserManager().getUser(event.getPlayer()).clearCombatTask();
     }
@@ -153,12 +159,12 @@ public class CombatListener implements Listener {
         if (damager instanceof Player playerDamager) {
             int combatDuration = plugin.getConfiguration().getPlayerCombatDurationTicks();
             User userDamager = plugin.getUserManager().getUser(playerDamager);
-            userDamager.setCombatTask(CombatTask.Type.PLAYER, combatDuration);
-            userDamaged.setCombatTask(CombatTask.Type.PLAYER, combatDuration);
+            userDamager.setCombatTask(CombatType.PLAYER, combatDuration);
+            userDamaged.setCombatTask(CombatType.PLAYER, combatDuration);
             userDamaged.setKiller(playerDamager);
         } else {
             int combatDuration = plugin.getConfiguration().getMobCombatDurationTicks();
-            userDamaged.setCombatTask(CombatTask.Type.MOB, combatDuration);
+            userDamaged.setCombatTask(CombatType.MOB, combatDuration);
         }
     }
 
@@ -168,27 +174,28 @@ public class CombatListener implements Listener {
         if (!(damaged instanceof Player playerDamaged)) {
             return;
         }
-        if (combatDamageCauses.contains(event.getCause())) {
+        if (specialDamageCauses.contains(event.getCause())) {
             int combatDuration = plugin.getConfiguration().getMobCombatDurationTicks();
-            plugin.getUserManager().getUser(playerDamaged).setCombatTask(CombatTask.Type.MOB, combatDuration);
+            plugin.getUserManager().getUser(playerDamaged).setCombatTask(specialCausesType, combatDuration);
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW)
     private void assertPlayerKiller(EntityDeathEvent event) {
         if (event.getEntity() instanceof Player player) {
             plugin.getUserManager().getUser(player).getKiller().ifPresent(event.getEntity()::setKiller);
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     private void keepInventoryOutsideCombat(PlayerDeathEvent event) {
         // If we are dropping items, leave it as is
         if (plugin.getConfiguration().isOutOfCombatDeathDroppingItems()) {
             return;
         }
         // If player is in combat, leave it as is
-        if (plugin.getUserManager().getUser(event.getPlayer()).isInCombat()) {
+        CombatType combatTypeRequired = plugin.getConfiguration().getDeathDroppingItemsCombatTypeRequired();
+        if (plugin.getUserManager().getUser(event.getPlayer()).isInCombat(combatTypeRequired)) {
             return;
         }
         // Otherwise, keep inventory and drop nothing
@@ -196,14 +203,15 @@ public class CombatListener implements Listener {
         event.getDrops().clear();
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     private void keepExperienceOutsideCombat(PlayerDeathEvent event) {
         // If we are dropping experience, leave it as is
         if (plugin.getConfiguration().isOutOfCombatDeathDroppingExperience()) {
             return;
         }
         // If player is in combat, leave it as is
-        if (plugin.getUserManager().getUser(event.getPlayer()).isInCombat()) {
+        CombatType combatTypeRequired = plugin.getConfiguration().getDeathDroppingExperienceCombatTypeRequired();
+        if (plugin.getUserManager().getUser(event.getPlayer()).isInCombat(combatTypeRequired)) {
             return;
         }
         // Otherwise, keep experience and drop nothing

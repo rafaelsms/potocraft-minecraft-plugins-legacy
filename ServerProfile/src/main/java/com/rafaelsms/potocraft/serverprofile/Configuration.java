@@ -4,6 +4,7 @@ import com.rafaelsms.potocraft.YamlFile;
 import com.rafaelsms.potocraft.serverprofile.players.Home;
 import com.rafaelsms.potocraft.serverprofile.players.Profile;
 import com.rafaelsms.potocraft.serverprofile.players.TeleportRequest;
+import com.rafaelsms.potocraft.serverprofile.util.CombatType;
 import com.rafaelsms.potocraft.serverprofile.warps.Warp;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
@@ -138,8 +139,18 @@ public class Configuration extends YamlFile {
         return get("configuration.combat.out_of_combat_death_should_drop_items");
     }
 
+    public CombatType getDeathDroppingItemsCombatTypeRequired() {
+        String name = get("configuration.combat.minimum_combat_type_to_drop_items");
+        return CombatType.valueOf(Objects.requireNonNull(name).toUpperCase());
+    }
+
     public Boolean isOutOfCombatDeathDroppingExperience() {
         return get("configuration.combat.out_of_combat_death_should_drop_experience");
+    }
+
+    public CombatType getDeathDroppingExperienceCombatTypeRequired() {
+        String name = get("configuration.combat.minimum_combat_type_to_drop_experience");
+        return CombatType.valueOf(Objects.requireNonNull(name).toUpperCase());
     }
 
     public Boolean isCombatLogOffDestroysTotemFirst() {

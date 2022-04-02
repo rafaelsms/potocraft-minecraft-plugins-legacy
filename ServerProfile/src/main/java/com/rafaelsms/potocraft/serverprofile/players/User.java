@@ -4,6 +4,7 @@ import com.rafaelsms.potocraft.serverprofile.Permissions;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.tasks.CombatTask;
 import com.rafaelsms.potocraft.serverprofile.players.tasks.TeleportTask;
+import com.rafaelsms.potocraft.serverprofile.util.CombatType;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -218,7 +219,15 @@ public class User {
         return this.combatTask != null;
     }
 
-    public void setCombatTask(@NotNull CombatTask.Type combatType, int durationTicks) {
+    public boolean isInCombat(@NotNull CombatType combatType) {
+        return combatTask != null && combatTask.getType().getPriority() >= combatType.getPriority();
+    }
+
+    public Optional<CombatType> getCombatType() {
+        return Optional.ofNullable(combatTask).map(CombatTask::getType);
+    }
+
+    public void setCombatTask(@NotNull CombatType combatType, int durationTicks) {
         if (durationTicks < 0) {
             return;
         }
@@ -242,8 +251,8 @@ public class User {
         }
         // Prevent replacing "stronger" tasks
         if (combatTask != null && this.combatTask != null) {
-            CombatTask.Type newType = combatTask.getType();
-            CombatTask.Type oldType = this.combatTask.getType();
+            CombatType newType = combatTask.getType();
+            CombatType oldType = this.combatTask.getType();
             if (newType.canResetTime(oldType)) {
                 this.combatTask.resetTime();
                 return;
