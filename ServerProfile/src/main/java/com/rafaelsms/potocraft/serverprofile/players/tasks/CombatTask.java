@@ -2,6 +2,7 @@ package com.rafaelsms.potocraft.serverprofile.players.tasks;
 
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.User;
+import com.rafaelsms.potocraft.serverprofile.util.CombatType;
 import net.kyori.adventure.bossbar.BossBar;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,24 +11,27 @@ public class CombatTask implements Runnable {
     private final @NotNull User user;
 
     private final BossBar progressBar;
-    private final Type type;
+    private final CombatType combatType;
     private final long initialTaskTicks;
 
     private long remainingTicks;
 
-    public CombatTask(@NotNull ServerProfilePlugin plugin, @NotNull User user, Type type, long initialTaskTicks) {
+    public CombatTask(@NotNull ServerProfilePlugin plugin,
+                      @NotNull User user,
+                      CombatType combatType,
+                      long initialTaskTicks) {
         this.user = user;
         this.progressBar = BossBar.bossBar(plugin.getConfiguration().getCombatBarTitle(),
                                            BossBar.MAX_PROGRESS,
                                            BossBar.Color.RED,
                                            BossBar.Overlay.PROGRESS);
-        this.type = type;
+        this.combatType = combatType;
         this.initialTaskTicks = initialTaskTicks;
         this.remainingTicks = initialTaskTicks;
     }
 
-    public Type getType() {
-        return type;
+    public CombatType getType() {
+        return combatType;
     }
 
     public void cancelTask() {
@@ -56,17 +60,4 @@ public class CombatTask implements Runnable {
         cancelTask();
     }
 
-    public enum Type {
-
-        MOB,
-        PLAYER;
-
-        public boolean canOverride(@NotNull Type other) {
-            return this == PLAYER && other == MOB;
-        }
-
-        public boolean canResetTime(@NotNull Type other) {
-            return this == other;
-        }
-    }
 }
