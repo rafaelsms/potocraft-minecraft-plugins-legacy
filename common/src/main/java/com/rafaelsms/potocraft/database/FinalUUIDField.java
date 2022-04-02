@@ -7,12 +7,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public class UUIDField extends UncachedField<UUID> {
+public class FinalUUIDField extends UncachedField<UUID> {
 
     private final UUID identifier;
 
-    public UUIDField(@Nullable String namespace, @NotNull String key, @NotNull UUID identifier) {
-        super(namespace, key);
+    public FinalUUIDField(@NotNull String key, @NotNull UUID identifier) {
+        super(key);
         this.identifier = identifier;
     }
 

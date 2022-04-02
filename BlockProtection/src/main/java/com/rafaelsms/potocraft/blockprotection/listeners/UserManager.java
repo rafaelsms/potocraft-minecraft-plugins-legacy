@@ -4,12 +4,13 @@ import com.rafaelsms.potocraft.blockprotection.BlockProtectionPlugin;
 import com.rafaelsms.potocraft.blockprotection.players.Profile;
 import com.rafaelsms.potocraft.blockprotection.players.User;
 import com.rafaelsms.potocraft.database.DatabaseException;
+import com.rafaelsms.potocraft.player.BaseUserManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class UserManager extends com.rafaelsms.potocraft.player.UserManager<User, Profile> {
+public class UserManager extends BaseUserManager<User, Profile> {
 
     private final @NotNull BlockProtectionPlugin plugin;
 

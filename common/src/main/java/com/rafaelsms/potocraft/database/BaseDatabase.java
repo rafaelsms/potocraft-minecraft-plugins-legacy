@@ -6,6 +6,7 @@ import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.UpdateOptions;
+import com.rafaelsms.potocraft.plugin.BaseConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,9 +20,13 @@ public abstract class BaseDatabase implements Closeable {
     private final @NotNull String uri;
     private final @NotNull String databaseName;
 
-    protected BaseDatabase(@NotNull String uri, @NotNull String databaseName) {
+    private BaseDatabase(@NotNull String uri, @NotNull String databaseName) {
         this.uri = uri;
         this.databaseName = databaseName;
+    }
+
+    protected BaseDatabase(@NotNull BaseConfiguration configuration) {
+        this(configuration.getMongoURI(), configuration.getMongoDatabaseName());
     }
 
     /**

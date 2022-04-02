@@ -5,17 +5,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class SimpleField<T> extends CachedField<T> {
+public class CachedSimpleField<T> extends CachedField<T> {
 
-    public SimpleField(@Nullable String namespace,
-                       @NotNull String key,
-                       @NotNull CollectionProvider provider,
-                       @Nullable T defaultValue) {
-        super(namespace, key, provider, defaultValue);
+    public CachedSimpleField(@NotNull String key, @NotNull CollectionProvider provider, @Nullable T defaultValue) {
+        super(key, provider, defaultValue);
     }
 
-    public SimpleField(@Nullable String namespace, @NotNull CollectionProvider provider, @NotNull String key) {
-        super(namespace, key, provider);
+    public CachedSimpleField(@NotNull CollectionProvider provider, @NotNull String key) {
+        super(key, provider);
     }
 
     @SuppressWarnings("unchecked")

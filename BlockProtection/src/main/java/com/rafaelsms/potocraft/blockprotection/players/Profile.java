@@ -3,10 +3,10 @@ package com.rafaelsms.potocraft.blockprotection.players;
 import com.mongodb.client.MongoCollection;
 import com.rafaelsms.potocraft.blockprotection.BlockProtectionPlugin;
 import com.rafaelsms.potocraft.database.CachedField;
+import com.rafaelsms.potocraft.database.CachedMapField;
+import com.rafaelsms.potocraft.database.CachedSimpleField;
 import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.database.IdentifiedDatabaseStored;
-import com.rafaelsms.potocraft.database.MapField;
-import com.rafaelsms.potocraft.database.SimpleField;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,17 +17,16 @@ public class Profile extends IdentifiedDatabaseStored {
 
     private final @NotNull BlockProtectionPlugin plugin;
 
-    private final MapField<String> regionNames;
-    private final SimpleField<Integer> areaAvailable;
-    private final SimpleField<Double> areaParts;
+    private final CachedMapField<String> regionNames;
+    private final CachedSimpleField<Integer> areaAvailable;
+    private final CachedSimpleField<Double> areaParts;
 
     private Profile(@NotNull BlockProtectionPlugin plugin, @NotNull UUID playerId) throws DatabaseException {
         super(playerId);
         this.plugin = plugin;
-        String namespace = plugin.getDatabase().getProfileNamespace();
-        this.regionNames = new MapField<>(namespace, "regionMap", collectionProvider);
-        this.areaAvailable = new SimpleField<>(namespace, "areaAvailable", collectionProvider, 0);
-        this.areaParts = new SimpleField<>(namespace, "areaParts", collectionProvider, 0.0);
+        this.regionNames = new CachedMapField<>("regionMap", collectionProvider);
+        this.areaAvailable = new CachedSimpleField<>("areaAvailable", collectionProvider, 0);
+        this.areaParts = new CachedSimpleField<>("areaParts", collectionProvider, 0.0);
         fetchAllFields().ifPresent(document -> {
             this.regionNames.readFrom(document);
             this.areaAvailable.readFrom(document);

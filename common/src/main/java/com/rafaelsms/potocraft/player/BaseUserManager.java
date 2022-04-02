@@ -24,62 +24,57 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public abstract class UserManager<U, P> {
+public abstract class BaseUserManager<User, Profile> {
 
     private final Object lock = new Object();
     private final Set<UUID> leavingPlayers = Collections.synchronizedSet(new HashSet<>());
-    private final Map<UUID, P> loadedProfiles = Collections.synchronizedMap(new HashMap<>());
-    private final Map<UUID, U> users = Collections.synchronizedMap(new HashMap<>());
+    private final Map<UUID, Profile> loadedProfiles = Collections.synchronizedMap(new HashMap<>());
+    private final Map<UUID, User> users = Collections.synchronizedMap(new HashMap<>());
 
     private final @NotNull JavaPlugin plugin;
+    private final @NotNull UserManagerListener listener;
 
     private final long savePlayerTaskPeriod;
     private @Nullable BukkitTask savePlayerTask = null;
     private @Nullable BukkitTask tickPlayerTask = null;
 
-    /*
-     * TODO: question
-     *  - using single user manager to cross-server data sharing
-     *  - using single user manager to single-server data sharing
-     *  - centralize all database to a single instance and query through pluginmessages?
-     */
-
-    protected UserManager(@NotNull JavaPlugin plugin, long savePlayerTaskPeriod) {
+    protected BaseUserManager(@NotNull JavaPlugin plugin, long savePlayerTaskPeriod) {
         this.plugin = plugin;
         this.savePlayerTaskPeriod = savePlayerTaskPeriod;
+        this.listener = new UserManagerListener();
     }
 
     protected abstract Component getKickMessageCouldNotLoadProfile();
 
-    protected abstract P retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException;
+    protected abstract Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException;
 
-    protected abstract U retrieveUser(PlayerLoginEvent event, @NotNull P profile);
+    protected abstract User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile);
 
-    protected abstract void onLogin(U user);
+    protected abstract void onLogin(User user);
 
-    protected abstract void onJoin(U user);
+    protected abstract void onJoin(User user);
 
-    protected abstract void onQuit(U user);
+    protected abstract void onQuit(User user);
 
-    protected abstract void tickUser(U user);
+    protected abstract void tickUser(User user);
 
-    protected abstract void saveUser(U user) throws DatabaseException;
+    protected abstract void saveUser(User user) throws DatabaseException;
 
     public @NotNull UserManagerListener getListener() {
-        return new UserManagerListener();
+        return listener;
     }
 
-    public @NotNull U getUser(@NotNull Player player) {
+    public @NotNull User getUser(@NotNull Player player) {
         return getUser(player.getUniqueId());
     }
 
-    public @NotNull U getUser(@NotNull UUID playerId) {
+    public @NotNull User getUser(@NotNull UUID playerId) {
         synchronized (lock) {
             return users.get(playerId);
         }
     }
 
-    public @NotNull Collection<U> getUsers() {
+    public @NotNull Collection<User> getUsers() {
         synchronized (lock) {
             return Collections.unmodifiableCollection(users.values());
         }
@@ -91,7 +86,7 @@ public abstract class UserManager<U, P> {
         public void run() {
             synchronized (lock) {
                 // Tick all users synchronously
-                for (U user : users.values()) {
+                for (User user : users.values()) {
                     try {
                         tickUser(user);
                     } catch (Exception exception) {
@@ -108,7 +103,7 @@ public abstract class UserManager<U, P> {
         public void run() {
             synchronized (lock) {
                 // Simply save all profiles at once and hope it doesn't lag ;)
-                for (U user : users.values()) {
+                for (User user : users.values()) {
                     try {
                         saveUser(user);
                     } catch (DatabaseException exception) {
@@ -148,7 +143,7 @@ public abstract class UserManager<U, P> {
         @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
         public void loadPlayerProfile(AsyncPlayerPreLoginEvent event) {
             try {
-                P profile = retrieveProfile(event);
+                Profile profile = retrieveProfile(event);
                 synchronized (lock) {
                     if (leavingPlayers.contains(event.getUniqueId())) {
                         plugin.getSLF4JLogger()
@@ -170,7 +165,7 @@ public abstract class UserManager<U, P> {
         @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
         public void assignPlayerProfile(PlayerLoginEvent event) {
             synchronized (lock) {
-                P profile = loadedProfiles.remove(event.getPlayer().getUniqueId());
+                Profile profile = loadedProfiles.remove(event.getPlayer().getUniqueId());
                 if (profile == null || leavingPlayers.contains(event.getPlayer().getUniqueId())) {
                     plugin.getSLF4JLogger()
                           .warn("Didn't have a loaded Profile for user {} (uuid = {})",
@@ -178,7 +173,7 @@ public abstract class UserManager<U, P> {
                     event.disallow(PlayerLoginEvent.Result.KICK_OTHER, getKickMessageCouldNotLoadProfile());
                     return;
                 }
-                U user = retrieveUser(event, profile);
+                User user = retrieveUser(event, profile);
                 users.put(event.getPlayer().getUniqueId(), user);
                 onLogin(user);
             }
@@ -201,7 +196,7 @@ public abstract class UserManager<U, P> {
                 synchronized (lock) {
                     loadedProfiles.remove(playerId);
                     leavingPlayers.remove(playerId);
-                    U removedUser = users.remove(playerId);
+                    User removedUser = users.remove(playerId);
                     if (removedUser != null) {
                         try {
                             onQuit(removedUser);

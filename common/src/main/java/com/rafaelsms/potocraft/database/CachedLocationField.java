@@ -12,24 +12,20 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
-public class LocationField extends CachedField<Location> {
+public class CachedLocationField extends CachedField<Location> {
 
     private final @NotNull JavaPlugin plugin;
 
-    public LocationField(@Nullable String namespace,
-                         @NotNull String key,
-                         @NotNull CollectionProvider provider,
-                         @Nullable Location defaultValue,
-                         @NotNull JavaPlugin plugin) {
-        super(namespace, key, provider, defaultValue);
+    public CachedLocationField(@NotNull String key,
+                               @NotNull CollectionProvider provider,
+                               @Nullable Location defaultValue,
+                               @NotNull JavaPlugin plugin) {
+        super(key, provider, defaultValue);
         this.plugin = plugin;
     }
 
-    public LocationField(@Nullable String namespace,
-                         @NotNull String key,
-                         @NotNull CollectionProvider provider,
-                         @NotNull JavaPlugin plugin) {
-        super(namespace, key, provider);
+    public CachedLocationField(@NotNull String key, @NotNull CollectionProvider provider, @NotNull JavaPlugin plugin) {
+        super(key, provider);
         this.plugin = plugin;
     }
 

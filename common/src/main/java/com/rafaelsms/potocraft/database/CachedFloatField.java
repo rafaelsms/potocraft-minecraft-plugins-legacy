@@ -6,17 +6,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 // Float isn't available on MongoDB, so we store as text and parse it back
-public class FloatField extends CachedField<Float> {
+public class CachedFloatField extends CachedField<Float> {
 
-    public FloatField(@Nullable String namespace,
-                      @NotNull String key,
-                      @NotNull CollectionProvider provider,
-                      @Nullable Float defaultValue) {
-        super(namespace, key, provider, defaultValue);
+    public CachedFloatField(@NotNull String key, @NotNull CollectionProvider provider, @Nullable Float defaultValue) {
+        super(key, provider, defaultValue);
     }
 
-    public FloatField(@Nullable String namespace, @NotNull String key, @NotNull CollectionProvider provider) {
-        super(namespace, key, provider);
+    public CachedFloatField(@NotNull String key, @NotNull CollectionProvider provider) {
+        super(key, provider);
     }
 
     @SuppressWarnings("unchecked")

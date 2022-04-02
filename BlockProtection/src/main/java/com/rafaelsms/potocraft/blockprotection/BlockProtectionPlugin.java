@@ -3,7 +3,10 @@ package com.rafaelsms.potocraft.blockprotection;
 import com.rafaelsms.potocraft.blockprotection.commands.ProtectCommand;
 import com.rafaelsms.potocraft.blockprotection.listeners.AreaListener;
 import com.rafaelsms.potocraft.blockprotection.listeners.UserManager;
+import com.rafaelsms.potocraft.blockprotection.players.Profile;
+import com.rafaelsms.potocraft.blockprotection.players.User;
 import com.rafaelsms.potocraft.blockprotection.util.ProtectionException;
+import com.rafaelsms.potocraft.plugin.BaseJavaPlugin;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flags;
@@ -14,18 +17,13 @@ import com.sk89q.worldguard.protection.managers.storage.StorageException;
 import com.sk89q.worldguard.protection.regions.GlobalProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.World;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.Optional;
 
-public class BlockProtectionPlugin extends JavaPlugin {
+public class BlockProtectionPlugin extends BaseJavaPlugin<User, Profile, Database, Configuration> {
 
     private final @NotNull Configuration configuration;
     private final @NotNull Database database;
@@ -38,18 +36,18 @@ public class BlockProtectionPlugin extends JavaPlugin {
     }
 
     @Override
-    public void onEnable() {
-        // Register events
-        getServer().getPluginManager().registerEvents(userManager.getListener(), this);
-        getServer().getPluginManager().registerEvents(new AreaListener(this), this);
-
-        registerCommand("protect", new ProtectCommand(this));
-
-        logger().info("BlockProtection enabled!");
+    protected @NotNull String getPluginName() {
+        return "BlockProtection";
     }
 
     @Override
-    public void onDisable() {
+    protected void executeOnEnable() {
+        getServer().getPluginManager().registerEvents(new AreaListener(this), this);
+        registerCommand("protect", new ProtectCommand(this));
+    }
+
+    @Override
+    protected void executeOnDisable() {
         // Save all WorldGuard
         getWorldGuardInstance().ifPresent(worldGuard -> {
             for (RegionManager regionManager : worldGuard.getPlatform().getRegionContainer().getLoaded()) {
@@ -61,27 +59,21 @@ public class BlockProtectionPlugin extends JavaPlugin {
                 }
             }
         });
-
-        HandlerList.unregisterAll(this);
-        getServer().getScheduler().cancelTasks(this);
-
-        logger().info("BlockProtection disabled!");
     }
 
-    public Logger logger() {
-        return getSLF4JLogger();
-    }
-
+    @Override
     public @NotNull Configuration getConfiguration() {
         return configuration;
     }
 
-    public @NotNull Database getDatabase() {
-        return database;
-    }
-
+    @Override
     public @NotNull UserManager getUserManager() {
         return userManager;
+    }
+
+    @Override
+    public @NotNull Database getDatabase() {
+        return database;
     }
 
     public @NotNull Optional<RegionManager> getRegionManager(@NotNull Player player) {
@@ -122,12 +114,6 @@ public class BlockProtectionPlugin extends JavaPlugin {
             throw new ProtectionException("WorldGuard instance is not available.");
         }
         return instance;
-    }
-
-    private void registerCommand(@NotNull String commandName, @NotNull CommandExecutor executor) {
-        PluginCommand pluginCommand = getServer().getPluginCommand(commandName);
-        assert pluginCommand != null;
-        pluginCommand.setExecutor(executor);
     }
 
     public Optional<ProtectedRegion> getBaseRegion(@NotNull World world) {

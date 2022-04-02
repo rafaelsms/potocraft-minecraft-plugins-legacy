@@ -12,15 +12,8 @@ public abstract class UncachedField<T> {
 
     private final @NotNull String key;
 
-    public UncachedField(@Nullable String namespace, @NotNull String key) {
-        this.key = makeKey(namespace, key);
-    }
-
-    private static @NotNull String makeKey(@Nullable String namespace, @NotNull String key) {
-        if (namespace == null || namespace.isBlank()) {
-            return key;
-        }
-        return "%s.%s".formatted(namespace, key);
+    public UncachedField(@NotNull String key) {
+        this.key = key;
     }
 
     public @NotNull String getKey() {

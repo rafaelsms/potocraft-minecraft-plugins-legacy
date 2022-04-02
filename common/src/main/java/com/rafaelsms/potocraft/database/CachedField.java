@@ -17,17 +17,14 @@ public abstract class CachedField<T> extends UncachedField<T> {
     private boolean fetched = false;
     private boolean dirty = false;
 
-    public CachedField(@Nullable String namespace,
-                       @NotNull String key,
-                       @NotNull CollectionProvider provider,
-                       @Nullable T defaultValue) {
-        super(namespace, key);
+    public CachedField(@NotNull String key, @NotNull CollectionProvider provider, @Nullable T defaultValue) {
+        super(key);
         this.provider = provider;
         this.value = defaultValue;
     }
 
-    public CachedField(@Nullable String namespace, @NotNull String key, @NotNull CollectionProvider provider) {
-        this(namespace, key, provider, null);
+    public CachedField(@NotNull String key, @NotNull CollectionProvider provider) {
+        this(key, provider, null);
     }
 
     @Override

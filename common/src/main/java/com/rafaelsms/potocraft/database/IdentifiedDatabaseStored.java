@@ -17,10 +17,10 @@ public abstract class IdentifiedDatabaseStored extends DatabaseStored {
     public static final String ID_KEY = "_id";
 
     protected final CollectionProvider collectionProvider = new CollectionProvider();
-    protected final UUIDField idField;
+    protected final FinalUUIDField idField;
 
     protected IdentifiedDatabaseStored(@NotNull UUID id) {
-        this.idField = new UUIDField(null, ID_KEY, id);
+        this.idField = new FinalUUIDField(ID_KEY, id);
     }
 
     protected abstract List<CachedField<?>> getOtherRegisteredFields();

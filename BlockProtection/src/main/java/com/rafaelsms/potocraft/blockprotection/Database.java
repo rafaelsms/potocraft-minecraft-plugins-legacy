@@ -11,7 +11,7 @@ public class Database extends BaseDatabase {
     private final @NotNull BlockProtectionPlugin plugin;
 
     public Database(@NotNull BlockProtectionPlugin plugin) {
-        super(plugin.getConfiguration().getMongoURI(), plugin.getConfiguration().getMongoDatabaseName());
+        super(plugin.getConfiguration());
         this.plugin = plugin;
     }
 
@@ -19,7 +19,4 @@ public class Database extends BaseDatabase {
         return getClient().getCollection(plugin.getConfiguration().getMongoPlayerCollection());
     }
 
-    public @NotNull String getProfileNamespace() {
-        return plugin.getConfiguration().getMongoPlayerNamespace();
-    }
 }

@@ -1,8 +1,8 @@
 package com.rafaelsms.potocraft.blockprotection;
 
+import com.rafaelsms.potocraft.plugin.BaseConfiguration;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
-import com.rafaelsms.potocraft.util.YamlFile;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
@@ -14,17 +14,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class Configuration extends YamlFile {
+public class Configuration extends BaseConfiguration {
 
-    public Configuration(@NotNull BlockProtectionPlugin plugin) throws IOException {
-        super(plugin.getDataFolder(), "config.yml");
+    protected Configuration(@NotNull BlockProtectionPlugin plugin) throws IOException {
+        super(plugin);
     }
 
-    public String getMongoURI() {
+    public @NotNull String getMongoURI() {
         return get("configuration.database.mongo_uri");
     }
 
-    public String getMongoDatabaseName() {
+    public @NotNull String getMongoDatabaseName() {
         return get("configuration.database.database_name");
     }
 

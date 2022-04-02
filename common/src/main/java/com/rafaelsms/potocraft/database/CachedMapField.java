@@ -20,17 +20,16 @@ import java.util.Set;
  * @param <V> type of values used. If not readable/writable directly from {@link Document}, it will be necessary to
  *            extend this class and reimplementing {@link this#parseFromDocument(Object, Map)}.
  */
-public class MapField<V> extends CachedField<Map<String, V>> implements Map<String, V> {
+public class CachedMapField<V> extends CachedField<Map<String, V>> implements Map<String, V> {
 
-    public MapField(@Nullable String namespace,
-                    @NotNull String key,
-                    @NotNull CollectionProvider provider,
-                    @Nullable Map<String, V> defaultValue) {
-        super(namespace, key, provider, defaultValue);
+    public CachedMapField(@NotNull String key,
+                          @NotNull CollectionProvider provider,
+                          @Nullable Map<String, V> defaultValue) {
+        super(key, provider, defaultValue);
     }
 
-    public MapField(@Nullable String namespace, @NotNull String key, @NotNull CollectionProvider provider) {
-        super(namespace, key, provider);
+    public CachedMapField(@NotNull String key, @NotNull CollectionProvider provider) {
+        super(key, provider);
     }
 
     @Override

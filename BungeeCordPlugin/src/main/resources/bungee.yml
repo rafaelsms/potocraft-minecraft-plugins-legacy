@@ -1,5 +1,0 @@
-name: BungeeCordPlugin
-main: com.rafaelsms.potocraft.bungeecordplugin.BungeeCordPlugin
-version: "0.1"
-author: rafaelsms
-description: Custom plugin for PotoCraft Server
