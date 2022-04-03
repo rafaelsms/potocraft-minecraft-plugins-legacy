@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.player;
 
 import com.rafaelsms.potocraft.database.DatabaseException;
+import com.rafaelsms.potocraft.plugin.BaseJavaPlugin;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public abstract class BaseUserManager<User, Profile> {
+public abstract class BaseUserManager<User extends BaseUser<Profile>, Profile extends BaseProfile> {
 
     private final Object lock = new Object();
     private final Set<UUID> leavingPlayers = Collections.synchronizedSet(new HashSet<>());
@@ -38,9 +39,9 @@ public abstract class BaseUserManager<User, Profile> {
     private @Nullable BukkitTask savePlayerTask = null;
     private @Nullable BukkitTask tickPlayerTask = null;
 
-    protected BaseUserManager(@NotNull JavaPlugin plugin, long savePlayerTaskPeriod) {
+    public BaseUserManager(@NotNull BaseJavaPlugin plugin) {
         this.plugin = plugin;
-        this.savePlayerTaskPeriod = savePlayerTaskPeriod;
+        this.savePlayerTaskPeriod = plugin.getConfiguration().getProfileSavingTaskTimer();
         this.listener = new UserManagerListener();
     }
 
@@ -169,7 +170,8 @@ public abstract class BaseUserManager<User, Profile> {
                 if (profile == null || leavingPlayers.contains(event.getPlayer().getUniqueId())) {
                     plugin.getSLF4JLogger()
                           .warn("Didn't have a loaded Profile for user {} (uuid = {})",
-                                event.getPlayer().getName(), event.getPlayer().getUniqueId());
+                                event.getPlayer().getName(),
+                                event.getPlayer().getUniqueId());
                     event.disallow(PlayerLoginEvent.Result.KICK_OTHER, getKickMessageCouldNotLoadProfile());
                     return;
                 }

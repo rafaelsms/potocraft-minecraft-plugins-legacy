@@ -1,6 +1,9 @@
-package com.rafaelsms.potocraft.database;
+package com.rafaelsms.potocraft.database.fields;
 
 import com.mongodb.client.model.Updates;
+import com.rafaelsms.potocraft.database.CollectionProvider;
+import com.rafaelsms.potocraft.database.DatabaseException;
+import com.rafaelsms.potocraft.database.serializers.Serializer;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jetbrains.annotations.NotNull;
@@ -8,28 +11,23 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public abstract class CachedField<T> extends UncachedField<T> {
-
-    private final @NotNull CollectionProvider provider;
+public class CachedField<T> extends UncachedField<T> {
 
     // Cached value
     private @Nullable T value;
     private boolean fetched = false;
     private boolean dirty = false;
 
-    public CachedField(@NotNull String key, @NotNull CollectionProvider provider, @Nullable T defaultValue) {
-        super(key);
-        this.provider = provider;
+    public CachedField(@NotNull String key,
+                       @NotNull Serializer<T> serializer,
+                       @NotNull CollectionProvider provider,
+                       @Nullable T defaultValue) {
+        super(key, serializer, provider);
         this.value = defaultValue;
     }
 
-    public CachedField(@NotNull String key, @NotNull CollectionProvider provider) {
-        this(key, provider, null);
-    }
-
-    @Override
-    protected @NotNull CollectionProvider getCollectionProvider() {
-        return provider;
+    public CachedField(@NotNull String key, @NotNull Serializer<T> serializer, @NotNull CollectionProvider provider) {
+        this(key, serializer, provider, null);
     }
 
     @Override
@@ -50,7 +48,7 @@ public abstract class CachedField<T> extends UncachedField<T> {
      *
      * @return cached value (can be null) or throws.
      * @throws IllegalStateException if field was not fetched before.
-     * @see this#getOrDefault() for setting the default value (which can be null still) instead of throwing.
+     * @see CachedField#getOrDefault() for setting the default value (which can be null still) instead of throwing.
      */
     public @NotNull Optional<T> getIfFetched() {
         if (!fetched) {
@@ -97,20 +95,10 @@ public abstract class CachedField<T> extends UncachedField<T> {
         set(value);
     }
 
-    @Override
-    protected @Nullable T parseFromDocument(@Nullable Object databaseObject) {
-        if (databaseObject == null) {
-            return value;
-        }
-        return parseFromDocument(databaseObject, value);
-    }
-
-    protected abstract @Nullable T parseFromDocument(@Nullable Object databaseObject, @Nullable T defaultValue);
-
     public void readFrom(@Nullable Document document) {
         if (document != null) {
             // If nothing on document, keep with value (initialized with default or null value)
-            this.value = parseFromDocument(document.get(getKey(), value));
+            this.value = getSerializer().fromDocument(document.get(getKey(), value));
         }
         this.fetched = true;
         this.dirty = false;
@@ -120,7 +108,7 @@ public abstract class CachedField<T> extends UncachedField<T> {
         if (!fetched || !dirty) {
             return Optional.empty();
         }
-        return Optional.of(Updates.set(getKey(), parseToDocument(value)));
+        return Optional.of(Updates.set(getKey(), getSerializer().toDocument(value)));
     }
 
     public void setUpdated() {

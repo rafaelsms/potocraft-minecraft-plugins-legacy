@@ -4,8 +4,6 @@ import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,7 +49,7 @@ public final class Util {
         try {
             T returned = first.get();
             return Objects.requireNonNullElse(returned, fallback);
-        } catch (Exception ignored) {
+        } catch (Throwable ignored) {
         }
         return fallback;
     }
@@ -96,6 +94,22 @@ public final class Util {
     /**
      * Convert a nullable item to another type.
      *
+     * @param r      input object
+     * @param sClass class type of output
+     * @param <R>    type of input
+     * @param <S>    type of output
+     * @return null if input is null, converted item otherwise
+     */
+    public static <R, S> @Nullable S convert(@Nullable R r, @NotNull Class<S> sClass) {
+        if (r == null) {
+            return null;
+        }
+        return sClass.cast(r);
+    }
+
+    /**
+     * Convert a nullable item to another type.
+     *
      * @param r          input object
      * @param rsFunction converting function
      * @param <R>        type of input
@@ -107,6 +121,47 @@ public final class Util {
     }
 
     /**
+     * Convert a nullable item to another type.
+     *
+     * @param r      input object
+     * @param sClass class type of output, used for casting
+     * @param <R>    type of input
+     * @param <S>    type of output
+     * @return converted r object
+     */
+    public static <R, S> @NotNull S convertNonNull(@NotNull R r, @NotNull Class<S> sClass) {
+        return Objects.requireNonNull(convert(r, sClass));
+    }
+
+    /**
+     * Convert a nullable item to another type.
+     *
+     * @param r          input object
+     * @param rsFunction converting function
+     * @param <R>        type of input
+     * @param <S>        type of output
+     * @return converted r object
+     * @throws NullPointerException if input object is null
+     */
+    public static <R, S> @NotNull S convertOrThrow(@Nullable R r, @NotNull Function<R, S> rsFunction) {
+        return Objects.requireNonNull(convert(r, rsFunction));
+    }
+
+    /**
+     * Convert a nullable item to another type.
+     *
+     * @param r      input object
+     * @param sClass class type of output, used for casting
+     * @param <R>    type of input
+     * @param <S>    type of output
+     * @return converted r object
+     * @throws NullPointerException if input object is null
+     */
+    public static <R, S> @NotNull S convertOrThrow(@Nullable R r, @NotNull Class<S> sClass) {
+        return Objects.requireNonNull(convert(r, sClass));
+    }
+
+    /**
      * Convert a nullable item to another type providing a fallback.
      *
      * @param r          input object
@@ -115,6 +170,7 @@ public final class Util {
      * @param <R>        type of input
      * @param <S>        type of output
      * @return converted r item or fallback
+     * @throws NullPointerException if input object is null
      */
     public static <R, S> @NotNull S convertFallback(@Nullable R r,
                                                     @NotNull Function<R, S> rsFunction,
@@ -123,14 +179,6 @@ public final class Util {
             return fallback;
         }
         return Objects.requireNonNull(convert(r, rsFunction));
-    }
-
-    public static @Nullable ZonedDateTime toDateTime(@Nullable String string) {
-        return convert(string, str -> ZonedDateTime.parse(str, DateTimeFormatter.ISO_ZONED_DATE_TIME));
-    }
-
-    public static @Nullable String fromDateTime(@Nullable ZonedDateTime zonedDateTime) {
-        return convert(zonedDateTime, dateTime -> dateTime.format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
     }
 
     public static int getManhattanDistance(Location location, Location otherLocation) {
@@ -147,5 +195,9 @@ public final class Util {
             return Optional.empty();
         }
         return Optional.of(Arrays.copyOfRange(array, initialIndex + 1, array.length));
+    }
+
+    public static <T> T nonNull(T value) {
+        return Objects.requireNonNull(value);
     }
 }

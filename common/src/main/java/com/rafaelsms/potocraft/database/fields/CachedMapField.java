@@ -1,6 +1,9 @@
-package com.rafaelsms.potocraft.database;
+package com.rafaelsms.potocraft.database.fields;
 
-import org.bson.Document;
+import com.rafaelsms.potocraft.database.CollectionProvider;
+import com.rafaelsms.potocraft.database.DatabaseException;
+import com.rafaelsms.potocraft.database.serializers.MapSerializer;
+import com.rafaelsms.potocraft.database.serializers.Serializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,25 +14,19 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-/**
- * This field will store a map internally that can be read using {@link this#get()} but cannot be changed.
- * <p>
- * To change this map, use its {@link Map's} methods, but won't fetch the database if the value is not cached, resulting
- * in data loss through overwriting.
- *
- * @param <V> type of values used. If not readable/writable directly from {@link Document}, it will be necessary to
- *            extend this class and reimplementing {@link this#parseFromDocument(Object, Map)}.
- */
 public class CachedMapField<V> extends CachedField<Map<String, V>> implements Map<String, V> {
 
     public CachedMapField(@NotNull String key,
+                          @NotNull Serializer<V> objectSerializer,
                           @NotNull CollectionProvider provider,
                           @Nullable Map<String, V> defaultValue) {
-        super(key, provider, defaultValue);
+        super(key, MapSerializer.getSerializer(objectSerializer), provider, defaultValue);
     }
 
-    public CachedMapField(@NotNull String key, @NotNull CollectionProvider provider) {
-        super(key, provider);
+    public CachedMapField(@NotNull String key,
+                          @NotNull Serializer<V> objectSerializer,
+                          @NotNull CollectionProvider provider) {
+        super(key, MapSerializer.getSerializer(objectSerializer), provider);
     }
 
     @Override
@@ -56,24 +53,6 @@ public class CachedMapField<V> extends CachedField<Map<String, V>> implements Ma
 
     private LinkedHashMap<String, V> getWritableCopy() {
         return getIfFetched().map(LinkedHashMap::new).orElseGet(LinkedHashMap::new);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    protected @Nullable Map<String, V> parseFromDocument(@Nullable Object databaseObject,
-                                                         @Nullable Map<String, V> defaultValue) {
-        return Optional.ofNullable(databaseObject).map(obj -> (Map<String, V>) obj).orElse(defaultValue);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    protected <R> @Nullable R parseToDocument(@Nullable Map<String, V> value) {
-        if (value == null) {
-            return null;
-        }
-        Document document = new Document();
-        document.putAll(value);
-        return (R) document;
     }
 
     @Override
@@ -119,7 +98,9 @@ public class CachedMapField<V> extends CachedField<Map<String, V>> implements Ma
 
     @Override
     public void putAll(@NotNull Map<? extends String, ? extends V> m) {
-        m.forEach(this::put);
+        LinkedHashMap<String, V> writableCopy = getWritableCopy();
+        writableCopy.putAll(m);
+        set(writableCopy);
     }
 
     @Override
@@ -130,18 +111,24 @@ public class CachedMapField<V> extends CachedField<Map<String, V>> implements Ma
     @NotNull
     @Override
     public Set<String> keySet() {
-        return getValueOrEmpty().keySet();
+        LinkedHashMap<String, V> writableCopy = getWritableCopy();
+        set(writableCopy);
+        return writableCopy.keySet();
     }
 
     @NotNull
     @Override
     public Collection<V> values() {
-        return getValueOrEmpty().values();
+        LinkedHashMap<String, V> writableCopy = getWritableCopy();
+        set(writableCopy);
+        return writableCopy.values();
     }
 
     @NotNull
     @Override
     public Set<Entry<String, V>> entrySet() {
-        return getValueOrEmpty().entrySet();
+        LinkedHashMap<String, V> writableCopy = getWritableCopy();
+        set(writableCopy);
+        return writableCopy.entrySet();
     }
 }

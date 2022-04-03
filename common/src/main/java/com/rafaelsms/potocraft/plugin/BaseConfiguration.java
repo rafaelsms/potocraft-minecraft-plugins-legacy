@@ -19,4 +19,8 @@ public abstract class BaseConfiguration extends YamlFile {
 
     public abstract @NotNull String getMongoDatabaseName();
 
+    public abstract @NotNull String getProfileCollectionName();
+
+    public abstract int getProfileSavingTaskTimer();
+
 }

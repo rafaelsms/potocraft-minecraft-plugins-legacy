@@ -3,10 +3,12 @@ package com.rafaelsms.potocraft.database;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.UpdateOptions;
 import com.rafaelsms.potocraft.plugin.BaseConfiguration;
+import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,14 +21,18 @@ public abstract class BaseDatabase implements Closeable {
     private @Nullable MongoClient mongoClient = null;
     private final @NotNull String uri;
     private final @NotNull String databaseName;
+    private final @NotNull String profileCollectionName;
 
-    private BaseDatabase(@NotNull String uri, @NotNull String databaseName) {
+    private BaseDatabase(@NotNull String uri, @NotNull String databaseName, @NotNull String profileCollectionName) {
         this.uri = uri;
         this.databaseName = databaseName;
+        this.profileCollectionName = profileCollectionName;
     }
 
     protected BaseDatabase(@NotNull BaseConfiguration configuration) {
-        this(configuration.getMongoURI(), configuration.getMongoDatabaseName());
+        this(configuration.getMongoURI(),
+             configuration.getMongoDatabaseName(),
+             configuration.getProfileCollectionName());
     }
 
     /**
@@ -54,5 +60,9 @@ public abstract class BaseDatabase implements Closeable {
             this.mongoClient.close();
             this.mongoClient = null;
         }
+    }
+
+    public @NotNull MongoCollection<Document> getProfileCollection() throws DatabaseException {
+        return getClient().getCollection(profileCollectionName);
     }
 }

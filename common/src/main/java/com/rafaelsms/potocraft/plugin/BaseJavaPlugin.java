@@ -1,6 +1,8 @@
 package com.rafaelsms.potocraft.plugin;
 
 import com.rafaelsms.potocraft.database.BaseDatabase;
+import com.rafaelsms.potocraft.player.BaseProfile;
+import com.rafaelsms.potocraft.player.BaseUser;
 import com.rafaelsms.potocraft.player.BaseUserManager;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -10,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-public abstract class BaseJavaPlugin<User, Profile, Database extends BaseDatabase, Configuration extends BaseConfiguration>
+public abstract class BaseJavaPlugin<User extends BaseUser<Profile>, Profile extends BaseProfile, Database extends BaseDatabase, Configuration extends BaseConfiguration>
         extends JavaPlugin {
 
     @Override
