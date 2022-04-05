@@ -12,13 +12,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-public abstract class BaseJavaPlugin<User extends BaseUser<Profile>, Profile extends BaseProfile, Database extends BaseDatabase, Configuration extends BaseConfiguration>
+public abstract class BaseJavaPlugin<User extends BaseUser<Profile>, Profile extends BaseProfile, Database extends BaseDatabase, Configuration extends BaseConfiguration, Permissions extends BasePermissions>
         extends JavaPlugin {
 
     @Override
     public void onEnable() {
         super.onEnable();
         getServer().getPluginManager().registerEvents(getUserManager().getListener(), this);
+        getPermissions().registerPermissions();
         executeOnEnable();
         logger().info("{} enabled!", getPluginName());
     }
@@ -57,4 +58,6 @@ public abstract class BaseJavaPlugin<User extends BaseUser<Profile>, Profile ext
     public abstract @NotNull BaseUserManager<User, Profile> getUserManager();
 
     public abstract @NotNull Database getDatabase();
+
+    public abstract @NotNull Permissions getPermissions();
 }

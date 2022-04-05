@@ -1,13 +1,14 @@
 package com.rafaelsms.potocraft.player;
 
 import com.rafaelsms.potocraft.database.DatabaseException;
+import com.rafaelsms.potocraft.util.TickableTask;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public abstract class BaseUser<Profile> {
+public abstract class BaseUser<Profile> implements TickableTask {
 
     private final @NotNull Profile profile;
     private final @NotNull Player player;

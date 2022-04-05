@@ -8,6 +8,7 @@ import com.rafaelsms.potocraft.database.serializers.LocationSerializer;
 import com.rafaelsms.potocraft.database.serializers.Serializer;
 import com.rafaelsms.potocraft.database.serializers.SimpleSerializer;
 import com.rafaelsms.potocraft.player.BaseProfile;
+import com.rafaelsms.potocraft.util.TickableTask;
 import com.rafaelsms.teleporter.TeleporterPlugin;
 import com.rafaelsms.teleporter.database.HomeSerializer;
 import org.bson.Document;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public class Profile extends BaseProfile {
+public class Profile extends BaseProfile implements TickableTask {
 
     private final @NotNull TeleporterPlugin plugin;
 
@@ -28,7 +29,7 @@ public class Profile extends BaseProfile {
     private final CachedField<Location> deathLocation;
     private final CachedMapField<Home> homeMap;
 
-    protected Profile(@NotNull UUID id, @NotNull TeleporterPlugin plugin) {
+    protected Profile(@NotNull UUID id, @NotNull TeleporterPlugin plugin) throws DatabaseException {
         super(id);
         Serializer<Location> locationSerializer = LocationSerializer.getSerializer(plugin);
         this.plugin = plugin;
@@ -39,6 +40,7 @@ public class Profile extends BaseProfile {
         this.backLocation = new CachedField<>("backLocation", locationSerializer, this);
         this.deathLocation = new CachedField<>("deathLocation", locationSerializer, this);
         this.homeMap = new CachedMapField<>("homeMap", HomeSerializer.getSerializer(plugin), this);
+        fetchDatabaseObjectIfPresent();
     }
 
     @Override
@@ -49,5 +51,26 @@ public class Profile extends BaseProfile {
     @Override
     protected List<CachedField<?>> getRegisteredFields() {
         return List.of(acceptingTeleportRequests, teleportCooldownTicks, backLocation, deathLocation, homeMap);
+    }
+
+    public void setDeathLocation(@NotNull Location location) {
+        deathLocation.set(location);
+        setBackLocation(location);
+    }
+
+    public void setBackLocation(@NotNull Location location) {
+        backLocation.set(location);
+    }
+
+    public int getTeleportCooldownTicks() {
+        return teleportCooldownTicks.getOrDefault().orElse(0);
+    }
+
+    @Override
+    public void tick() {
+        int cooldownTicks = getTeleportCooldownTicks();
+        if (cooldownTicks > 0) {
+            teleportCooldownTicks.set(cooldownTicks - 1);
+        }
     }
 }

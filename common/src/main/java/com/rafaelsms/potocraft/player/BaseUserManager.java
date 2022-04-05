@@ -49,7 +49,7 @@ public abstract class BaseUserManager<User extends BaseUser<Profile>, Profile ex
 
     protected abstract Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException;
 
-    protected abstract User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile);
+    protected abstract User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile) throws DatabaseException;
 
     protected abstract void onLogin(User user);
 
@@ -57,9 +57,13 @@ public abstract class BaseUserManager<User extends BaseUser<Profile>, Profile ex
 
     protected abstract void onQuit(User user);
 
-    protected abstract void tickUser(User user);
+    protected void tickUser(User user) {
+        user.tick();
+    }
 
-    protected abstract void saveUser(User user) throws DatabaseException;
+    protected void saveUser(User user) throws DatabaseException {
+        user.getProfile().save();
+    }
 
     public @NotNull UserManagerListener getListener() {
         return listener;
@@ -175,9 +179,21 @@ public abstract class BaseUserManager<User extends BaseUser<Profile>, Profile ex
                     event.disallow(PlayerLoginEvent.Result.KICK_OTHER, getKickMessageCouldNotLoadProfile());
                     return;
                 }
-                User user = retrieveUser(event, profile);
-                users.put(event.getPlayer().getUniqueId(), user);
-                onLogin(user);
+                try {
+                    User user = retrieveUser(event, profile);
+                    users.put(event.getPlayer().getUniqueId(), user);
+                    onLogin(user);
+                } catch (DatabaseException ignored) {
+                    event.disallow(PlayerLoginEvent.Result.KICK_OTHER, getKickMessageCouldNotLoadProfile());
+                } catch (Exception exception) {
+                    plugin.getSLF4JLogger()
+                          .warn("Failed to assign profile for user {} (uuid = {}): {}",
+                                event.getPlayer().getName(),
+                                event.getPlayer().getUniqueId(),
+                                exception.getLocalizedMessage());
+                    exception.printStackTrace();
+                    event.disallow(PlayerLoginEvent.Result.KICK_OTHER, getKickMessageCouldNotLoadProfile());
+                }
             }
         }
 

@@ -65,12 +65,20 @@ public abstract class IdentifiedDatabaseObject<T> implements CollectionProvider 
         return Projections.fields(fieldProjections);
     }
 
-    protected @NotNull Optional<Document> fetchDocument(@NotNull Bson projection) throws DatabaseException {
+    private @NotNull Optional<Document> fetchDocument(@NotNull Bson projection) throws DatabaseException {
         return Optional.ofNullable(getCollection().find(getIdQuery()).projection(projection).first());
     }
 
-    protected @NotNull Optional<Document> fetchAllFields() throws DatabaseException {
+    private @NotNull Optional<Document> fetchAllFields() throws DatabaseException {
         return fetchDocument(getAllFieldsProjection());
+    }
+
+    protected void fetchDatabaseObjectIfPresent() throws DatabaseException {
+        fetchAllFields().ifPresent(document -> {
+            for (CachedField<?> registeredField : getRegisteredFields()) {
+                registeredField.readFrom(document);
+            }
+        });
     }
 
     protected abstract List<CachedField<?>> getRegisteredFields();

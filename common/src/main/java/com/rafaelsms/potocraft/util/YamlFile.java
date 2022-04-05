@@ -55,20 +55,20 @@ public abstract class YamlFile {
         return ((Number) fileMap.getOrDefault(key, defaultValue)).doubleValue();
     }
 
-    protected <T> @Nullable T get(@NotNull String key) {
-        return get(key, null);
+    protected <T> @NotNull T getOrThrow(@NotNull String key) {
+        return Util.nonNull(get(key, null));
     }
 
-    protected @Nullable Long getLong(@NotNull String key) {
-        return getLong(key, null);
+    protected long getLongOrThrow(@NotNull String key) {
+        return Util.nonNull(getLong(key, null));
     }
 
-    protected @Nullable Integer getInt(@NotNull String key) {
-        return getInt(key, null);
+    protected int getIntOrThrow(@NotNull String key) {
+        return Util.nonNull(getInt(key, null));
     }
 
-    protected @Nullable Double getDouble(@NotNull String key) {
-        return getDouble(key, null);
+    protected double getDoubleOrThrow(@NotNull String key) {
+        return Util.nonNull(getDouble(key, null));
     }
 
     /**
