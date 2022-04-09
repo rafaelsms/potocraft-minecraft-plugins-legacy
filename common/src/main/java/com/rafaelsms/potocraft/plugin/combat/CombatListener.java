@@ -9,6 +9,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public abstract class CombatListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
@@ -34,6 +36,10 @@ public abstract class CombatListener implements Listener {
             return;
         }
 
+        // Ignore self-inflicted damage
+        if (Objects.equals(damager.getUniqueId(), damaged.getUniqueId())) {
+            return;
+        }
         onPlayerVersusPlayerDamage(damaged, damager, event.getDamager());
     }
 

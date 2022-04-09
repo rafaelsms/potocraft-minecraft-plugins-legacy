@@ -28,7 +28,7 @@ public class TeleportingTask extends TimerTask<TeleportResult> {
 
     @Override
     public boolean shouldCancelTask() {
-        return !teleportDestination.isAvailable() || teleporting.canTeleport(false).isFailed();
+        return !teleportDestination.isAvailable() || teleporting.getTeleportStatus(false).isNegative();
     }
 
     @Override

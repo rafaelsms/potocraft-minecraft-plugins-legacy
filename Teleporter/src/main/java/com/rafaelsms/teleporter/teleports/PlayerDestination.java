@@ -19,6 +19,6 @@ public class PlayerDestination implements TeleportDestination {
 
     @Override
     public boolean isAvailable() {
-        return !destination.canTeleport(false).isFailed();
+        return !destination.getTeleportStatus(false).isNegative();
     }
 }

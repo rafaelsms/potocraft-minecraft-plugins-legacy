@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.plugin;
 
 import com.rafaelsms.potocraft.util.YamlFile;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -23,4 +24,7 @@ public abstract class BaseConfiguration extends YamlFile {
 
     public abstract int getProfileSavingTaskTimer();
 
+    public abstract @NotNull Component getCommandIsPlayerOnly();
+
+    public abstract @NotNull Component getFailedToRetrieveUserProfile();
 }

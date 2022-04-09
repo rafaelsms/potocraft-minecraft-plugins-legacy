@@ -1,4 +1,4 @@
-package com.rafaelsms.potocraft.player;
+package com.rafaelsms.potocraft.plugin.player;
 
 import com.rafaelsms.potocraft.database.IdentifiedDatabaseObject;
 import com.rafaelsms.potocraft.database.serializers.UUIDSerializer;

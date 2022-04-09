@@ -7,7 +7,7 @@ import com.rafaelsms.potocraft.database.fields.CachedMapField;
 import com.rafaelsms.potocraft.database.serializers.LocationSerializer;
 import com.rafaelsms.potocraft.database.serializers.Serializer;
 import com.rafaelsms.potocraft.database.serializers.SimpleSerializer;
-import com.rafaelsms.potocraft.player.BaseProfile;
+import com.rafaelsms.potocraft.plugin.player.BaseProfile;
 import com.rafaelsms.potocraft.util.TickableTask;
 import com.rafaelsms.teleporter.TeleporterPlugin;
 import com.rafaelsms.teleporter.database.HomeSerializer;
@@ -64,6 +64,10 @@ public class Profile extends BaseProfile implements TickableTask {
 
     public int getTeleportCooldownTicks() {
         return teleportCooldownTicks.getOrDefault().orElse(0);
+    }
+
+    public boolean isAcceptingTeleportRequests() {
+        return acceptingTeleportRequests.getOrDefault().orElse(true);
     }
 
     @Override

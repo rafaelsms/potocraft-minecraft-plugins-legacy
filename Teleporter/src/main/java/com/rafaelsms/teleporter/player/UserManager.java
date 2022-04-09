@@ -1,7 +1,7 @@
 package com.rafaelsms.teleporter.player;
 
 import com.rafaelsms.potocraft.database.DatabaseException;
-import com.rafaelsms.potocraft.player.BaseUserManager;
+import com.rafaelsms.potocraft.plugin.player.BaseUserManager;
 import com.rafaelsms.teleporter.TeleporterPlugin;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -23,24 +23,24 @@ public class UserManager extends BaseUserManager<User, Profile> {
     }
 
     @Override
-    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException {
+    protected @NotNull Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException {
         return new Profile(event.getUniqueId(), plugin);
     }
 
     @Override
-    protected User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile) throws DatabaseException {
+    protected @NotNull User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile) throws DatabaseException {
         return new User(profile, event.getPlayer(), plugin);
     }
 
     @Override
-    protected void onLogin(User user) {
+    protected void onLogin(@NotNull User user) {
     }
 
     @Override
-    protected void onJoin(User user) {
+    protected void onJoin(@NotNull User user) {
     }
 
     @Override
-    protected void onQuit(User user) {
+    protected void onQuit(@NotNull User user) {
     }
 }

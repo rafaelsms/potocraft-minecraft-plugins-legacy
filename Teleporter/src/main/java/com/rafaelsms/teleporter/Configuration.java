@@ -34,6 +34,16 @@ public class Configuration extends BaseConfiguration {
         return 0;
     }
 
+    @Override
+    public @NotNull Component getCommandIsPlayerOnly() {
+        return null;
+    }
+
+    @Override
+    public @NotNull Component getFailedToRetrieveUserProfile() {
+        return null;
+    }
+
     public int getTeleportRequestDurationTicks() {
         return 0;
     }
@@ -51,6 +61,66 @@ public class Configuration extends BaseConfiguration {
     }
 
     public @NotNull Component getTeleportRequestExpired(@NotNull Component requesterName) {
+        return null;
+    }
+
+    public @NotNull Component getTeleportCommandHelp() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportStatusAlreadyTeleporting() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportStatusUserIsDead() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportStatusInCooldown() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportStatusUserInCombat() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportStatusLocationUnavailable() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportStatusUserIsOffline() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportStatusUserIsTeleporting() {
+        return null;
+    }
+
+    public @NotNull Component getCommandPlayerNotFound() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportFailed() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportRequestRequested() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportRequestUserNotAccepting() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportRequestRequestUpdated() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportRequestRequestReplaced() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportRequestReceived(@NotNull Component playerName, boolean thisUserTeleporting) {
         return null;
     }
 }

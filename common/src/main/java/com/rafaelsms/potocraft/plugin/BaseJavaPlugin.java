@@ -1,9 +1,9 @@
 package com.rafaelsms.potocraft.plugin;
 
 import com.rafaelsms.potocraft.database.BaseDatabase;
-import com.rafaelsms.potocraft.player.BaseProfile;
-import com.rafaelsms.potocraft.player.BaseUser;
-import com.rafaelsms.potocraft.player.BaseUserManager;
+import com.rafaelsms.potocraft.plugin.player.BaseProfile;
+import com.rafaelsms.potocraft.plugin.player.BaseUser;
+import com.rafaelsms.potocraft.plugin.player.BaseUserManager;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;

@@ -1,7 +1,10 @@
-package com.rafaelsms.potocraft.player;
+package com.rafaelsms.potocraft.plugin.player;
 
+import com.rafaelsms.potocraft.database.BaseDatabase;
 import com.rafaelsms.potocraft.database.DatabaseException;
+import com.rafaelsms.potocraft.plugin.BaseConfiguration;
 import com.rafaelsms.potocraft.plugin.BaseJavaPlugin;
+import com.rafaelsms.potocraft.plugin.BasePermissions;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,7 +15,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerLoadEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,14 +34,15 @@ public abstract class BaseUserManager<User extends BaseUser<Profile>, Profile ex
     private final Map<UUID, Profile> loadedProfiles = Collections.synchronizedMap(new HashMap<>());
     private final Map<UUID, User> users = Collections.synchronizedMap(new HashMap<>());
 
-    private final @NotNull JavaPlugin plugin;
+    private final @NotNull BaseJavaPlugin<User, Profile, ? extends BaseDatabase, ? extends BaseConfiguration, ? extends BasePermissions>
+            plugin;
     private final @NotNull UserManagerListener listener;
 
     private final long savePlayerTaskPeriod;
     private @Nullable BukkitTask savePlayerTask = null;
     private @Nullable BukkitTask tickPlayerTask = null;
 
-    public BaseUserManager(@NotNull BaseJavaPlugin plugin) {
+    public BaseUserManager(@NotNull BaseJavaPlugin<User, Profile, ? extends BaseDatabase, ? extends BaseConfiguration, ? extends BasePermissions> plugin) {
         this.plugin = plugin;
         this.savePlayerTaskPeriod = plugin.getConfiguration().getProfileSavingTaskTimer();
         this.listener = new UserManagerListener();
@@ -47,21 +50,22 @@ public abstract class BaseUserManager<User extends BaseUser<Profile>, Profile ex
 
     protected abstract Component getKickMessageCouldNotLoadProfile();
 
-    protected abstract Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException;
+    protected abstract @NotNull Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException;
 
-    protected abstract User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile) throws DatabaseException;
+    protected abstract @NotNull User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile) throws
+                                                                                                    DatabaseException;
 
-    protected abstract void onLogin(User user);
+    protected abstract void onLogin(@NotNull User user);
 
-    protected abstract void onJoin(User user);
+    protected abstract void onJoin(@NotNull User user);
 
-    protected abstract void onQuit(User user);
+    protected abstract void onQuit(@NotNull User user);
 
-    protected void tickUser(User user) {
+    protected void tickUser(@NotNull User user) {
         user.tick();
     }
 
-    protected void saveUser(User user) throws DatabaseException {
+    protected void saveUser(@NotNull User user) throws DatabaseException {
         user.getProfile().save();
     }
 
@@ -69,13 +73,44 @@ public abstract class BaseUserManager<User extends BaseUser<Profile>, Profile ex
         return listener;
     }
 
+    private @NotNull User getMappedUser(@NotNull UUID playerId) throws DatabaseException {
+        synchronized (lock) {
+            User user = users.get(playerId);
+            if (user == null) {
+                throw new DatabaseException("User profile for player \"%s\" is null!".formatted(playerId.toString()));
+            }
+            return user;
+        }
+    }
+
+    private void kickPlayerForNullUser(@NotNull Player player) {
+        plugin.logger()
+              .error("Failed to retrieve User profile for online player {} (UUID = {})",
+                     player.getName(),
+                     player.getUniqueId());
+        player.kick(plugin.getConfiguration().getFailedToRetrieveUserProfile());
+    }
+
     public @NotNull User getUser(@NotNull Player player) {
-        return getUser(player.getUniqueId());
+        try {
+            return getMappedUser(player.getUniqueId());
+        } catch (DatabaseException exception) {
+            kickPlayerForNullUser(player);
+            throw new NullPointerException(exception.getLocalizedMessage());
+        }
     }
 
     public @NotNull User getUser(@NotNull UUID playerId) {
-        synchronized (lock) {
-            return users.get(playerId);
+        try {
+            return getMappedUser(playerId);
+        } catch (DatabaseException exception) {
+            Player player = plugin.getServer().getPlayer(playerId);
+            if (player != null) {
+                kickPlayerForNullUser(player);
+            } else {
+                plugin.logger().error("Failed to retrieve User profile for offline UUID = \"{}\"", playerId);
+            }
+            throw new NullPointerException(exception.getLocalizedMessage());
         }
     }
 
@@ -95,7 +130,7 @@ public abstract class BaseUserManager<User extends BaseUser<Profile>, Profile ex
                     try {
                         tickUser(user);
                     } catch (Exception exception) {
-                        plugin.getSLF4JLogger().error("Exception thrown on user tick task:", exception);
+                        plugin.logger().error("Exception thrown on user tick task:", exception);
                     }
                 }
             }
@@ -112,9 +147,9 @@ public abstract class BaseUserManager<User extends BaseUser<Profile>, Profile ex
                     try {
                         saveUser(user);
                     } catch (DatabaseException exception) {
-                        plugin.getSLF4JLogger().warn("Failed to save user:", exception);
+                        plugin.logger().warn("Failed to save user:", exception);
                     } catch (Exception exception) {
-                        plugin.getSLF4JLogger().error("Exception thrown on user save task:", exception);
+                        plugin.logger().error("Exception thrown on user save task:", exception);
                     }
                 }
             }
@@ -151,7 +186,7 @@ public abstract class BaseUserManager<User extends BaseUser<Profile>, Profile ex
                 Profile profile = retrieveProfile(event);
                 synchronized (lock) {
                     if (leavingPlayers.contains(event.getUniqueId())) {
-                        plugin.getSLF4JLogger()
+                        plugin.logger()
                               .warn("Player joining before finished leaving: {} (uuid={})",
                                     event.getName(),
                                     event.getUniqueId());
@@ -161,8 +196,7 @@ public abstract class BaseUserManager<User extends BaseUser<Profile>, Profile ex
                     loadedProfiles.put(event.getUniqueId(), profile);
                 }
             } catch (DatabaseException ignored) {
-                plugin.getSLF4JLogger()
-                      .warn("Failed to load profile for {} (uuid={})", event.getName(), event.getUniqueId());
+                plugin.logger().warn("Failed to load profile for {} (uuid={})", event.getName(), event.getUniqueId());
                 event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, getKickMessageCouldNotLoadProfile());
             }
         }
@@ -172,7 +206,7 @@ public abstract class BaseUserManager<User extends BaseUser<Profile>, Profile ex
             synchronized (lock) {
                 Profile profile = loadedProfiles.remove(event.getPlayer().getUniqueId());
                 if (profile == null || leavingPlayers.contains(event.getPlayer().getUniqueId())) {
-                    plugin.getSLF4JLogger()
+                    plugin.logger()
                           .warn("Didn't have a loaded Profile for user {} (uuid = {})",
                                 event.getPlayer().getName(),
                                 event.getPlayer().getUniqueId());
@@ -186,7 +220,7 @@ public abstract class BaseUserManager<User extends BaseUser<Profile>, Profile ex
                 } catch (DatabaseException ignored) {
                     event.disallow(PlayerLoginEvent.Result.KICK_OTHER, getKickMessageCouldNotLoadProfile());
                 } catch (Exception exception) {
-                    plugin.getSLF4JLogger()
+                    plugin.logger()
                           .warn("Failed to assign profile for user {} (uuid = {}): {}",
                                 event.getPlayer().getName(),
                                 event.getPlayer().getUniqueId(),
@@ -220,9 +254,9 @@ public abstract class BaseUserManager<User extends BaseUser<Profile>, Profile ex
                             onQuit(removedUser);
                             saveUser(removedUser);
                         } catch (DatabaseException exception) {
-                            plugin.getSLF4JLogger().warn("Failed to save user:", exception);
+                            plugin.logger().warn("Failed to save user:", exception);
                         } catch (Exception exception) {
-                            plugin.getSLF4JLogger().error("Exception thrown on user quit and save task:", exception);
+                            plugin.logger().error("Exception thrown on user quit and save task:", exception);
                         }
                     }
                 }

@@ -1,7 +1,7 @@
 package com.rafaelsms.teleporter;
 
-import com.rafaelsms.potocraft.player.BaseUserManager;
 import com.rafaelsms.potocraft.plugin.BaseJavaPlugin;
+import com.rafaelsms.potocraft.plugin.player.BaseUserManager;
 import com.rafaelsms.teleporter.player.Profile;
 import com.rafaelsms.teleporter.player.User;
 import com.rafaelsms.teleporter.player.UserManager;

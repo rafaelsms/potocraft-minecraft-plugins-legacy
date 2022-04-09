@@ -81,6 +81,6 @@ public class TeleportRequest extends TimerTask<Void> {
     }
 
     private boolean isUserUnavailable(@NotNull User user) {
-        return !user.isOnline();
+        return user.getTeleportStatus(false).isNegative();
     }
 }

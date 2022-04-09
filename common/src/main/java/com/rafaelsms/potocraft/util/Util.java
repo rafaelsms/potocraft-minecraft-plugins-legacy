@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -199,5 +201,16 @@ public final class Util {
 
     public static <T> T nonNull(T value) {
         return Objects.requireNonNull(value);
+    }
+
+    public static <T, U extends Throwable> @NotNull BiConsumer<T, U> biConsumer(@NotNull Consumer<T> tConsumer,
+                                                                                @NotNull Consumer<U> throwableConsumer) {
+        return (t, throwable) -> {
+            if (throwable != null) {
+                throwableConsumer.accept(throwable);
+                return;
+            }
+            tConsumer.accept(t);
+        };
     }
 }

@@ -1,12 +1,14 @@
 package com.rafaelsms.teleporter.player;
 
 import com.rafaelsms.potocraft.database.DatabaseException;
-import com.rafaelsms.potocraft.player.BaseUser;
+import com.rafaelsms.potocraft.plugin.PluginUtil;
 import com.rafaelsms.potocraft.plugin.combat.CombatType;
+import com.rafaelsms.potocraft.plugin.player.BaseUser;
 import com.rafaelsms.potocraft.util.TickableTask;
 import com.rafaelsms.teleporter.TeleporterPlugin;
 import com.rafaelsms.teleporter.teleports.TeleportDestination;
 import com.rafaelsms.teleporter.teleports.TeleportRequest;
+import com.rafaelsms.teleporter.teleports.TeleportRequestResult;
 import com.rafaelsms.teleporter.teleports.TeleportResult;
 import com.rafaelsms.teleporter.teleports.TeleportingTask;
 import org.bukkit.entity.Player;
@@ -16,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -38,6 +41,9 @@ public class User extends BaseUser<Profile> {
         getProfile().tick();
         if (combat != null) {
             combat.tick();
+        }
+        if (teleportingTask != null) {
+            teleportingTask.tick();
         }
         teleportRequestMap.values().forEach(TeleportRequest::tick);
     }
@@ -73,9 +79,12 @@ public class User extends BaseUser<Profile> {
         this.combat = null;
     }
 
-    public @NotNull TeleportResult canTeleport(boolean checkCooldown) {
-        if (!isOnline()) {
+    public @NotNull TeleportResult getTeleportStatus(boolean checkCooldown) {
+        if (!getPlayer().isOnline() || !getPlayer().isValid() || !PluginUtil.isOnSurvival(getPlayer())) {
             return TeleportResult.PLAYER_OFFLINE;
+        }
+        if (getPlayer().isDead()) {
+            return TeleportResult.PLAYER_DEAD;
         }
         if (isInCombat()) {
             return TeleportResult.PLAYER_IN_COMBAT;
@@ -95,8 +104,8 @@ public class User extends BaseUser<Profile> {
 
     public @NotNull CompletableFuture<TeleportResult> teleport(@NotNull TeleportDestination destination,
                                                                boolean checkCooldown) {
-        TeleportResult canTeleportResult = canTeleport(checkCooldown);
-        if (canTeleportResult.isFailed()) {
+        TeleportResult canTeleportResult = getTeleportStatus(checkCooldown);
+        if (canTeleportResult.isNegative()) {
             return CompletableFuture.completedFuture(canTeleportResult);
         }
         if (getPlayer().hasPermission(plugin.getPermissions().getBypassTeleportTimer())) {
@@ -111,8 +120,8 @@ public class User extends BaseUser<Profile> {
 
     public @NotNull CompletableFuture<TeleportResult> teleportNow(@NotNull TeleportDestination destination) {
         CompletableFuture<TeleportResult> future = new CompletableFuture<>();
-        TeleportResult canTeleportResult = canTeleport(false);
-        if (canTeleportResult.isFailed()) {
+        TeleportResult canTeleportResult = getTeleportStatus(false);
+        if (canTeleportResult.isNegative()) {
             future.complete(canTeleportResult);
             return future;
         }
@@ -130,6 +139,31 @@ public class User extends BaseUser<Profile> {
 
     public void clearTeleportingTask() {
         this.teleportingTask = null;
+    }
+
+    public @NotNull TeleportRequestResult addTeleportRequest(@NotNull User requester, @NotNull User teleporting) {
+        if (!getProfile().isAcceptingTeleportRequests()) {
+            return TeleportRequestResult.USER_IS_NOT_ACCEPTING_REQUESTS;
+        }
+        TeleportRequest newRequest = new TeleportRequest(plugin, this, requester, teleporting);
+        TeleportRequest existingRequest = teleportRequestMap.get(requester);
+        if (existingRequest != null) {
+            if (!Objects.equals(existingRequest.getTeleporting().getUniqueId(),
+                                newRequest.getTeleporting().getUniqueId())) {
+                teleportRequestMap.put(requester, newRequest);
+                return TeleportRequestResult.REQUEST_REPLACED;
+            } else {
+                existingRequest.restartDuration();
+                return TeleportRequestResult.REQUEST_RENEWED;
+            }
+        } else {
+            boolean thisUserTeleporting = Objects.equals(teleporting.getUniqueId(), getUniqueId());
+            getPlayer().sendMessage(plugin.getConfiguration()
+                                          .getTeleportRequestReceived(requester.getPlayer().name(),
+                                                                      thisUserTeleporting));
+            teleportRequestMap.put(requester, newRequest);
+            return TeleportRequestResult.REQUESTED;
+        }
     }
 
     public @NotNull Optional<TeleportRequest> removeTeleportRequest(@NotNull User requester) {

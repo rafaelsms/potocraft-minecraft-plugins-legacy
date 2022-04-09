@@ -1,4 +1,4 @@
-package com.rafaelsms.potocraft.player;
+package com.rafaelsms.potocraft.plugin.player;
 
 import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.util.TickableTask;
