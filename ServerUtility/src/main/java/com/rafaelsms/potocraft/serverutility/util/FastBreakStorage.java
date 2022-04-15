@@ -13,7 +13,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 
 public class FastBreakStorage {
@@ -21,8 +23,10 @@ public class FastBreakStorage {
     public static final @NotNull BrokenBlockConsumer NO_OP_CONSUMER = (block, player) -> {
     };
 
-    private final Map<Player, ItemStack> playerTools = Collections.synchronizedMap(new HashMap<>());
-    private final Map<Player, Map<Location, Block>> playerBlocks = Collections.synchronizedMap(new HashMap<>());
+    private final Map<UUID, Integer> playerHeldSlot = Collections.synchronizedMap(new HashMap<>());
+    private final Map<UUID, ItemStack> playerItemHeld = Collections.synchronizedMap(new HashMap<>());
+    private final Map<UUID, Player> playerInstances = Collections.synchronizedMap(new HashMap<>());
+    private final Map<UUID, Map<Location, Block>> playerBlocks = Collections.synchronizedMap(new HashMap<>());
     private final Map<Location, Block> blocks = Collections.synchronizedMap(new HashMap<>());
 
     private final @NotNull BrokenBlockConsumer consumeOnBreak;
@@ -81,8 +85,11 @@ public class FastBreakStorage {
         Map<Location, Block> existingMap = playerBlocks.getOrDefault(player, new LinkedHashMap<>());
         existingMap.putAll(blocks);
         this.blocks.putAll(blocks);
-        playerTools.put(player, player.getInventory().getItemInMainHand());
-        playerBlocks.put(player, existingMap);
+        UUID playerId = player.getUniqueId();
+        playerHeldSlot.put(playerId, player.getInventory().getHeldItemSlot());
+        playerItemHeld.put(playerId, player.getInventory().getItemInMainHand());
+        playerInstances.put(playerId, player);
+        playerBlocks.put(playerId, existingMap);
     }
 
     public boolean containsBlock(@NotNull Block block) {
@@ -90,19 +97,22 @@ public class FastBreakStorage {
     }
 
     public void tickBreak() {
-        Iterator<Map.Entry<Player, Map<Location, Block>>> iterator = playerBlocks.entrySet().iterator();
+        Iterator<Map.Entry<UUID, Map<Location, Block>>> iterator = playerBlocks.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<Player, Map<Location, Block>> entry = iterator.next();
-            Player player = entry.getKey();
+            Map.Entry<UUID, Map<Location, Block>> entry = iterator.next();
+            UUID playerId = entry.getKey();
+            Player player = playerInstances.get(playerId);
             Map<Location, Block> playerBlocks = entry.getValue();
 
-            // Check if player left
-            if (!player.isOnline()) {
-                iterator.remove();
-                continue;
-            }
-
-            if (playerBlocks.isEmpty()) {
+            // Check if player left, there are no more blocks or if player changed item in hand
+            if (player == null ||
+                !player.isOnline() ||
+                playerBlocks.isEmpty() ||
+                !Objects.equals(playerItemHeld.get(playerId), player.getInventory().getItemInMainHand()) ||
+                !Objects.equals(playerHeldSlot.get(playerId), player.getInventory().getHeldItemSlot())) {
+                playerHeldSlot.remove(playerId);
+                playerItemHeld.remove(playerId);
+                playerInstances.remove(playerId);
                 iterator.remove();
                 continue;
             }
@@ -127,5 +137,4 @@ public class FastBreakStorage {
     public interface BrokenBlockConsumer {
         void onBroken(@NotNull Block block, @NotNull Player player);
     }
-
 }
