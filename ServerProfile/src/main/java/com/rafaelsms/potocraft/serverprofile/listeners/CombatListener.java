@@ -22,6 +22,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -157,6 +158,9 @@ public class CombatListener implements Listener {
 
         User userDamaged = plugin.getUserManager().getUser(playerDamaged);
         if (damager instanceof Player playerDamager) {
+            if (Objects.equals(playerDamager.getUniqueId(), playerDamaged.getUniqueId())) {
+                return;
+            }
             int combatDuration = plugin.getConfiguration().getPlayerCombatDurationTicks();
             User userDamager = plugin.getUserManager().getUser(playerDamager);
             userDamager.setCombatTask(CombatType.PLAYER, combatDuration);
