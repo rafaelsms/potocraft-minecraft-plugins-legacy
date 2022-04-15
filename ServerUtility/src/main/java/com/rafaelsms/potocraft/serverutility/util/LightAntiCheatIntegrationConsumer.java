@@ -45,7 +45,7 @@ public class LightAntiCheatIntegrationConsumer extends AntiCheatIntegration {
             return;
         }
         // If inside the fastbreak forgiveness window, cancel the flag
-        if (ZonedDateTime.now().minus(FAST_BREAK_FORGIVENESS).isBefore(dateTime)) {
+        if (dateTime.isAfter(ZonedDateTime.now().minus(FAST_BREAK_FORGIVENESS))) {
             event.setCancelled(true);
         }
     }
