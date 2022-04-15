@@ -24,51 +24,51 @@ public class Configuration extends YamlFile {
     }
 
     public String getMongoURI() {
-        return get("configuration.database.mongo_uri");
+        return getOrThrow("configuration.database.mongo_uri");
     }
 
     public String getMongoDatabaseName() {
-        return get("configuration.database.database_name");
+        return getOrThrow("configuration.database.database_name");
     }
 
     public Boolean isMongoDatabaseExceptionFatal() {
-        return get("configuration.database.is_exception_fatal");
+        return getOrThrow("configuration.database.is_exception_fatal");
     }
 
     public String getMongoPlayerCollectionName() {
-        return get("configuration.database.player_collection_name");
+        return getOrThrow("configuration.database.player_collection_name");
     }
 
     public long getSaveProfileTaskTimer() {
-        return Objects.requireNonNull(getLong("configuration.database.save_player_timer_task_ticks"));
+        return Objects.requireNonNull(getLongOrThrow("configuration.database.save_player_timer_task_ticks"));
     }
 
     public long getPetTargetSetterTimer() {
-        return Objects.requireNonNull(getLong("configuration.set_target_timer_ticks"));
+        return Objects.requireNonNull(getLongOrThrow("configuration.set_target_timer_ticks"));
     }
 
     public long getDistanceCheckerTimer() {
-        return Objects.requireNonNull(getLong("configuration.check_distance_timer_ticks"));
+        return Objects.requireNonNull(getLongOrThrow("configuration.check_distance_timer_ticks"));
     }
 
     public double getMaxDistanceFromOwner() {
-        return Objects.requireNonNull(getDouble("configuration.max_distance_from_player"));
+        return Objects.requireNonNull(getDoubleOrThrow("configuration.max_distance_from_player"));
     }
 
     public double getMinDistanceToTarget() {
-        return Objects.requireNonNull(getDouble("configuration.min_distance_to_target"));
+        return Objects.requireNonNull(getDoubleOrThrow("configuration.min_distance_to_target"));
     }
 
     public float getPetSpeedMultiplier() {
-        return Objects.requireNonNull(getDouble("configuration.pet_speed_multiplier")).floatValue();
+        return Objects.requireNonNull(getDoubleOrThrow("configuration.pet_speed_multiplier")).floatValue();
     }
 
     public int getPetAwayForDamageTicks() {
-        return Objects.requireNonNull(getInt("configuration.ticks_after_damage_pet_away"));
+        return Objects.requireNonNull(getIntOrThrow("configuration.ticks_after_damage_pet_away"));
     }
 
     public @NotNull EntityType getDefaultPetType() {
-        String name = get("configuration.default_pet_type");
+        String name = getOrThrow("configuration.default_pet_type");
         try {
             return EntityType.valueOf(Objects.requireNonNull(name).toUpperCase());
         } catch (IllegalArgumentException exception) {
@@ -78,7 +78,7 @@ public class Configuration extends YamlFile {
     }
 
     private List<String> getDefaultPetNameList() {
-        return get("configuration.default_pet_names");
+        return getOrThrow("configuration.default_pet_names");
     }
 
     public String getRandomDefaultPetNameList() {
@@ -87,23 +87,23 @@ public class Configuration extends YamlFile {
     }
 
     public Component getFailedToRetrieveProfile() {
-        return TextUtil.toComponent(get("language.failed_to_retrieve_profile"));
+        return TextUtil.toComponent(getOrThrow("language.failed_to_retrieve_profile"));
     }
 
     public Component getPlayerOnlyCommand() {
-        return TextUtil.toComponent(get("language.command_for_players_only"));
+        return TextUtil.toComponent(getOrThrow("language.command_for_players_only"));
     }
 
     public Component getCommandHelp() {
-        return TextUtil.toComponent(get("language.pet_command.help"));
+        return TextUtil.toComponent(getOrThrow("language.pet_command.help"));
     }
 
     public Component getCommandEntityTypeUnavailable() {
-        return TextUtil.toComponent(get("language.pet_command.entity_type_unavailable"));
+        return TextUtil.toComponent(getOrThrow("language.pet_command.entity_type_unavailable"));
     }
 
     public Component getCommandEntityTypeList(@NotNull Collection<EntityType> allowedEntityTypes) {
-        return TextUtil.toComponent(get("language.pet_command.allowed_entity_types"),
+        return TextUtil.toComponent(getOrThrow("language.pet_command.allowed_entity_types"),
                                     Placeholder.unparsed("list",
                                                          TextUtil.joinStrings(allowedEntityTypes,
                                                                               ", ",
@@ -111,22 +111,22 @@ public class Configuration extends YamlFile {
     }
 
     public Component getPetNameTooLong() {
-        return TextUtil.toComponent(get("language.pet_command.pet_name_too_long"));
+        return TextUtil.toComponent(getOrThrow("language.pet_command.pet_name_too_long"));
     }
 
     public Component getCommandPetEnabled() {
-        return TextUtil.toComponent(get("language.pet_command.pet_enabled"));
+        return TextUtil.toComponent(getOrThrow("language.pet_command.pet_enabled"));
     }
 
     public Component getCommandPetDisabled() {
-        return TextUtil.toComponent(get("language.pet_command.pet_disabled"));
+        return TextUtil.toComponent(getOrThrow("language.pet_command.pet_disabled"));
     }
 
     public Component getPetWentAwayBecauseCombat() {
-        return TextUtil.toComponent(get("language.pet_went_away_because_of_combat"));
+        return TextUtil.toComponent(getOrThrow("language.pet_went_away_because_of_combat"));
     }
 
     public Component getPetCameBackAfterCombat() {
-        return TextUtil.toComponent(get("language.pet_came_back_after_combat"));
+        return TextUtil.toComponent(getOrThrow("language.pet_came_back_after_combat"));
     }
 }

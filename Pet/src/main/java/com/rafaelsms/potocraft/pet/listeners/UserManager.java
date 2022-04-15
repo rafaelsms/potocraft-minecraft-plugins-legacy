@@ -5,12 +5,13 @@ import com.rafaelsms.potocraft.pet.Permissions;
 import com.rafaelsms.potocraft.pet.PetPlugin;
 import com.rafaelsms.potocraft.pet.player.Profile;
 import com.rafaelsms.potocraft.pet.player.User;
+import com.rafaelsms.potocraft.plugin.player.BaseUserManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class UserManager extends com.rafaelsms.potocraft.player.UserManager<User, Profile> {
+public class UserManager extends BaseUserManager<User, Profile> {
 
     private final @NotNull PetPlugin plugin;
 
@@ -25,25 +26,25 @@ public class UserManager extends com.rafaelsms.potocraft.player.UserManager<User
     }
 
     @Override
-    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException {
+    protected @NotNull Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException {
         return plugin.getDatabase()
                      .getProfile(event.getUniqueId())
                      .orElse(new Profile(event.getUniqueId(), event.getName()));
     }
 
     @Override
-    protected User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile) {
+    protected @NotNull User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile) {
         return new User(plugin, event.getPlayer(), profile);
     }
 
     @Override
-    protected void onLogin(User user) {
+    protected void onLogin(@NotNull User user) {
         // Update player name
         user.getProfile().setPlayerName(user.getPlayer().getName());
     }
 
     @Override
-    protected void onJoin(User user) {
+    protected void onJoin(@NotNull User user) {
         // Spawn player's pet
         if (user.getProfile().isPetEnabled() && user.getPlayer().hasPermission(Permissions.PET_PERMISSION)) {
             user.spawnPet();
@@ -51,17 +52,17 @@ public class UserManager extends com.rafaelsms.potocraft.player.UserManager<User
     }
 
     @Override
-    protected void onQuit(User user) {
+    protected void onQuit(@NotNull User user) {
         user.despawnPet();
     }
 
     @Override
-    protected void tickUser(User user) {
+    protected void tickUser(@NotNull User user) {
         user.tickPet();
     }
 
     @Override
-    protected void saveUser(User user) {
+    protected void saveUser(@NotNull User user) {
         plugin.getDatabase().saveProfile(user.getProfile());
     }
 }

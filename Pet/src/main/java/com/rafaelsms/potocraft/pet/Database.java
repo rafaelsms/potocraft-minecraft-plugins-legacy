@@ -28,7 +28,7 @@ public class Database extends BaseDatabase {
         throw databaseException;
     }
 
-    private MongoCollection<Document> getProfileCollection() throws DatabaseException {
+    private @NotNull MongoCollection<Document> getProfileCollection() throws DatabaseException {
         return getClient().getCollection(plugin.getConfiguration().getMongoPlayerCollectionName());
     }
 

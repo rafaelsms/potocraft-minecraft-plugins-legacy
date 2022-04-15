@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class TeleportCommand extends BaseTeleportCommand {
+public class TeleportHereCommand extends BaseTeleportCommand {
 
-    public TeleportCommand(@NotNull TeleporterPlugin plugin) {
+    public TeleportHereCommand(@NotNull TeleporterPlugin plugin) {
         super(plugin);
     }
 
@@ -19,18 +19,18 @@ public class TeleportCommand extends BaseTeleportCommand {
             return;
         }
 
-        Optional<User> destinationOptional = searchOnlinePlayer(arguments[0]);
-        if (destinationOptional.isEmpty()) {
+        Optional<User> teleportingOptional = searchOnlinePlayer(arguments[0]);
+        if (teleportingOptional.isEmpty()) {
             user.getPlayer().sendMessage(plugin.getConfiguration().getCommandPlayerNotFound());
             return;
         }
-        User destination = destinationOptional.get();
+        User teleporting = teleportingOptional.get();
 
         if (user.getPlayer().hasPermission(plugin.getPermissions().getBypassTeleportRequest())) {
-            executeTeleportToUser(user, user, destination);
+            executeTeleportToUser(user, user, teleporting);
             return;
         }
 
-        destination.addTeleportRequest(user, user).getStatusMessage(plugin).ifPresent(user.getPlayer()::sendMessage);
+        teleporting.addTeleportRequest(user, teleporting).getStatusMessage(plugin).ifPresent(user.getPlayer()::sendMessage);
     }
 }

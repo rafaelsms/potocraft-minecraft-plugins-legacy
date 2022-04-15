@@ -40,13 +40,17 @@ public class TeleportRequest extends TimerTask<Void> {
     }
 
     public @NotNull User getDestination() {
-        if (Objects.equals(teleporting.getUniqueId(), requested.getUniqueId())) {
+        if (isTeleportHere()) {
             // If requested is the one teleporting, the destination is the requester (teleport here)
             return requester;
         } else {
             // Otherwise, the one teleporting is the requester, so the destination is the requested (simple teleport)
             return requested;
         }
+    }
+
+    public boolean isTeleportHere() {
+        return Objects.equals(teleporting.getUniqueId(), requested.getUniqueId());
     }
 
     @Override
@@ -67,17 +71,17 @@ public class TeleportRequest extends TimerTask<Void> {
     }
 
     @Override
-    protected Void executeTask() throws Exception {
+    protected Void executeTask() {
+        requested.getPlayer()
+                 .sendMessage(requester.getPlayer().identity(),
+                              plugin.getConfiguration().getTeleportRequestExpired(requester.getPlayer().displayName()),
+                              MessageType.CHAT);
         return null;
     }
 
     @Override
     public void taskCleanup() {
         requested.removeTeleportRequest(requester);
-        requested.getPlayer()
-                 .sendMessage(requester.getPlayer().identity(),
-                              plugin.getConfiguration().getTeleportRequestExpired(requester.getPlayer().displayName()),
-                              MessageType.CHAT);
     }
 
     private boolean isUserUnavailable(@NotNull User user) {

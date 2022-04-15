@@ -10,3 +10,5 @@ include 'GameServer'
 include 'CombatServer'
 include 'TestPlugin'
 include 'Pet'
+include 'Teleporter'
+

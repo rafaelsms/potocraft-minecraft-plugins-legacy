@@ -6,6 +6,7 @@ import com.rafaelsms.teleporter.TeleporterPlugin;
 import com.rafaelsms.teleporter.player.User;
 import com.rafaelsms.teleporter.teleports.TeleportDestination;
 import com.rafaelsms.teleporter.teleports.TeleportResult;
+import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
@@ -33,12 +34,26 @@ public abstract class BaseTeleportCommand extends BaseCommand<User> {
 
     protected abstract void onTeleportCommand(@NotNull User user, @NotNull String label, @NotNull String[] arguments);
 
-    protected void executeTeleport(@NotNull User requesting, @NotNull User teleporting, @NotNull User destination) {
+    protected void executeTeleportToUser(@NotNull User requesting,
+                                         @NotNull User teleporting,
+                                         @NotNull User destination) {
+        executeTeleport(requesting, teleporting, TeleportDestination.ofPlayer(destination));
+    }
+
+    protected void executeTeleportToLocation(@NotNull User requesting,
+                                             @NotNull User teleporting,
+                                             @NotNull Location destination) {
+        executeTeleport(requesting, teleporting, TeleportDestination.ofLocation(destination));
+    }
+
+    protected void executeTeleport(@NotNull User requesting,
+                                   @NotNull User teleporting,
+                                   @NotNull TeleportDestination destination) {
         BiConsumer<TeleportResult, Throwable> teleportResultConsumer =
                 Util.biConsumer(teleportResult -> teleportResult.getTeleportStatusMessage(plugin)
                                                                 .ifPresent(requesting.getPlayer()::sendMessage),
                                 throwable -> requesting.getPlayer()
                                                        .sendMessage(plugin.getConfiguration().getTeleportFailed()));
-        teleporting.teleport(TeleportDestination.ofPlayer(destination), true).whenComplete(teleportResultConsumer);
+        teleporting.teleport(destination, true).whenComplete(teleportResultConsumer);
     }
 }

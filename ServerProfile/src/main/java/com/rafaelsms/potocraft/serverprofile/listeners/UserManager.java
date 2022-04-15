@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.serverprofile.listeners;
 
 import com.rafaelsms.potocraft.database.DatabaseException;
+import com.rafaelsms.potocraft.plugin.player.BaseUserManager;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.Profile;
 import com.rafaelsms.potocraft.serverprofile.players.User;
@@ -9,7 +10,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class UserManager extends com.rafaelsms.potocraft.player.UserManager<User, Profile> {
+public class UserManager extends BaseUserManager<User, Profile> {
 
     private final @NotNull ServerProfilePlugin plugin;
 
@@ -24,41 +25,41 @@ public class UserManager extends com.rafaelsms.potocraft.player.UserManager<User
     }
 
     @Override
-    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException {
+    protected @NotNull Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException {
         return plugin.getDatabase()
                      .loadProfile(event.getUniqueId())
                      .orElse(new Profile(event.getUniqueId(), event.getName()));
     }
 
     @Override
-    protected User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile) {
+    protected @NotNull User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile) {
         return new User(plugin, event.getPlayer(), profile);
     }
 
     @Override
-    protected void onLogin(User user) {
+    protected void onLogin(@NotNull User user) {
         // Update player name
         user.getProfile().setPlayerName(user.getPlayer().getName());
     }
 
     @Override
-    protected void onJoin(User user) {
+    protected void onJoin(@NotNull User user) {
     }
 
     @Override
-    protected void onQuit(User user) {
+    protected void onQuit(@NotNull User user) {
         // Update play time
         user.getProfile().setQuitTime();
         // The profile is already saved on common.UserManager
     }
 
     @Override
-    protected void tickUser(User user) {
+    protected void tickUser(@NotNull User user) {
         user.runTick();
     }
 
     @Override
-    protected void saveUser(User user) {
+    protected void saveUser(@NotNull User user) {
         plugin.getDatabase().saveProfileCatching(user.getProfile());
     }
 }

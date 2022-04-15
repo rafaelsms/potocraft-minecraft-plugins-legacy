@@ -11,6 +11,7 @@ public abstract class TimerTask<T> implements TickableTask {
     private final int taskTimerDurationTicks;
     private int remainingTicks;
 
+    private boolean taskCancelled = false;
     private boolean taskEnded = false;
     private boolean firstTick = true;
 
@@ -28,7 +29,7 @@ public abstract class TimerTask<T> implements TickableTask {
         }
 
         // If we should cancel the task, end it early completing it exceptionally
-        if (shouldCancelTask() || remainingTicks <= 0) {
+        if (shouldCancelTask() || remainingTicks <= 0 || taskCancelled) {
             endTask();
             return;
         }
@@ -59,6 +60,10 @@ public abstract class TimerTask<T> implements TickableTask {
         if (!future.isDone()) {
             future.completeExceptionally(new IllegalStateException("Task wasn't completed"));
         }
+    }
+
+    public void cancelTask() {
+        this.taskCancelled = true;
     }
 
     public int getRemainingTicks() {

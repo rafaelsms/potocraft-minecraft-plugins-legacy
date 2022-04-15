@@ -3,10 +3,12 @@ package com.rafaelsms.teleporter;
 import com.rafaelsms.potocraft.plugin.BaseConfiguration;
 import com.rafaelsms.potocraft.plugin.BaseJavaPlugin;
 import com.rafaelsms.potocraft.plugin.combat.CombatType;
+import com.rafaelsms.teleporter.teleports.TeleportRequest;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Collection;
 
 public class Configuration extends BaseConfiguration {
 
@@ -116,11 +118,35 @@ public class Configuration extends BaseConfiguration {
         return null;
     }
 
-    public @NotNull Component getTeleportRequestRequestReplaced() {
+    public @NotNull Component getTeleportRequestConflictingRequestAlreadyExists() {
         return null;
     }
 
     public @NotNull Component getTeleportRequestReceived(@NotNull Component playerName, boolean thisUserTeleporting) {
+        return null;
+    }
+
+    public @NotNull Component getTeleportPositionCommandHelp() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportPositionCommandParsingError() {
+        return null;
+    }
+
+    public @NotNull Component getWorldNotFoundError() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportRequestManyRequests(@NotNull Collection<TeleportRequest> teleportRequests) {
+        return null;
+    }
+
+    public @NotNull Component getTeleportRequestNoRequestAvailable() {
+        return null;
+    }
+
+    public @NotNull Component getTeleportRequestSpecificRequestNotFound() {
         return null;
     }
 }

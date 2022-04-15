@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -150,8 +151,7 @@ public class User extends BaseUser<Profile> {
         if (existingRequest != null) {
             if (!Objects.equals(existingRequest.getTeleporting().getUniqueId(),
                                 newRequest.getTeleporting().getUniqueId())) {
-                teleportRequestMap.put(requester, newRequest);
-                return TeleportRequestResult.REQUEST_REPLACED;
+                return TeleportRequestResult.CONFLICTING_REQUEST;
             } else {
                 existingRequest.restartDuration();
                 return TeleportRequestResult.REQUEST_RENEWED;
@@ -168,6 +168,10 @@ public class User extends BaseUser<Profile> {
 
     public @NotNull Optional<TeleportRequest> removeTeleportRequest(@NotNull User requester) {
         return Optional.ofNullable(teleportRequestMap.remove(requester));
+    }
+
+    public @NotNull Collection<TeleportRequest> getTeleportRequests() {
+        return teleportRequestMap.values();
     }
 
     private class Combat implements TickableTask {

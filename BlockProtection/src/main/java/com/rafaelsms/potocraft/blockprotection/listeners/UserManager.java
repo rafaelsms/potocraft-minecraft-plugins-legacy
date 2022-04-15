@@ -4,7 +4,7 @@ import com.rafaelsms.potocraft.blockprotection.BlockProtectionPlugin;
 import com.rafaelsms.potocraft.blockprotection.players.Profile;
 import com.rafaelsms.potocraft.blockprotection.players.User;
 import com.rafaelsms.potocraft.database.DatabaseException;
-import com.rafaelsms.potocraft.player.BaseUserManager;
+import com.rafaelsms.potocraft.plugin.player.BaseUserManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -25,34 +25,34 @@ public class UserManager extends BaseUserManager<User, Profile> {
     }
 
     @Override
-    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException {
+    protected @NotNull Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException {
         return Profile.fetch(plugin, event.getUniqueId());
     }
 
     @Override
-    protected User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile) {
+    protected @NotNull User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile) {
         return new User(plugin, event.getPlayer(), profile);
     }
 
     @Override
-    protected void onLogin(User user) {
+    protected void onLogin(@NotNull User user) {
     }
 
     @Override
-    protected void onJoin(User user) {
+    protected void onJoin(@NotNull User user) {
     }
 
     @Override
-    protected void onQuit(User user) {
+    protected void onQuit(@NotNull User user) {
     }
 
     @Override
-    protected void tickUser(User user) {
+    protected void tickUser(@NotNull User user) {
         user.run();
     }
 
     @Override
-    protected void saveUser(User user) throws DatabaseException {
+    protected void saveUser(@NotNull User user) throws DatabaseException {
         user.getProfile().save();
     }
 }

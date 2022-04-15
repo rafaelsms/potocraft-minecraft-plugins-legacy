@@ -4,12 +4,13 @@ import com.rafaelsms.potocraft.combatserver.CombatServerPlugin;
 import com.rafaelsms.potocraft.combatserver.player.Profile;
 import com.rafaelsms.potocraft.combatserver.player.User;
 import com.rafaelsms.potocraft.database.DatabaseException;
+import com.rafaelsms.potocraft.plugin.player.BaseUserManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class UserManager extends com.rafaelsms.potocraft.player.UserManager<User, Profile> {
+public class UserManager extends BaseUserManager<User, Profile> {
 
     private final @NotNull CombatServerPlugin plugin;
 
@@ -24,33 +25,33 @@ public class UserManager extends com.rafaelsms.potocraft.player.UserManager<User
     }
 
     @Override
-    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException {
+    protected @NotNull Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException {
         return Profile.fetch(plugin, event.getUniqueId());
     }
 
     @Override
-    protected User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile) {
+    protected @NotNull User retrieveUser(PlayerLoginEvent event, @NotNull Profile profile) {
         return new User(plugin, event.getPlayer(), profile);
     }
 
     @Override
-    protected void onLogin(User user) {
+    protected void onLogin(@NotNull User user) {
     }
 
     @Override
-    protected void onJoin(User user) {
+    protected void onJoin(@NotNull User user) {
     }
 
     @Override
-    protected void onQuit(User user) {
+    protected void onQuit(@NotNull User user) {
     }
 
     @Override
-    protected void tickUser(User user) {
+    protected void tickUser(@NotNull User user) {
     }
 
     @Override
-    protected void saveUser(User user) throws DatabaseException {
+    protected void saveUser(@NotNull User user) throws DatabaseException {
         user.getProfile().save();
     }
 }

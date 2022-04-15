@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.loginmanager.player;
 
-import com.rafaelsms.potocraft.database.DatabaseStored;
+import com.rafaelsms.potocraft.database.CollectionProvider;
 import com.rafaelsms.potocraft.util.Util;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-public class ReportEntry extends DatabaseStored {
+public class ReportEntry implements CollectionProvider {
 
     private final @NotNull Type type;
 

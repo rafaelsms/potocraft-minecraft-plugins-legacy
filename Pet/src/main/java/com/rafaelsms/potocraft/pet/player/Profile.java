@@ -1,7 +1,7 @@
 package com.rafaelsms.potocraft.pet.player;
 
 import com.mongodb.client.model.Filters;
-import com.rafaelsms.potocraft.database.DatabaseStored;
+import com.rafaelsms.potocraft.database.CollectionProvider;
 import com.rafaelsms.potocraft.util.Util;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Profile extends DatabaseStored {
+public class Profile implements CollectionProvider {
 
     private final @NotNull UUID playerId;
     private @NotNull String playerName;

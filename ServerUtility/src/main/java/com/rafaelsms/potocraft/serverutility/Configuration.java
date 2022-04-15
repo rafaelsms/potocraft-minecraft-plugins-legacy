@@ -39,7 +39,7 @@ public class Configuration extends YamlFile {
         this.plugin = plugin;
 
         // Parse world combat configurations
-        Map<String, Map<String, Object>> worldSettings = get("configuration.per_world_pvp_settings");
+        Map<String, Map<String, Object>> worldSettings = getOrThrow("configuration.per_world_pvp_settings");
         assert worldSettings != null;
         // Parse default configuration
         Map<String, Object> defaultConfiguration = worldSettings.getOrDefault("default", Map.of());
@@ -55,91 +55,91 @@ public class Configuration extends YamlFile {
     }
 
     public Double getOverallDamageDealtMultiplier() {
-        return getDouble("configuration.damage_modifiers.overall_damage_dealt_multiplier");
+        return getDoubleOrThrow("configuration.damage_modifiers.overall_damage_dealt_multiplier");
     }
 
     public Double getPlayerVersusPlayerDamageMultiplier() {
-        return getDouble("configuration.damage_modifiers.pvp_damage_multiplier");
+        return getDoubleOrThrow("configuration.damage_modifiers.pvp_damage_multiplier");
     }
 
     public Double getCooldownDamageFactor() {
-        return getDouble("configuration.damage_modifiers.damage_cooldown_factor");
+        return getDoubleOrThrow("configuration.damage_modifiers.damage_cooldown_factor");
     }
 
     public Double getArrowDamageMultiplier() {
-        return getDouble("configuration.damage_modifiers.arrow_damage_multiplier");
+        return getDoubleOrThrow("configuration.damage_modifiers.arrow_damage_multiplier");
     }
 
     public Double getArrowVelocityMultiplier() {
-        return getDouble("configuration.damage_modifiers.arrow_velocity_multiplier");
+        return getDoubleOrThrow("configuration.damage_modifiers.arrow_velocity_multiplier");
     }
 
     public Boolean isArrowAffectedByGravity() {
-        return get("configuration.damage_modifiers.arrow_affected_by_gravity");
+        return getOrThrow("configuration.damage_modifiers.arrow_affected_by_gravity");
     }
 
     public Double getLeatherArmorModifier() {
-        return getDouble("configuration.damage_modifiers.per_armor_type.leather_modifier");
+        return getDoubleOrThrow("configuration.damage_modifiers.per_armor_type.leather_modifier");
     }
 
     public Double getIronChainArmorModifier() {
-        return getDouble("configuration.damage_modifiers.per_armor_type.iron_chain_modifier");
+        return getDoubleOrThrow("configuration.damage_modifiers.per_armor_type.iron_chain_modifier");
     }
 
     public Double getIronArmorModifier() {
-        return getDouble("configuration.damage_modifiers.per_armor_type.iron_modifier");
+        return getDoubleOrThrow("configuration.damage_modifiers.per_armor_type.iron_modifier");
     }
 
     public Double getGoldArmorModifier() {
-        return getDouble("configuration.damage_modifiers.per_armor_type.gold_modifier");
+        return getDoubleOrThrow("configuration.damage_modifiers.per_armor_type.gold_modifier");
     }
 
     public Double getDiamondArmorModifier() {
-        return getDouble("configuration.damage_modifiers.per_armor_type.diamond_modifier");
+        return getDoubleOrThrow("configuration.damage_modifiers.per_armor_type.diamond_modifier");
     }
 
     public Double getNetheriteArmorModifier() {
-        return getDouble("configuration.damage_modifiers.per_armor_type.netherite_modifier");
+        return getDoubleOrThrow("configuration.damage_modifiers.per_armor_type.netherite_modifier");
     }
 
     public List<Double> getProtectionEnchantmentArmorMultiplier() {
-        return get("configuration.damage_modifiers.per_protection_enchantment");
+        return getOrThrow("configuration.damage_modifiers.per_protection_enchantment");
     }
 
     public String getWebhookUrl() {
-        return get("configuration.webhook_url");
+        return getOrThrow("configuration.webhook_url");
     }
 
     public Boolean isPlayerLoggingEnabled() {
-        return get("configuration.enable_player_logging");
+        return getOrThrow("configuration.enable_player_logging");
     }
 
     public Integer getDamageParticleAmount() {
-        return getInt("configuration.damage_effects.damage_particle_amount");
+        return getIntOrThrow("configuration.damage_effects.damage_particle_amount");
     }
 
     public Boolean isSpawnLightningOnDead() {
-        return get("configuration.damage_effects.spawn_lightning_on_dead");
+        return getOrThrow("configuration.damage_effects.spawn_lightning_on_dead");
     }
 
     public Boolean isSpawnFireworkOnKiller() {
-        return get("configuration.damage_effects.spawn_firework_on_killer");
+        return getOrThrow("configuration.damage_effects.spawn_firework_on_killer");
     }
 
     public Boolean isPreventingAllEnchantedBooks() {
-        return get("configuration.villager.prevent_all_enchanted_books");
+        return getOrThrow("configuration.villager.prevent_all_enchanted_books");
     }
 
     public Boolean isPreventingTreasureEnchantedBooks() {
-        return get("configuration.villager.prevent_treasure_enchanted_books");
+        return getOrThrow("configuration.villager.prevent_treasure_enchanted_books");
     }
 
     public Boolean isNerfVillagerEnchantedBooks() {
-        return get("configuration.villager.nerf_enchanted_books");
+        return getOrThrow("configuration.villager.nerf_enchanted_books");
     }
 
     public Optional<Difficulty> getGameDifficulty() {
-        String difficultyString = get("configuration.game_difficulty");
+        String difficultyString = getOrThrow("configuration.game_difficulty");
         for (Difficulty difficulty : Difficulty.values()) {
             if (difficulty.name().equalsIgnoreCase(difficultyString)) {
                 return Optional.of(difficulty);
@@ -149,7 +149,7 @@ public class Configuration extends YamlFile {
     }
 
     public Double getWorldSizeDiameter(@NotNull String worldName) {
-        Map<String, Double> map = Objects.requireNonNull(get("configuration.world_borders_radius"));
+        Map<String, Double> map = Objects.requireNonNull(getOrThrow("configuration.world_borders_radius"));
         for (Map.Entry<String, Double> entry : map.entrySet()) {
             if (entry.getKey().equalsIgnoreCase(worldName)) {
                 return entry.getValue() * 2.0;
@@ -161,13 +161,13 @@ public class Configuration extends YamlFile {
 
     @SuppressWarnings("rawtypes")
     public Map<GameRule, Object> getDefaultGameRules() {
-        Map<String, Map<String, Object>> map = Objects.requireNonNull(get("configuration.game_rules_applied"));
+        Map<String, Map<String, Object>> map = Objects.requireNonNull(getOrThrow("configuration.game_rules_applied"));
         return parseGameRules(map.getOrDefault("default", Map.of()));
     }
 
     @SuppressWarnings("rawtypes")
     public Map<GameRule, Object> getWorldGameRule(@NotNull String worldName) {
-        Map<String, Map<String, Object>> map = Objects.requireNonNull(get("configuration.game_rules_applied"));
+        Map<String, Map<String, Object>> map = Objects.requireNonNull(getOrThrow("configuration.game_rules_applied"));
         return parseGameRules(map.getOrDefault(worldName, Map.of()));
     }
 
@@ -186,13 +186,13 @@ public class Configuration extends YamlFile {
     }
 
     public Boolean isRainyNightEnabled() {
-        return get("configuration.rainy_night_event.enabled");
+        return getOrThrow("configuration.rainy_night_event.enabled");
     }
 
     public List<PotionEffect> getRainyNightPotionEffects() {
         List<PotionEffect> potionEffects = new ArrayList<>();
         List<Map<String, Object>> effects =
-                Objects.requireNonNull(get("configuration.rainy_night_event.potion_effects"));
+                Objects.requireNonNull(getOrThrow("configuration.rainy_night_event.potion_effects"));
         for (Map<String, Object> effect : effects) {
             String effectType = (String) effect.get("type");
             PotionEffectType potionEffectType = PotionEffectType.getByName(effectType);
@@ -212,12 +212,12 @@ public class Configuration extends YamlFile {
     }
 
     public Boolean isAllowLavaFlow() {
-        return get("configuration.lava_flow.allow_lava_flow");
+        return getOrThrow("configuration.lava_flow.allow_lava_flow");
     }
 
     public List<World> getLavaFlowWorlds() {
         List<World> worlds = new ArrayList<>();
-        List<String> worldNames = Objects.requireNonNull(get("configuration.lava_flow.allow_lava_flow_worlds"));
+        List<String> worldNames = Objects.requireNonNull(getOrThrow("configuration.lava_flow.allow_lava_flow_worlds"));
         for (String worldName : worldNames) {
             World world = plugin.getServer().getWorld(worldName);
             if (world != null) {
@@ -228,35 +228,35 @@ public class Configuration extends YamlFile {
     }
 
     public Boolean isExperienceModifierEnabled() {
-        return get("configuration.experience_modifier.enabled");
+        return getOrThrow("configuration.experience_modifier.enabled");
     }
 
     public Double getExperienceModifierDefault() {
-        return getDouble("configuration.experience_modifier.default_modifier");
+        return getDoubleOrThrow("configuration.experience_modifier.default_modifier");
     }
 
     public Map<String, Double> getExperienceModifierGroups() {
-        return get("configuration.experience_modifier.groups");
+        return getOrThrow("configuration.experience_modifier.groups");
     }
 
     public Boolean isDroppedExperienceChangeEnabled() {
-        return get("configuration.dropped_experience.enabled");
+        return getOrThrow("configuration.dropped_experience.enabled");
     }
 
     public Double getExperienceKeptRatio() {
-        return getDouble("configuration.dropped_experience.kept_ratio");
+        return getDoubleOrThrow("configuration.dropped_experience.kept_ratio");
     }
 
     public Double getExperienceDroppedRatio() {
-        return getDouble("configuration.dropped_experience.dropped_ratio");
+        return getDoubleOrThrow("configuration.dropped_experience.dropped_ratio");
     }
 
     public Boolean isPlayerHeadDropping() {
-        return get("configuration.drop_player_heads.enabled");
+        return getOrThrow("configuration.drop_player_heads.enabled");
     }
 
     public List<Component> getPlayerHeadLore(@NotNull Player killed, @NotNull Player killer) {
-        List<String> itemLoreStrings = Objects.requireNonNull(get("configuration.drop_player_heads.item_lore"));
+        List<String> itemLoreStrings = Objects.requireNonNull(getOrThrow("configuration.drop_player_heads.item_lore"));
         ArrayList<Component> itemLore = new ArrayList<>();
         for (String itemLoreString : itemLoreStrings) {
             itemLore.add(TextUtil.toComponent(itemLoreString,
@@ -270,44 +270,44 @@ public class Configuration extends YamlFile {
     }
 
     public Boolean isHideJoinQuitMessages() {
-        return get("configuration.hide_join_quit_messages");
+        return getOrThrow("configuration.hide_join_quit_messages");
     }
 
     public Duration getDelayBetweenDeathMessages() {
-        return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.delay_between_death_messages_seconds")));
+        return Duration.ofSeconds(Objects.requireNonNull(getLongOrThrow("configuration.delay_between_death_messages_seconds")));
     }
 
     public Duration getDelayBetweenLoginMessages() {
-        return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.delay_between_login_messages_seconds")));
+        return Duration.ofSeconds(Objects.requireNonNull(getLongOrThrow("configuration.delay_between_login_messages_seconds")));
     }
 
     public Boolean isForceFirstSpawnLocation() {
-        return get("configuration.force_first_spawn_location");
+        return getOrThrow("configuration.force_first_spawn_location");
     }
 
     public String getVipGroupName() {
-        return get("configuration.luck_perms_vip_group_name");
+        return getOrThrow("configuration.luck_perms_vip_group_name");
     }
 
     public Boolean isBlockEnderchestWithoutPermissions() {
-        return get("configuration.purpur_permissions.block_enderchest_without_permissions");
+        return getOrThrow("configuration.purpur_permissions.block_enderchest_without_permissions");
     }
 
     public Boolean isBlockSpawnerPlaceWithoutPermission() {
-        return get("configuration.purpur_permissions.block_spawner_place_without_permissions");
+        return getOrThrow("configuration.purpur_permissions.block_spawner_place_without_permissions");
     }
 
     public Boolean isWarnOnSpawnerBlockDamage() {
-        return get("configuration.purpur_permissions.warn_on_spawner_damage");
+        return getOrThrow("configuration.purpur_permissions.warn_on_spawner_damage");
     }
 
     public double getNearbyPlayersRange() {
-        return Objects.requireNonNull(getDouble("configuration.nearby_players_range_blocks"));
+        return Objects.requireNonNull(getDoubleOrThrow("configuration.nearby_players_range_blocks"));
     }
 
     public List<World> getSyncedTimeWorlds() {
         List<World> worlds = new ArrayList<>();
-        List<String> worldNames = Objects.requireNonNull(get("configuration.worlds_with_synced_real_time"));
+        List<String> worldNames = Objects.requireNonNull(getOrThrow("configuration.worlds_with_synced_real_time"));
         for (String worldName : worldNames) {
             World world = plugin.getServer().getWorld(worldName);
             if (world != null) {
@@ -349,87 +349,87 @@ public class Configuration extends YamlFile {
     }
 
     public Component getSpawnerNoPermissionToPlace() {
-        return TextUtil.toComponent(get("language.purpur_permissions.spawner_permissions.no_permission_to_place"));
+        return TextUtil.toComponent(getOrThrow("language.purpur_permissions.spawner_permissions.no_permission_to_place"));
     }
 
     public Component getSpawnerWarningBreak() {
-        return TextUtil.toComponent(get("language.purpur_permissions.spawner_permissions.warning_message"));
+        return TextUtil.toComponent(getOrThrow("language.purpur_permissions.spawner_permissions.warning_message"));
     }
 
     public Component getFailedEnderchestKickMessage() {
-        return TextUtil.toComponent(get("language.purpur_permissions.enderchest_permissions.kick_message"));
+        return TextUtil.toComponent(getOrThrow("language.purpur_permissions.enderchest_permissions.kick_message"));
     }
 
     public Component getFailedEnderchestInventoryMessage() {
-        return TextUtil.toComponent(get("language.purpur_permissions.enderchest_permissions.warning_message"));
+        return TextUtil.toComponent(getOrThrow("language.purpur_permissions.enderchest_permissions.warning_message"));
     }
 
     public Component getPlayerOnly() {
-        return TextUtil.toComponent(get("language.commands.player_only"));
+        return TextUtil.toComponent(getOrThrow("language.commands.player_only"));
     }
 
     public Component getPlayerNotFound() {
-        return TextUtil.toComponent(get("language.commands.player_not_found"));
+        return TextUtil.toComponent(getOrThrow("language.commands.player_not_found"));
     }
 
     public Component getPlayerTimeHelp() {
-        return TextUtil.toComponent(get("language.commands.player_time.help"));
+        return TextUtil.toComponent(getOrThrow("language.commands.player_time.help"));
     }
 
     public Component getPlayerWeatherHelp() {
-        return TextUtil.toComponent(get("language.commands.player_weather.help"));
+        return TextUtil.toComponent(getOrThrow("language.commands.player_weather.help"));
     }
 
     public Component getGameModeHelp() {
-        return TextUtil.toComponent(get("language.commands.gamemode.help"));
+        return TextUtil.toComponent(getOrThrow("language.commands.gamemode.help"));
     }
 
     public Component getEnchantHelp() {
-        return TextUtil.toComponent(get("language.commands.enchant.help"));
+        return TextUtil.toComponent(getOrThrow("language.commands.enchant.help"));
     }
 
     public Component getEnchantCantEnchantItem() {
-        return TextUtil.toComponent(get("language.commands.enchant.cant_enchant_item"));
+        return TextUtil.toComponent(getOrThrow("language.commands.enchant.cant_enchant_item"));
     }
 
     public Component getKillHelp() {
-        return TextUtil.toComponent(get("language.commands.kill.help"));
+        return TextUtil.toComponent(getOrThrow("language.commands.kill.help"));
     }
 
     public Component getFlyHelp() {
-        return TextUtil.toComponent(get("language.commands.fly.help"));
+        return TextUtil.toComponent(getOrThrow("language.commands.fly.help"));
     }
 
     public Component getFlyStatus(@NotNull String playerName, boolean allowFlight) {
-        return TextUtil.toComponent(get("language.commands.fly.status"),
+        return TextUtil.toComponent(getOrThrow("language.commands.fly.status"),
                                     Placeholder.unparsed("username", playerName),
                                     Placeholder.unparsed("flying", allowFlight ? "enabled" : "disabled"));
     }
 
     public Component getNearbyPlayers(@NotNull Map<Player, Double> nearbyPlayers) {
         if (nearbyPlayers.isEmpty()) {
-            return TextUtil.toComponent(get("language.commands.near.nobody_near_you"));
+            return TextUtil.toComponent(getOrThrow("language.commands.near.nobody_near_you"));
         }
         String playerList = TextUtil.joinStrings(nearbyPlayers.entrySet(),
                                                  ", ",
                                                  entry -> "%s (%.1f)".formatted(entry.getKey().getName(),
                                                                                 entry.getValue()));
-        return TextUtil.toComponent(get("language.commands.near.nearby_players"),
+        return TextUtil.toComponent(getOrThrow("language.commands.near.nearby_players"),
                                     Placeholder.parsed("list", playerList));
     }
 
     public Component getVipRemainingTime(@Nullable InheritanceNode node) {
         if (node == null || node.hasExpired() || !node.getValue()) {
-            return TextUtil.toComponent(get("language.commands.vip.help"));
+            return TextUtil.toComponent(getOrThrow("language.commands.vip.help"));
         }
         if (!node.hasExpiry()) {
-            return TextUtil.toComponent(get("language.commands.vip.unlimited_vip"));
+            return TextUtil.toComponent(getOrThrow("language.commands.vip.unlimited_vip"));
         }
         assert node.getExpiryDuration() != null;
         String expirationDate =
-                DateTimeFormatter.ofPattern(Objects.requireNonNull(get("language.commands.vip.date_time_format")))
+                DateTimeFormatter.ofPattern(Objects.requireNonNull(getOrThrow("language.commands.vip.date_time_format")))
                                  .format(ZonedDateTime.now().plus(node.getExpiryDuration()));
-        return TextUtil.toComponent(get("language.commands.vip.vip_expiration_date"),
+        return TextUtil.toComponent(getOrThrow("language.commands.vip.vip_expiration_date"),
                                     Placeholder.unparsed("expiration_date", expirationDate));
     }
 }

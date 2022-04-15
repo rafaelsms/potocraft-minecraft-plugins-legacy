@@ -16,6 +16,7 @@ import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Profile extends BaseProfile implements TickableTask {
@@ -56,6 +57,10 @@ public class Profile extends BaseProfile implements TickableTask {
     public void setDeathLocation(@NotNull Location location) {
         deathLocation.set(location);
         setBackLocation(location);
+    }
+
+    public Optional<Location> getBackLocation() {
+        return backLocation.getIfFetched();
     }
 
     public void setBackLocation(@NotNull Location location) {

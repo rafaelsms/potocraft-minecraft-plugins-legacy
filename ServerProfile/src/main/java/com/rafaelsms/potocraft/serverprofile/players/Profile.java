@@ -2,8 +2,7 @@ package com.rafaelsms.potocraft.serverprofile.players;
 
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
-import com.rafaelsms.potocraft.database.DatabaseStored;
-import com.rafaelsms.potocraft.database.LocationField;
+import com.rafaelsms.potocraft.database.IdentifiedDatabaseObject;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.util.Util;
 import org.bson.Document;
@@ -16,88 +15,15 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Profile extends DatabaseStored {
+public class Profile extends IdentifiedDatabaseObject {
 
-    private final @NotNull UUID playerId;
-    private @NotNull String playerName;
-
-    private final Map<String, Home> homes = Collections.synchronizedMap(new HashMap<>());
-
-    private @Nullable ZonedDateTime lastTeleportDate = null;
-    private @Nullable LocationField backLocation = null;
-    private @Nullable ZonedDateTime deathDateTime = null;
-    private @Nullable LocationField deathLocation = null;
     private @Nullable ZonedDateTime lastTotemUsage = null;
-
-    private final @NotNull ZonedDateTime lastJoinDateTime = ZonedDateTime.now();
-    private long playTimeMillis = 0;
-
-    private int mobKills = 0;
-    private int playerKills = 0;
-    private int deathCount = 0;
-    private int blocksPlaced = 0;
-    private int blocksBroken = 0;
-    private long experiencePickedUp = 0;
-    private int totemUsages = 0;
-
-    private boolean importedEssentials = false;
-
-    // TODO /tptoggle
-    // TODO permission based particle effects for players
-
-    public Profile(@NotNull UUID playerId, @NotNull String playerName) {
-        this.playerId = playerId;
-        this.playerName = playerName;
-    }
-
-    public Profile(@NotNull Document document) {
-        super(document);
-        this.playerId = Util.convertNonNull(document.getString(Keys.PLAYER_ID), UUID::fromString);
-        this.playerName = Util.getCatchingOrElse(() -> document.getString(Keys.PLAYER_NAME), "");
-
-        List<Home> homes = Util.convertList(document.getList(Keys.HOMES, Document.class), Home::new);
-        for (Home home : homes) {
-            this.homes.put(home.getName().toLowerCase(), home);
-        }
-
-        this.lastTeleportDate = Util.toDateTime(document.getString(Keys.LAST_TELEPORT_DATE));
-        this.backLocation = Util.convert(document.get(Keys.BACK_LOCATION, Document.class), LocationField::new);
-        this.deathDateTime = Util.convert(document.getString(Keys.DEATH_DATE_TIME), Util::toDateTime);
-        this.deathLocation = Util.convert(document.get(Keys.DEATH_LOCATION, Document.class), LocationField::new);
-        this.lastTotemUsage = Util.convert(document.getString(Keys.TOTEM_USED_DATE), Util::toDateTime);
-
-        this.playTimeMillis = Util.getCatchingOrElse(() -> document.getLong(Keys.PLAY_TIME_MILLIS), 0L);
-
-        this.mobKills = Util.getCatchingOrElse(() -> document.getInteger(Keys.MOB_KILLS), 0);
-        this.playerKills = Util.getCatchingOrElse(() -> document.getInteger(Keys.PLAYER_KILLS), 0);
-        this.deathCount = Util.getCatchingOrElse(() -> document.getInteger(Keys.DEATH_COUNT), 0);
-        this.blocksPlaced = Util.getCatchingOrElse(() -> document.getInteger(Keys.BLOCKS_PLACED), 0);
-        this.blocksBroken = Util.getCatchingOrElse(() -> document.getInteger(Keys.BLOCKS_BROKEN), 0);
-        this.experiencePickedUp = Util.getCatchingOrElse(() -> document.getLong(Keys.EXPERIENCE_PICKED_UP), 0L);
-        this.totemUsages = Util.getCatchingOrElse(() -> document.getInteger(Keys.TOTEM_USAGES), 0);
-
-        this.importedEssentials = Util.getCatchingOrElse(() -> document.getBoolean(Keys.IMPORTED_ESSENTIALS), false);
-    }
-
-    public @NotNull UUID getPlayerId() {
-        return playerId;
-    }
-
-    public @NotNull String getPlayerName() {
-        return playerName;
-    }
-
-    public void setPlayerName(@NotNull String playerName) {
-        this.playerName = playerName;
-    }
 
     public List<Home> getHomesSortedByDate() {
         List<Home> sortedHomes = new LinkedList<>(homes.values());
@@ -134,7 +60,7 @@ public class Profile extends DatabaseStored {
     }
 
     public void setBackLocation(@Nullable Location location) {
-        this.backLocation = Util.convert(location, LocationField::new);
+        this.backLocation = Util.convert(location, CachedLocationField::new);
     }
 
     public Optional<ZonedDateTime> getDeathDateTime() {
@@ -146,7 +72,7 @@ public class Profile extends DatabaseStored {
     }
 
     public void setDeathLocation(@Nullable Location location) {
-        this.deathLocation = Util.convert(location, LocationField::new);
+        this.deathLocation = Util.convert(location, CachedLocationField::new);
         this.deathDateTime = ZonedDateTime.now();
     }
 
@@ -249,9 +175,9 @@ public class Profile extends DatabaseStored {
         document.put(Keys.HOMES, Util.convertList(this.homes.values(), Home::toDocument));
 
         document.put(Keys.LAST_TELEPORT_DATE, Util.fromDateTime(this.lastTeleportDate));
-        document.put(Keys.BACK_LOCATION, Util.convert(backLocation, LocationField::toDocument));
+        document.put(Keys.BACK_LOCATION, Util.convert(backLocation, CachedLocationField::toDocument));
         document.put(Keys.DEATH_DATE_TIME, Util.convert(deathDateTime, Util::fromDateTime));
-        document.put(Keys.DEATH_LOCATION, Util.convert(deathLocation, LocationField::toDocument));
+        document.put(Keys.DEATH_LOCATION, Util.convert(deathLocation, CachedLocationField::toDocument));
         document.put(Keys.TOTEM_USED_DATE, Util.convert(lastTotemUsage, Util::fromDateTime));
 
         document.put(Keys.LAST_JOIN_DATE, Util.convertNonNull(lastJoinDateTime, Util::fromDateTime));

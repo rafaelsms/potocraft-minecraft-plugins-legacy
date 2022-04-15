@@ -33,181 +33,181 @@ public class Configuration extends YamlFile {
     }
 
     public String getMongoURI() {
-        return get("configuration.database.mongo_uri");
+        return getOrThrow("configuration.database.mongo_uri");
     }
 
     public String getMongoDatabase() {
-        return get("configuration.database.mongo_database");
+        return getOrThrow("configuration.database.mongo_database");
     }
 
     public String getMongoPlayerProfileCollection() {
-        return get("configuration.database.player_profile_collection");
+        return getOrThrow("configuration.database.player_profile_collection");
     }
 
     public List<String> getAllowedCommandsLoggedOff() {
-        return get("configuration.offline_players.offline_allowed_commands");
+        return getOrThrow("configuration.offline_players.offline_allowed_commands");
     }
 
     public List<String> getBlockedCommandsMuted() {
-        return get("configuration.muted_blocked_commands");
+        return getOrThrow("configuration.muted_blocked_commands");
     }
 
     public Pattern getAllowedJavaUsernamesRegex() {
-        return Pattern.compile(Objects.requireNonNull(get("configuration.allowed_java_usernames_regex")),
+        return Pattern.compile(Objects.requireNonNull(getOrThrow("configuration.allowed_java_usernames_regex")),
                                Pattern.CASE_INSENSITIVE);
     }
 
     public String getLoginServer() {
-        return get("configuration.offline_players.offline_players_login_server_name");
+        return getOrThrow("configuration.offline_players.offline_players_login_server_name");
     }
 
     public String getDefaultServer() {
-        return get("configuration.default_server_name");
+        return getOrThrow("configuration.default_server_name");
     }
 
     public Duration getAutoLoginWindow() {
-        return Duration.ofMinutes(Objects.requireNonNull(getLong(
+        return Duration.ofMinutes(Objects.requireNonNull(getLongOrThrow(
                 "configuration.offline_players.minutes_between_joins_to_auto_login")));
     }
 
     public Integer getMaxAccountsPerAddress() {
-        return getInt("configuration.offline_players.max_accounts_registered_per_address");
+        return getIntOrThrow("configuration.offline_players.max_accounts_registered_per_address");
     }
 
     public @NotNull DateTimeFormatter getDateTimeFormatter() {
-        return DateTimeFormatter.ofPattern(Objects.requireNonNull(get("language.generic.date_time_formatter")));
+        return DateTimeFormatter.ofPattern(Objects.requireNonNull(getOrThrow("language.generic.date_time_formatter")));
     }
 
     public @NotNull BaseComponent[] getNoPermission() {
-        return TextUtil.toComponentBungee(get("language.generic.no_permission"));
+        return TextUtil.toComponentBungee(getOrThrow("language.generic.no_permission"));
     }
 
     public @NotNull BaseComponent[] getNoPlayerFound() {
-        return TextUtil.toComponentBungee(get("language.generic.no_player_found"));
+        return TextUtil.toComponentBungee(getOrThrow("language.generic.no_player_found"));
     }
 
     public @NotNull BaseComponent[] getCommandPlayersOnly() {
-        return TextUtil.toComponentBungee(get("language.commands.players_only"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.players_only"));
     }
 
     public @NotNull BaseComponent[] getCommandOfflinePlayersOnly() {
-        return TextUtil.toComponentBungee(get("language.commands.offline_players_only"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.offline_players_only"));
     }
 
     public @NotNull BaseComponent[] getCommandIncorrectPin() {
-        return TextUtil.toComponentBungee(get("language.commands.incorrect_pin"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.incorrect_pin"));
     }
 
     public @NotNull BaseComponent[] getCommandIncorrectPinFormat() {
-        return TextUtil.toComponentBungee(get("language.commands.incorrect_pin_format"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.incorrect_pin_format"));
     }
 
     public @NotNull BaseComponent[] getCommandLoggedInOnly() {
-        return TextUtil.toComponentBungee(get("language.commands.logged_in_players_only"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.logged_in_players_only"));
     }
 
     public @NotNull BaseComponent[] getCommandLoggedIn() {
-        return TextUtil.toComponentBungee(get("language.commands.logged_in"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.logged_in"));
     }
 
     public @NotNull BaseComponent[] getCommandFailedToSearchProfile() {
-        return TextUtil.toComponentBungee(get("language.commands.failed_to_search_profile"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.failed_to_search_profile"));
     }
 
     public @NotNull BaseComponent[] getCommandNoProfileFound() {
-        return TextUtil.toComponentBungee(get("language.commands.no_profile_found"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.no_profile_found"));
     }
 
     public @NotNull BaseComponent[] getCommandFailedToSaveProfile() {
-        return TextUtil.toComponentBungee(get("language.commands.failed_to_save_profile"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.failed_to_save_profile"));
     }
 
     public @NotNull BaseComponent[] getCommandChangePinHelp() {
-        return TextUtil.toComponentBungee(get("language.commands.change_pin.help"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.change_pin.help"));
     }
 
     public @NotNull BaseComponent[] getCommandChangePinInvalidPins() {
-        return TextUtil.toComponentBungee(get("language.commands.change_pin.invalid_pins"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.change_pin.invalid_pins"));
     }
 
     public @NotNull BaseComponent[] getCommandChangePinRegisterFirst() {
-        return TextUtil.toComponentBungee(get("language.commands.change_pin.register_instead"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.change_pin.register_instead"));
     }
 
     public @NotNull BaseComponent[] getCommandChangedPinSuccessful() {
-        return TextUtil.toComponentBungee(get("language.commands.change_pin.success"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.change_pin.success"));
     }
 
     public @NotNull BaseComponent[] getCommandRegisterHelp() {
-        return TextUtil.toComponentBungee(get("language.commands.register.help"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.register.help"));
     }
 
     public @NotNull BaseComponent[] getCommandRegisterInvalidPin() {
-        return TextUtil.toComponentBungee(get("language.commands.register.invalid_pins"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.register.invalid_pins"));
     }
 
     public @NotNull BaseComponent[] getCommandRegisterAccountLimitForAddress() {
-        return TextUtil.toComponentBungee(get("language.commands.register.max_accounts_per_address_reached"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.register.max_accounts_per_address_reached"));
     }
 
     public @NotNull BaseComponent[] getCommandRegisterShouldChangePinInstead() {
-        return TextUtil.toComponentBungee(get("language.commands.register.change_pin_instead"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.register.change_pin_instead"));
     }
 
     public @NotNull BaseComponent[] getCommandRegisterShouldLoginInstead() {
-        return TextUtil.toComponentBungee(get("language.commands.register.login_instead"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.register.login_instead"));
     }
 
     public @NotNull BaseComponent[] getCommandLoginHelp() {
-        return TextUtil.toComponentBungee(get("language.commands.login.help"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.login.help"));
     }
 
     public @NotNull BaseComponent[] getCommandLoginRegisterFirst() {
-        return TextUtil.toComponentBungee(get("language.commands.login.register_instead"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.login.register_instead"));
     }
 
     public @NotNull BaseComponent[] getCommandLoginAlreadyLoggedIn() {
-        return TextUtil.toComponentBungee(get("language.commands.login.already_logged_in"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.login.already_logged_in"));
     }
 
     public @NotNull BaseComponent[] getCommandNoServerAvailable() {
-        return TextUtil.toComponentBungee(get("language.commands.login.no_server_available"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.login.no_server_available"));
     }
 
     public @NotNull BaseComponent[] getCommandLoginWithWeakPin() {
-        return TextUtil.toComponentBungee(get("language.commands.login.weak_pin_used"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.login.weak_pin_used"));
     }
 
     public @NotNull BaseComponent[] getCommandUnbanHelp() {
-        return TextUtil.toComponentBungee(get("language.commands.unban.help"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.unban.help"));
     }
 
     public @NotNull BaseComponent[] getCommandUnpunished(@NotNull String playerName) {
-        return TextUtil.toComponentBungee(get("language.commands.player_unpunished"),
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.player_unpunished"),
                                           Placeholder.unparsed("player", playerName));
     }
 
     public @NotNull BaseComponent[] getCommandPlayerIsNotPunished(@NotNull String playerName) {
-        return TextUtil.toComponentBungee(get("language.commands.player_is_not_punished"),
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.player_is_not_punished"),
                                           Placeholder.unparsed("player", playerName));
     }
 
     public @NotNull BaseComponent[] getCommandBanHelp() {
-        return TextUtil.toComponentBungee(get("language.commands.ban.help"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.ban.help"));
     }
 
     public @NotNull BaseComponent[] getCommandBanPlayerOffline() {
-        return TextUtil.toComponentBungee(get("language.commands.ban.player_offline"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.ban.player_offline"));
     }
 
     public @NotNull BaseComponent[] getPlayerPunished(@NotNull String playerName) {
-        return TextUtil.toComponentBungee(get("language.commands.player_punished"),
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.player_punished"),
                                           Placeholder.unparsed("player", playerName));
     }
 
     public @NotNull BaseComponent[] getListServerList(@NotNull String serverName,
                                                       @NotNull Collection<ProxiedPlayer> playerList) {
-        return TextUtil.toComponentBungee(get("language.commands.list_server_players"),
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.list_server_players"),
                                           Placeholder.unparsed("server_name", serverName),
                                           Placeholder.unparsed("size", String.valueOf(playerList.size())),
                                           Placeholder.unparsed("player_list",
@@ -217,7 +217,7 @@ public class Configuration extends YamlFile {
     }
 
     public @NotNull BaseComponent[] getCommandSeenHelp() {
-        return TextUtil.toComponentBungee(get("language.commands.seen.help"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.seen.help"));
     }
 
     private Component getCommandSeenReportEntries(@NotNull LoginManagerPlugin plugin,
@@ -232,7 +232,7 @@ public class Configuration extends YamlFile {
                 }
             }
 
-            lines.add(TextUtil.toComponent(get("language.commands.seen.report_entry"),
+            lines.add(TextUtil.toComponent(getOrThrow("language.commands.seen.report_entry"),
                                            Placeholder.unparsed("reporter_id",
                                                                 Util.convertFallback(entry.getReporterId(),
                                                                                      UUID::toString,
@@ -266,7 +266,7 @@ public class Configuration extends YamlFile {
                 Util.convertFallback(profile.getLastJoinDate().orElse(null), getDateTimeFormatter()::format, "?");
         String lastQuitDate =
                 Util.convertFallback(profile.getLastQuitDate().orElse(null), getDateTimeFormatter()::format, "?");
-        return TextUtil.toComponentBungee(get("language.commands.seen.profile"),
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.seen.profile"),
                                           Placeholder.parsed("user_name", profile.getLastPlayerName()),
                                           Placeholder.parsed("user_id", profile.getPlayerId().toString()),
                                           Placeholder.parsed("user_ip", profile.getLastAddress().orElse("?")),
@@ -280,27 +280,27 @@ public class Configuration extends YamlFile {
     }
 
     public @NotNull BaseComponent[] getCommandTemporaryBanHelp() {
-        return TextUtil.toComponentBungee(get("language.commands.temporary_ban.help"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.temporary_ban.help"));
     }
 
     public @NotNull BaseComponent[] getCommandTemporaryBanPlayerOffline() {
-        return TextUtil.toComponentBungee(get("language.commands.temporary_ban.player_offline"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.temporary_ban.player_offline"));
     }
 
     public @NotNull BaseComponent[] getCommandUnmuteHelp() {
-        return TextUtil.toComponentBungee(get("language.commands.unmute.help"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.unmute.help"));
     }
 
     public @NotNull BaseComponent[] getCommandMuteHelp() {
-        return TextUtil.toComponentBungee(get("language.commands.mute.help"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.mute.help"));
     }
 
     public @NotNull BaseComponent[] getCommandMutePlayerOffline() {
-        return TextUtil.toComponentBungee(get("language.commands.mute.player_offline"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.mute.player_offline"));
     }
 
     public @NotNull BaseComponent[] getCommandKickHelp() {
-        return TextUtil.toComponentBungee(get("language.commands.kick.help"));
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.kick.help"));
     }
 
     private String formatPing(int ping) {
@@ -308,49 +308,49 @@ public class Configuration extends YamlFile {
     }
 
     public @NotNull BaseComponent[] getCommandPing(int ping, int averagePing) {
-        return TextUtil.toComponentBungee(get("language.commands.ping.self_ping"),
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.ping.self_ping"),
                                           Placeholder.parsed("ping", formatPing(ping)),
                                           Placeholder.parsed("average", formatPing(averagePing)));
     }
 
     public @NotNull BaseComponent[] getCommandPingOthers(@NotNull String playerName, int ping, int averagePing) {
-        return TextUtil.toComponentBungee(get("language.commands.ping.other_player_ping"),
+        return TextUtil.toComponentBungee(getOrThrow("language.commands.ping.other_player_ping"),
                                           Placeholder.parsed("username", playerName),
                                           Placeholder.parsed("ping", formatPing(ping)),
                                           Placeholder.parsed("average", formatPing(averagePing)));
     }
 
     public @NotNull BaseComponent[] getKickMessageCouldNotCheckMojangUsername() {
-        return TextUtil.toComponentBungee(get("language.kick_messages.could_not_check_mojang"));
+        return TextUtil.toComponentBungee(getOrThrow("language.kick_messages.could_not_check_mojang"));
     }
 
     public @NotNull BaseComponent[] getKickMessageInvalidPrefixForJavaPlayer() {
-        return TextUtil.toComponentBungee(get("language.kick_messages.invalid_java_prefix"));
+        return TextUtil.toComponentBungee(getOrThrow("language.kick_messages.invalid_java_prefix"));
     }
 
     public @NotNull BaseComponent[] getKickMessageInvalidJavaUsername() {
-        return TextUtil.toComponentBungee(get("language.kick_messages.invalid_java_username"));
+        return TextUtil.toComponentBungee(getOrThrow("language.kick_messages.invalid_java_username"));
     }
 
     public @NotNull BaseComponent[] getKickMessageFailedToRetrieveProfile() {
-        return TextUtil.toComponentBungee(get("language.kick_messages.failed_to_retrieve_player_profile"));
+        return TextUtil.toComponentBungee(getOrThrow("language.kick_messages.failed_to_retrieve_player_profile"));
     }
 
     public @NotNull BaseComponent[] getKickMessageFailedToSaveProfile() {
-        return TextUtil.toComponentBungee(get("language.kick_messages.failed_to_save_player_profile"));
+        return TextUtil.toComponentBungee(getOrThrow("language.kick_messages.failed_to_save_player_profile"));
     }
 
     public @NotNull BaseComponent[] getKickMessageLoginServerUnavailable() {
-        return TextUtil.toComponentBungee(get("language.kick_messages.login_server_unavailable"));
+        return TextUtil.toComponentBungee(getOrThrow("language.kick_messages.login_server_unavailable"));
     }
 
     private @NotNull BaseComponent[] getPunishmentMessage(@Nullable String baseMessage,
                                                           @Nullable String reporterName,
                                                           @Nullable String reason,
                                                           @Nullable String expirationDate) {
-        String reporterFallback = Objects.requireNonNull(get("language.generic.console_name"));
-        String reasonFallback = Objects.requireNonNull(get("language.generic.report_reason_unknown"));
-        String expirationDateFallback = Objects.requireNonNull(get("language.generic.no_expiration_date"));
+        String reporterFallback = Objects.requireNonNull(getOrThrow("language.generic.console_name"));
+        String reasonFallback = Objects.requireNonNull(getOrThrow("language.generic.report_reason_unknown"));
+        String expirationDateFallback = Objects.requireNonNull(getOrThrow("language.generic.no_expiration_date"));
         return TextUtil.toComponentBungee(baseMessage,
                                           Placeholder.unparsed("reporter",
                                                                Util.getOrElse(reporterName, reporterFallback)),
@@ -363,25 +363,25 @@ public class Configuration extends YamlFile {
                                                                @Nullable ZonedDateTime expirationDate,
                                                                @Nullable String reason) {
         String expirationDateString = Util.convert(expirationDate, date -> getDateTimeFormatter().format(date));
-        return getPunishmentMessage(get("language.punishment.banned"), reporterName, reason, expirationDateString);
+        return getPunishmentMessage(getOrThrow("language.punishment.banned"), reporterName, reason, expirationDateString);
     }
 
     public @NotNull BaseComponent[] getPunishmentMessageMuted(@Nullable String reporterName,
                                                               @Nullable ZonedDateTime expirationDate,
                                                               @Nullable String reason) {
         String expirationDateString = Util.convert(expirationDate, date -> getDateTimeFormatter().format(date));
-        return getPunishmentMessage(get("language.punishment.muted"), reporterName, reason, expirationDateString);
+        return getPunishmentMessage(getOrThrow("language.punishment.muted"), reporterName, reason, expirationDateString);
     }
 
     public @NotNull BaseComponent[] getPunishmentMessageBlockedCommandMuted() {
-        return TextUtil.toComponentBungee(get("language.punishment.commands_muted"));
+        return TextUtil.toComponentBungee(getOrThrow("language.punishment.commands_muted"));
     }
 
     public @NotNull BaseComponent[] getPunishmentMessageKicked(@Nullable String reporterName, @Nullable String reason) {
-        return getPunishmentMessage(get("language.punishment.kicked"), reporterName, reason, null);
+        return getPunishmentMessage(getOrThrow("language.punishment.kicked"), reporterName, reason, null);
     }
 
     public @NotNull BaseComponent[] getPunishmentMessageLoggedOff() {
-        return TextUtil.toComponentBungee(get("language.punishment.logged_off"));
+        return TextUtil.toComponentBungee(getOrThrow("language.punishment.logged_off"));
     }
 }

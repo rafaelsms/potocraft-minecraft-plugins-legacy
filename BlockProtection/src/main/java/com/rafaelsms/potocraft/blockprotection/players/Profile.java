@@ -2,36 +2,33 @@ package com.rafaelsms.potocraft.blockprotection.players;
 
 import com.mongodb.client.MongoCollection;
 import com.rafaelsms.potocraft.blockprotection.BlockProtectionPlugin;
-import com.rafaelsms.potocraft.database.CachedField;
-import com.rafaelsms.potocraft.database.CachedMapField;
-import com.rafaelsms.potocraft.database.CachedSimpleField;
 import com.rafaelsms.potocraft.database.DatabaseException;
-import com.rafaelsms.potocraft.database.IdentifiedDatabaseStored;
+import com.rafaelsms.potocraft.database.IdentifiedDatabaseObject;
+import com.rafaelsms.potocraft.database.fields.CachedField;
+import com.rafaelsms.potocraft.database.fields.CachedMapField;
+import com.rafaelsms.potocraft.database.serializers.SimpleSerializer;
+import com.rafaelsms.potocraft.database.serializers.UUIDSerializer;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
 
-public class Profile extends IdentifiedDatabaseStored {
+public class Profile extends IdentifiedDatabaseObject<UUID> {
 
     private final @NotNull BlockProtectionPlugin plugin;
 
     private final CachedMapField<String> regionNames;
-    private final CachedSimpleField<Integer> areaAvailable;
-    private final CachedSimpleField<Double> areaParts;
+    private final CachedField<Integer> areaAvailable;
+    private final CachedField<Double> areaParts;
 
     private Profile(@NotNull BlockProtectionPlugin plugin, @NotNull UUID playerId) throws DatabaseException {
-        super(playerId);
+        super(UUIDSerializer.getSerializer(), playerId);
         this.plugin = plugin;
-        this.regionNames = new CachedMapField<>("regionMap", collectionProvider);
-        this.areaAvailable = new CachedSimpleField<>("areaAvailable", collectionProvider, 0);
-        this.areaParts = new CachedSimpleField<>("areaParts", collectionProvider, 0.0);
-        fetchAllFields().ifPresent(document -> {
-            this.regionNames.readFrom(document);
-            this.areaAvailable.readFrom(document);
-            this.areaParts.readFrom(document);
-        });
+        this.regionNames = new CachedMapField<>("regionMap", SimpleSerializer.getSerializer(), this);
+        this.areaAvailable = new CachedField<>("areaAvailable", SimpleSerializer.getSerializer(), this, 0);
+        this.areaParts = new CachedField<>("areaParts", SimpleSerializer.getSerializer(), this, 0.0);
+        fetchDatabaseObjectIfPresent();
     }
 
     public static Profile fetch(@NotNull BlockProtectionPlugin plugin, @NotNull UUID playerId) throws
@@ -40,12 +37,12 @@ public class Profile extends IdentifiedDatabaseStored {
     }
 
     @Override
-    protected List<CachedField<?>> getOtherRegisteredFields() {
+    protected List<CachedField<?>> getRegisteredFields() {
         return List.of(regionNames, areaAvailable, areaParts);
     }
 
     @Override
-    protected MongoCollection<Document> getMongoCollection() throws DatabaseException {
+    public @NotNull MongoCollection<Document> getCollection() throws DatabaseException {
         return plugin.getDatabase().getPlayerCollection();
     }
 

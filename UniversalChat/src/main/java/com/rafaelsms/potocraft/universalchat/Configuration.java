@@ -27,123 +27,123 @@ public class Configuration extends YamlFile {
     }
 
     public Integer getLimiterMessageAmount() {
-        return getInt("configuration.chat_limiter.message_amount");
+        return getIntOrThrow("configuration.chat_limiter.message_amount");
     }
 
     public Duration getLimiterTimeAmount() {
-        return Duration.ofMillis(Objects.requireNonNull(getLong("configuration.chat_limiter.time_amount_millis")));
+        return Duration.ofMillis(Objects.requireNonNull(getLongOrThrow("configuration.chat_limiter.time_amount_millis")));
     }
 
     public Integer getLimiterMinMessageLength() {
-        return getInt("configuration.chat_limiter.min_message_length");
+        return getIntOrThrow("configuration.chat_limiter.min_message_length");
     }
 
     public Integer getComparatorMinLength() {
-        return getInt("configuration.comparator.min_length_to_compare");
+        return getIntOrThrow("configuration.comparator.min_length_to_compare");
     }
 
     public Integer getComparatorMinDifferences() {
-        return getInt("configuration.comparator.min_char_differences");
+        return getIntOrThrow("configuration.comparator.min_char_differences");
     }
 
     public @NotNull BaseComponent[] getUniversalChatFormat(@NotNull ProxiedPlayer player, @NotNull Component message) {
-        return getChatFormat(get("configuration.universal_chat.format"), player, message);
+        return getChatFormat(getOrThrow("configuration.universal_chat.format"), player, message);
     }
 
     public String getUniversalChatPrefix() {
-        return get("configuration.universal_chat.prefix");
+        return getOrThrow("configuration.universal_chat.prefix");
     }
 
     public @NotNull BaseComponent[] getGlobalChatFormat(@NotNull ProxiedPlayer player, @NotNull Component message) {
-        return getChatFormat(get("configuration.global_chat.format"), player, message);
+        return getChatFormat(getOrThrow("configuration.global_chat.format"), player, message);
     }
 
     public @NotNull BaseComponent[] getGlobalChatSpyFormat(@NotNull ProxiedPlayer player, @NotNull Component message) {
-        return getChatFormat(get("configuration.global_chat.spy_format"), player, message);
+        return getChatFormat(getOrThrow("configuration.global_chat.spy_format"), player, message);
     }
 
     public String getGlobalChatPrefix() {
-        return get("configuration.global_chat.prefix");
+        return getOrThrow("configuration.global_chat.prefix");
     }
 
     public @NotNull BaseComponent[] getOtherServerChatSpyFormat(@NotNull ProxiedPlayer player,
                                                                 @NotNull Component message) {
-        return getChatFormat(get("configuration.other_server_chat.spy_format"), player, message);
+        return getChatFormat(getOrThrow("configuration.other_server_chat.spy_format"), player, message);
     }
 
     public Duration getDirectMessagesReplyDuration() {
-        return Duration.ofSeconds(Objects.requireNonNull(getInt(
+        return Duration.ofSeconds(Objects.requireNonNull(getIntOrThrow(
                 "configuration.direct_messages.reply_time_amount_seconds")));
     }
 
     public boolean getBroadcastEnabled() {
-        return Objects.requireNonNull(get("configuration.broadcast_messages.enabled"));
+        return Objects.requireNonNull(getOrThrow("configuration.broadcast_messages.enabled"));
     }
 
     public Duration getBroadcastPeriod() {
-        return Duration.ofSeconds(Objects.requireNonNull(getInt("configuration.broadcast_messages.period_in_seconds")));
+        return Duration.ofSeconds(Objects.requireNonNull(getIntOrThrow("configuration.broadcast_messages.period_in_seconds")));
     }
 
     @SuppressWarnings("unchecked")
     public List<BaseComponent[]> getBroadcastMessages() {
-        return Util.convertList((Collection<String>) get("configuration.broadcast_messages.messages"),
+        return Util.convertList((Collection<String>) getOrThrow("configuration.broadcast_messages.messages"),
                                 TextUtil::toComponentBungee);
     }
 
     public List<String> getBlockedWordsList() {
-        return get("configuration.blocked_words");
+        return getOrThrow("configuration.blocked_words");
     }
 
     public String getConsoleName() {
-        return get("language.console_name");
+        return getOrThrow("language.console_name");
     }
 
     public String getUnknownServer() {
-        return get("language.unknown_server_name");
+        return getOrThrow("language.unknown_server_name");
     }
 
     public @NotNull BaseComponent[] getNoPermission() {
-        return TextUtil.toComponentBungee(get("language.no_permission"));
+        return TextUtil.toComponentBungee(getOrThrow("language.no_permission"));
     }
 
     public @NotNull BaseComponent[] getMessagesTooSmall() {
-        return TextUtil.toComponentBungee(get("language.messages_too_small"));
+        return TextUtil.toComponentBungee(getOrThrow("language.messages_too_small"));
     }
 
     public @NotNull BaseComponent[] getMessagesTooFrequent() {
-        return TextUtil.toComponentBungee(get("language.messages_too_frequent"));
+        return TextUtil.toComponentBungee(getOrThrow("language.messages_too_frequent"));
     }
 
     public @NotNull BaseComponent[] getMessagesTooSimilar() {
-        return TextUtil.toComponentBungee(get("language.messages_too_similar"));
+        return TextUtil.toComponentBungee(getOrThrow("language.messages_too_similar"));
     }
 
     public @NotNull BaseComponent[] getPlayersOnly() {
-        return TextUtil.toComponentBungee(get("language.players_only"));
+        return TextUtil.toComponentBungee(getOrThrow("language.players_only"));
     }
 
     public @NotNull BaseComponent[] getDirectMessagesHelp() {
-        return TextUtil.toComponentBungee(get("language.direct_messages.help"));
+        return TextUtil.toComponentBungee(getOrThrow("language.direct_messages.help"));
     }
 
     public @NotNull BaseComponent[] getDirectMessagesReplyHelp() {
-        return TextUtil.toComponentBungee(get("language.direct_messages.reply_help"));
+        return TextUtil.toComponentBungee(getOrThrow("language.direct_messages.reply_help"));
     }
 
     public @NotNull BaseComponent[] getDirectMessagesNoPlayerFound() {
-        return TextUtil.toComponentBungee(get("language.direct_messages.no_player_found"));
+        return TextUtil.toComponentBungee(getOrThrow("language.direct_messages.no_player_found"));
     }
 
     public @NotNull BaseComponent[] getDirectMessagesOutgoingFormat(@NotNull String receiverName,
                                                                     @NotNull Component message) {
-        return TextUtil.toComponentBungee(get("language.direct_messages.outgoing_format"),
+        return TextUtil.toComponentBungee(getOrThrow("language.direct_messages.outgoing_format"),
                                           Placeholder.parsed("receiver", receiverName),
                                           Placeholder.component("message", message));
     }
 
     public @NotNull BaseComponent[] getDirectMessagesIncomingFormat(@NotNull String senderName,
                                                                     @NotNull Component message) {
-        return TextUtil.toComponentBungee(get("language.direct_messages.incoming_format"),
+        return TextUtil.toComponentBungee(getOrThrow("language.direct_messages.incoming_format"),
                                           Placeholder.parsed("sender", senderName),
                                           Placeholder.component("message", message));
     }
@@ -151,7 +151,7 @@ public class Configuration extends YamlFile {
     public @NotNull BaseComponent[] getDirectMessagesSpyFormat(@NotNull String senderName,
                                                                @NotNull String receiverName,
                                                                @NotNull Component message) {
-        return TextUtil.toComponentBungee(get("language.direct_messages.spy_format"),
+        return TextUtil.toComponentBungee(getOrThrow("language.direct_messages.spy_format"),
                                           Placeholder.parsed("sender", senderName),
                                           Placeholder.parsed("receiver", receiverName),
                                           Placeholder.component("message", message));

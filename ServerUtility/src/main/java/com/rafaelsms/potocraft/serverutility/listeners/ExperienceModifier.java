@@ -42,6 +42,10 @@ public class ExperienceModifier implements Listener {
         if (!event.getPlayer().hasPermission(Permissions.KEEP_EXPERIENCE)) {
             return;
         }
+        // If already keeping level, don't change anything
+        if (event.getKeepLevel()) {
+            return;
+        }
 
         int playerLevel = event.getPlayer().getLevel();
         int keptLevels = floor(playerLevel * plugin.getConfiguration().getExperienceKeptRatio());

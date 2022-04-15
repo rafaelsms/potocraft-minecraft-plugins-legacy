@@ -1,8 +1,7 @@
 package com.rafaelsms.potocraft.serverprofile.warps;
 
 import com.mongodb.client.model.Filters;
-import com.rafaelsms.potocraft.database.DatabaseStored;
-import com.rafaelsms.potocraft.database.LocationField;
+import com.rafaelsms.potocraft.database.CollectionProvider;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -11,21 +10,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class Warp extends DatabaseStored {
+public class Warp implements CollectionProvider {
 
     private final @NotNull String name;
-    private final @NotNull LocationField location;
+    private final @NotNull CachedLocationField location;
 
     public Warp(@NotNull Document document) {
         super(document);
         this.name = document.getString(Keys.NAME);
-        this.location = new LocationField(document.get(Keys.LOCATION, Document.class));
+        this.location = new CachedLocationField(document.get(Keys.LOCATION, Document.class));
     }
 
     public Warp(@NotNull String name, @NotNull Location location) {
         super();
         this.name = name.toLowerCase();
-        this.location = new LocationField(location);
+        this.location = new CachedLocationField(location);
     }
 
     public @NotNull String getName() {

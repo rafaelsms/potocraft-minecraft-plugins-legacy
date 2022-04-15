@@ -1,7 +1,7 @@
 package com.rafaelsms.potocraft.loginmanager.player;
 
 import com.mongodb.client.model.Filters;
-import com.rafaelsms.potocraft.database.DatabaseStored;
+import com.rafaelsms.potocraft.database.CollectionProvider;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Profile extends DatabaseStored {
+public class Profile implements CollectionProvider {
 
     private final @NotNull UUID playerId;
 

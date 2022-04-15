@@ -15,42 +15,42 @@ public class Configuration extends YamlFile {
     }
 
     public String getMongoURI() {
-        return get("configuration.database.mongo_uri");
+        return getOrThrow("configuration.database.mongo_uri");
     }
 
     public String getMongoDatabaseName() {
-        return get("configuration.database.database_name");
+        return getOrThrow("configuration.database.database_name");
     }
 
     public Boolean isMongoDatabaseExceptionFatal() {
-        return get("configuration.database.is_exception_fatal");
+        return getOrThrow("configuration.database.is_exception_fatal");
     }
 
     public String getMongoPlayerCollectionName() {
-        return get("configuration.database.player_collection_name");
+        return getOrThrow("configuration.database.player_collection_name");
     }
 
     public String getMongoKitCollectionName() {
-        return get("configuration.database.kit_collection_name");
+        return getOrThrow("configuration.database.kit_collection_name");
     }
 
     public long getSaveProfileTaskTimer() {
-        return Objects.requireNonNull(getLong("configuration.database.save_player_timer_task_ticks"));
+        return Objects.requireNonNull(getLongOrThrow("configuration.database.save_player_timer_task_ticks"));
     }
 
     public Component getFailedToRetrieveProfile() {
-        return TextUtil.toComponent(get("language.failed_to_retrieve_profile"));
+        return TextUtil.toComponent(getOrThrow("language.failed_to_retrieve_profile"));
     }
 
     public Component getPlayerOnlyCommand() {
-        return TextUtil.toComponent(get("language.player_only_command"));
+        return TextUtil.toComponent(getOrThrow("language.player_only_command"));
     }
 
     public Component getSomethingWentWrong() {
-        return TextUtil.toComponent(get("language.something_went_wrong"));
+        return TextUtil.toComponent(getOrThrow("language.something_went_wrong"));
     }
 
     public Component getKitCommandHelp() {
-        return TextUtil.toComponent(get("language.command.kit.help"));
+        return TextUtil.toComponent(getOrThrow("language.command.kit.help"));
     }
 }

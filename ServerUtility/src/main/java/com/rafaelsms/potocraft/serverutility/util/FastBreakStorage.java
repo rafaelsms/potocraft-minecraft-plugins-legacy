@@ -4,6 +4,7 @@ import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,7 +12,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 
 public class FastBreakStorage {
@@ -20,6 +23,8 @@ public class FastBreakStorage {
     };
 
     private final Object lock = new Object();
+    private final Map<UUID, Integer> playerHeldItemSlot = new HashMap<>();
+    private final Map<UUID, ItemStack> playerItemInHand = new HashMap<>();
     private final Map<Player, Map<Location, Block>> playerBlocks = new HashMap<>();
     private final Map<Location, Block> blocks = new HashMap<>();
 
@@ -82,6 +87,8 @@ public class FastBreakStorage {
             Map<Location, Block> existingMap = playerBlocks.getOrDefault(player, new LinkedHashMap<>());
             existingMap.putAll(blocks);
             this.blocks.putAll(blocks);
+            playerHeldItemSlot.put(player.getUniqueId(), player.getInventory().getHeldItemSlot());
+            playerItemInHand.put(player.getUniqueId(), player.getInventory().getItemInMainHand());
             playerBlocks.put(player, existingMap);
         }
     }
@@ -102,22 +109,34 @@ public class FastBreakStorage {
 
                 // Check if player left
                 if (!player.isOnline()) {
+                    playerHeldItemSlot.remove(player.getUniqueId());
+                    playerItemInHand.remove(player.getUniqueId());
                     iterator.remove();
                     continue;
                 }
 
                 if (playerBlocks.isEmpty()) {
+                    playerHeldItemSlot.remove(player.getUniqueId());
+                    playerItemInHand.remove(player.getUniqueId());
                     iterator.remove();
                     continue;
                 }
 
+                // Check if item in hand is the same for this tick. If it isn't, we will just remove all items
+                boolean sameItemInHand =
+                        playerHeldItemSlot.get(player.getUniqueId()) == player.getInventory().getHeldItemSlot() &&
+                        Objects.equals(playerItemInHand.get(player.getUniqueId()),
+                                       player.getInventory().getItemInMainHand());
                 int processedBlocks = 0;
                 Iterator<Block> blockIterator = playerBlocks.values().iterator();
                 while (blockIterator.hasNext()) {
                     Block block = blockIterator.next();
-                    player.breakBlock(block);
                     blockIterator.remove();
-                    consumeOnBreak.onBroken(block, player);
+                    blocks.remove(block.getLocation());
+                    if (sameItemInHand) {
+                        player.breakBlock(block);
+                        consumeOnBreak.onBroken(block, player);
+                    }
 
                     // Stop if broke too many blocks this tick already
                     processedBlocks++;
