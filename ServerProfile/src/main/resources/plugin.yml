@@ -9,6 +9,7 @@ load: POSTWORLD
 softdepend:
   - LuckPerms
   - Essentials
+  - WorldGuard
 commands:
   voltar:
     description: Go back to your location prior to teleport.

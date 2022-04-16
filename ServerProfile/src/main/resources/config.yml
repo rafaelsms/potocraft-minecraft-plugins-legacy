@@ -28,6 +28,7 @@ configuration:
     minimum_combat_type_to_drop_items: "player"
     out_of_combat_death_should_drop_experience: true
     minimum_combat_type_to_drop_experience: "mob"
+    minimum_combat_type_to_prevent_entry: "player"
     should_log_off_destroy_totem_first: false
     player_killer_time_seconds: 45
     blocked_commands:
@@ -125,3 +126,6 @@ language:
       <gold><bold>R A N K I N G</bold></gold>
       <list>
     ranking_entry: "<yellow>* <bold><username></bold></yellow> <gray>-</gray> <gold><killcount></gold><gray>/</gray><red><deathcount></red> <gray>(KD: <killdeathratio>)</gray>"
+  regions:
+    entering_region_members_names: "<green>Entrando em região protegida.</green> <gold>Membros protegidos:</gold> <yellow><membernames></yellow>."
+    leaving_region_members_names: "<red>Saindo de região protegida.</red> <gold>Membros:</gold> <yellow><membernames></yellow>."

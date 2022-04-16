@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 public class Configuration extends YamlFile {
@@ -150,6 +151,11 @@ public class Configuration extends YamlFile {
 
     public CombatType getDeathDroppingExperienceCombatTypeRequired() {
         String name = get("configuration.combat.minimum_combat_type_to_drop_experience");
+        return CombatType.valueOf(Objects.requireNonNull(name).toUpperCase());
+    }
+
+    public CombatType getPreventEnteringCombatTypeRequired() {
+        String name = get("configuration.combat.minimum_combat_type_to_prevent_entry");
         return CombatType.valueOf(Objects.requireNonNull(name).toUpperCase());
     }
 
@@ -439,5 +445,17 @@ public class Configuration extends YamlFile {
                                     Placeholder.unparsed("killdeathratio", killDeathRatioString),
                                     Placeholder.unparsed("killcount", String.valueOf(playerKills)),
                                     Placeholder.unparsed("deathcount", String.valueOf(playerDeaths)));
+    }
+
+    public @NotNull Component getEnteringRegionMessage(@NotNull Set<String> memberNames) {
+        return TextUtil.toComponent(get("language.regions.entering_region_members_names"),
+                                    Placeholder.parsed("membernames",
+                                                       TextUtil.joinStrings(memberNames, ", ", str -> str)));
+    }
+
+    public @NotNull Component getLeavingRegionMessage(@NotNull Set<String> memberNames) {
+        return TextUtil.toComponent(get("language.regions.leaving_region_members_names"),
+                                    Placeholder.parsed("membernames",
+                                                       TextUtil.joinStrings(memberNames, ", ", str -> str)));
     }
 }

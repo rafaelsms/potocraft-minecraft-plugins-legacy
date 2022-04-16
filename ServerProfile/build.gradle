@@ -17,6 +17,10 @@ repositories {
         name('essentialsx-releases')
         url('https://repo.essentialsx.net/releases/')
     }
+    // WorldGuard
+    maven {
+        url('https://maven.enginehub.org/repo/')
+    }
 }
 
 dependencies {
@@ -27,6 +31,7 @@ dependencies {
     implementation('org.mongodb:mongodb-driver:3.12.10')
     implementation('com.google.code.gson:gson:2.9.0')
     compileOnly('org.purpurmc.purpur:purpur-api:1.18.2-R0.1-SNAPSHOT')
+    compileOnly('com.sk89q.worldguard:worldguard-bukkit:7.0.6')
     compileOnly('net.essentialsx:EssentialsX:2.19.2')
 }
 

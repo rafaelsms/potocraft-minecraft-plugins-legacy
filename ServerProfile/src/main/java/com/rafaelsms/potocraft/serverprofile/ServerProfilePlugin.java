@@ -25,6 +25,13 @@ import com.rafaelsms.potocraft.serverprofile.listeners.HardcoreListener;
 import com.rafaelsms.potocraft.serverprofile.listeners.StatisticsListener;
 import com.rafaelsms.potocraft.serverprofile.listeners.TotemLimiter;
 import com.rafaelsms.potocraft.serverprofile.listeners.UserManager;
+import com.rafaelsms.potocraft.serverprofile.listeners.WorldGuardNoEnteringInCombatFlag;
+import com.rafaelsms.potocraft.serverprofile.listeners.WorldGuardShowMemberFlag;
+import com.rafaelsms.potocraft.serverprofile.util.WorldGuardUtil;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.flags.RegionGroup;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.session.SessionManager;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
@@ -35,8 +42,13 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class ServerProfilePlugin extends JavaPlugin {
+
+    public static StateFlag ENTERING_IN_COMBAT_FLAG = null;
+    public static StateFlag REQUIRE_INITIAL_MEMBER_DAMAGE = null;
+    public static StateFlag SHOW_MEMBERS_FLAG = null;
 
     private final @NotNull Configuration configuration;
     private final @NotNull Database database;
@@ -63,6 +75,25 @@ public class ServerProfilePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new TotemLimiter(this), this);
         getServer().getPluginManager().registerEvents(new EssentialsImporter(this), this);
         getServer().getPluginManager().registerEvents(new HardcoreListener(this), this);
+
+        // Register WorldGuard flags
+        ENTERING_IN_COMBAT_FLAG =
+                WorldGuardUtil.registerFlag(this, "entering-while-in-combat", true, RegionGroup.ALL).orElseThrow();
+        REQUIRE_INITIAL_MEMBER_DAMAGE =
+                WorldGuardUtil.registerFlag(this, "require-initial-member-damage-to-pvp", false, RegionGroup.ALL)
+                              .orElseThrow();
+        SHOW_MEMBERS_FLAG =
+                WorldGuardUtil.registerFlag(this, "show-members-when-entering", false, RegionGroup.ALL).orElseThrow();
+        // Register WorldGuard handlers
+        getWorldGuard().ifPresent(instance -> {
+            SessionManager sessionManager = instance.getPlatform().getSessionManager();
+            // No entering while in combat
+            WorldGuardNoEnteringInCombatFlag.setPlugin(this);
+            sessionManager.registerHandler(WorldGuardNoEnteringInCombatFlag.FACTORY, null);
+            // Showing member list on enter region
+            WorldGuardShowMemberFlag.setPlugin(this);
+            sessionManager.registerHandler(WorldGuardShowMemberFlag.FACTORY, null);
+        });
 
         // Register commands
         registerCommand("voltar", new BackCommand(this));
@@ -109,6 +140,10 @@ public class ServerProfilePlugin extends JavaPlugin {
 
     public @NotNull UserManager getUserManager() {
         return userManager;
+    }
+
+    public @NotNull Optional<WorldGuard> getWorldGuard() {
+        return Optional.ofNullable(WorldGuard.getInstance());
     }
 
     public Logger logger() {
