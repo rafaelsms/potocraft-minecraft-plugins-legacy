@@ -129,3 +129,4 @@ language:
   regions:
     entering_region_members_names: "<green>Entrando em região protegida.</green> <gold>Membros protegidos:</gold> <yellow><membernames></yellow>."
     leaving_region_members_names: "<red>Saindo de região protegida.</red> <gold>Membros:</gold> <yellow><membernames></yellow>."
+    unknown_player: "jogador desconhecido"

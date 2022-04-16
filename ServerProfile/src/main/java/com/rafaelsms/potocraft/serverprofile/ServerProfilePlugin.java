@@ -58,6 +58,13 @@ public class ServerProfilePlugin extends JavaPlugin {
         this.configuration = new Configuration(this);
         this.database = new Database(this);
         this.userManager = new UserManager(this);
+        // Register WorldGuard flags
+        ENTERING_IN_COMBAT_FLAG =
+                WorldGuardUtil.registerFlag(this, "entering-while-in-combat", true, RegionGroup.ALL).orElseThrow();
+        REQUIRE_INITIAL_MEMBER_DAMAGE =
+                WorldGuardUtil.registerFlag(this, "require-member-hit-to-pvp", false, RegionGroup.ALL).orElseThrow();
+        SHOW_MEMBERS_FLAG =
+                WorldGuardUtil.registerFlag(this, "show-members-when-entering", false, RegionGroup.ALL).orElseThrow();
     }
 
     // TODO make exit proxy don't kill people (warn servers)
@@ -76,14 +83,6 @@ public class ServerProfilePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EssentialsImporter(this), this);
         getServer().getPluginManager().registerEvents(new HardcoreListener(this), this);
 
-        // Register WorldGuard flags
-        ENTERING_IN_COMBAT_FLAG =
-                WorldGuardUtil.registerFlag(this, "entering-while-in-combat", true, RegionGroup.ALL).orElseThrow();
-        REQUIRE_INITIAL_MEMBER_DAMAGE =
-                WorldGuardUtil.registerFlag(this, "require-initial-member-damage-to-pvp", false, RegionGroup.ALL)
-                              .orElseThrow();
-        SHOW_MEMBERS_FLAG =
-                WorldGuardUtil.registerFlag(this, "show-members-when-entering", false, RegionGroup.ALL).orElseThrow();
         // Register WorldGuard handlers
         getWorldGuard().ifPresent(instance -> {
             SessionManager sessionManager = instance.getPlatform().getSessionManager();

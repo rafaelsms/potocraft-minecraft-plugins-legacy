@@ -14,7 +14,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 public class WorldGuardShowMemberFlag extends Handler {
 
@@ -46,7 +48,7 @@ public class WorldGuardShowMemberFlag extends Handler {
                                    Set<ProtectedRegion> exited,
                                    MoveType moveType) {
         Player bukkitPlayer = BukkitAdapter.adapt(player);
-        for (ProtectedRegion protectedRegion : entered) {
+        for (ProtectedRegion protectedRegion : toSet.getRegions()) {
             if (protectedRegion.getFlag(ServerProfilePlugin.SHOW_MEMBERS_FLAG) == StateFlag.State.ALLOW) {
                 bukkitPlayer.sendMessage(plugin.getConfiguration()
                                                .getEnteringRegionMessage(getMembersNames(protectedRegion)));
@@ -63,8 +65,14 @@ public class WorldGuardShowMemberFlag extends Handler {
 
     private Set<String> getMembersNames(@NotNull ProtectedRegion protectedRegion) {
         Set<String> playerNames = new LinkedHashSet<>();
-        playerNames.addAll(protectedRegion.getOwners().getPlayers());
-        playerNames.addAll(protectedRegion.getMembers().getPlayers());
+        for (UUID playerIds : protectedRegion.getOwners().getUniqueIds()) {
+            playerNames.add(Optional.ofNullable(plugin.getServer().getOfflinePlayer(playerIds).getName())
+                                    .orElse(plugin.getConfiguration().getUnknownPlayerName()));
+        }
+        for (UUID playerIds : protectedRegion.getMembers().getUniqueIds()) {
+            playerNames.add(Optional.ofNullable(plugin.getServer().getOfflinePlayer(playerIds).getName())
+                                    .orElse(plugin.getConfiguration().getUnknownPlayerName()));
+        }
         return playerNames;
     }
 }

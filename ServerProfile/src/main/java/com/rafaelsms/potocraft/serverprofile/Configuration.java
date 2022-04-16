@@ -458,4 +458,8 @@ public class Configuration extends YamlFile {
                                     Placeholder.parsed("membernames",
                                                        TextUtil.joinStrings(memberNames, ", ", str -> str)));
     }
+
+    public @NotNull String getUnknownPlayerName() {
+        return Objects.requireNonNull(get("language.regions.unknown_player"));
+    }
 }
