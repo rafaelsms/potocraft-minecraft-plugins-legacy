@@ -65,7 +65,6 @@ public abstract class WorldGuardStateFlagRegister implements Listener {
         RegionManager regionManager =
                 worldGuard.get().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(location.getWorld()));
         if (regionManager == null) {
-            plugin.logger().error("No region manager found! Preventing item damage as a precaution.");
             return Optional.empty();
         }
 
