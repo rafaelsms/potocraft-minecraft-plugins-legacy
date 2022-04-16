@@ -127,6 +127,7 @@ language:
       <list>
     ranking_entry: "<yellow>* <bold><username></bold></yellow> <gray>-</gray> <gold><killcount></gold><gray>/</gray><red><deathcount></red> <gray>(KD: <killdeathratio>)</gray>"
   regions:
-    entering_region_members_names: "<green>Entrando em região protegida.</green> <gold>Membros protegidos:</gold> <yellow><membernames></yellow>."
-    leaving_region_members_names: "<red>Saindo de região protegida.</red> <gold>Membros:</gold> <yellow><membernames></yellow>."
+    entering_region_members_names: "<green>Entrando em região protegida.</green> <gold>Membros protegidos:</gold> <yellow><list></yellow>."
+    leaving_region_members_names: "<red>Saindo de região protegida.</red> <gold>Membros:</gold> <yellow><list></yellow>."
     unknown_player: "jogador desconhecido"
+    no_memßber: "nenhum"

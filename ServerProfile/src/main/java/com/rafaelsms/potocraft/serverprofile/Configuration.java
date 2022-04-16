@@ -448,18 +448,32 @@ public class Configuration extends YamlFile {
     }
 
     public @NotNull Component getEnteringRegionMessage(@NotNull Set<String> memberNames) {
+        String memberList;
+        if (memberNames.isEmpty()) {
+            memberList = getRegionWithoutMembers();
+        } else {
+            memberList = TextUtil.joinStrings(memberNames, ", ", str -> str);
+        }
         return TextUtil.toComponent(get("language.regions.entering_region_members_names"),
-                                    Placeholder.parsed("membernames",
-                                                       TextUtil.joinStrings(memberNames, ", ", str -> str)));
+                                    Placeholder.parsed("list", memberList));
     }
 
     public @NotNull Component getLeavingRegionMessage(@NotNull Set<String> memberNames) {
+        String memberList;
+        if (memberNames.isEmpty()) {
+            memberList = getRegionWithoutMembers();
+        } else {
+            memberList = TextUtil.joinStrings(memberNames, ", ", str -> str);
+        }
         return TextUtil.toComponent(get("language.regions.leaving_region_members_names"),
-                                    Placeholder.parsed("membernames",
-                                                       TextUtil.joinStrings(memberNames, ", ", str -> str)));
+                                    Placeholder.parsed("list", memberList));
     }
 
     public @NotNull String getUnknownPlayerName() {
         return Objects.requireNonNull(get("language.regions.unknown_player"));
+    }
+
+    public @NotNull String getRegionWithoutMembers() {
+        return Objects.requireNonNull(get("language.regions.no_member"));
     }
 }

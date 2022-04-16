@@ -5,7 +5,6 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.session.MoveType;
 import com.sk89q.worldguard.session.Session;
@@ -13,7 +12,7 @@ import com.sk89q.worldguard.session.handler.Handler;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -47,32 +46,45 @@ public class WorldGuardShowMemberFlag extends Handler {
                                    Set<ProtectedRegion> entered,
                                    Set<ProtectedRegion> exited,
                                    MoveType moveType) {
-        Player bukkitPlayer = BukkitAdapter.adapt(player);
-        for (ProtectedRegion protectedRegion : toSet.getRegions()) {
-            if (protectedRegion.getFlag(ServerProfilePlugin.SHOW_MEMBERS_FLAG) == StateFlag.State.ALLOW) {
-                bukkitPlayer.sendMessage(plugin.getConfiguration()
-                                               .getEnteringRegionMessage(getMembersNames(protectedRegion)));
-            }
+        // Ignore if no change in which regions we are in
+        if (entered.isEmpty() && exited.isEmpty()) {
+            return true;
         }
+        // Ignore if no show members flag
+        if (!toSet.testState(player, ServerProfilePlugin.SHOW_MEMBERS_FLAG)) {
+            return true;
+        }
+
+        // For each entered region, show its members
+        Player bukkitPlayer = BukkitAdapter.adapt(player);
+        Set<String> enteredRegionsMembers = new HashSet<>();
+        for (ProtectedRegion protectedRegion : entered) {
+            accumulateMembersNames(protectedRegion, enteredRegionsMembers);
+        }
+        if (!enteredRegionsMembers.isEmpty()) {
+            bukkitPlayer.sendMessage(plugin.getConfiguration().getEnteringRegionMessage(enteredRegionsMembers));
+        }
+
+        // For each exiting region, show its members
+        Set<String> exitingRegionsMembers = new HashSet<>();
         for (ProtectedRegion protectedRegion : exited) {
-            if (protectedRegion.getFlag(ServerProfilePlugin.SHOW_MEMBERS_FLAG) == StateFlag.State.ALLOW) {
-                bukkitPlayer.sendMessage(plugin.getConfiguration()
-                                               .getLeavingRegionMessage(getMembersNames(protectedRegion)));
-            }
+            accumulateMembersNames(protectedRegion, exitingRegionsMembers);
+        }
+        if (!exitingRegionsMembers.isEmpty()) {
+            bukkitPlayer.sendMessage(plugin.getConfiguration().getLeavingRegionMessage(exitingRegionsMembers));
         }
         return true;
     }
 
-    private Set<String> getMembersNames(@NotNull ProtectedRegion protectedRegion) {
-        Set<String> playerNames = new LinkedHashSet<>();
-        for (UUID playerIds : protectedRegion.getOwners().getUniqueIds()) {
-            playerNames.add(Optional.ofNullable(plugin.getServer().getOfflinePlayer(playerIds).getName())
-                                    .orElse(plugin.getConfiguration().getUnknownPlayerName()));
+    private void accumulateMembersNames(@NotNull ProtectedRegion protectedRegion,
+                                        @NotNull Set<String> accumulatingNames) {
+        for (UUID playerIds : protectedRegion.getOwners().getPlayerDomain().getUniqueIds()) {
+            accumulatingNames.add(Optional.ofNullable(plugin.getServer().getOfflinePlayer(playerIds).getName())
+                                          .orElse(plugin.getConfiguration().getUnknownPlayerName()));
         }
-        for (UUID playerIds : protectedRegion.getMembers().getUniqueIds()) {
-            playerNames.add(Optional.ofNullable(plugin.getServer().getOfflinePlayer(playerIds).getName())
-                                    .orElse(plugin.getConfiguration().getUnknownPlayerName()));
+        for (UUID playerIds : protectedRegion.getMembers().getPlayerDomain().getUniqueIds()) {
+            accumulatingNames.add(Optional.ofNullable(plugin.getServer().getOfflinePlayer(playerIds).getName())
+                                          .orElse(plugin.getConfiguration().getUnknownPlayerName()));
         }
-        return playerNames;
     }
 }

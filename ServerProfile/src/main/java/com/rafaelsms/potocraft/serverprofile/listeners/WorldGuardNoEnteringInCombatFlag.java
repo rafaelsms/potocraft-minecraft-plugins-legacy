@@ -45,16 +45,22 @@ public class WorldGuardNoEnteringInCombatFlag extends Handler {
                                    Set<ProtectedRegion> entered,
                                    Set<ProtectedRegion> exited,
                                    MoveType moveType) {
+        // Ignore if on the same regions (we just prevent entry)
+        if (entered.isEmpty()) {
+            return true;
+        }
         // Ignore if it allows entering region while in combat
         if (toSet.testState(player, ServerProfilePlugin.ENTERING_IN_COMBAT_FLAG)) {
             return true;
         }
+
         Player bukkitPlayer = BukkitAdapter.adapt(player);
         User user = plugin.getUserManager().getUser(bukkitPlayer);
         // Ignore if player is not in combat
         if (!user.isInCombat(plugin.getConfiguration().getPreventEnteringCombatTypeRequired())) {
             return true;
         }
+
         // Prevent entry if region has no PVP
         if (!toSet.testState(player, Flags.PVP)) {
             return false;
@@ -65,6 +71,7 @@ public class WorldGuardNoEnteringInCombatFlag extends Handler {
                 return false;
             }
         }
+        // Otherwise, allow (PVP is enabled and player is not member)
         return true;
     }
 }
