@@ -72,7 +72,7 @@ public class LoginCommand extends Command implements TabExecutor {
 
         // Attempt password format match
         String passwordString = args[0];
-        if (LoginUtil.isValidPassword(passwordString)) {
+        if (!LoginUtil.isValidPassword(passwordString)) {
             player.sendMessage(plugin.getConfiguration().getCommandLoginHelp());
             return;
         }

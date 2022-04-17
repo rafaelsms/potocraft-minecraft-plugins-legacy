@@ -98,9 +98,8 @@ public class RegisterCommand extends Command implements TabExecutor {
         // Save status
         try {
             profile.setLoggedIn(LoginUtil.getInetAddress(player.getSocketAddress()).orElse(null));
-            player.sendMessage(plugin.getConfiguration().getCommandLoggedIn());
             plugin.getDatabase().saveProfile(profile);
-            sender.sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
+            player.sendMessage(plugin.getConfiguration().getCommandLoggedIn());
         } catch (Database.DatabaseException ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
         }
