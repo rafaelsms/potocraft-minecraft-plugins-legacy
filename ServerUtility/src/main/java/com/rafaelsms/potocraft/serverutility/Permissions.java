@@ -2,6 +2,8 @@ package com.rafaelsms.potocraft.serverutility;
 
 public final class Permissions {
 
+    public static final String COLORED_NAME_PREFIX = "potocraft.server.colored_name.";
+
     public static final String QUICK_BREAK_TREES = "potocraft.server.quick_break.trees";
     public static final String QUICK_BREAK_ORES = "potocraft.server.quick_break.ores";
     public static final String QUICK_BREAK_CROP = "potocraft.server.quick_break.crop";
