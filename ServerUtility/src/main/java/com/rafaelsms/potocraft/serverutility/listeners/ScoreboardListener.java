@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerLoadEvent;
@@ -18,6 +19,10 @@ import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class ScoreboardListener implements Listener {
 
@@ -45,17 +50,36 @@ public class ScoreboardListener implements Listener {
         plugin.logger().info("Registered colored scoreboard.");
     }
 
+    @EventHandler
+    private void unsetPlayerScoreboard(AsyncPlayerPreLoginEvent event) {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            // Delete player's team
+            Team playerTeam = scoreboard.getTeam(event.getName());
+            if (playerTeam != null) {
+                playerTeam.unregister();
+            }
+            future.complete(null);
+        });
+        try {
+            future.get(500, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException exception) {
+            plugin.logger().warn("Failed to wait Scoreboard removal:", exception);
+        }
+    }
+
     @SuppressWarnings("deprecation")
     @EventHandler
     private void setPlayersScoreboard(PlayerJoinEvent event) {
+        // Set player's scoreboard
         event.getPlayer().setScoreboard(scoreboard);
         // Remove player's team if existent
-        Team existingTeam = scoreboard.getTeam(event.getPlayer().getUniqueId().toString());
+        Team existingTeam = scoreboard.getTeam(event.getPlayer().getName());
         if (existingTeam != null) {
             existingTeam.unregister();
         }
         // Create a new team
-        Team playerTeam = scoreboard.registerNewTeam(event.getPlayer().getUniqueId().toString());
+        Team playerTeam = scoreboard.registerNewTeam(event.getPlayer().getName());
         // Add player
         playerTeam.addEntry(event.getPlayer().getName());
         Optional<ChatColor> permissionColor = getPlayerPermissionColor(event.getPlayer());
@@ -71,7 +95,7 @@ public class ScoreboardListener implements Listener {
     @EventHandler
     private void unsetPlayerScoreboard(PlayerQuitEvent event) {
         // Delete player's team
-        Team playerTeam = scoreboard.getTeam(event.getPlayer().getUniqueId().toString());
+        Team playerTeam = scoreboard.getTeam(event.getPlayer().getName());
         if (playerTeam != null) {
             playerTeam.unregister();
         }
