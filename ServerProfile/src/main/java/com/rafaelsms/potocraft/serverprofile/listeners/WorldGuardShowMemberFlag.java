@@ -78,11 +78,11 @@ public class WorldGuardShowMemberFlag extends Handler {
 
     private void accumulateMembersNames(@NotNull ProtectedRegion protectedRegion,
                                         @NotNull Set<String> accumulatingNames) {
-        for (UUID playerIds : protectedRegion.getOwners().getPlayerDomain().getUniqueIds()) {
+        for (UUID playerIds : protectedRegion.getOwners().getUniqueIds()) {
             accumulatingNames.add(Optional.ofNullable(plugin.getServer().getOfflinePlayer(playerIds).getName())
                                           .orElse(plugin.getConfiguration().getUnknownPlayerName()));
         }
-        for (UUID playerIds : protectedRegion.getMembers().getPlayerDomain().getUniqueIds()) {
+        for (UUID playerIds : protectedRegion.getMembers().getUniqueIds()) {
             accumulatingNames.add(Optional.ofNullable(plugin.getServer().getOfflinePlayer(playerIds).getName())
                                           .orElse(plugin.getConfiguration().getUnknownPlayerName()));
         }

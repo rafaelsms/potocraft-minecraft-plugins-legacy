@@ -71,7 +71,7 @@ public class WorldGuardNoEnteringInCombatFlag extends Handler {
                 return false;
             }
         }
-        // Otherwise, allow (PVP is enabled and player is not member)
+        // Otherwise, allow (PVP is enabled and player is not member, thus not being protected in this region)
         return true;
     }
 }
