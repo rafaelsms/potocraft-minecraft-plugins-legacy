@@ -4,6 +4,7 @@ import com.rafaelsms.potocraft.database.Database;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import com.rafaelsms.potocraft.loginmanager.player.ReportEntry;
+import com.rafaelsms.potocraft.loginmanager.util.LoginUtil;
 import com.rafaelsms.potocraft.util.Util;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -84,8 +85,7 @@ public class ReportsCheckerListener implements Listener {
         }
 
         // Check if is a player
-        Optional<ProxiedPlayer> playerOptional =
-                com.rafaelsms.potocraft.loginmanager.util.Util.getPlayer(event.getSender());
+        Optional<ProxiedPlayer> playerOptional = LoginUtil.getPlayer(event.getSender());
         if (playerOptional.isEmpty()) {
             return;
         }
@@ -127,8 +127,7 @@ public class ReportsCheckerListener implements Listener {
         }
 
         // Check if is a player
-        Optional<ProxiedPlayer> playerOptional =
-                com.rafaelsms.potocraft.loginmanager.util.Util.getPlayer(event.getSender());
+        Optional<ProxiedPlayer> playerOptional = LoginUtil.getPlayer(event.getSender());
         if (playerOptional.isEmpty()) {
             return;
         }

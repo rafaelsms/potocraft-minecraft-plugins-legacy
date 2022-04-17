@@ -94,12 +94,12 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponentBungee(get("language.commands.offline_players_only"));
     }
 
-    public @NotNull BaseComponent[] getCommandIncorrectPin() {
-        return TextUtil.toComponentBungee(get("language.commands.incorrect_pin"));
+    public @NotNull BaseComponent[] getCommandIncorrectPassword() {
+        return TextUtil.toComponentBungee(get("language.commands.incorrect_password"));
     }
 
-    public @NotNull BaseComponent[] getCommandIncorrectPinFormat() {
-        return TextUtil.toComponentBungee(get("language.commands.incorrect_pin_format"));
+    public @NotNull BaseComponent[] getCommandIncorrectPasswordFormat() {
+        return TextUtil.toComponentBungee(get("language.commands.incorrect_password_format"));
     }
 
     public @NotNull BaseComponent[] getCommandLoggedInOnly() {
@@ -122,36 +122,36 @@ public class Configuration extends YamlFile {
         return TextUtil.toComponentBungee(get("language.commands.failed_to_save_profile"));
     }
 
-    public @NotNull BaseComponent[] getCommandChangePinHelp() {
-        return TextUtil.toComponentBungee(get("language.commands.change_pin.help"));
+    public @NotNull BaseComponent[] getCommandChangePasswordHelp() {
+        return TextUtil.toComponentBungee(get("language.commands.change_password.help"));
     }
 
-    public @NotNull BaseComponent[] getCommandChangePinInvalidPins() {
-        return TextUtil.toComponentBungee(get("language.commands.change_pin.invalid_pins"));
+    public @NotNull BaseComponent[] getCommandChangePasswordDoNotMatch() {
+        return TextUtil.toComponentBungee(get("language.commands.change_password.passwords_do_not_match"));
     }
 
-    public @NotNull BaseComponent[] getCommandChangePinRegisterFirst() {
-        return TextUtil.toComponentBungee(get("language.commands.change_pin.register_instead"));
+    public @NotNull BaseComponent[] getCommandChangePasswordRegisterFirst() {
+        return TextUtil.toComponentBungee(get("language.commands.change_password.register_instead"));
     }
 
-    public @NotNull BaseComponent[] getCommandChangedPinSuccessful() {
-        return TextUtil.toComponentBungee(get("language.commands.change_pin.success"));
+    public @NotNull BaseComponent[] getCommandChangedPasswordSuccessful() {
+        return TextUtil.toComponentBungee(get("language.commands.change_password.success"));
     }
 
     public @NotNull BaseComponent[] getCommandRegisterHelp() {
         return TextUtil.toComponentBungee(get("language.commands.register.help"));
     }
 
-    public @NotNull BaseComponent[] getCommandRegisterInvalidPin() {
-        return TextUtil.toComponentBungee(get("language.commands.register.invalid_pins"));
+    public @NotNull BaseComponent[] getCommandRegisterPasswordsDoNotMatch() {
+        return TextUtil.toComponentBungee(get("language.commands.register.passwords_do_not_match"));
     }
 
     public @NotNull BaseComponent[] getCommandRegisterAccountLimitForAddress() {
         return TextUtil.toComponentBungee(get("language.commands.register.max_accounts_per_address_reached"));
     }
 
-    public @NotNull BaseComponent[] getCommandRegisterShouldChangePinInstead() {
-        return TextUtil.toComponentBungee(get("language.commands.register.change_pin_instead"));
+    public @NotNull BaseComponent[] getCommandRegisterShouldChangePasswordInstead() {
+        return TextUtil.toComponentBungee(get("language.commands.register.change_password_instead"));
     }
 
     public @NotNull BaseComponent[] getCommandRegisterShouldLoginInstead() {
@@ -172,10 +172,6 @@ public class Configuration extends YamlFile {
 
     public @NotNull BaseComponent[] getCommandNoServerAvailable() {
         return TextUtil.toComponentBungee(get("language.commands.login.no_server_available"));
-    }
-
-    public @NotNull BaseComponent[] getCommandLoginWithWeakPin() {
-        return TextUtil.toComponentBungee(get("language.commands.login.weak_pin_used"));
     }
 
     public @NotNull BaseComponent[] getCommandUnbanHelp() {
@@ -270,6 +266,8 @@ public class Configuration extends YamlFile {
                                           Placeholder.parsed("user_name", profile.getLastPlayerName()),
                                           Placeholder.parsed("user_id", profile.getPlayerId().toString()),
                                           Placeholder.parsed("user_ip", profile.getLastAddress().orElse("?")),
+                                          Placeholder.unparsed("user_has_password",
+                                                               profile.hasPassword() ? "yes" : "no"),
                                           Placeholder.unparsed("server_name", profile.getLastServerName().orElse("?")),
                                           Placeholder.unparsed("play_time", playTime),
                                           Placeholder.unparsed("join_date", lastJoinDate),

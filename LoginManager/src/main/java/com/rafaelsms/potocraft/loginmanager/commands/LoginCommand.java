@@ -4,8 +4,7 @@ import com.rafaelsms.potocraft.database.Database;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
-import com.rafaelsms.potocraft.loginmanager.util.Util;
-import com.rafaelsms.potocraft.util.TextUtil;
+import com.rafaelsms.potocraft.loginmanager.util.LoginUtil;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -16,11 +15,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 public class LoginCommand extends Command implements TabExecutor {
-
-    private final Pattern pinExtractor = Pattern.compile("^\\d{6}$", Pattern.CASE_INSENSITIVE);
 
     private final @NotNull LoginManagerPlugin plugin;
 
@@ -42,7 +38,7 @@ public class LoginCommand extends Command implements TabExecutor {
             return;
         }
 
-        if (args.length != 1 || !pinExtractor.matcher(args[0]).matches()) {
+        if (args.length != 1 || !LoginUtil.isValidPassword(args[0])) {
             player.sendMessage(plugin.getConfiguration().getCommandLoginHelp());
             return;
         }
@@ -59,7 +55,7 @@ public class LoginCommand extends Command implements TabExecutor {
             profile = profileOptional.get();
 
             // Check if is online
-            if (Util.isPlayerLoggedIn(plugin, profile, player)) {
+            if (LoginUtil.isPlayerLoggedIn(plugin, profile, player)) {
                 player.sendMessage(plugin.getConfiguration().getCommandLoginAlreadyLoggedIn());
                 return;
             }
@@ -68,34 +64,28 @@ public class LoginCommand extends Command implements TabExecutor {
             return;
         }
 
-        // Does not have a PIN => warn to register
-        if (!profile.hasPin()) {
+        // Does not have a password => warn to register
+        if (!profile.hasPassword()) {
             player.sendMessage(plugin.getConfiguration().getCommandLoginRegisterFirst());
             return;
         }
 
-        // Attempt PIN format match
-        Optional<Integer> pinOptional = TextUtil.parsePin(args[0]);
-        if (pinOptional.isEmpty()) {
+        // Attempt password format match
+        String passwordString = args[0];
+        if (LoginUtil.isValidPassword(passwordString)) {
             player.sendMessage(plugin.getConfiguration().getCommandLoginHelp());
             return;
         }
 
-        // Check if we couldn't set pin
-        if (!profile.isPinValid(pinOptional.get())) {
-            player.disconnect(plugin.getConfiguration().getCommandIncorrectPin());
+        // Check if we couldn't validate password
+        if (!profile.isPasswordValid(passwordString)) {
+            player.disconnect(plugin.getConfiguration().getCommandIncorrectPassword());
             return;
-        }
-
-        if (pinOptional.get().equals(98765) || pinOptional.get().equals(123456)) {
-            for (int i = 0; i < 3; i++) {
-                player.sendMessage(plugin.getConfiguration().getCommandLoginWithWeakPin());
-            }
         }
 
         try {
             // Set as logged in and save
-            profile.setLoggedIn(Util.getInetAddress(player.getSocketAddress()).orElse(null));
+            profile.setLoggedIn(LoginUtil.getInetAddress(player.getSocketAddress()).orElse(null));
             player.sendMessage(plugin.getConfiguration().getCommandLoggedIn());
             plugin.getDatabase().saveProfile(profile);
         } catch (Database.DatabaseException ignored) {
@@ -108,13 +98,13 @@ public class LoginCommand extends Command implements TabExecutor {
             if (serverInfo != null) {
                 player.connect(serverInfo, (result, error) -> {
                     if (error != null || result == null || !result) {
-                        Util.sendPlayerToDefaultServer(plugin, player);
+                        LoginUtil.sendPlayerToDefaultServer(plugin, player);
                     }
                 }, ServerConnectEvent.Reason.PLUGIN);
                 return;
             }
         }
-        Util.sendPlayerToDefaultServer(plugin, player);
+        LoginUtil.sendPlayerToDefaultServer(plugin, player);
     }
 
     @Override

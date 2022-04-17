@@ -3,7 +3,7 @@ package com.rafaelsms.potocraft.loginmanager.listeners;
 import com.rafaelsms.potocraft.database.Database;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
-import com.rafaelsms.potocraft.loginmanager.util.Util;
+import com.rafaelsms.potocraft.loginmanager.util.LoginUtil;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerConnectEvent;
@@ -47,7 +47,7 @@ public class RedirectPlayerListener implements Listener {
         }
 
         // Check if player is logged off
-        if ((profileOptional.isEmpty() || !Util.isPlayerLoggedIn(plugin, profileOptional.get(), player))) {
+        if ((profileOptional.isEmpty() || !LoginUtil.isPlayerLoggedIn(plugin, profileOptional.get(), player))) {
             Optional<ServerInfo> loginServer = getLoginServer();
             if (loginServer.isPresent()) {
                 // Send to login server

@@ -2,7 +2,7 @@ package com.rafaelsms.potocraft.loginmanager.listeners;
 
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
-import com.rafaelsms.potocraft.loginmanager.util.Util;
+import com.rafaelsms.potocraft.loginmanager.util.LoginUtil;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.TabCompleteEvent;
@@ -37,7 +37,7 @@ public class LoggedOffPlayerListener implements Listener {
             return;
         }
 
-        Util.getPlayer(event.getSender()).ifPresent(sender -> {
+        LoginUtil.getPlayer(event.getSender()).ifPresent(sender -> {
             // Ignore if logged on
             if (isPlayerLoggedOn(sender)) {
                 return;
@@ -53,7 +53,7 @@ public class LoggedOffPlayerListener implements Listener {
             return;
         }
 
-        Util.getPlayer(event.getSender()).ifPresent(sender -> {
+        LoginUtil.getPlayer(event.getSender()).ifPresent(sender -> {
             // Ignore if logged on
             if (isPlayerLoggedOn(sender)) {
                 return;
@@ -88,7 +88,7 @@ public class LoggedOffPlayerListener implements Listener {
             return;
         }
 
-        Util.getPlayer(event.getSender()).ifPresent(sender -> {
+        LoginUtil.getPlayer(event.getSender()).ifPresent(sender -> {
             // Ignore if logged on
             if (isPlayerLoggedOn(sender)) {
                 return;
@@ -122,6 +122,6 @@ public class LoggedOffPlayerListener implements Listener {
             return true;
         }
         Optional<Profile> profile = plugin.getDatabase().getProfileCatching(player.getUniqueId());
-        return profile.isPresent() && Util.isPlayerLoggedIn(plugin, profile.get(), player);
+        return profile.isPresent() && LoginUtil.isPlayerLoggedIn(plugin, profile.get(), player);
     }
 }

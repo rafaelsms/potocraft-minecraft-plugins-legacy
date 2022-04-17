@@ -1,8 +1,8 @@
 package com.rafaelsms.potocraft.loginmanager.listeners;
 
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
+import com.rafaelsms.potocraft.loginmanager.util.LoginUtil;
 import com.rafaelsms.potocraft.loginmanager.util.PlayerType;
-import com.rafaelsms.potocraft.loginmanager.util.Util;
 import com.rafaelsms.potocraft.util.TextUtil;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -93,9 +93,9 @@ public class PlayerTypeManager implements Listener {
               .info("Player {} (uuid = {}, address = {}) connected with type {}",
                     event.getPlayer().getName(),
                     event.getPlayer().getUniqueId(),
-                    Util.getInetAddress(event.getPlayer().getSocketAddress())
-                        .map(TextUtil::getIpAddress)
-                        .orElse("socket address"),
+                    LoginUtil.getInetAddress(event.getPlayer().getSocketAddress())
+                             .map(TextUtil::getIpAddress)
+                             .orElse("socket address"),
                     getPlayerType(event.getPlayer()));
     }
 
@@ -105,9 +105,9 @@ public class PlayerTypeManager implements Listener {
               .info("Player {} (uuid = {}, address = {}) disconnected with type {}",
                     event.getPlayer().getName(),
                     event.getPlayer().getUniqueId(),
-                    Util.getInetAddress(event.getPlayer().getSocketAddress())
-                        .map(TextUtil::getIpAddress)
-                        .orElse("socket address"),
+                    LoginUtil.getInetAddress(event.getPlayer().getSocketAddress())
+                             .map(TextUtil::getIpAddress)
+                             .orElse("socket address"),
                     getPlayerType(event.getPlayer()));
     }
 }

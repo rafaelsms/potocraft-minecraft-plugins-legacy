@@ -3,6 +3,7 @@ package com.rafaelsms.potocraft.loginmanager.player;
 import com.mongodb.client.model.Filters;
 import com.rafaelsms.potocraft.database.DatabaseObject;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
+import com.rafaelsms.potocraft.loginmanager.util.LoginUtil;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -27,7 +28,7 @@ public class Profile extends DatabaseObject {
     /* Login information for offline players */
     private @Nullable Boolean loggedIn = null;
     private @Nullable ZonedDateTime lastLoginDate = null;
-    private @Nullable Integer pin = null;
+    private @Nullable String password = null;
 
     /* Play time and useful information */
     private @NotNull String lastPlayerName;
@@ -53,7 +54,12 @@ public class Profile extends DatabaseObject {
 
         this.loggedIn = document.getBoolean(Keys.LOGGED_IN);
         this.lastLoginDate = Util.convert(document.getString(Keys.LAST_LOGIN_DATE), Util::toDateTime);
-        this.pin = document.getInteger(Keys.PIN);
+        this.password = document.getString(Keys.PASSWORD);
+        // Converting password from old PIN format
+        Integer pin = document.getInteger(Keys.PIN);
+        if (pin != null && this.password == null) {
+            this.password = String.valueOf(pin);
+        }
 
         this.lastPlayerName = document.getString(Keys.LAST_PLAYER_NAME);
         this.lastServerName = document.getString(Keys.LAST_SERVER_NAME);
@@ -102,11 +108,10 @@ public class Profile extends DatabaseObject {
      * @param autoLoginWindow time window to auto login to work
      * @return true if player logged in using the same address or if player joined within auto login time using the same
      * address
-     * @see com.rafaelsms.potocraft.loginmanager.util.Util#isPlayerLoggedIn(LoginManagerPlugin, Profile, ProxiedPlayer)
-     * helper
+     * @see LoginUtil#isPlayerLoggedIn(LoginManagerPlugin, Profile, ProxiedPlayer) helper
      */
     public boolean isLoggedIn(@Nullable InetSocketAddress address, @NotNull Duration autoLoginWindow) {
-        if (pin == null ||
+        if (password == null ||
             loggedIn == null ||
             address == null ||
             !TextUtil.getIpAddress(address).equalsIgnoreCase(lastAddress)) {
@@ -136,19 +141,19 @@ public class Profile extends DatabaseObject {
         }
     }
 
-    public boolean isPinValid(int pin) {
-        return this.pin != null && pin == this.pin;
+    public boolean isPasswordValid(@Nullable String password) {
+        return this.password != null && this.password.equals(password);
     }
 
-    public boolean hasPin() {
-        return pin != null && pin >= 0 && pin <= 999_999;
+    public boolean hasPassword() {
+        return password != null;
     }
 
-    public boolean setPin(int pin) {
-        if (pin < 0 || pin > 999_999) {
+    public boolean setPassword(@NotNull String password) {
+        if (!LoginUtil.isValidPassword(password)) {
             return false;
         }
-        this.pin = pin;
+        this.password = password;
         return true;
     }
 
@@ -228,7 +233,7 @@ public class Profile extends DatabaseObject {
 
         document.put(Keys.LOGGED_IN, loggedIn);
         document.put(Keys.LAST_LOGIN_DATE, Util.convert(lastLoginDate, Util::fromDateTime));
-        document.put(Keys.PIN, pin);
+        document.put(Keys.PASSWORD, password);
 
         document.put(Keys.LAST_PLAYER_NAME, lastPlayerName);
         document.put(Keys.LAST_SERVER_NAME, lastServerName);
@@ -248,6 +253,7 @@ public class Profile extends DatabaseObject {
         public static final String LOGGED_IN = "isLoggedIn";
         public static final String LAST_LOGIN_DATE = "lastLoginDate";
         public static final String PIN = "pin";
+        public static final String PASSWORD = "password";
 
         public static final String LAST_PLAYER_NAME = "lastPlayerName";
         public static final String LAST_SERVER_NAME = "lastServerName";

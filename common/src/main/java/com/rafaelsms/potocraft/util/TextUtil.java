@@ -74,30 +74,6 @@ public final class TextUtil {
         return duration == Duration.ZERO ? Optional.empty() : Optional.of(duration);
     }
 
-    public static @NotNull Optional<Integer> parsePin(@NotNull String string) {
-        if (string.strip().length() != 6) {
-            return Optional.empty();
-        }
-        try {
-            return Optional.of(Integer.parseInt(string));
-        } catch (Exception exception) {
-            return Optional.empty();
-        }
-    }
-
-    public static @NotNull Optional<Integer> parseMatchingPins(@NotNull String firstPin, @NotNull String secondPin) {
-        try {
-            int newPin = TextUtil.parsePin(firstPin).orElseThrow();
-            int newPinConfirmation = TextUtil.parsePin(secondPin).orElseThrow();
-            if (newPin != newPinConfirmation) {
-                return Optional.empty();
-            }
-            return Optional.of(newPin);
-        } catch (Exception ignored) {
-            return Optional.empty();
-        }
-    }
-
     public static @NotNull Optional<String> joinStrings(String[] strings, int initialIndex) {
         if (initialIndex >= strings.length) {
             return Optional.empty();

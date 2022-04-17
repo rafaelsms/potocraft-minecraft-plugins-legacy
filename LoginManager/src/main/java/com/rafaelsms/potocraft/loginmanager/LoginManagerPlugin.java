@@ -1,7 +1,7 @@
 package com.rafaelsms.potocraft.loginmanager;
 
 import com.rafaelsms.potocraft.loginmanager.commands.BanCommand;
-import com.rafaelsms.potocraft.loginmanager.commands.ChangePinCommand;
+import com.rafaelsms.potocraft.loginmanager.commands.ChangePasswordCommand;
 import com.rafaelsms.potocraft.loginmanager.commands.KickCommand;
 import com.rafaelsms.potocraft.loginmanager.commands.ListCommand;
 import com.rafaelsms.potocraft.loginmanager.commands.LoginCommand;
@@ -57,7 +57,7 @@ public class LoginManagerPlugin extends Plugin {
         // Register commands
         getProxy().getPluginManager().registerCommand(this, new LoginCommand(this));
         getProxy().getPluginManager().registerCommand(this, new RegisterCommand(this));
-        getProxy().getPluginManager().registerCommand(this, new ChangePinCommand(this));
+        getProxy().getPluginManager().registerCommand(this, new ChangePasswordCommand(this));
         getProxy().getPluginManager().registerCommand(this, new UnbanCommand(this));
         getProxy().getPluginManager().registerCommand(this, new BanCommand(this));
         getProxy().getPluginManager().registerCommand(this, new TemporaryBanCommand(this));

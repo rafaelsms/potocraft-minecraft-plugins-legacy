@@ -13,11 +13,14 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
-public final class Util {
+public final class LoginUtil {
+
+    private static final Pattern PASSWORD_REGEX = Pattern.compile("^\\S{4,32}$");
 
     // Private constructor
-    private Util() {
+    private LoginUtil() {
     }
 
     public static Optional<ProxiedPlayer> getPlayer(@NotNull Connection connection) {
@@ -52,5 +55,9 @@ public final class Util {
             return Optional.of(inetAddress);
         }
         return Optional.empty();
+    }
+
+    public static boolean isValidPassword(@NotNull String password) {
+        return PASSWORD_REGEX.matcher(password).matches();
     }
 }

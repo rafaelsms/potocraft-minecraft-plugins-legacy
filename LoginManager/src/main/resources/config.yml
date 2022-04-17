@@ -58,36 +58,35 @@ language:
   commands:
     players_only: "<red>Comando pode ser executado apenas por jogadores!"
     offline_players_only: "<red>Comando pode ser executado apenas por jogadores piratas!"
-    incorrect_pin: "<red>Senha inválida!"
-    incorrect_pin_format: "<red>Sua senha deve ter 6 números."
+    incorrect_password: "<red>Senha inválida!"
+    incorrect_password_format: "<red>Sua senha não respeita o formato necessário. Tente uma maior que 4 letras e sem espaços."
     logged_in: "<green>Login efetuado com sucesso!"
     logged_in_players_only: "<red>Comando pode ser executado apenas por jogadores que usaram <bold>/login</bold>!"
     no_profile_found: "<gold>Não encontramos usuários com este nome."
     failed_to_search_profile: "<red>Falha ao procurar perfil."
     failed_to_save_profile: "<red>Falha ao salvar perfil."
-    change_pin:
+    change_password:
       help: |
-        <gold>Lembre da sua senha anterior, pense numa senha nova de 6 números e digite:
+        <gold>Lembre da sua senha anterior, pense numa senha nova e digite:
         <yellow><bold>/mudarsenha <antiga> <nova> <nova></bold></yellow>
-        <gold>Por exemplo: <yellow>/mudarsenha 000000 123456 123456</yellow>
-      invalid_pins: |
-        <red>Sua senha nova precisa ser digitada igualmente duas vezes.
-        <red>A senha precisa ser 6 números.
-        <gold>Exemplo: <yellow><bold>/mudarsenha <antiga> 123456 123456</bold></yellow>
+        <gold>Por exemplo: <yellow>/mudarsenha senhaAntiga senhaNova senhaNova</yellow>
+      passwords_do_not_match: |
+        <red>Digite sua senha antiga e digite duas vezes a senha nova.
+        <gold>Exemplo: <yellow><bold>/mudarsenha senhaAntiga senhaNova senhaNova</bold></yellow>
       register_instead: |
         <gold>Você ainda não tem senha cadastrada, digite para cadastrar:
-        <yellow><bold>/registrar</bold></yellow>
+        <yellow><bold>/registrar (senha) (senha)</bold></yellow>
       success: "<gold>Senha alterada com sucesso!"
     register:
       help: |
-        <gold>Pense e memorize uma senha de 6 números e digite duas vezes:
-        <gold>Por exemplo: <yellow>/registrar 123456 123456</yellow>
-      invalid_pins: |
-        <gold>Sua senha deve conter 6 números e ser digitada duas vezes de forma igual:
-        <gold>Por exemplo: <yellow>/registrar 012345 012345</yellow>
+        <gold>Crie, memorize e digite uma senha igual duas vezes:
+        <gold>Por exemplo: <yellow>/registrar senhaSegura senhaSegura</yellow>
+      passwords_do_not_match: |
+        <gold>Sua senha deve ser digitada duas vezes de forma igual:
+        <gold>Por exemplo: <yellow>/registrar senhaSegura senhaSegura</yellow>
       max_accounts_per_address_reached: "<red>Número máximo de contas para seu endereço atingido."
       login_instead: "<gold>Conta já cadastrada! Digite <yellow><bold>/login</bold></yellow> e sua senha para entrar."
-      change_pin_instead: "<gold>Conta já cadastrada! Digite <yellow><bold>/mudarsenha</bold></yellow> para alterar a senha."
+      change_password_instead: "<gold>Conta já cadastrada! Digite <yellow><bold>/mudarsenha</bold></yellow> para alterar a senha."
     login:
       help: "<gold>Lembre-se da senha cadastrada e digite: <yellow><bold>/login 123456</bold></yellow> trocando pela <yellow><underline>sua</underline></yellow> senha de 6 números."
       register_instead: "<gold>Conta ainda não cadastrada! Digite <yellow><bold>/registrar</bold></yellow> para registrar"
@@ -95,7 +94,6 @@ language:
       no_server_available: |
         <red>Falha ao transferir: servidor não encontrado.
         <red>Digite <yellow>/server</yellow> para mudar de servidor manualmente.
-      weak_pin_used: "<red>SENHA OBVIA DETECTADA! Altere sua senha digitando <yellow>/mudarsenha</yellow>!</red>"
     unban:
       help: "<gold>Uso: <yellow>/unban <nome></yellow>"
     ban:
@@ -107,6 +105,7 @@ language:
         <gold><click:copy_to_clipboard:'<user_id>'><hover:show_text:'<gold><yellow>Clique</yellow> para copiar o nome</gold>'><yellow><user_name></yellow></hover></click> (<click:copy_to_clipboard:'<user_id>'><hover:show_text:'<gold><yellow>Clique</yellow> para copiar UUID</gold>'><yellow><user_id></yellow></hover></click>):
         <gold>* Último IP: <click:copy_to_clipboard:'<user_ip>'><hover:show_text:'<gold><yellow>Clique</yellow> para copiar o IP</gold>'><yellow><user_ip></yellow></hover></click>
         <gold>* Último servidor: <yellow><server_name></yellow>
+        <gold>* Possui senha: <yellow><user_has_password></yellow>
         <gold>* Tempo em jogo: <yellow><play_time></yellow>
         <gold>* Última vez online: <yellow><join_date></yellow>
         <gold>* Última saída: <yellow><quit_date></yellow>
