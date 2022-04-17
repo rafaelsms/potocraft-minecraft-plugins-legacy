@@ -26,6 +26,7 @@ import com.rafaelsms.potocraft.serverprofile.listeners.StatisticsListener;
 import com.rafaelsms.potocraft.serverprofile.listeners.TotemLimiter;
 import com.rafaelsms.potocraft.serverprofile.listeners.UserManager;
 import com.rafaelsms.potocraft.serverprofile.listeners.WorldGuardNoEnteringInCombatFlag;
+import com.rafaelsms.potocraft.serverprofile.listeners.WorldGuardRequireInitialMemberDamageFlag;
 import com.rafaelsms.potocraft.serverprofile.listeners.WorldGuardShowMemberFlag;
 import com.rafaelsms.potocraft.serverprofile.util.WorldGuardUtil;
 import com.sk89q.worldguard.WorldGuard;
@@ -83,6 +84,7 @@ public class ServerProfilePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new TotemLimiter(this), this);
         getServer().getPluginManager().registerEvents(new EssentialsImporter(this), this);
         getServer().getPluginManager().registerEvents(new HardcoreListener(this), this);
+        getServer().getPluginManager().registerEvents(new WorldGuardRequireInitialMemberDamageFlag(this), this);
 
         // Register WorldGuard handlers
         getWorldGuard().ifPresent(instance -> {
