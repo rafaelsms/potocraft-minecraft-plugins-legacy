@@ -22,6 +22,7 @@ configuration:
     home_number_permission_groups:
       potocraft.homes.vip: 5
   combat:
+    player_combat_in_safe_region_timeout_seconds: 180
     player_combat_duration_ticks: 820
     mob_combat_duration_ticks: 260
     out_of_combat_death_should_drop_items: true

@@ -58,7 +58,8 @@ public class ServerProfilePlugin extends JavaPlugin {
         this.configuration = new Configuration(this);
         this.database = new Database(this);
         this.userManager = new UserManager(this);
-        // Register WorldGuard flags
+
+        // Register WorldGuard flags on startup
         ENTERING_IN_COMBAT_FLAG =
                 WorldGuardUtil.registerFlag(this, "entering-while-in-combat", true, RegionGroup.ALL).orElseThrow();
         REQUIRE_INITIAL_MEMBER_DAMAGE =

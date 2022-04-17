@@ -136,6 +136,11 @@ public class Configuration extends YamlFile {
         return getInt("configuration.combat.player_combat_duration_ticks");
     }
 
+    public Duration getPlayerSafeRegionCombatTimeout() {
+        Integer seconds = getInt("configuration.combat.player_combat_in_safe_region_timeout_seconds");
+        return Duration.ofSeconds(Objects.requireNonNull(seconds));
+    }
+
     public Boolean isOutOfCombatDeathDroppingItems() {
         return get("configuration.combat.out_of_combat_death_should_drop_items");
     }
