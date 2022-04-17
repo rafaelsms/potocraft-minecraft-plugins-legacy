@@ -50,11 +50,11 @@ public class PlayerLogging implements Listener {
         Location to = event.getTo();
         logPlayer(event.getPlayer(),
                   event.getFrom(),
-                  "teleported by %s to %s, %d %d %d".formatted(event.getCause().name().toLowerCase(),
-                                                               to.getWorld().getName(),
-                                                               to.getBlockX(),
-                                                               to.getBlockY(),
-                                                               to.getBlockZ()));
+                  "teleported by %s to %s, %d %d %d from".formatted(event.getCause().name().toLowerCase(),
+                                                                    to.getWorld().getName(),
+                                                                    to.getBlockX(),
+                                                                    to.getBlockY(),
+                                                                    to.getBlockZ()));
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -69,7 +69,9 @@ public class PlayerLogging implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void log(PlayerPortalEvent event) {
-        logPlayer(event.getPlayer(), event.getFrom(), "entered portal to %s".formatted(parseLocation(event.getTo())));
+        logPlayer(event.getPlayer(),
+                  event.getFrom(),
+                  "entered portal to %s from".formatted(parseLocation(event.getTo())));
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)

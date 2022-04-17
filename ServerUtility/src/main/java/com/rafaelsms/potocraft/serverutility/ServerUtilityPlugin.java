@@ -30,6 +30,7 @@ import com.rafaelsms.potocraft.serverutility.listeners.QuickBreakOreListener;
 import com.rafaelsms.potocraft.serverutility.listeners.QuickBreakTreeListener;
 import com.rafaelsms.potocraft.serverutility.listeners.QuickReplantListener;
 import com.rafaelsms.potocraft.serverutility.listeners.RainyNightListener;
+import com.rafaelsms.potocraft.serverutility.listeners.ScoreboardListener;
 import com.rafaelsms.potocraft.serverutility.listeners.VillagerListener;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldBorderApplier;
 import com.rafaelsms.potocraft.serverutility.listeners.WorldConfigurationApplier;
@@ -104,13 +105,13 @@ public class ServerUtilityPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new NightVisionListener(), this);
         getServer().getPluginManager().registerEvents(new FirstSpawnPointListener(this), this);
         getServer().getPluginManager().registerEvents(new PurpurPermissionChecker(this), this);
+        getServer().getPluginManager().registerEvents(new ScoreboardListener(this), this);
         if (noEquipmentDamageFlag != null) {
             getServer().getPluginManager().registerEvents(noEquipmentDamageFlag, this);
         }
         if (noDeathDropsFlag != null) {
             getServer().getPluginManager().registerEvents(noDeathDropsFlag, this);
         }
-        // TODO keepInventory excluding for PVP option
 
         // Run world sync task
         getServer().getScheduler().runTaskTimer(this, new SyncWorldTimeTask(this), 5L, 5L);
