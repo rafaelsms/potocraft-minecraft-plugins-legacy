@@ -71,8 +71,8 @@ language:
         <yellow><bold>/mudarsenha <antiga> <nova> <nova></bold></yellow>
         <gold>Por exemplo: <yellow>/mudarsenha senhaAntiga senhaNova senhaNova</yellow>
       passwords_do_not_match: |
-        <red>Digite sua senha antiga e digite duas vezes a senha nova.
-        <gold>Exemplo: <yellow><bold>/mudarsenha senhaAntiga senhaNova senhaNova</bold></yellow>
+        <red>Senhas não coincidem!</red> <gold>Digite sua senha antiga e digite duas vezes a senha nova.</gold>
+        <gold>Exemplo: <yellow><bold>/mudarsenha senhaAntiga senhaNova senhaNova</bold></yellow></gold>
       register_instead: |
         <gold>Você ainda não tem senha cadastrada, digite para cadastrar:
         <yellow><bold>/registrar (senha) (senha)</bold></yellow>
@@ -82,13 +82,13 @@ language:
         <gold>Crie, memorize e digite uma senha igual duas vezes:
         <gold>Por exemplo: <yellow>/registrar senhaSegura senhaSegura</yellow>
       passwords_do_not_match: |
-        <gold>Sua senha deve ser digitada duas vezes de forma igual:
-        <gold>Por exemplo: <yellow>/registrar senhaSegura senhaSegura</yellow>
+        <red>Senhas não coincidem!</red> <gold>Sua senha deve ser digitada duas vezes de forma igual:</gold>
+        <gold>Por exemplo: <yellow>/registrar senhaSegura senhaSegura</yellow></gold>
       max_accounts_per_address_reached: "<red>Número máximo de contas para seu endereço atingido."
       login_instead: "<gold>Conta já cadastrada! Digite <yellow><bold>/login</bold></yellow> e sua senha para entrar."
       change_password_instead: "<gold>Conta já cadastrada! Digite <yellow><bold>/mudarsenha</bold></yellow> para alterar a senha."
     login:
-      help: "<gold>Lembre-se da senha cadastrada e digite: <yellow><bold>/login 123456</bold></yellow> trocando pela <yellow><underline>sua</underline></yellow> senha de 6 números."
+      help: "<gold>Lembre-se da senha cadastrada e digite: <yellow><bold>/login (senha)</bold></yellow> trocando <yellow>(senha)</yellow> pela <yellow>SUA</yellow> senha.</gold>"
       register_instead: "<gold>Conta ainda não cadastrada! Digite <yellow><bold>/registrar</bold></yellow> para registrar"
       already_logged_in: "<gold>Já está online, bom jogo :)"
       no_server_available: |
