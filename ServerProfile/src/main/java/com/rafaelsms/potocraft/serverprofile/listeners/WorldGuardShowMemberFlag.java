@@ -5,6 +5,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.session.MoveType;
 import com.sk89q.worldguard.session.Session;
@@ -50,28 +51,32 @@ public class WorldGuardShowMemberFlag extends Handler {
         if (entered.isEmpty() && exited.isEmpty()) {
             return true;
         }
-        // Ignore if no show members flag
-        if (!toSet.testState(player, ServerProfilePlugin.SHOW_MEMBERS_FLAG)) {
-            return true;
+        Player bukkitPlayer = BukkitAdapter.adapt(player);
+
+        // For each exiting region, show its members
+        boolean sendPlayerMessage = false;
+        Set<String> exitingRegionsMembers = new HashSet<>();
+        for (ProtectedRegion protectedRegion : exited) {
+            if (protectedRegion.getFlag(ServerProfilePlugin.SHOW_MEMBERS_FLAG) == StateFlag.State.ALLOW) {
+                sendPlayerMessage = true;
+            }
+            accumulateMembersNames(protectedRegion, exitingRegionsMembers);
+        }
+        if (sendPlayerMessage && !exitingRegionsMembers.isEmpty()) {
+            bukkitPlayer.sendMessage(plugin.getConfiguration().getLeavingRegionMessage(exitingRegionsMembers));
         }
 
         // For each entered region, show its members
-        Player bukkitPlayer = BukkitAdapter.adapt(player);
+        sendPlayerMessage = false;
         Set<String> enteredRegionsMembers = new HashSet<>();
         for (ProtectedRegion protectedRegion : entered) {
+            if (protectedRegion.getFlag(ServerProfilePlugin.SHOW_MEMBERS_FLAG) == StateFlag.State.ALLOW) {
+                sendPlayerMessage = true;
+            }
             accumulateMembersNames(protectedRegion, enteredRegionsMembers);
         }
-        if (!enteredRegionsMembers.isEmpty()) {
+        if (sendPlayerMessage && !enteredRegionsMembers.isEmpty()) {
             bukkitPlayer.sendMessage(plugin.getConfiguration().getEnteringRegionMessage(enteredRegionsMembers));
-        }
-
-        // For each exiting region, show its members
-        Set<String> exitingRegionsMembers = new HashSet<>();
-        for (ProtectedRegion protectedRegion : exited) {
-            accumulateMembersNames(protectedRegion, exitingRegionsMembers);
-        }
-        if (!exitingRegionsMembers.isEmpty()) {
-            bukkitPlayer.sendMessage(plugin.getConfiguration().getLeavingRegionMessage(exitingRegionsMembers));
         }
         return true;
     }
