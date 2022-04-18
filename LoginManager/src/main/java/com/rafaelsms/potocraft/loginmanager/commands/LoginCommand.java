@@ -92,18 +92,20 @@ public class LoginCommand extends Command implements TabExecutor {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
         }
 
-        // Attempt to send player to lobby
+        // Attempt to send player to last connected server
         if (profile.getLastServerName().isPresent()) {
             ServerInfo serverInfo = plugin.getProxy().getServerInfo(profile.getLastServerName().get());
             if (serverInfo != null) {
                 player.connect(serverInfo, (result, error) -> {
-                    if (error != null || result == null || !result) {
+                    // Fallback to default server
+                    if (error != null) {
                         LoginUtil.sendPlayerToDefaultServer(plugin, player);
                     }
                 }, ServerConnectEvent.Reason.PLUGIN);
                 return;
             }
         }
+        // If there isn't a last connected server, send to default one
         LoginUtil.sendPlayerToDefaultServer(plugin, player);
     }
 

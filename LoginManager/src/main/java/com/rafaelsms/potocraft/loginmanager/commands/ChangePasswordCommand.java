@@ -49,7 +49,7 @@ public class ChangePasswordCommand extends Command implements TabExecutor {
         }
 
         // Get new password and verify they are equal
-        String oldPasswordString = args[1];
+        String oldPasswordString = args[0];
         String newPasswordString = args[1];
         String newPasswordConfirmationString = args[2];
         if (!newPasswordString.equalsIgnoreCase(newPasswordConfirmationString)) {
@@ -101,7 +101,7 @@ public class ChangePasswordCommand extends Command implements TabExecutor {
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length <= 3) {
-            return List.of("senha", "098765");
+            return List.of("senhaSegura", "098765");
         }
         return List.of();
     }
