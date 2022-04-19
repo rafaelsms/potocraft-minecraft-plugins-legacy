@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.serverprofile.commands;
 
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.serverprofile.Permissions;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.Profile;
@@ -57,7 +57,7 @@ public class TopCommand implements CommandExecutor {
             }
 
             sender.sendMessage(plugin.getConfiguration().getTopRanking(rankedProfiles));
-        } catch (Database.DatabaseException ignored) {
+        } catch (DatabaseException ignored) {
             sender.sendMessage(plugin.getConfiguration().getCouldNotLoadProfile());
         }
         return true;

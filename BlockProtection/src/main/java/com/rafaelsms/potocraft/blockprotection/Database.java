@@ -2,6 +2,7 @@ package com.rafaelsms.potocraft.blockprotection;
 
 import com.mongodb.client.MongoCollection;
 import com.rafaelsms.potocraft.blockprotection.players.Profile;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.util.Util;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;

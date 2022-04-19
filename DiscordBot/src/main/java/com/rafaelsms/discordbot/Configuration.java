@@ -1,6 +1,6 @@
 package com.rafaelsms.discordbot;
 
-import com.rafaelsms.potocraft.YamlFile;
+import com.rafaelsms.potocraft.util.YamlFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -16,111 +16,114 @@ public class Configuration extends YamlFile {
     }
 
     public String getToken() {
-        return get("configuration.token");
+        return getOrThrow("configuration.token");
     }
 
     public String getBotPlayingActivity() {
-        return get("configuration.bot_playing_activity");
+        return getOrThrow("configuration.bot_playing_activity");
     }
 
     public String getOperatorRoleName() {
-        return get("configuration.operator_role_name");
+        return getOrThrow("configuration.operator_role_name");
     }
 
     public String getRemovedMessagesCategoryName() {
-        return get("configuration.removed_messages.category_name");
+        return getOrThrow("configuration.removed_messages.category_name");
     }
 
     public String getRemovedMessagesChannelName() {
-        return get("configuration.removed_messages.channel_name");
+        return getOrThrow("configuration.removed_messages.channel_name");
     }
 
     public Duration getRemovedMessagesCacheTime() {
-        return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.removed_messages.cached_time_in_seconds")));
+        return Duration.ofSeconds(Objects.requireNonNull(getLongOrNull(
+                "configuration.removed_messages.cached_time_in_seconds")));
     }
 
     public String getTicketCategoryName() {
-        return get("configuration.tickets.category_name");
+        return getOrThrow("configuration.tickets.category_name");
     }
 
     public String getTicketLobbyChannelName() {
-        return get("configuration.tickets.lobby_channel_name");
+        return getOrThrow("configuration.tickets.lobby_channel_name");
     }
 
     public boolean isLengthLimiterEnabled() {
-        return Objects.requireNonNull(get("configuration.message_length_limiter.enabled"));
+        return Objects.requireNonNull(getOrThrow("configuration.message_length_limiter.enabled"));
     }
 
     public boolean shouldLengthyMessagesBeRemoved() {
-        return Objects.requireNonNull(get("configuration.message_length_limiter.should_be_removed"));
+        return Objects.requireNonNull(getOrThrow("configuration.message_length_limiter.should_be_removed"));
     }
 
     public int getMaximumMessageLength() {
-        return Objects.requireNonNull(getInt("configuration.message_length_limiter.maximum_length"));
+        return Objects.requireNonNull(getIntOrNull("configuration.message_length_limiter.maximum_length"));
     }
 
     public int getMaximumNewLines() {
-        return Objects.requireNonNull(getInt("configuration.message_length_limiter.maximum_new_line_count"));
+        return Objects.requireNonNull(getIntOrNull("configuration.message_length_limiter.maximum_new_line_count"));
     }
 
     public int getMaximumEmojiCount() {
-        return Objects.requireNonNull(getInt("configuration.message_length_limiter.maximum_emoji_count"));
+        return Objects.requireNonNull(getIntOrNull("configuration.message_length_limiter.maximum_emoji_count"));
     }
 
     public Duration getExceededLengthTimeoutDuration() {
-        return Duration.ofSeconds(Objects.requireNonNull(getLong(
+        return Duration.ofSeconds(Objects.requireNonNull(getLongOrNull(
                 "configuration.message_length_limiter.user_timeout_seconds")));
     }
 
     public boolean isMentionsShouldBeRemoved() {
-        return Objects.requireNonNull(get("configuration.mentions.should_be_removed"));
+        return Objects.requireNonNull(getOrThrow("configuration.mentions.should_be_removed"));
     }
 
     public boolean isMentionsShouldBeWarned() {
-        return Objects.requireNonNull(get("configuration.mentions.should_be_warned"));
+        return Objects.requireNonNull(getOrThrow("configuration.mentions.should_be_warned"));
     }
 
     public Duration getMentionsWarningDuration() {
-        return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.mentions.warn_message_duration_seconds")));
+        return Duration.ofSeconds(Objects.requireNonNull(getLongOrNull(
+                "configuration.mentions.warn_message_duration_seconds")));
     }
 
     public Duration getMentioningTimeout() {
-        return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.mentions.user_timeout_seconds")));
+        return Duration.ofSeconds(Objects.requireNonNull(getLongOrNull("configuration.mentions.user_timeout_seconds")));
     }
 
     public boolean isCursingBlockerEnabled() {
-        return Objects.requireNonNull(get("configuration.blocked_words.enabled"));
+        return Objects.requireNonNull(getOrThrow("configuration.blocked_words.enabled"));
     }
 
     public Duration getCursedTimeout() {
-        return Duration.ofSeconds(Objects.requireNonNull(getLong("configuration.blocked_words.user_timeout_seconds")));
+        return Duration.ofSeconds(Objects.requireNonNull(getLongOrNull(
+                "configuration.blocked_words.user_timeout_seconds")));
     }
 
     public List<String> getBlockedWords() {
-        return get("configuration.blocked_words.word_list");
+        return getOrThrow("configuration.blocked_words.word_list");
     }
 
     public String getOpenTicketMessage() {
-        return get("language.tickets.open_ticket_message");
+        return getOrThrow("language.tickets.open_ticket_message");
     }
 
     public String getOpenedTicketMessage() {
-        return get("language.tickets.ticket_opened_instructions_message");
+        return getOrThrow("language.tickets.ticket_opened_instructions_message");
     }
 
     public String getTicketChannelCreatedMessage() {
-        return get("language.tickets.ticket_channel_created_message");
+        return getOrThrow("language.tickets.ticket_channel_created_message");
     }
 
     public String getTicketClosingMessage() {
-        return get("language.tickets.ticket_closing_message");
+        return getOrThrow("language.tickets.ticket_closing_message");
     }
 
     public String getTicketChannelAlreadyExists() {
-        return get("language.tickets.ticket_channel_already_exists");
+        return getOrThrow("language.tickets.ticket_channel_already_exists");
     }
 
     public String getMentionWarningMessage() {
-        return get("language.message_mentions_user_directly");
+        return getOrThrow("language.message_mentions_user_directly");
     }
 }

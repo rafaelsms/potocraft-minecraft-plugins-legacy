@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.gameserver;
 
-import com.rafaelsms.potocraft.YamlFile;
+import com.rafaelsms.potocraft.util.YamlFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -14,10 +14,10 @@ public class Configuration extends YamlFile {
     }
 
     public Set<String> getUhcWorldNames() {
-        return Set.copyOf(Objects.requireNonNull(get("configuration.uhc.worlds")));
+        return Set.copyOf(Objects.requireNonNull(getOrThrow("configuration.uhc.worlds")));
     }
 
     public Integer getUhcMinPlayers() {
-        return getInt("configuration.uhc.min_player_count");
+        return getIntOrNull("configuration.uhc.min_player_count");
     }
 }

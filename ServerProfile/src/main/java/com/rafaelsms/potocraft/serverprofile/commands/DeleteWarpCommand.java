@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.serverprofile.commands;
 
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.serverprofile.Permissions;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import org.bukkit.command.Command;
@@ -35,7 +35,7 @@ public class DeleteWarpCommand implements CommandExecutor {
             String warpRegex = args[0];
             plugin.getDatabase().deleteWarp(warpRegex);
             sender.sendMessage(plugin.getConfiguration().getTeleportWarpManageSuccess());
-        } catch (Database.DatabaseException ignored) {
+        } catch (DatabaseException ignored) {
             sender.sendMessage(plugin.getConfiguration().getTeleportWarpManageDatabaseFailure());
         }
         return true;

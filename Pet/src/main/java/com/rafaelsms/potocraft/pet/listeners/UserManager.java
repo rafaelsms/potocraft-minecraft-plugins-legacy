@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.pet.listeners;
 
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.pet.Permissions;
 import com.rafaelsms.potocraft.pet.PetPlugin;
 import com.rafaelsms.potocraft.pet.player.Profile;
@@ -25,7 +25,7 @@ public class UserManager extends com.rafaelsms.potocraft.util.UserManager<User, 
     }
 
     @Override
-    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws Database.DatabaseException {
+    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException {
         return plugin.getDatabase()
                      .getProfile(event.getUniqueId())
                      .orElse(new Profile(event.getUniqueId(), event.getName()));

@@ -142,11 +142,4 @@ public abstract class Database {
 
     }
 
-    public static class DatabaseException extends Exception {
-
-        public DatabaseException(Exception exception) {
-            super(exception);
-        }
-
-    }
 }

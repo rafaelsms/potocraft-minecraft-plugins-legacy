@@ -1,8 +1,8 @@
 package com.rafaelsms.potocraft.serverprofile.players;
 
 import com.rafaelsms.potocraft.database.DatabaseObject;
+import com.rafaelsms.potocraft.database.StoredLocation;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
-import com.rafaelsms.potocraft.util.StoredLocation;
 import com.rafaelsms.potocraft.util.Util;
 import org.bson.Document;
 import org.bukkit.Location;

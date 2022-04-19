@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 public final class TextUtil {
 
     private static final Pattern SPACED_STRING_PATTERN = Pattern.compile("\\s*(\\S+)");
-    private static final Pattern TIME_PATTERN = Pattern.compile("((\\d+)([wdhms]))+", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TIME_PATTERN = Pattern.compile("((\\d+)(s|m|h|d|w|mo|y))+", Pattern.CASE_INSENSITIVE);
 
     // Private constructor
     private TextUtil() {
@@ -62,7 +62,9 @@ public final class TextUtil {
             long amount = Long.parseLong(matcher.group(2));
             String unit = matcher.group(3);
             Duration parsed = switch (unit) {
-                case "w" -> Duration.ofDays(amount * 7L);
+                case "y" -> Duration.ofDays(amount * 365);
+                case "mo" -> Duration.ofDays(amount * 30);
+                case "w" -> Duration.ofDays(amount * 7);
                 case "d" -> Duration.ofDays(amount);
                 case "h" -> Duration.ofHours(amount);
                 case "m" -> Duration.ofMinutes(amount);

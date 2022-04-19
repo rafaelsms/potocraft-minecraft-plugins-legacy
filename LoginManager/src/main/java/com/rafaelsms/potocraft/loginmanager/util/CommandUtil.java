@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.loginmanager.util;
 
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
 import net.md_5.bungee.api.CommandSender;
@@ -20,7 +20,7 @@ public final class CommandUtil {
         Optional<Profile> optionalProfile;
         try {
             optionalProfile = plugin.getDatabase().searchOfflineProfile(usernameSearch);
-        } catch (Database.DatabaseException ignored) {
+        } catch (DatabaseException ignored) {
             sender.sendMessage(plugin.getConfiguration().getCommandFailedToSearchProfile());
             return Optional.empty();
         }

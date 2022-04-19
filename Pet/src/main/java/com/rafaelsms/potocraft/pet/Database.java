@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.pet;
 
 import com.mongodb.client.MongoCollection;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.pet.player.Profile;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;

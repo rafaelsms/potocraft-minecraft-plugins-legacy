@@ -2,6 +2,7 @@ package com.rafaelsms.potocraft.serverprofile;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.serverprofile.players.Profile;
 import com.rafaelsms.potocraft.serverprofile.warps.Warp;
 import com.rafaelsms.potocraft.util.TextUtil;

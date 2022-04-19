@@ -1,10 +1,10 @@
 package com.rafaelsms.potocraft.universalchat.commands;
 
+import com.rafaelsms.potocraft.player.ChatHistory;
 import com.rafaelsms.potocraft.universalchat.Permissions;
 import com.rafaelsms.potocraft.universalchat.UniversalChatPlugin;
 import com.rafaelsms.potocraft.universalchat.player.User;
 import com.rafaelsms.potocraft.universalchat.util.ChatUtil;
-import com.rafaelsms.potocraft.util.ChatHistory;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
 import net.kyori.adventure.text.Component;

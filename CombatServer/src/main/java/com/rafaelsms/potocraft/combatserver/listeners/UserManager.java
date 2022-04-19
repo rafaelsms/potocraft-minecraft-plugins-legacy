@@ -3,7 +3,7 @@ package com.rafaelsms.potocraft.combatserver.listeners;
 import com.rafaelsms.potocraft.combatserver.CombatServerPlugin;
 import com.rafaelsms.potocraft.combatserver.player.Profile;
 import com.rafaelsms.potocraft.combatserver.player.User;
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -24,7 +24,7 @@ public class UserManager extends com.rafaelsms.potocraft.util.UserManager<User, 
     }
 
     @Override
-    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws Database.DatabaseException {
+    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException {
         return plugin.getDatabase()
                      .getProfile(event.getUniqueId())
                      .orElse(new Profile(event.getUniqueId(), event.getName()));

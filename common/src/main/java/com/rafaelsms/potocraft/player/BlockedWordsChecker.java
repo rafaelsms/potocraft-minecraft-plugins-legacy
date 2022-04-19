@@ -1,5 +1,6 @@
-package com.rafaelsms.potocraft.util;
+package com.rafaelsms.potocraft.player;
 
+import com.rafaelsms.potocraft.util.TextUtil;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 

@@ -2,7 +2,7 @@ package com.rafaelsms.discordbot.listeners;
 
 import com.rafaelsms.discordbot.DiscordBot;
 import com.rafaelsms.discordbot.util.DiscordUtil;
-import com.rafaelsms.potocraft.util.BlockedWordsChecker;
+import com.rafaelsms.potocraft.player.BlockedWordsChecker;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;

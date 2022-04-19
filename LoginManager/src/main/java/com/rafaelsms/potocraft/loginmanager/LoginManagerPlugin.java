@@ -1,5 +1,6 @@
 package com.rafaelsms.potocraft.loginmanager;
 
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.loginmanager.commands.BanCommand;
 import com.rafaelsms.potocraft.loginmanager.commands.ChangePasswordCommand;
 import com.rafaelsms.potocraft.loginmanager.commands.KickCommand;
@@ -32,7 +33,7 @@ public class LoginManagerPlugin extends Plugin {
     private final @NotNull Database database;
     private final @NotNull PlayerTypeManager playerTypeManager;
 
-    public LoginManagerPlugin() throws IOException, com.rafaelsms.potocraft.database.Database.DatabaseException {
+    public LoginManagerPlugin() throws IOException, DatabaseException {
         this.configuration = new Configuration(getDataFolder().toPath());
         this.database = new Database(this);
         this.playerTypeManager = new PlayerTypeManager(this);

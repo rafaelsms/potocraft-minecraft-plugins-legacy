@@ -3,6 +3,7 @@ package com.rafaelsms.potocraft.combatserver;
 import com.mongodb.client.MongoCollection;
 import com.rafaelsms.potocraft.combatserver.player.Profile;
 import com.rafaelsms.potocraft.combatserver.util.InventoryContent;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 

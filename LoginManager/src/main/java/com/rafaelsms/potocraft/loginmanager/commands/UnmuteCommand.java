@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.loginmanager.commands;
 
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
@@ -50,7 +50,7 @@ public class UnmuteCommand extends Command implements TabExecutor {
         if (changed) {
             try {
                 plugin.getDatabase().saveProfile(profile);
-            } catch (Database.DatabaseException ignored) {
+            } catch (DatabaseException ignored) {
                 sender.sendMessage(plugin.getConfiguration().getCommandFailedToSaveProfile());
                 return;
             }

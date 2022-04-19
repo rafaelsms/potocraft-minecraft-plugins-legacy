@@ -2,8 +2,8 @@ package com.rafaelsms.potocraft.serverprofile.warps;
 
 import com.mongodb.client.model.Filters;
 import com.rafaelsms.potocraft.database.DatabaseObject;
+import com.rafaelsms.potocraft.database.StoredLocation;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
-import com.rafaelsms.potocraft.util.StoredLocation;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Location;

@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.loginmanager.commands;
 
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
@@ -66,7 +66,7 @@ public class BanCommand extends Command implements TabExecutor {
                 player.disconnect(messageBanned);
             });
             sender.sendMessage(plugin.getConfiguration().getPlayerPunished(profile.getLastPlayerName()));
-        } catch (Database.DatabaseException ignored) {
+        } catch (DatabaseException ignored) {
             sender.sendMessage(plugin.getConfiguration().getCommandFailedToSaveProfile());
         }
     }

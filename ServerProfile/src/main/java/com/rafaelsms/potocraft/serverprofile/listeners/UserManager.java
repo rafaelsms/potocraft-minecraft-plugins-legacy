@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.serverprofile.listeners;
 
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
 import com.rafaelsms.potocraft.serverprofile.players.Profile;
 import com.rafaelsms.potocraft.serverprofile.players.User;
@@ -24,7 +24,7 @@ public class UserManager extends com.rafaelsms.potocraft.util.UserManager<User, 
     }
 
     @Override
-    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws Database.DatabaseException {
+    protected Profile retrieveProfile(AsyncPlayerPreLoginEvent event) throws DatabaseException {
         return plugin.getDatabase()
                      .loadProfile(event.getUniqueId())
                      .orElse(new Profile(event.getUniqueId(), event.getName()));

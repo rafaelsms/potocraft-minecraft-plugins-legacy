@@ -1,12 +1,12 @@
 package com.rafaelsms.potocraft.universalchat;
 
 
+import com.rafaelsms.potocraft.player.BlockedWordsChecker;
 import com.rafaelsms.potocraft.universalchat.commands.MessageCommand;
 import com.rafaelsms.potocraft.universalchat.commands.ReplyCommand;
 import com.rafaelsms.potocraft.universalchat.listeners.ChatListener;
 import com.rafaelsms.potocraft.universalchat.listeners.UserManager;
 import com.rafaelsms.potocraft.universalchat.tasks.BroadcastTask;
-import com.rafaelsms.potocraft.util.BlockedWordsChecker;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

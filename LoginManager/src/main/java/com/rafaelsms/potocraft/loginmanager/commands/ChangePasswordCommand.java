@@ -1,6 +1,6 @@
 package com.rafaelsms.potocraft.loginmanager.commands;
 
-import com.rafaelsms.potocraft.database.Database;
+import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.loginmanager.LoginManagerPlugin;
 import com.rafaelsms.potocraft.loginmanager.Permissions;
 import com.rafaelsms.potocraft.loginmanager.player.Profile;
@@ -72,7 +72,7 @@ public class ChangePasswordCommand extends Command implements TabExecutor {
                 player.sendMessage(plugin.getConfiguration().getCommandLoggedInOnly());
                 return;
             }
-        } catch (Database.DatabaseException ignored) {
+        } catch (DatabaseException ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToRetrieveProfile());
             return;
         }
@@ -93,7 +93,7 @@ public class ChangePasswordCommand extends Command implements TabExecutor {
         try {
             plugin.getDatabase().saveProfile(profile);
             player.sendMessage(plugin.getConfiguration().getCommandChangedPasswordSuccessful());
-        } catch (Database.DatabaseException ignored) {
+        } catch (DatabaseException ignored) {
             player.disconnect(plugin.getConfiguration().getKickMessageFailedToSaveProfile());
         }
     }

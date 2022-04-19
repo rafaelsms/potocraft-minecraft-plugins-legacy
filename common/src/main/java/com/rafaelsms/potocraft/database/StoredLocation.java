@@ -1,6 +1,6 @@
-package com.rafaelsms.potocraft.util;
+package com.rafaelsms.potocraft.database;
 
-import com.rafaelsms.potocraft.database.DatabaseObject;
+import com.rafaelsms.potocraft.util.Util;
 import org.bson.Document;
 import org.bukkit.Location;
 import org.bukkit.World;
