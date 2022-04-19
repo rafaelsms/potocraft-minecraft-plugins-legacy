@@ -1,11 +1,10 @@
 package com.rafaelsms.potocraft.blockprotection;
 
+import com.rafaelsms.potocraft.BasePlugin;
 import com.rafaelsms.potocraft.blockprotection.commands.ProtectCommand;
 import com.rafaelsms.potocraft.blockprotection.listeners.AreaListener;
 import com.rafaelsms.potocraft.blockprotection.listeners.UserManager;
-import com.rafaelsms.potocraft.blockprotection.util.ProtectionException;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.WorldGuard;
+import com.rafaelsms.potocraft.util.WorldGuardUtil;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.RegionGroup;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -14,18 +13,13 @@ import com.sk89q.worldguard.protection.managers.storage.StorageException;
 import com.sk89q.worldguard.protection.regions.GlobalProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.World;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.Optional;
 
-public class BlockProtectionPlugin extends JavaPlugin {
+public class BlockProtectionPlugin extends BasePlugin {
 
     private final @NotNull Configuration configuration;
     private final @NotNull Database database;
@@ -45,19 +39,19 @@ public class BlockProtectionPlugin extends JavaPlugin {
 
         registerCommand("protect", new ProtectCommand(this));
 
-        logger().info("BlockProtection enabled!");
+        info("BlockProtection enabled!");
     }
 
     @Override
     public void onDisable() {
         // Save all WorldGuard
-        getWorldGuardInstance().ifPresent(worldGuard -> {
+        WorldGuardUtil.getWorldGuard().ifPresent(worldGuard -> {
             for (RegionManager regionManager : worldGuard.getPlatform().getRegionContainer().getLoaded()) {
                 try {
                     regionManager.save();
-                    logger().info("Saved data for WorldGuard's {} region manager", regionManager.getName());
+                    info("Saved data for WorldGuard's {} region manager", regionManager.getName());
                 } catch (StorageException exception) {
-                    logger().error("Failed to save WorldGuard data:", exception);
+                    error("Failed to save WorldGuard data:", exception);
                 }
             }
         });
@@ -65,11 +59,7 @@ public class BlockProtectionPlugin extends JavaPlugin {
         HandlerList.unregisterAll(this);
         getServer().getScheduler().cancelTasks(this);
 
-        logger().info("BlockProtection disabled!");
-    }
-
-    public Logger logger() {
-        return getSLF4JLogger();
+        info("BlockProtection disabled!");
     }
 
     public @NotNull Configuration getConfiguration() {
@@ -84,54 +74,8 @@ public class BlockProtectionPlugin extends JavaPlugin {
         return userManager;
     }
 
-    public @NotNull Optional<RegionManager> getRegionManager(@NotNull Player player) {
-        return getRegionManager(player.getWorld());
-    }
-
-    public @NotNull Optional<RegionManager> getRegionManager(@NotNull World world) {
-        try {
-            return Optional.of(getRegionManagerInstance(world));
-        } catch (ProtectionException ignored) {
-            return Optional.empty();
-        }
-    }
-
-    public @NotNull RegionManager getRegionManagerInstance(@NotNull World world) throws ProtectionException {
-        WorldGuard instance = WorldGuard.getInstance();
-        if (instance == null) {
-            throw new ProtectionException("WorldGuard instance is not available.");
-        }
-        RegionManager regionManager = instance.getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
-        if (regionManager == null) {
-            throw new ProtectionException("WorldGuard database is not available.");
-        }
-        return regionManager;
-    }
-
-    public @NotNull Optional<WorldGuard> getWorldGuardInstance() {
-        try {
-            return Optional.of(getWorldGuard());
-        } catch (ProtectionException ignored) {
-            return Optional.empty();
-        }
-    }
-
-    public @NotNull WorldGuard getWorldGuard() throws ProtectionException {
-        WorldGuard instance = WorldGuard.getInstance();
-        if (instance == null) {
-            throw new ProtectionException("WorldGuard instance is not available.");
-        }
-        return instance;
-    }
-
-    private void registerCommand(@NotNull String commandName, @NotNull CommandExecutor executor) {
-        PluginCommand pluginCommand = getServer().getPluginCommand(commandName);
-        assert pluginCommand != null;
-        pluginCommand.setExecutor(executor);
-    }
-
     public Optional<ProtectedRegion> getBaseRegion(@NotNull World world) {
-        Optional<RegionManager> managerOptional = getRegionManager(world);
+        Optional<RegionManager> managerOptional = WorldGuardUtil.getRegionManager(world);
         if (managerOptional.isEmpty()) {
             return Optional.empty();
         }

@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.serverutility.listeners;
 
 import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
+import com.rafaelsms.potocraft.util.WorldGuardUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.LocalPlayer;
@@ -41,7 +42,7 @@ public abstract class WorldGuardStateFlagRegister implements Listener {
     }
 
     private void registerFlag() {
-        Optional<WorldGuard> worldGuard = plugin.getWorldGuard();
+        Optional<WorldGuard> worldGuard = WorldGuardUtil.getWorldGuard();
         if (worldGuard.isEmpty()) {
             plugin.logger().warn("WorldGuard not present, skipping {} custom flag registry.", flagName);
             return;
@@ -58,7 +59,7 @@ public abstract class WorldGuardStateFlagRegister implements Listener {
     }
 
     protected @NotNull Optional<Boolean> testFlag(@NotNull Location location, @Nullable Player player) {
-        Optional<WorldGuard> worldGuard = plugin.getWorldGuard();
+        Optional<WorldGuard> worldGuard = WorldGuardUtil.getWorldGuard();
         if (worldGuard.isEmpty() || flag == null) {
             return Optional.empty();
         }

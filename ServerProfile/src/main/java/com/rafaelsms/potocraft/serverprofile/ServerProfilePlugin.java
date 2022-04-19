@@ -1,5 +1,6 @@
 package com.rafaelsms.potocraft.serverprofile;
 
+import com.rafaelsms.potocraft.BasePlugin;
 import com.rafaelsms.potocraft.serverprofile.commands.BackCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.CreateHomeCommand;
 import com.rafaelsms.potocraft.serverprofile.commands.CreateWarpCommand;
@@ -28,24 +29,18 @@ import com.rafaelsms.potocraft.serverprofile.listeners.UserManager;
 import com.rafaelsms.potocraft.serverprofile.listeners.WorldGuardNoEnteringInCombatFlag;
 import com.rafaelsms.potocraft.serverprofile.listeners.WorldGuardRequireInitialMemberDamageFlag;
 import com.rafaelsms.potocraft.serverprofile.listeners.WorldGuardShowMemberFlag;
-import com.rafaelsms.potocraft.serverprofile.util.WorldGuardUtil;
+import com.rafaelsms.potocraft.util.WorldGuardUtil;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.RegionGroup;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.session.SessionManager;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.Optional;
 
-public class ServerProfilePlugin extends JavaPlugin {
+public class ServerProfilePlugin extends BasePlugin {
 
     public static StateFlag ENTERING_IN_COMBAT_FLAG = null;
     public static StateFlag REQUIRE_INITIAL_MEMBER_DAMAGE = null;
@@ -146,30 +141,5 @@ public class ServerProfilePlugin extends JavaPlugin {
 
     public @NotNull Optional<WorldGuard> getWorldGuard() {
         return Optional.ofNullable(WorldGuard.getInstance());
-    }
-
-    public Logger logger() {
-        return getSLF4JLogger();
-    }
-
-    private void registerCommand(@NotNull String name, @NotNull CommandExecutor executor) {
-        if (executor instanceof TabCompleter tabCompleter) {
-            registerCommand(name, executor, tabCompleter);
-        } else {
-            registerCommand(name, executor, null);
-        }
-    }
-
-    private void registerCommand(@NotNull String name,
-                                 @NotNull CommandExecutor executor,
-                                 @Nullable TabCompleter tabCompleter) {
-        PluginCommand pluginCommand = getCommand(name);
-        if (pluginCommand == null) {
-            throw new IllegalStateException("Command couldn't be registered: %s".formatted(name));
-        }
-        pluginCommand.setExecutor(executor);
-        if (tabCompleter != null) {
-            pluginCommand.setTabCompleter(tabCompleter);
-        }
     }
 }

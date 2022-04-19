@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
-public class UniversalChatPlugin extends Plugin {
+public class UniversalChatPlugin extends Plugin implements com.rafaelsms.potocraft.Logger {
 
     private final @NotNull Configuration configuration;
     private final @NotNull UserManager userManager;
@@ -42,7 +42,7 @@ public class UniversalChatPlugin extends Plugin {
         getProxy().getScheduler()
                   .schedule(this, new BroadcastTask(this), period.toMillis(), period.toMillis(), TimeUnit.MILLISECONDS);
 
-        logger().info("UniversalChat enabled!");
+        info("UniversalChat enabled!");
     }
 
     @Override
@@ -51,11 +51,7 @@ public class UniversalChatPlugin extends Plugin {
         getProxy().getPluginManager().unregisterListeners(this);
         getProxy().getScheduler().cancel(this);
 
-        logger().info("UniversalChat disabled!");
-    }
-
-    public Logger logger() {
-        return getSLF4JLogger();
+        info("UniversalChat disabled!");
     }
 
     public @NotNull Configuration getConfiguration() {
@@ -68,5 +64,10 @@ public class UniversalChatPlugin extends Plugin {
 
     public @NotNull BlockedWordsChecker getWordsChecker() {
         return blockedWordsChecker;
+    }
+
+    @Override
+    public @NotNull Logger logger() {
+        return getSLF4JLogger();
     }
 }

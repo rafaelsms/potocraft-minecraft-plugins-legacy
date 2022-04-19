@@ -1,11 +1,20 @@
 package com.rafaelsms.potocraft.blockprotection.util;
 
+import com.rafaelsms.potocraft.blockprotection.BlockProtectionPlugin;
+import com.rafaelsms.potocraft.util.WorldGuardUtil;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionType;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public final class ProtectionUtil {
 
@@ -86,5 +95,51 @@ public final class ProtectionUtil {
         return location1.getWorld() != null &&
                location2.getWorld() != null &&
                Objects.equals(location1.getWorld().getUID(), location2.getWorld().getUID());
+    }
+
+    public static @NotNull Optional<ProtectedRegion> getProtectedRegion(@NotNull BlockProtectionPlugin plugin,
+                                                                        @NotNull Player player,
+                                                                        boolean warnPlayer) {
+        return getProtectedRegion(plugin, player, warnPlayer, true);
+    }
+
+    public static @NotNull Optional<ProtectedRegion> getProtectedRegion(@NotNull BlockProtectionPlugin plugin,
+                                                                        @NotNull Player player,
+                                                                        boolean warnPlayer,
+                                                                        boolean requireOwner) {
+        Optional<LocalPlayer> localPlayer = WorldGuardUtil.toLocalPlayer(player);
+        if (localPlayer.isEmpty()) {
+            if (warnPlayer) {
+                player.sendMessage(plugin.getConfiguration().getFailedToFetchRegions());
+            }
+            return Optional.empty();
+        }
+        BlockVector3 playerLocation = WorldGuardUtil.toBlockVector3(player.getLocation());
+        Optional<RegionManager> regionManager = WorldGuardUtil.getRegionManager(player);
+        if (regionManager.isEmpty()) {
+            if (warnPlayer) {
+                player.sendMessage(plugin.getConfiguration().getFailedToFetchRegions());
+            }
+            return Optional.empty();
+        }
+        ApplicableRegionSet applicableRegions = regionManager.get().getApplicableRegions(playerLocation);
+        // Cancel edit: does not have permission
+        for (ProtectedRegion applicableRegion : applicableRegions) {
+            if (applicableRegion.getType() == RegionType.GLOBAL) {
+                continue;
+            }
+            if ((requireOwner && !applicableRegion.isOwner(localPlayer.get())) ||
+                (!requireOwner && !applicableRegion.isMember(localPlayer.get()))) {
+                if (warnPlayer) {
+                    player.sendMessage(plugin.getConfiguration().getNoRegionPermission());
+                }
+                return Optional.empty();
+            }
+            return Optional.of(applicableRegion);
+        }
+        if (warnPlayer) {
+            player.sendMessage(plugin.getConfiguration().getRegionRequired());
+        }
+        return Optional.empty();
     }
 }

@@ -5,10 +5,11 @@ import com.rafaelsms.potocraft.blockprotection.Permissions;
 import com.rafaelsms.potocraft.blockprotection.players.Profile;
 import com.rafaelsms.potocraft.blockprotection.players.User;
 import com.rafaelsms.potocraft.blockprotection.protection.Selection;
-import com.rafaelsms.potocraft.blockprotection.util.WorldGuardUtil;
+import com.rafaelsms.potocraft.blockprotection.util.ProtectionUtil;
 import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
+import com.rafaelsms.potocraft.util.WorldGuardUtil;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -71,13 +72,13 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
         }
 
         // Check if region manager is available
-        Optional<WorldGuard> worldGuardInstance = plugin.getWorldGuardInstance();
+        Optional<WorldGuard> worldGuardInstance = WorldGuardUtil.getWorldGuard();
         if (worldGuardInstance.isEmpty()) {
             sender.sendMessage(plugin.getConfiguration().getFailedToFetchRegions());
             return true;
         }
         User user = plugin.getUserManager().getUser(player);
-        Optional<RegionManager> regionManager = plugin.getRegionManager(player);
+        Optional<RegionManager> regionManager = WorldGuardUtil.getRegionManager(player);
         if (regionManager.isEmpty()) {
             sender.sendMessage(plugin.getConfiguration().getFailedToFetchRegions());
             return true;
@@ -114,7 +115,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
             Optional<Selection> selectionOptional = user.getSelection();
             if (selectionOptional.isEmpty() || selectionOptional.get().getExistingProtectedRegion().isEmpty()) {
                 // Start selection to edit region
-                Optional<ProtectedRegion> regionOptional = WorldGuardUtil.getProtectedRegion(plugin, player, true);
+                Optional<ProtectedRegion> regionOptional = ProtectionUtil.getProtectedRegion(plugin, player, true);
                 if (regionOptional.isEmpty()) {
                     return true;
                 }
@@ -170,7 +171,7 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
 
-            Optional<ProtectedRegion> protectedRegion = WorldGuardUtil.getProtectedRegion(plugin, player, false);
+            Optional<ProtectedRegion> protectedRegion = ProtectionUtil.getProtectedRegion(plugin, player, false);
             if (protectedRegion.isEmpty()) {
                 player.sendMessage(plugin.getConfiguration().getProtectDeleteHelp());
                 return true;
@@ -336,14 +337,14 @@ public class ProtectCommand implements CommandExecutor, TabCompleter {
             return;
         }
         // Get region manager
-        Optional<RegionManager> regionManager = plugin.getRegionManager(player);
+        Optional<RegionManager> regionManager = WorldGuardUtil.getRegionManager(player);
         if (regionManager.isEmpty()) {
             player.sendMessage(plugin.getConfiguration().getFailedToFetchRegions());
             return;
         }
 
         // This already checks permission and warns player
-        Optional<ProtectedRegion> protectedRegion = WorldGuardUtil.getProtectedRegion(plugin, player, true);
+        Optional<ProtectedRegion> protectedRegion = ProtectionUtil.getProtectedRegion(plugin, player, true);
         if (protectedRegion.isEmpty()) {
             return;
         }

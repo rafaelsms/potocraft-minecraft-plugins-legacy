@@ -2,6 +2,7 @@ package com.rafaelsms.potocraft.serverutility.listeners;
 
 import com.rafaelsms.potocraft.serverutility.Permissions;
 import com.rafaelsms.potocraft.serverutility.ServerUtilityPlugin;
+import com.rafaelsms.potocraft.util.LuckPermsUtil;
 import com.rafaelsms.potocraft.util.TextUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -19,6 +20,7 @@ import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -71,25 +73,27 @@ public class ScoreboardListener implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler
     private void setPlayersScoreboard(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        String playerName = player.getName();
+        UUID playerId = player.getUniqueId();
         // Set player's scoreboard
-        event.getPlayer().setScoreboard(scoreboard);
+        player.setScoreboard(scoreboard);
         // Remove player's team if existent
-        Team existingTeam = scoreboard.getTeam(event.getPlayer().getName());
+        Team existingTeam = scoreboard.getTeam(playerName);
         if (existingTeam != null) {
             existingTeam.unregister();
         }
         // Create a new team
-        Team playerTeam = scoreboard.registerNewTeam(event.getPlayer().getName());
+        Team playerTeam = scoreboard.registerNewTeam(playerName);
         // Add player
-        playerTeam.addEntry(event.getPlayer().getName());
-        Optional<ChatColor> permissionColor = getPlayerPermissionColor(event.getPlayer());
+        playerTeam.addEntry(playerName);
+        Optional<ChatColor> permissionColor = getPlayerPermissionColor(player);
         permissionColor.ifPresent(playerTeam::setColor);
         // Set prefix
-        String prefix = TextUtil.getPrefix(event.getPlayer().getUniqueId());
-        playerTeam.setPrefix(TextUtil.toColorizedString(prefix) + permissionColor.orElse(ChatColor.WHITE));
+        playerTeam.setPrefix(LuckPermsUtil.getColorizedPrefix(playerId).orElse("") +
+                             permissionColor.orElse(ChatColor.WHITE));
         // Set suffix
-        String suffix = TextUtil.getSuffix(event.getPlayer().getUniqueId());
-        playerTeam.setSuffix(TextUtil.toColorizedString(suffix));
+        playerTeam.setSuffix(LuckPermsUtil.getColorizedSuffix(playerId).orElse(""));
     }
 
     @EventHandler

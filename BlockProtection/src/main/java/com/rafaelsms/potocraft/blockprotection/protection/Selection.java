@@ -2,10 +2,9 @@ package com.rafaelsms.potocraft.blockprotection.protection;
 
 import com.rafaelsms.potocraft.blockprotection.BlockProtectionPlugin;
 import com.rafaelsms.potocraft.blockprotection.players.User;
-import com.rafaelsms.potocraft.blockprotection.util.ProtectionException;
 import com.rafaelsms.potocraft.blockprotection.util.ProtectionUtil;
-import com.rafaelsms.potocraft.blockprotection.util.WorldGuardUtil;
 import com.rafaelsms.potocraft.util.Util;
+import com.rafaelsms.potocraft.util.WorldGuardUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.LocalPlayer;
@@ -19,6 +18,7 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -64,7 +64,7 @@ public class Selection implements Runnable {
             return Optional.empty();
         }
         try {
-            RegionManager regionManager = plugin.getRegionManagerInstance(selectionWorld);
+            RegionManager regionManager = WorldGuardUtil.getRegionManager(selectionWorld).orElseThrow();
             ProtectedCuboidRegion region = getTemporaryRegion(lowCorner, highCorner);
             ApplicableRegionSet applicableRegions = regionManager.getApplicableRegions(region);
             // Check if we are intersecting a prohibited region
@@ -78,7 +78,7 @@ public class Selection implements Runnable {
                 }
                 return Optional.of(true);
             }
-        } catch (ProtectionException e) {
+        } catch (NoSuchElementException e) {
             return Optional.empty();
         }
         return Optional.of(false);
@@ -114,11 +114,17 @@ public class Selection implements Runnable {
             this.highCorner = null;
         }
 
+        LocalPlayer player;
+        try {
+            player = WorldGuardUtil.toLocalPlayer(user.getPlayer()).orElseThrow();
+        } catch (NoSuchElementException ignored) {
+            return Result.FAILED_PROTECTION_DATA_FETCH;
+        }
+
         // Check if we can expand instead
-        LocalPlayer player = WorldGuardUtil.toLocalPlayer(user.getPlayer());
         if (this.lowCorner == null || this.highCorner == null) {
             try {
-                RegionManager regionManager = plugin.getRegionManagerInstance(selectionWorld);
+                RegionManager regionManager = WorldGuardUtil.getRegionManager(selectionWorld).orElseThrow();
                 BlockVector3 position = WorldGuardUtil.toBlockVector3(location);
                 ApplicableRegionSet applicableRegions = regionManager.getApplicableRegions(position);
                 for (ProtectedRegion applicableRegion : applicableRegions) {
@@ -138,7 +144,7 @@ public class Selection implements Runnable {
                         return Result.OTHER_REGION_WITH_PERMISSION_FOUND;
                     }
                 }
-            } catch (ProtectionException ignored) {
+            } catch (NoSuchElementException ignored) {
                 return Result.FAILED_PROTECTION_DATA_FETCH;
             }
         }
@@ -169,7 +175,7 @@ public class Selection implements Runnable {
             boolean checkApplicableRegions = true;
             while (checkApplicableRegions) {
                 checkApplicableRegions = false;
-                RegionManager regionManager = plugin.getRegionManagerInstance(selectionWorld);
+                RegionManager regionManager = WorldGuardUtil.getRegionManager(selectionWorld).orElseThrow();
                 ProtectedCuboidRegion region = getTemporaryRegion(lowestPoint, highestPoint);
                 ApplicableRegionSet applicableRegions = regionManager.getApplicableRegions(region);
                 // Check if we are intersecting a prohibited region
@@ -206,7 +212,7 @@ public class Selection implements Runnable {
             if (ProtectionUtil.isLocationHigher(lowestPoint, highestPoint)) {
                 return Result.OTHER_REGION_WITH_PERMISSION_FOUND;
             }
-        } catch (ProtectionException ignored) {
+        } catch (NoSuchElementException ignored) {
             return Result.FAILED_PROTECTION_DATA_FETCH;
         }
 

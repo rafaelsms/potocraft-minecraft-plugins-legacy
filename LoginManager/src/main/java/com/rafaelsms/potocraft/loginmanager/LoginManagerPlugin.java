@@ -1,5 +1,6 @@
 package com.rafaelsms.potocraft.loginmanager;
 
+import com.rafaelsms.potocraft.Logger;
 import com.rafaelsms.potocraft.database.DatabaseException;
 import com.rafaelsms.potocraft.loginmanager.commands.BanCommand;
 import com.rafaelsms.potocraft.loginmanager.commands.ChangePasswordCommand;
@@ -23,11 +24,10 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 import java.io.IOException;
 
-public class LoginManagerPlugin extends Plugin {
+public class LoginManagerPlugin extends Plugin implements Logger {
 
     private final @NotNull Configuration configuration;
     private final @NotNull Database database;
@@ -43,7 +43,7 @@ public class LoginManagerPlugin extends Plugin {
     public void onEnable() {
         // Assert Floodgate API is available
         if (FloodgateApi.getInstance() == null) {
-            logger().error("Floodgate API is a required dependency!");
+            error("Floodgate API is a required dependency!");
             return;
         }
 
@@ -69,7 +69,7 @@ public class LoginManagerPlugin extends Plugin {
         getProxy().getPluginManager().registerCommand(this, new SeenCommand(this));
         getProxy().getPluginManager().registerCommand(this, new PingCommand(this));
 
-        logger().info("LoginManager enabled!");
+        info("LoginManager enabled!");
     }
 
     @Override
@@ -79,7 +79,7 @@ public class LoginManagerPlugin extends Plugin {
         // Stop database
         this.database.close();
 
-        logger().info("LoginManager disabled!");
+        info("LoginManager disabled!");
     }
 
     public @NotNull Configuration getConfiguration() {
@@ -94,11 +94,12 @@ public class LoginManagerPlugin extends Plugin {
         return playerTypeManager;
     }
 
-    public Logger logger() {
-        return getSLF4JLogger();
-    }
-
     public ScheduledTask runAsync(@NotNull Runnable task) {
         return getProxy().getScheduler().runAsync(this, task);
+    }
+
+    @Override
+    public @NotNull org.slf4j.Logger logger() {
+        return getSLF4JLogger();
     }
 }

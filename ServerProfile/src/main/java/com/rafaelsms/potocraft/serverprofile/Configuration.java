@@ -5,6 +5,7 @@ import com.rafaelsms.potocraft.serverprofile.players.Profile;
 import com.rafaelsms.potocraft.serverprofile.players.TeleportRequest;
 import com.rafaelsms.potocraft.serverprofile.util.CombatType;
 import com.rafaelsms.potocraft.serverprofile.warps.Warp;
+import com.rafaelsms.potocraft.util.LuckPermsUtil;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
 import com.rafaelsms.potocraft.util.YamlFile;
@@ -84,8 +85,8 @@ public class Configuration extends YamlFile {
                                     @NotNull UUID senderId,
                                     @NotNull String senderName,
                                     @NotNull Component message) {
-        String prefix = TextUtil.getPrefix(senderId);
-        String suffix = TextUtil.getSuffix(senderId);
+        String prefix = LuckPermsUtil.getUncoloredPrefix(senderId).orElse("");
+        String suffix = LuckPermsUtil.getUncoloredSuffix(senderId).orElse("");
         Component displayName = TextUtil.toLegacyComponent(prefix + senderName + suffix);
         return TextUtil.toComponent(format,
                                     Placeholder.parsed("prefix", prefix),

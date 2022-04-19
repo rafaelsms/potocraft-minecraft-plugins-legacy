@@ -6,9 +6,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.model.user.User;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +19,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -129,35 +125,6 @@ public final class TextUtil {
         return Optional.ofNullable(closestMatch);
     }
 
-    public static @NotNull String getPrefix(@NotNull UUID playerId) {
-        String prefix = "";
-        try {
-            LuckPerms luckPerms = LuckPermsProvider.get();
-            User user = luckPerms.getUserManager().loadUser(playerId).join();
-            // Get prefix
-            String prefixString = user.getCachedData().getMetaData().getPrefix();
-            if (prefixString != null) {
-                prefix = prefixString;
-            }
-        } catch (Throwable ignored) {
-        }
-        return prefix;
-    }
-
-    public static @NotNull String getSuffix(@NotNull UUID playerId) {
-        String suffix = "";
-        try {
-            LuckPerms luckPerms = LuckPermsProvider.get();
-            User user = luckPerms.getUserManager().loadUser(playerId).join();
-            String suffixString = user.getCachedData().getMetaData().getSuffix();
-            if (suffixString != null) {
-                suffix = suffixString;
-            }
-        } catch (Throwable ignored) {
-        }
-        return suffix;
-    }
-
     public static @NotNull String toColorizedString(@NotNull Component component) {
         return LegacyComponentSerializer.legacyAmpersand().serializeOrNull(component);
     }
@@ -179,11 +146,12 @@ public final class TextUtil {
         return MiniMessage.miniMessage().deserialize(baseMessage, resolvers);
     }
 
+    @SuppressWarnings("deprecation")
     public static @NotNull BaseComponent[] toComponentBungee(@Nullable String base, TagResolver... resolvers) {
         return BungeeComponentSerializer.get().serialize(toComponent(base, resolvers));
     }
 
     public static @NotNull String normalizeString(@NotNull String string) {
-        return Normalizer.normalize(string, Normalizer.Form.NFD).replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        return Normalizer.normalize(string, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}", "");
     }
 }

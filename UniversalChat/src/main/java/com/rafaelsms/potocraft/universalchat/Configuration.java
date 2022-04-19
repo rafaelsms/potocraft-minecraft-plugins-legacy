@@ -1,5 +1,6 @@
 package com.rafaelsms.potocraft.universalchat;
 
+import com.rafaelsms.potocraft.util.LuckPermsUtil;
 import com.rafaelsms.potocraft.util.TextUtil;
 import com.rafaelsms.potocraft.util.Util;
 import com.rafaelsms.potocraft.util.YamlFile;
@@ -165,8 +166,8 @@ public class Configuration extends YamlFile {
                                     .map(Server::getInfo)
                                     .map(ServerInfo::getName)
                                     .orElse(getUnknownServer());
-        String prefix = TextUtil.getPrefix(player.getUniqueId());
-        String suffix = TextUtil.getSuffix(player.getUniqueId());
+        String prefix = LuckPermsUtil.getUncoloredPrefix(player.getUniqueId()).orElse("");
+        String suffix = LuckPermsUtil.getUncoloredSuffix(player.getUniqueId()).orElse("");
         String playerName = player.getName();
         Component displayName = TextUtil.toLegacyComponent(prefix + playerName + suffix);
         return TextUtil.toComponentBungee(chatFormat,

@@ -1,6 +1,7 @@
 package com.rafaelsms.potocraft.serverutility;
 
 import club.minnced.discord.webhook.WebhookClient;
+import com.rafaelsms.potocraft.BasePlugin;
 import com.rafaelsms.potocraft.serverutility.commands.AnvilCommand;
 import com.rafaelsms.potocraft.serverutility.commands.EnchantCommand;
 import com.rafaelsms.potocraft.serverutility.commands.EnderchestCommand;
@@ -39,21 +40,15 @@ import com.rafaelsms.potocraft.serverutility.listeners.WorldGuardNoDeathDropsFla
 import com.rafaelsms.potocraft.serverutility.listeners.WorldGuardNoEquipmentDamageFlag;
 import com.rafaelsms.potocraft.serverutility.tasks.SyncWorldTimeTask;
 import com.rafaelsms.potocraft.serverutility.tasks.TimedPVPTask;
-import com.sk89q.worldguard.WorldGuard;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.Optional;
 
-public class ServerUtilityPlugin extends JavaPlugin {
+public class ServerUtilityPlugin extends BasePlugin {
 
     private final @NotNull Configuration configuration;
     private @Nullable WebhookClient webhookClient = null;
@@ -151,10 +146,6 @@ public class ServerUtilityPlugin extends JavaPlugin {
         return Optional.ofNullable(webhookClient);
     }
 
-    public @NotNull Optional<WorldGuard> getWorldGuard() {
-        return Optional.ofNullable(WorldGuard.getInstance());
-    }
-
     public boolean isVulcanIntegrationAvailable() {
         Plugin plugin = getServer().getPluginManager().getPlugin("Vulcan");
         return plugin != null && plugin.isEnabled();
@@ -163,20 +154,5 @@ public class ServerUtilityPlugin extends JavaPlugin {
     public boolean isLACIntegrationAvailable() {
         Plugin plugin = getServer().getPluginManager().getPlugin("LightAntiCheat");
         return plugin != null && plugin.isEnabled();
-    }
-
-    public Logger logger() {
-        return getSLF4JLogger();
-    }
-
-    private void registerCommand(@NotNull String command, @NotNull CommandExecutor executor) {
-        PluginCommand pluginCommand = getServer().getPluginCommand(command);
-        if (pluginCommand == null) {
-            throw new IllegalStateException("Couldn't find command %s. Make sure it is on plugin.yml".formatted(command));
-        }
-        pluginCommand.setExecutor(executor);
-        if (executor instanceof TabCompleter tabCompleter) {
-            pluginCommand.setTabCompleter(tabCompleter);
-        }
     }
 }

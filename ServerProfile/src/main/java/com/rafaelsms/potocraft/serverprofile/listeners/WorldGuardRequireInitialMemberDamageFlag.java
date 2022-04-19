@@ -1,7 +1,7 @@
 package com.rafaelsms.potocraft.serverprofile.listeners;
 
 import com.rafaelsms.potocraft.serverprofile.ServerProfilePlugin;
-import com.rafaelsms.potocraft.serverprofile.util.WorldGuardUtil;
+import com.rafaelsms.potocraft.util.WorldGuardUtil;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -59,7 +59,7 @@ public class WorldGuardRequireInitialMemberDamageFlag implements Listener {
 
         // Get applicable regions
         Optional<ApplicableRegionSet> applicableRegionsOptional =
-                WorldGuardUtil.getApplicableRegions(plugin, damaged.getLocation());
+                WorldGuardUtil.getApplicableRegions(damaged.getLocation());
         if (applicableRegionsOptional.isEmpty()) {
             // Prevent damage anyway, it is safer
             plugin.logger().error("No region manager found! Preventing PVP damage as a precaution.");
@@ -74,9 +74,9 @@ public class WorldGuardRequireInitialMemberDamageFlag implements Listener {
         }
 
         // If player DAMAGED is NOT a member, allow damage to happen
-        if (!isMember(applicableRegions, WorldGuardUtil.adapt(damaged).orElseThrow())) {
+        if (!isMember(applicableRegions, WorldGuardUtil.toLocalPlayer(damaged).orElseThrow())) {
             // If player DAMAGER IS a member, allow DAMAGED player to attack back
-            if (isMember(applicableRegions, WorldGuardUtil.adapt(damager).orElseThrow())) {
+            if (isMember(applicableRegions, WorldGuardUtil.toLocalPlayer(damager).orElseThrow())) {
                 Map<UUID, ZonedDateTime> allowed = allowedToAttack.getOrDefault(damager.getUniqueId(), new HashMap<>());
                 allowed.put(damaged.getUniqueId(), ZonedDateTime.now());
                 allowedToAttack.put(damager.getUniqueId(), allowed);
